@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+        <title>Goodreads Analysis</title>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="collapse navbar-collapse" id="navbarText">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item active pr-2">
+                  <a class="nav-link" href="{% url 'index-view' %}">Home</a>
+                </li>
+                <li class="nav-item active pr-2">
+                  <a class="nav-link" href="{% url 'csv-upload' %}">Upload CSV</a>
+                </li>
+                <li class="nav-item active">
+                  <a class="nav-link" href="{% url 'finish-plot' %}">Plots</a>
+                </li>
+              </ul>
+              <span class="navbar-text">
+                <a href="{% url 'user-login' %}" style="text-decoration: none;">Login</a>
+              </span>
+            </div>
+          </nav>
+        {% block content %}{% endblock content %}
+    </body>
+</html>
