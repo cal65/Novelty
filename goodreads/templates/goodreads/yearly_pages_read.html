@@ -1,0 +1,9 @@
+{% extends "goodreads/basefile.html" %}
+{% load static %}
+
+{% block content %}
+    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">YEARLY PAGES READ</div>
+    <div style="display: flex; justify-content: center;">
+        <img style="width: 80%; height: 650px;" src="{% static yearly_pages_read_url %}" %}" class="text-center" alt="yearly-pages-read" />
+    </div>
+{% endblock content %}

@@ -1,0 +1,9 @@
+{% extends "goodreads/basefile.html" %}
+{% load static %}
+
+{% block content %}
+    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">SUMMARY PLOT IMAGE</div>
+    <div style="display: flex; justify-content: center;">
+        <img style="width: 80%; height: 650px;" src="{% static summary_plot_url %}" %}" class="text-center" alt="summary-plot" />
+    </div>
+{% endblock content %}
