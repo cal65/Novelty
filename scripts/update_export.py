@@ -31,20 +31,20 @@ def update_goodreads(df1, df2, index_column):
     df1.update(df2)
     df1.reset_index(inplace=True)
     df2_updated = append_scraping(df2_new)
+    df2_updated.reset_index(inplace=True)
     df_updated = pd.concat([df1, df2_updated], ignore_index=True)
     return df_updated
 
 if __name__ == "__main__":
     """
-    Usage: python append_to_export.py [--update] filepath.csv 
+    Usage: python update_export.py existing_file_appended.csv new_file.csv 
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("file_path1")
     parser.add_argument("file_path2")
     args = parser.parse_args()
     file_path1, file_path2 = args.file_path1, args.file_path2
-    export_path = re.sub(".csv|.xlsx", "_appended.csv", file_path2)
     df1 = pd.read_csv(file_path1)
     df2 = pd.read_csv(file_path2)
     df = update_goodreads(df1, df2, index_column='Book.Id')
-    df.to_csv(export_path, index=False)
+    df.to_csv(file_path1, index=False)
