@@ -4,8 +4,8 @@ import pandas as pd
 import numpy as np
 import sys
 import logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 S = requests.Session()
 
@@ -97,10 +97,11 @@ def lookup_unfound(df, nationality_col="Country.Chosen", author_col="Author"):
         ]
     ]
     if len(df_unfound) > 0:
-	    df_unfound = append_nationalities(df_unfound)
-	    df_return = pd.concat([df_found, df_unfound])
+        logger.info("Looking up author nationalities for " + str(len(df_unfound)) + " authors")
+        df_unfound = append_nationalities(df_unfound)
+        df_return = pd.concat([df_found, df_unfound])
     else:
-	    df_return = df_found
+        df_return = df_found
 
     return df_return
 

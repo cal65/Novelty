@@ -60,7 +60,7 @@ def update_missing_data(df, wait=4):
     """
     This function is for incomplete appends, when rows failed due to timeouts
     """
-    df_missing = df[pd.isnull(df["Added_by"])] # this is a scraped field that is often missing
+    df_missing = df[pd.isnull(df["Shelf6"])] # this is a scraped field that is often missing
     if len(df_missing) > 0:
         logger.info("Updating " + str(len(df_missing)) + " missing rows of data")
         urls = scrape_goodreads.return_urls(df_missing)
@@ -73,6 +73,10 @@ def update_missing_data(df, wait=4):
 
 
 def fix_date(file_path):
+    """
+    In passing csvs back and forth between R and Python, different defaults in reading date columns can be problematic
+    This function ensures that the csv in a file path has the Date.Added and Date.Read columns in datetime 
+    """
     df = pd.read_csv(file_path)
     df["Date.Added"] = pd.to_datetime(df["Date.Added"])
     df["Date.Read"] = pd.to_datetime(df["Date.Read"])
