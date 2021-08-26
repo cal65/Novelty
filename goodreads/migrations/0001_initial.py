@@ -18,6 +18,10 @@ class Migration(migrations.Migration):
                 ('book_id', models.CharField(max_length=250)),
                 ('title', models.CharField(max_length=250)),
                 ('author', models.CharField(max_length=250)),
+                ('number_of_pages', models.IntegerField(blank=True)),
+                ('my_rating', models.FloatField(blank=True)),
+                ('average_rating', models.FloatField()),
+                ('original_publication_year', models.IntegerField(blank=True)),
             ],
         ),
     ]
