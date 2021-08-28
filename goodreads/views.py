@@ -108,11 +108,16 @@ def upload_view(request):
 
     # save csv file in database
     df = pd.read_csv(csv_file)
+    df.columns = df.columns.str.replace(' |\.', '_') # standard export comes in with spaces. R would turn these into dots
+    df['Number_of_Pages'].fillna(0, inplace=True)
     for row in df.itertuples():
         _, book = ExportData.objects.update_or_create(
-                book_id=row._1, 
+                book_id=row.Book_Id, 
                 title=row.Title, 
                 author=row.Author,
+                number_of_pages=row.Number_of_Pages,
+                my_rating=row.My_Rating,
+                original_publication_year=row.Original_Publication_Year
             )
     
     # save csv file to user's folder
