@@ -26,7 +26,7 @@ SECRET_KEY = 'h8wrw%rvx&wxoafmbrgfurc=s!ygbz#3cjx3yv!^l9k!n&zw*y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['3.216.30.217', 'localhost', '127.0.0.1', '0.0.0.0']
 
 
 # Application definition
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'crispy_forms',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -147,4 +148,5 @@ TAILWIND_APP_NAME = 'theme'
 
 INTERNAL_IPS = [
     "127.0.0.1",
+    "3.216.30.217"
 ]

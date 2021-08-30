@@ -122,6 +122,11 @@ def upload_view(request):
     
     # save csv file to user's folder
     username = request.user
-    df.to_csv('goodreads/Graphs/{}/sample_export_{}.csv'.format(username, username))
+    try:
+        df.to_csv('goodreads/Graphs/{}/sample_export_{}.csv'.format(username, username))
+    except OSError:
+        os.mkdir('goodreads/Graphs/{}'.format(username))
+        df.to_csv('goodreads/Graphs/{}/sample_export_{}.csv'.format(username, username))
 
     return render(request, template, {'file_exists': file_exists})
+    

@@ -1,5 +1,26 @@
-{% extends basefile %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="{%  static  'css/landing.css'  %}" />
+        <title>Goodreads Analysis</title>
+    </head>
 
-{% block content %}
-    <div class="text-center font-bold pt-2 text-3xl">GOODREADS ANALYSIS</div>
-{% endblock content %}
+    <body>
+        <div>
+            <img class="center" src="../../static/admin/img/logo.png" alt="Novelty"> </img>
+        </div>
+        <div class="container">
+            <div class="item one-two one-three pb-2"><a href="{% url 'csv-upload' %}"><img src="../../static/admin/img/goodreads.svg" alt="Novelty" style="height:5em;"> </img></div></a>
+            <div class="item one-two pl-8"><img src="../../static/admin/img/spotify.png" alt="Novelty" style="height:5em;"> </img></div>
+            <div class="item one-three pt-2"><img src="../../static/admin/img/earth_rotate.jpeg" alt="Novelty" style="height:5em;"> </img></div>
+            <div class="item pt-2 pl-8"><img src="../../static/admin/img/earth_rotate.jpeg" alt="Novelty" style="height:5em;"> </img></div>
+        </div>
+    </body>
+</html>
