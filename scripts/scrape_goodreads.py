@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
-from pandas.api.types import is_string_dtype 
+from pandas.api.types import is_string_dtype
 import numpy as np
 import json
 import random
@@ -40,6 +40,7 @@ def get_stats(url, wait=0):
         "Shelf7": None,
         "Original_title": None,
         "url": url,
+        "numberOfPages": None,
     }
 
     scripts = soup.findAll("script")
@@ -106,7 +107,9 @@ def get_stats(url, wait=0):
     try:
         shelves = soup.findAll("a", {"class": "actionLinkLite bookPageGenreLink"})
         shelves = [shelf.text for shelf in shelves]
-        shelves = pd.unique(shelves) # because of the way Goodreads organizes this, there are some repeat shelves
+        shelves = pd.unique(
+            shelves
+        )  # because of the way Goodreads organizes this, there are some repeat shelves
         shelf1 = shelves[0] if len(shelves) > 0 else ""
         shelf2 = shelves[1] if len(shelves) > 1 else ""
         shelf3 = shelves[2] if len(shelves) > 2 else ""
@@ -121,6 +124,10 @@ def get_stats(url, wait=0):
         original_title = soup.find("div", {"class": "infoBoxRowItem"}).text
     except:
         original_title = None
+    try:
+        numberOfPages = soup.find("span", {"itemprop": "numberOfPages"}).text.replace("\n", "")
+    except:
+        numberOfPages = None
 
     time.sleep(wait)
 
@@ -141,12 +148,13 @@ def get_stats(url, wait=0):
         "Shelf7": shelf7,
         "Original_title": original_title,
         "url": url,
+        "numberOfPages": numberOfPages,
     }
 
 
 def create_url(id, name):
 
-    return "https://www.goodreads.com/book/show/" + str(id) 
+    return "https://www.goodreads.com/book/show/" + str(id)
 
 
 def read_goodreads_export(file_path):
@@ -157,7 +165,7 @@ def read_goodreads_export(file_path):
     return goodreads_data
 
 
-def return_urls(goodreads_data, id_col="Book.Id"):
+def return_urls(goodreads_data, id_col="Book_Id"):
     if not is_string_dtype(goodreads_data["Title"]):
         goodreads_data["Title"] = goodreads_data["Title"].astype(str)
     urls = goodreads_data.apply(lambda x: create_url(x[id_col], x["Title"]), axis=1)
@@ -165,7 +173,7 @@ def return_urls(goodreads_data, id_col="Book.Id"):
     return urls
 
 
-def apply_added_by(urls, wait=3):
+def apply_added_by(urls, wait=4):
     stats = [get_stats(url, wait=wait) for url in urls]
     goodreads_data = pd.DataFrame(stats)
 
@@ -209,10 +217,14 @@ if __name__ == "__main__":
     python scrape_goodreads.py 67500000 25 999 export_goodreads.csv
     """
     urls = generate_random_urls(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))
-    goodreads_data = apply_added_by(urls)
+    if len(sys.argv) >= 6:
+        wait = int(sys.argv[5])
+    else:
+        wait = 3
+    goodreads_data = apply_added_by(urls, wait=wait)
     try:
-        existing = pd.read_csv(sys.argv[-1])
+        existing = pd.read_csv(sys.argv[4])
         goodreads_data = pd.concat([existing, goodreads_data], axis=0)
     except:
         pass
-    goodreads_data.to_csv(sys.argv[-1], index=False)
+    goodreads_data.to_csv(sys.argv[4], index=False)

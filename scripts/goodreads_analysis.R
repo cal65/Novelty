@@ -33,7 +33,9 @@ paths <- list('Cal' = paste0(file_start, 'cal_appended.csv'),
               'Josh_Z' = paste0(file_start, 'josh_z_appended.csv'),
               'Maryann' = paste0(file_start, 'maryann_appended.csv'),
               'Stephanie' = 'data/goodreads_library_SHopkins_appended.csv',
-              'Tiff' = paste0(file_start, 'tiff_appended.csv'))
+              'Tiff' = paste0(file_start, 'tiff_appended.csv'),
+              'Alison_Shin' = paste0(file_start, 'alison_shin_appended.csv'),
+              'Eva' = 'data/goodreads_library_Eva_appended.csv')
 goodreads_list <- lapply(paths, run_all)
 for (name in names(paths)){
   goodreads_list[[name]]$Source <- name
@@ -110,7 +112,7 @@ genre_df.m <- create_melted_genre_df(genre_df)
 for (name in names(paths)){
   genre_plot(genre_df, name = name, n_genre = 24, read_col='Read',  plot=T)
 }
-
+  
 
 
 ## Month plot
