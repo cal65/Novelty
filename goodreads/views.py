@@ -95,8 +95,11 @@ def upload_view(request):
         
     # run analysis when user clicks on Analyze button
     if request.method == 'POST' and 'runscript' in request.POST:
-        run_script_function(request)
-        return render(request, template, {'file_exists': file_exists})
+        if os.path.isfile(file_path):
+            run_script_function(request)
+            return render(request, template, {'file_exists': file_exists})
+        else:
+            return render(request, template)
     
     # upload csv file
     csv_file = request.FILES['file']
