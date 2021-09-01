@@ -119,6 +119,8 @@ def upload_view(request):
                 my_rating=row.My_Rating,
                 original_publication_year=row.Original_Publication_Year
             )
+
+    df.columns = df.columns.str.replace('_', '.')
     
     # save csv file to user's folder
     username = request.user
