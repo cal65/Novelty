@@ -125,7 +125,9 @@ def get_stats(url, wait=0):
     except:
         original_title = None
     try:
-        numberOfPages = soup.find("span", {"itemprop": "numberOfPages"}).text.replace("\n", "")
+        numberOfPages = soup.find("span", {"itemprop": "numberOfPages"}).text.replace(
+            "\n", ""
+        )
     except:
         numberOfPages = None
 
@@ -165,7 +167,7 @@ def read_goodreads_export(file_path):
     return goodreads_data
 
 
-def return_urls(goodreads_data, id_col="Book_Id"):
+def return_urls(goodreads_data, id_col="Book.Id"):
     if not is_string_dtype(goodreads_data["Title"]):
         goodreads_data["Title"] = goodreads_data["Title"].astype(str)
     urls = goodreads_data.apply(lambda x: create_url(x[id_col], x["Title"]), axis=1)
@@ -183,15 +185,20 @@ def apply_added_by(urls, wait=4):
         .apply(lambda x: x[0] if x is not None else None)
     )
     # gender
+    goodreads_data = guess_gender(goodreads_data)
+    # shelves
+    return goodreads_data
+
+
+def guess_gender(goodreads_data, gender_col="gender"):
     d = gender.Detector()
     goodreads_data["First.Name"] = [
-        name[0] if name is not None else ""
-        for name in goodreads_data["Author"].str.split(" ")
+        name[0] if name != "" else ""
+        for name in goodreads_data["Author"].str.split(" ").fillna("")
     ]
-    goodreads_data["gender"] = [
+    goodreads_data[gender_col] = [
         d.get_gender(name) for name in goodreads_data["First.Name"]
     ]
-    # shelves
     return goodreads_data
 
 
