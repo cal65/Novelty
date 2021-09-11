@@ -14,7 +14,7 @@ def append_scraping(goodreads_data):
     Take data meant to be in the Goodreads export format
     Scrape additional fields and add them as columns
     """
-    goodreads_data.columns = [c.replace(" ", ".") for c in goodreads_data.columns]
+    goodreads_data.columns = [c.replace(" ", "_") for c in goodreads_data.columns]
     urls = scrape_goodreads.return_urls(goodreads_data)
     scraped_df = scrape_goodreads.apply_added_by(urls)
     scraped_df.drop(columns=["Title", "Author", "Publish_info"], inplace=True)

@@ -13,6 +13,7 @@ ch.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 logger.addHandler(ch)
 
+
 def update_goodreads(df1, df2, index_column):
     """
     Takes df1, an existing dataframe, and df2, a new dataframe.
@@ -35,9 +36,10 @@ def update_goodreads(df1, df2, index_column):
     df_updated = pd.concat([df1, df2_updated], ignore_index=True)
     return df_updated
 
+
 if __name__ == "__main__":
     """
-    Usage: python update_export.py existing_file_appended.csv new_file.csv 
+    Usage: python update_export.py existing_file_appended.csv new_file.csv
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("file_path1")
@@ -46,5 +48,5 @@ if __name__ == "__main__":
     file_path1, file_path2 = args.file_path1, args.file_path2
     df1 = pd.read_csv(file_path1)
     df2 = pd.read_csv(file_path2)
-    df = update_goodreads(df1, df2, index_column='Book.Id')
+    df = update_goodreads(df1, df2, index_column="Book.Id")
     df.to_csv(file_path1, index=False)

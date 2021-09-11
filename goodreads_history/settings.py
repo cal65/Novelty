@@ -90,7 +90,7 @@ AUTH_PASSWORD_VALIDATORS = []
 #     }
 # }
 
-DATABASE_URL = 'postgres://christopherlee:callee24@localhost/goodreads'
+DATABASE_URL = 'postgres://cal:callee24@localhost/goodreads'
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 
 
