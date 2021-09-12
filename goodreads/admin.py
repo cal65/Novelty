@@ -14,5 +14,6 @@ class ExportDataAdmin(admin.ModelAdmin):
         "original_publication_year",
         "shelf1",
         "shelf2",
+        "shelf3",
         "user",
     )

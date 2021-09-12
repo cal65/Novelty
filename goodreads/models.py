@@ -10,6 +10,8 @@ class ExportData(models.Model):
     average_rating = models.FloatField(blank=True, null=True)
     original_publication_year = models.FloatField(blank=True, null=True)
     shelf1 = models.CharField(max_length=250)
+    shelf2 = models.CharField(max_length=250)
+    shelf3 = models.CharField(max_length=250)
     user = models.CharField(max_length=30, unique=True)
     # author_l_f = models.CharField(max_length=250)
     # additional_authors = models.CharField(max_length=250)
