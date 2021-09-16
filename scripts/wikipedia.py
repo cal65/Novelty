@@ -75,9 +75,9 @@ def search_person_for_gender(person):
 
 def evaluate_file(csv, fix_col="gender_fixed", name_col="Author"):
     df = pd.read_csv(csv)
-    authors = df.loc[~(df[fix_col].isin(['male', 'female', 'non-binary'])), name_col]
+    authors = df.loc[~(df[fix_col].isin(["male", "female", "non-binary"])), name_col]
     genders = [search_person_for_gender(author) for author in authors]
-    df.loc[~(df[fix_col].isin(['male', 'female', 'non-binary'])), fix_col] = genders
+    df.loc[~(df[fix_col].isin(["male", "female", "non-binary"])), fix_col] = genders
     logger.info("Updating genders for " + str(len(genders)) + " authors")
     return df
 
