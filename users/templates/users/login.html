@@ -19,4 +19,14 @@
             <div>*Don’t have an account? Click <a class="hover:no-underline text-blue-500" href="{% url 'register' %}">Here</a> to register.</div>
         </div>
     </div>
+
+    <div class="flex justify-center">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="text-red-600 pb-2">
+                    <strong>*{{message|safe}}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
 {% endblock content %}

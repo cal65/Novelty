@@ -23,6 +23,24 @@
             </div>
         </form>
     </div>
+    <div class="flex justify-center">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="text-red-600 pb-2">
+                    <strong>*{{message|safe}}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="flex justify-center">
+        {% if form.errors %}
+            {% for key, value in form.errors.items %}
+                <div class="text-red-600 pb-2">
+                    <strong>{{ value }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
     <div style="display: flex; justify-content: center;" class="border-top pt-3">
         <small>
             Already Have An Account? <a class="ml-2" href="{% url 'user-login' %}">Sign In</a>

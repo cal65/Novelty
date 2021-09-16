@@ -28,6 +28,7 @@ def register(request):
 
             return redirect('user-login')
     else:
+        print('form not valid')
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
 
@@ -59,7 +60,7 @@ def login_user(request):
                 else:
                     return redirect(next)
         else:
-            # messages.warning(request, "The username or password are not valid!")
+            messages.warning(request, "The username or password is incorrect.")
             return redirect('user-login')
 
     context = {'form': form, 'next': next}
