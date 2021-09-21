@@ -1,4 +1,6 @@
 from django.db import models
+from adaptor.model import CsvModel
+from adaptor.fields import CharField
 
 
 class ExportData(models.Model):
@@ -9,13 +11,16 @@ class ExportData(models.Model):
     my_rating = models.FloatField(blank=True, null=True)
     average_rating = models.FloatField(blank=True, null=True)
     original_publication_year = models.FloatField(blank=True, null=True)
+    shelf1 = models.CharField(max_length=250)
+    shelf2 = models.CharField(max_length=250)
+    shelf3 = models.CharField(max_length=250)
+    user = models.CharField(max_length=30, unique=True, default='Random')
     # author_l_f = models.CharField(max_length=250)
     # additional_authors = models.CharField(max_length=250)
     # isbn = models.CharField(max_length=250)
     # isbn13 = models.CharField(max_length=250)
     # publisher = models.CharField(max_length=250)
     # binding = models.CharField(max_length=250)
-    # number_of_pages = models.CharField(max_length=250)
     # year_published = models.CharField(max_length=250)
     # original_pub_year = models.CharField(max_length=250)
     # date_read = models.CharField(max_length=250)
@@ -35,3 +40,13 @@ class ExportData(models.Model):
     # condition = models.CharField(max_length=250)
     # condition_description = models.CharField(max_length=250)
     # bcid = models.CharField(max_length=250)
+
+
+class Authors(models.Model):
+    author_name = models.CharField(max_length=250)
+    gender = models.CharField(blank=True, null=True, max_length=50)
+    nationality1 = models.CharField(blank=True, null=True, max_length=80)
+    nationality2 = models.CharField(blank=True, null=True, max_length=80)
+    nationality_chosen = models.CharField(blank=True, null=True, max_length=80)
+
+
