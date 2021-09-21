@@ -5,10 +5,8 @@ library(ggrepel)
 library(forcats)
 library(plyr)
 library(stringi)
-library(rworldmap)
 library(RColorBrewer)
-# setwd('~/Documents/CAL/Real_Life/Repository/Books/')
-setwd('.')
+setwd('~/Documents/CAL/Real_Life/Repository/Books/')
 
 preprocess <- function(dt){
   dt$gender <- mapvalues(dt$gender,
@@ -101,7 +99,7 @@ month_plot <- function(df, name, date_col, page_col, title_col,
     theme(strip.text.y=element_text(angle=0), plot.title = element_text(hjust=0.5),
           panel.background = element_rect(color='black', fill=NA))
   if (save == T){
-    ggsave(paste0('goodreads/Graphs/', name, '/Monthly_pages_read_', name, '.jpeg'), width=15, height=9, dpi=180)
+    ggsave(paste0('Graphs/', name, '/Monthly_pages_read_', name, '.jpeg'), width=15, height=9, dpi=180)
   }
 }
 
@@ -130,7 +128,7 @@ year_plot <- function(df, name, fiction_col, date_col, page_col,
     theme_pander() + theme(plot.title=element_text(hjust=0.5), 
                            legend.position = 'bottom') 
   if (save == T){
-    ggsave(paste0('goodreads/Graphs/',  name, '/Yearly_pages_read_', name, '.jpeg'), width=15, height=9)
+    ggsave(paste0('Graphs/',  name, '/Yearly_pages_read_', name, '.jpeg'), width=15, height=9)
   }
 }
 
@@ -163,19 +161,22 @@ read_plot <- function(df,
   breaks <- c(0, 10^c(min_break : max_digits))
   df[[read_col]] <- as.numeric(df[[read_col]])
   df$title_length <- nchar(df[[title_col]])
-  df$text_size <- pmax(3, 70/df$title_length)
   # order title text by popularity
   df <- df[order(get(read_col))]
   df[[title_col]] <- factor(df[[title_col]], levels = unique(df[[title_col]]))
   labels = generate_labels(prettyNum(breaks, big.mark = ',', scientific=F))
   df$strats <- cut(df[[read_col]], breaks = breaks, 
                    labels = labels)
+  # 1 text size for each strat
+  text_sizes <- df[, .(text_size = 120/max(title_length)), by = strats]
+  df <- merge(df, text_sizes, by='strats', all.x=T)
+  
   ggplot(df, aes(x=strats, y=get(title_col))) +
     geom_tile(aes(fill=Narrative), color='black') +
     geom_text(aes(label = get(title_col), size = text_size)) +
     facet_wrap(strats ~ ., scales='free', nrow=1) +
     scale_fill_manual(values = c('hotpink2', 'darkolivegreen')) +
-    scale_size_continuous(guide=F, range=c(3, 10)) +
+    scale_size_continuous(guide=F, range=c(2, 5)) +
     xlab('Number of Readers') + 
     ylab('Title') +
     ggtitle(paste0('Readership Spectrum - ', name)) +
@@ -183,7 +184,7 @@ read_plot <- function(df,
           plot.title = element_text(hjust=0.5),
           panel.background = element_blank())
   if (plot){
-    ggsave(paste0('goodreads/Graphs/', name, '/', plot_name, name, '.jpeg'), width = 16, height=9)
+    ggsave(paste0('Graphs/', name, '/', plot_name, name, '.jpeg'), width = 16, height=9, dpi=100)
   }
 }
 
@@ -191,20 +192,22 @@ read_plot <- function(df,
 finish_plot <- function(df, 
                       name, 
                       read_col = 'Read.Percentage',
+                      exclusive_shelf = 'Exclusive.Shelf',
                       n = 10, 
                       plot=F, 
                       plot_name = 'finish_plot_'){
   df_read <- df[order(get(read_col)),]
   df_read <- df_read[!is.na(get(read_col))]
   # keep only bottom n
-  df_read <- head(df_read, n)
-  df_read$Title.Simple <- factor(df_read$Title.Simple,
-                                 levels = unique(df_read$Title.Simple))
-  ggplot(df_read, aes(x=Title.Simple)) +
+  df_read_n <- df_read[, head(.SD, n), by=get(exclusive_shelf)]
+  df_read_n$Title.Simple <- factor(df_read_n$Title.Simple,
+                                 levels = unique(df_read_n$Title.Simple))
+  ggplot(df_read_n, aes(x=Title.Simple)) +
     geom_col(aes( y=1), fill='Dark Blue') +
        geom_col(aes( y=get(read_col)), fill='red') +
     geom_text(aes(y=get(read_col)/2, label = paste0(Read, ' / ', Added_by)), 
               size=n * 3/5, color='white', hjust=0) +
+    facet_grid(get(exclusive_shelf) ~ ., scales='free', space='free') +
     ylim(0, 1) +
     xlab('Title') +
     ylab('Reading Percentage') +
@@ -213,7 +216,7 @@ finish_plot <- function(df,
        theme_pander() +
        theme(plot.title = element_text(hjust=0.5))
   if (plot == T){
-    ggsave(paste0('goodreads/Graphs/', name, '/', plot_name, name, '.jpeg'), width=12, height=8)
+    ggsave(paste0('Graphs/', name, '/', plot_name, name, '.jpeg'), width=12, height=8)
   }
 }
 
@@ -239,7 +242,7 @@ year_comparison <- function(l, year_col, year_start, user, plot=T) {
     theme_dark() +
     ggtitle('Publication Year Comparison')
   if (plot == T){
-    ggsave(paste0('goodreads/Graphs/', user, '/publication_year_', user, '.jpeg'), width=12, height=8)
+    ggsave(paste0('Graphs/', user, '/publication_year_', user, '.jpeg'), width=12, height=8)
   }
 }
 
@@ -251,17 +254,14 @@ update_authors_artifact <- function(artifact, df_new, id_col='Author', gender_co
   names(authors_new) <- mapvalues(names(authors_new), from='gender', to='gender_guessed')
   authors_new$gender_fixed <- authors_new$gender_guessed
   authors_new$Country.Chosen <- ''
-  write.csv(authors_new, 'goodreads/scripts/new_authors_data.csv', row.names=F)
-  system('/home/bitnami/Reading-History/Novelty/env/bin/python goodreads/scripts/google_answer.py goodreads/scripts/new_authors_data.csv')
-  system('/home/bitnami/Reading-History/Novelty/env/bin/python goodreads/scripts/choose_nationality.py goodreads/scripts/new_authors_data.csv')
-  system('/home/bitnami/Reading-History/Novelty/env/bin/python goodreads/scripts/wikipedia.py goodreads/scripts/new_authors_data.csv')
-  # system('/Users/apple/opt/anaconda3/bin/python goodreads/scripts/google_answer.py goodreads/scripts/new_authors_data.csv')
-  # system('/Users/apple/opt/anaconda3/bin/python goodreads/scripts/choose_nationality.py goodreads/scripts/new_authors_data.csv')
-  # system('/Users/apple/opt/anaconda3/bin/python goodreads/scripts/wikipedia.py goodreads/scripts/new_authors_data.csv')
-  new_data <- read.csv('goodreads/scripts/new_authors_data.csv')
+  write.csv(authors_new, 'new_authors_data.csv', row.names=F)
+  system('/Users/christopherlee/anaconda3/bin/python3 google_answer.py new_authors_data.csv')
+  system('/Users/christopherlee/anaconda3/bin/python3 choose_nationality.py new_authors_data.csv')
+  system('/Users/christopherlee/anaconda3/bin/python3 wikipedia.py new_authors_data.csv')
+  new_data <- read.csv('new_authors_data.csv')
   artifact <- rbind.fill(artifact, new_data)
   # because of the multiple programming languages, have this awkward write python read pipeline
-  write.csv(artifact, 'goodreads/scripts/authors_database.csv', row.names=F)
+  write.csv(artifact, 'authors_database.csv', row.names=F)
   return (artifact)
 }
 
@@ -270,21 +270,34 @@ merge_nationalities <- function(df, authors_db, country_col = 'Country.Chosen'){
   return (df)
 }
 
-plot_map_data <- function(df, region_dict, world_df, user, country_col = 'Country.Chosen'){
+plot_map_data <- function(df, region_dict, world_sf, user, country_col = 'Country.Chosen'){
+  # defining other df for subregions not included in the world simple features
+  # choosing to define here because it's low cost and multiple lines of code. 
+  # Including Hong Kong and the countries of the United Kingdom
+  hk_sf <- ne_states(geounit = "Hong Kong S.A.R.", returnclass = "sf")
+  uk_sf <- ne_states(country = "united kingdom", returnclass = "sf")
+  other_sf <- rbind(uk_sf, hk_sf)
+  names(other_sf) <- mapvalues(names(other_sf), from = 'geonunit', to='geounit')
+  
   country_df <- merge(df, region_dict, by.x='Country.Chosen', by.y='nationality', all.x=T)
-  regions_count <- data.frame(table(country_df$region))
-  names(regions_count) <- c('region', 'count')
-  world_df <- merge(world_df, regions_count, all.x=T)
+  regions_count <- country_df[, .(count = .N, titles = paste(head(Title.Simple, 3), collapse='\n')), by=region]
+  world_sf <- merge(world_sf, 
+                    regions_count, by.x='geounit', by.y='region', all.x=T)
+  
+  other_sf <- merge(other_sf, regions_count, by.x='geounit', by.y='region', all.x=T)
   max_count = max(regions_count$count)
   my_breaks <- c(1, rep(2^(1:round(log2(max_count)))))
-  ggplot(world_df) + 
-    geom_polygon((aes(x=long, y=lat, group=group, fill=count))) +
+  ggplot(world_sf) + 
+    geom_sf(aes(fill=count, group=geounit, text=titles), size=0.1) +
+    geom_sf(data=other_sf, aes(fill=count, group=geounit), color=NA) +
     scale_fill_gradientn(name = "count", trans = "log", breaks=my_breaks,
-                        colors=rev(brewer.pal(8, 'RdBu'))) +
+                        colors=brewer.pal(9, 'YlOrRd')) +
     ggtitle(paste0('Author Nationality Map - ', user)) +
     theme_pander() + theme(plot.title=element_text(hjust=0.5), 
                            legend.position = 'bottom', legend.key.width = unit(1.5, 'cm')) 
-  ggsave(paste0('goodreads/Graphs/', user, '/nationality_map_', user, '.jpeg'), width=12, height=8)
+  ggsave(paste0('Graphs/', user, '/nationality_map_', user, '.pdf'), width=12, height=8)
+  #world_plotly <- ggplotly(tool_tip=c('geounit', 'count', 'titles'), original_data=F)
+  #htmlwidgets::saveWidget(world_plotly, paste0('Graphs/', user, '/nationality_map_', user, '.html'))
 }
 
 export_user_authors <- function(user, list='goodreads_list', authors_db){
@@ -295,20 +308,57 @@ export_user_authors <- function(user, list='goodreads_list', authors_db){
   return (df)
 }
 
-create_melted_genre_df <- function(dt) {
+create_genre_df <- function(dt) {
+  ## grab all the columns starting with Shelf, as well as Source
+  genre_df <- dt[,c('Source', grep('^Shelf', names(dt), value=T)),with=F]
+  return (genre_df)
+}
+
+create_melted_genre_df <- function(dt, additional_exclude=c('Audiobook')) {
   genre_df <- dt[,c('Source', grep('^Shelf', names(dt), value=T)),with=F]
   genre_df.m <- setDT(melt(genre_df, 
                            id.var='Source', value.name = 'Shelf'))
-  genre_df.m <- genre_df.m[!Shelf %in% c('Fiction', 'Nonfiction', '')]
+  genre_df.m <- genre_df.m[!Shelf %in% c('Fiction', 'Nonfiction', '', additional_exclude)]
   genre_df.m <- genre_df.m[!is.na(Shelf)]
   return (genre_df.m)
+}
+
+create_genre_difference_df <- function(genre_df){
+  melted_genre_df <- create_melted_genre_df(genre_df)
+  top_table <- melted_genre_df[,.(Freq = .N), 
+                          by = c('Source', 'Shelf')][order(Freq, decreasing = T),]
+  # I want to make a table with all sources and shelves
+  all_genres <- unique(melted_genre_df$Shelf)
+  all_table <- data.frame(Source=rep(unique(genre_df$Source), each = length(all_genres)),
+                          Shelf = rep(all_genres, length(unique(genre_df$Source))))
+  all_table <- merge(all_table, top_table, by = c('Source', 'Shelf'), all.x=T)
+  all_table$Freq[is.na(all_table$Freq)] <- 0
+  setDT(all_table)
+  all_table <- all_table[order(Freq)]
+  ### Calculate average frequencies of genres
+  genres_total <- setDT(data.frame(table(melted_genre_df$Shelf)))
+  names(genres_total) <- c('Shelf', 'Freq')
+  genres_total$Ratio_Total <- genres_total$Freq / nrow(genre_df) * 100
+  genres_total$Source <- 'Average'
+  ## To do, calculate user averages and merge with this total table, calculate difference
+  ## Use greatest and highest differences as top and bottom genres
+  n_source <- genre_df[, .N, by=Source]
+  all_table <- merge(all_table, n_source)
+  all_table$Ratio <- with(all_table, Freq / N * 100)
+  # for each user, calculate their genre ratio and compare to average
+  genre_table_merged <- merge(all_table, genres_total[,c('Shelf', 'Ratio_Total')], by='Shelf')
+  genre_table_merged$Diff <- with(genre_table_merged, sqrt(Ratio) - sqrt(Ratio_Total))
+  setDT(genre_table_merged)
+  # return dataframe from least read to most read genres for all users
+  genre_table_merged <- genre_table_merged[order(Diff)]
+  
+  return(list('genres_total' = genres_total, 'genre_table_merged' = genre_table_merged))
 }
 
 genre_plot <- function(genre_df, 
                       name, 
                       read_col,
-                      n_genre = 10, 
-                      n_users = 5,
+                      n_genre = 20, 
                       plot=F, 
                       plot_name = 'genre_comparison_',
                       source_col= 'Source',
@@ -316,39 +366,39 @@ genre_plot <- function(genre_df,
                       random_seed=337,
                       start_year=NA){
   #random_seed
-  genre_df.m <- setDT(melt(genre_df, 
-                     id.var='Source', value.name = 'Shelf'))
+  genre_df.m <- create_melted_genre_df(setDT(genre_df))
+  # get dataframe 
+  genre_list <- create_genre_difference_df(genre_df)
+  genres_total <- genre_list$genres_total
+  genre_table_merged <- genre_list$genre_table_merged
+  user_table <- genre_table_merged[Source == name]
+  top_genres <-  tail(user_table$Shelf, n_genre)
+  bottom_genres <- head(user_table$Shelf, n_genre)
+  
+  # plot only shelves in top and bottom
+  genre_plot_df <- user_table[Shelf %in% c(top_genres, bottom_genres)]
+  genres_select <- genres_total[Shelf %in% c(bottom_genres, top_genres)]
+  names(genres_select) <- mapvalues(names(genres_select), from = 'Ratio_Total',
+                                    to = 'Ratio')
+  genre_plot_df <- setDT(rbind.fill(genre_plot_df, genres_select))
 
-  all_names <- unique(genre_df[,get(source_col)])
-  other_names <- sample(setdiff(all_names, name), n_users)
-  chosen_names <- c(name, other_names)
-  top_table <- genre_df.m[,.(Freq = .N), by = c('Source', 'Shelf')][order(Freq, decreasing = T),]
-
-  ### Calculate average
-  genres_total <- setDT(data.frame(table(genre_df.m$Shelf)))
-  names(genres_total) <- c('Shelf', 'Freq')
-  genres_total$Freq <- genres_total$Freq / nrow(genre_df) * 100
-  genres_total$Source <- 'Average'
-  top_genres <- unique(top_table[Source %in% chosen_names, .SD[1:n_genre], by=Source]$Shelf)
-  genre_plot_df <- top_table[Shelf %in% top_genres & Source %in% chosen_names]
-  genre_plot_df <- rbind(genre_plot_df, genres_total[Shelf %in% top_genres])
-  genre_plot_df$Source <- mapvalues(genre_plot_df$Source, 
-                                    from = other_names,
-                                    to = paste0('Reader', 1:length(other_names)))
   # order the shelves based on the order of the user
   genre_plot_df$Shelf <- factor(genre_plot_df$Shelf, 
                             levels = rev(union(unique(genre_plot_df[Source == name]$Shelf),
                                                unique(genre_plot_df$Shelf))))
+  genre_plot_df$Type <- ifelse(genre_plot_df$Shelf %in% top_genres, 'Above Average', 'Below Average')
   ggplot(genre_plot_df) + 
-    geom_col(aes(x=Shelf, y=Freq, fill=Source), color='black') +
-    facet_grid(. ~ Source, scales='free') + 
+    geom_col(aes(x=Shelf, y=Ratio, fill=Source), color='black', position=position_dodge()) +
+    facet_wrap(. ~ Type, scales='free') + 
     scale_fill_brewer(palette = 'Set1') +
     coord_flip() +
-    ggtitle('Genre Plot') +
-    theme_pander() + theme(plot.title=element_text(hjust=0.5), 
-                           legend.position = 'bottom', legend.key.width = unit(1.5, 'cm')) 
+    ggtitle(paste0('Genre Comparison Plot - ', name)) +
+    theme_pander() + 
+    theme(plot.title=element_text(hjust=0.5), 
+                           legend.position = 'bottom', legend.key.width = unit(1.5, 'cm'),
+          panel.border = element_rect(color='black', fill=NA)) 
   if (plot==T){
-    ggsave(paste0('goodreads/Graphs/', name, '/', plot_name, name, '.jpeg'), width=14, height=8)
+    ggsave(paste0('Graphs/', name, '/', plot_name, name, '.jpeg'), width=14, height=8)
     
   }
 }
@@ -362,15 +412,15 @@ summary_plot <- function(dt, date_col,
   # 2. Barplot of highest rated books
   # 3. Histogram of publication date
   # 4. Top genres
-  source('goodreads/scripts/multiplot.R')
-  p1 <- gender_bar_plot(dt, gender_col, narrative_col, name)
+  source('multiplot.R')
+  p1 <- gender_bar_plot(dt, gender_col, narrative_col, name) 
   # p2 <- nationality_bar_plot(dt, authors_database, nationality_col)
-  p2 <- plot_highest_rated_books(dt)
-  p3 <- publication_histogram(dt, date_col)
+  p2 <- plot_longest_books(dt) + ggtitle('Longest Books')
+  p3 <- publication_histogram(dt, date_col) + ggtitle('Publication Years')
   p3 <- p3 + ggtitle(paste0('for ', name))
   min_count <- round(nrow(dt)/40)
-  p4 <- genre_bar_plot(dt, min_count=min_count)
-  jpeg(filename = paste0('goodreads/Graphs/', name, '/Summary_plot.jpeg'), 
+  p4 <- genre_bar_plot(dt, min_count=min_count) + ggtitle('Most Common Genres')
+  jpeg(filename = paste0('Graphs/', name, '/Summary_plot.jpeg'), 
        res = 200, width = 3200, height=2400)
   multiplot(p1, p2, p3, p4, cols=2)
   dev.off()
@@ -383,17 +433,21 @@ gender_bar_plot <- function(dt, gender_col, narrative_col, name){
                                 to = rep('unknown or other', 3),
                                 warn_missing = F)
   ggplot(dt) + 
-    geom_bar(aes(x=get(narrative_col), fill=get(gender_col)), position=position_dodge()) +
+    # preserve parameter allows for equal bar heights
+    geom_bar(aes(x=get(narrative_col), fill=get(gender_col)), 
+             position=position_dodge2(preserve = 'single')) +
     theme_pander() +
-    xlab('') +
+    xlab('') + ylab('Count') +
     scale_fill_brewer('Gender', palette='Set1') +
     coord_flip() +
     theme(legend.position = 'bottom', plot.title=element_text(hjust=1),
-          panel.border = element_rect(colour = "black", fill=NA, size=1)) + 
+          axis.text = element_text(size=12),
+          plot.background = element_rect(colour = "black", fill=NA, size=0.5)) + 
     ggtitle('Summary Plots')
 }
 
-nationality_bar_plot <- function(dt, authors_database, nationality_col='Country.Chosen'){
+nationality_bar_plot <- function(dt, authors_database, name,
+                                 nationality_col='Country.Chosen', save=F){
   dt <- setDT(merge(dt, authors_database, by='Author'))
   dt_sub <- dt[get(nationality_col) != '']
   nation_table_df <- data.frame(table(dt_sub[,get(nationality_col)]))
@@ -404,17 +458,21 @@ nationality_bar_plot <- function(dt, authors_database, nationality_col='Country.
     factor(dt_sub[,get(nationality_col)], levels = nation_table_df$Nationality)
   ggplot(dt_sub) + geom_bar(aes(x=Nationality), color='black', fill='blue') + 
     coord_flip() + theme_pander() +
-    theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) 
+    theme(plot.background = element_rect(colour = "black", fill=NA, size=0.5)) 
+  if (save == T){
+    ggsave(paste0('Graphs/', name, '/nationality_barplot_' , name, '.jpeg'), width=11, height=8)
+  }
 }
 
 
 publication_histogram <- function(dt, date_col, start_year=1800){
   dt_sub <- dt[get(date_col) > start_year]
-  n_bins <- max(nrow(dt_sub) / 10, 10)
+  n_bins <- max(3*sqrt(nrow(dt_sub)), 50)
   ggplot(dt_sub) + geom_histogram(aes(x=get(date_col)), fill='black', bins=n_bins) + 
     theme_pander() +
-    xlab('Year of Publication') +
-    theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) 
+    xlab('Year of Publication') + ylab('Count') +
+    theme(plot.background = element_rect(colour = "black", fill=NA, size=0.5),
+          axis.title.y = element_text(vjust=-2)) 
 }
 
 genre_bar_plot <- function(dt, n_shelves=4, min_count=2){
@@ -428,7 +486,8 @@ genre_bar_plot <- function(dt, n_shelves=4, min_count=2){
   shelf_table_df$Shelf <- factor(shelf_table_df$Shelf, levels = shelf_table_df$Shelf)
   ggplot(shelf_table_df[Count > min_count]) + 
     geom_col(aes(x=Shelf, y=Count), color='black', fill='red') +
-    coord_flip() + theme_pander()
+    coord_flip() + theme_pander() + ylab('') +
+    theme(plot.background = element_rect(colour = "black", fill=NA, size=0.5))
 }
 
 get_highest_rated_book <- function(dt, rating_col='Average.Rating', 
@@ -451,4 +510,82 @@ plot_highest_rated_books <- function(dt, n=10, rating_col='Average.Rating',
     ylim(0, 5) +
     scale_fill_brewer(palette='Blues', 'Your Rating', type='seq') +
     coord_flip() + theme_pander()
+}
+
+plot_longest_books <- function(dt, n=10, pages_col='Number.of.Pages', 
+                               title_col='Title.Simple',
+                               my_rating_col='My.Rating'){
+  
+  highest <- tail(dt[!is.na(get(pages_col))][order(get(pages_col))], n)
+  highest[[title_col]] <- factor(highest[[(title_col)]],
+                                 levels = unique(highest[[(title_col)]]))
+  highest[[my_rating_col]] <- as.factor(highest[[my_rating_col]])
+  ggplot(highest, aes(x=Title.Simple)) + 
+    geom_col(aes(y=get(pages_col), fill=get(my_rating_col))) +
+    geom_text(aes(y=get(pages_col)/2, label=get(pages_col))) +
+    xlab('') + ylab('Number of Pages') +
+    scale_fill_brewer(palette='Blues', 'Your Rating', type='seq') +
+    coord_flip() + theme_pander() +
+    theme(plot.background = element_rect(colour = "black", fill=NA, size=0.5))
+}
+
+yearly_gender_graph <- function(dt, name, date_col, gender_col, year_start=NA,
+                                plot_name="gender_breakdown_by_year_", save=F){
+  dt$Year.Read <- as.numeric(format(dt[[date_col]], '%Y'))
+  if (length(unique(dt$Year.Read)) < 2) {
+    print("Not enough years to graph")
+    return()
+  }
+  if (!is.na(year_start)){
+    dt <- dt[Year.Read >= year_start]
+  }
+  min_year = min(dt$Year.Read, na.rm=T)
+  max_year = max(dt$Year.Read, na.rm=T)
+  ggplot(dt) + 
+    geom_bar(aes(x=get(gender_col), fill=get(gender_col)), 
+                              position = position_dodge2(0.7, preserve = 'single')) +
+    scale_fill_brewer(palette='Set1', 'Author Gender') +
+    facet_grid(. ~ Year.Read) +
+    theme_pander() + xlab('') +
+    ggtitle('Gender Breakdown by Year') +
+    theme(axis.text.x=element_blank(), axis.title.x = element_blank(), 
+          panel.border=element_rect(colour="black",size=1),
+          plot.title = element_text(hjust=0.5))
+  if (save==T){
+    print("Saving yearly gender breakdown plot")
+    ggsave(paste0('Graphs/', name, '/', plot_name, name, '.jpeg'), width=14, height=8)
+  }
+}
+
+graph_list <- function(dt, list_name, plot_name, save=F){
+  top_list_df <- fread(list_name)
+  # merging just by Book.Id may miss near matches with similar titles
+  # for now, check if titles are the same and change the book.id
+  top_list_df$Title.Upper <- toupper(top_list_df$Title)
+  
+  dt$Title.Upper <- toupper(dt$Title.Simple)
+  dt$Match <- dt$Book.Id %in% top_list_df$Book.Id
+  unmatched_titles <- dt[Match==F & Title.Upper %in% top_list_df$Title.Upper]$Title.Upper
+  for (title in unmatched_titles){
+    dt[Title.Upper==title]$Book.Id <- top_list_df[Title.Upper == title]$Book.Id
+  }
+  top_books <- merge(top_list_df, dt[,c('Book.Id', 'Source', 'gender', 'Date.Read')], 
+                     by='Book.Id', all.x=T)
+  setDT(top_books)
+  top_books$Read <- ifelse(is.na(top_books$Source), F, T)
+  top_books$Year.Read <- format(top_books$Date.Read, '%Y')
+  palette <- c('grey40', 'Purple')
+  plot_title <- gsub('_', ' ', plot_name)
+  ggplot(top_books, aes(x=1, y=Title)) +
+    geom_tile(aes(fill=Read), color='black') +
+    geom_text(aes(label=Year.Read)) +
+    facet_wrap(Facet ~ ., scales='free') +
+    scale_fill_manual(values = palette) +
+    ggtitle(paste0(plot_title, ' - ', name)) +
+    theme_pander() +
+    theme(axis.text.x = element_blank(), plot.title=element_text(hjust=0.5),
+          axis.title.x = element_blank())
+  if (save == T){
+    ggsave(paste0('Graphs/', name, '/', plot_name, '_', name, '.jpeg'), width=9.5, height=7)
+  }
 }
