@@ -1,10 +1,10 @@
 from django.db import models
 from adaptor.model import CsvModel
-from adaptor.fields import CharField
+from adaptor.fields import CharField, DateField
 
 
 class ExportData(models.Model):
-    book_id = models.CharField(max_length=250)
+    book_id = models.CharField(max_length=250, primary_key=True)
     title = models.CharField(max_length=250)
     author = models.CharField(max_length=250)
     number_of_pages = models.IntegerField(blank=True, null=True)
@@ -14,7 +14,15 @@ class ExportData(models.Model):
     shelf1 = models.CharField(max_length=250)
     shelf2 = models.CharField(max_length=250)
     shelf3 = models.CharField(max_length=250)
-    user = models.CharField(max_length=30, unique=True, default='Random')
+    shelf4 = models.CharField(max_length=250)
+    shelf5 = models.CharField(max_length=250)
+    shelf6 = models.CharField(max_length=250)
+    shelf7 = models.CharField(max_length=250)
+    added_by = models.IntegerField(blank=True, null=True, default=0)
+    to_reads = models.IntegerField(blank=True, null=True, default=0)
+    narrative = models.CharField(max_length=250)
+    date_read = models.DateField(auto_now=False)
+    user = models.CharField(max_length=30, unique=True, default="Random")
     # author_l_f = models.CharField(max_length=250)
     # additional_authors = models.CharField(max_length=250)
     # isbn = models.CharField(max_length=250)
@@ -43,10 +51,21 @@ class ExportData(models.Model):
 
 
 class Authors(models.Model):
-    author_name = models.CharField(max_length=250)
+    author_name = models.CharField(max_length=250, primary_key=True)
     gender = models.CharField(blank=True, null=True, max_length=50)
     nationality1 = models.CharField(blank=True, null=True, max_length=80)
     nationality2 = models.CharField(blank=True, null=True, max_length=80)
     nationality_chosen = models.CharField(blank=True, null=True, max_length=80)
 
 
+class Books(models.Model):
+    book_id = models.CharField(max_length=250, primary_key=True)
+    shelf1 = models.CharField(max_length=250)
+    shelf2 = models.CharField(max_length=250)
+    shelf3 = models.CharField(max_length=250)
+    shelf4 = models.CharField(max_length=250)
+    shelf5 = models.CharField(max_length=250)
+    shelf6 = models.CharField(max_length=250)
+    shelf7 = models.CharField(max_length=250)
+    added_by = models.IntegerField(blank=True, null=True, default=0)
+    to_reads = models.IntegerField(blank=True, null=True, default=0)
