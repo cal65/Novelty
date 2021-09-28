@@ -1,7 +1,4 @@
 from django.db import models
-from adaptor.model import CsvModel
-from adaptor.fields import CharField, DateField
-
 
 class ExportData(models.Model):
     book_id = models.CharField(max_length=250, primary_key=True)
@@ -11,13 +8,13 @@ class ExportData(models.Model):
     my_rating = models.FloatField(blank=True, null=True)
     average_rating = models.FloatField(blank=True, null=True)
     original_publication_year = models.FloatField(blank=True, null=True)
-    shelf1 = models.CharField(max_length=250)
-    shelf2 = models.CharField(max_length=250)
-    shelf3 = models.CharField(max_length=250)
-    shelf4 = models.CharField(max_length=250)
-    shelf5 = models.CharField(max_length=250)
-    shelf6 = models.CharField(max_length=250)
-    shelf7 = models.CharField(max_length=250)
+    shelf1 = models.CharField(max_length=250, null=True)
+    shelf2 = models.CharField(max_length=250, null=True)
+    shelf3 = models.CharField(max_length=250, null=True)
+    shelf4 = models.CharField(max_length=250, null=True)
+    shelf5 = models.CharField(max_length=250, null=True)
+    shelf6 = models.CharField(max_length=250, null=True)
+    shelf7 = models.CharField(max_length=250, null=True)
     added_by = models.IntegerField(blank=True, null=True, default=0)
     to_reads = models.IntegerField(blank=True, null=True, default=0)
     narrative = models.CharField(max_length=250)
