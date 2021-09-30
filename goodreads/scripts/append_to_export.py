@@ -1,20 +1,47 @@
-import scrape_goodreads
+import os
 import sys
 import pandas as pd
 import re
 import logging
 import argparse
 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
+import django
+from goodreads.models import ExportData, Authors, Books
+import scrape_goodreads
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+def convert_to_ExportData(row, username):
+    djangoObj = ExportData()
+    fields = ExportData._meta.get_fields()
+    f_names = [f.name for f in fields]
+    common_fields = list(set(row.keys()).intersection(set(f_names)))
+    for f in common_fields:
+        value = row.get(f)
+        if pd.isnull(value):
+            value = None
+        setattr(djangoObj, f, value)
+    djangoObj.username = username
+    djangoObj.ts_updated = datetime.now()
+    return djangoObj
+
+def clean_df(goodreads_data):
+    goodreads_data.columns = [c.replace(" ", "_") for c in goodreads_data.columns]
+    date_columns = [c for c in goodreads_data.columns if 'date' in c.lower()]
+    for c in date_columns:
+        goodreads_data[c] = pd.to_datetime(goodreads_data[c], errors='coerce')
+        goodreads_data[c] = goodreads_data[[c]].astype(object).where(goodreads_data[[c]].notnull(), None)
+    return goodreads_data
 
 def append_scraping(goodreads_data):
     """
     Take data meant to be in the Goodreads export format
     Scrape additional fields and add them as columns
     """
-    goodreads_data.columns = [c.replace(" ", "_") for c in goodreads_data.columns]
+    goodreads_data = clean_df(goodreads_data)
     urls = scrape_goodreads.return_urls(goodreads_data)
     scraped_df = scrape_goodreads.apply_added_by(urls)
     scraped_df.drop(columns=["Title", "Author", "Publish_info"], inplace=True)
@@ -22,8 +49,9 @@ def append_scraping(goodreads_data):
     return goodreads_data_merged
 
 
-def apply_append(file_path):
+def apply_append(file_path, username):
     goodreads_data = scrape_goodreads.read_goodreads_export(file_path)
+    goodreads_data.apply(lambda x: convert_to_ExportData(x, username=username).save(), axis=1)
     return append_scraping(goodreads_data)
 
 
@@ -81,8 +109,9 @@ def fix_date(file_path):
     This function ensures that the csv in a file path has the Date.Added and Date.Read columns in datetime
     """
     df = pd.read_csv(file_path)
-    df["Date.Added"] = pd.to_datetime(df["Date.Added"])
-    df["Date.Read"] = pd.to_datetime(df["Date.Read"])
+    date_columns = [c for c in df.columns if 'date' in c.lower()]
+    for c in date_columns:
+        df[c] = pd.to_datetime(df[c])
     df.to_csv(file_path, index=False)
     # return just for proof
     return df[["Title", "Date.Added", "Date.Read"]]

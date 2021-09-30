@@ -1,6 +1,5 @@
 from django.contrib import admin
 from .models import ExportData, Authors
-from adaptor.model import CsvModel
 
 
 @admin.register(ExportData)
@@ -16,7 +15,11 @@ class ExportDataAdmin(admin.ModelAdmin):
         "shelf1",
         "shelf2",
         "shelf3",
-        "user",
+        "shelf4",
+        "shelf5",
+        "shelf6",
+        "shelf7",
+        "username",
     )
 
 @admin.register(Authors)
