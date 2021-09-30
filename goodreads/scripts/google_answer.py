@@ -4,8 +4,9 @@ import pandas as pd
 import numpy as np
 import sys
 import logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 S = requests.Session()
 
@@ -13,6 +14,7 @@ URL = "https://www.google.com/search?q="
 
 
 def get_search_url(name):
+    name = str(name)
     return URL + name.replace(" ", "+") + "+nationality"
 
 
@@ -51,7 +53,7 @@ def lookup_author_nationality(author):
     answers = [a for answer in answers for a in answer]  # flatten list
     answers = pd.unique(answers)
     if len(answers) == 0:
-        print("No results found for " + author)
+        print("No results found for " + str(author))
     return answers
 
 
@@ -81,7 +83,11 @@ def append_nationalities(df, author_col="Author"):
     return pd.concat([df.reset_index(drop=True), nats_df], axis=1)
 
 
-def lookup_unfound(df, nationality_col="Country.Chosen", author_col="Author"):
+def lookup_unfound(df, nationality_col="nationality_1", author_col="Author"):
+    # for a file without the base schema
+    if nationality_col not in df.columns:
+        return append_nationalities(df)
+    # for a file with the nationality column
     df_found = df[(pd.notnull(df[nationality_col])) & (df[nationality_col] != "")]
     df_unfound = df[(pd.isnull(df[nationality_col])) | (df[nationality_col] == "")]
     df_unfound = df_unfound[
@@ -92,10 +98,13 @@ def lookup_unfound(df, nationality_col="Country.Chosen", author_col="Author"):
         ]
     ]
     if len(df_unfound) > 0:
-	    df_unfound = append_nationalities(df_unfound)
-	    df_return = pd.concat([df_found, df_unfound])
+        logger.info(
+            "Looking up author nationalities for " + str(len(df_unfound)) + " authors"
+        )
+        df_unfound = append_nationalities(df_unfound)
+        df_return = pd.concat([df_found, df_unfound])
     else:
-	    df_return = df_found
+        df_return = df_found
 
     return df_return
 
