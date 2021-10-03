@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'h8wrw%rvx&wxoafmbrgfurc=s!ygbz#3cjx3yv!^l9k!n&zw*y'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -91,7 +91,7 @@ AUTH_PASSWORD_VALIDATORS = []
 #     }
 # }
 
-DATABASE_URL = 'postgres://christopherlee:callee24@localhost/goodreads'
+DATABASE_URL = os.environ['DATABASE_URL']
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 
 
