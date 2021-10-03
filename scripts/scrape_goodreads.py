@@ -21,8 +21,6 @@ def get_stats(url, wait=0):
     Extract numerous useful book info from the page
     Returns a dictionary of that extract
     """
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content, "html.parser")
     null_return = {
         "Added_by": None,
         "To_reads": None,
@@ -42,6 +40,13 @@ def get_stats(url, wait=0):
         "url": url,
         "numberOfPages": None,
     }
+
+    try: 
+        page = requests.get(url)
+    except requests.exceptions.ConnectionError:
+        logger.info("Connection refused - too many requests")
+        return null_return
+    soup = BeautifulSoup(page.content, "html.parser")
 
     scripts = soup.findAll("script")
     try:
@@ -167,7 +172,7 @@ def read_goodreads_export(file_path):
     return goodreads_data
 
 
-def return_urls(goodreads_data, id_col="Book_Id"):
+def return_urls(goodreads_data, id_col="Book.Id"):
     if not is_string_dtype(goodreads_data["Title"]):
         goodreads_data["Title"] = goodreads_data["Title"].astype(str)
     urls = goodreads_data.apply(lambda x: create_url(x[id_col], x["Title"]), axis=1)
@@ -185,7 +190,7 @@ def apply_added_by(urls, wait=4):
         .apply(lambda x: x[0] if x is not None else None)
     )
     # gender
-    goodreads_data = guess_gender(goodreads_data)
+    goodreads_data = guess_gender(goodreads_data, gender_col="gender")
     # shelves
     return goodreads_data
 

@@ -22,6 +22,9 @@ class Migration(migrations.Migration):
                 ('my_rating', models.FloatField(blank=True, null=True)),
                 ('average_rating', models.FloatField(blank=True, null=True)),
                 ('original_publication_year', models.FloatField(blank=True, null=True)),
+                ('shelf1', models.CharField(max_length=250)),
+                ('shelf2', models.CharField(max_length=250)),
+                ('shelf3', models.CharField(max_length=250)),
             ],
         ),
     ]
