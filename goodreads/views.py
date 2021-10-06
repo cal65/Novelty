@@ -14,9 +14,7 @@ def run_script_function(request):
 
     print("running python script")
     os.system(
-        "python goodreads/scripts/append_to_export.py goodreads/Graphs/{}/sample_export_{}.csv {} 3".format(
-            user, user
-        )
+        f"python goodreads/scripts/append_to_export.py goodreads/Graphs/{user}/sample_export_{user}.csv --username {user} 3"
     )
     time.sleep(3)
 
