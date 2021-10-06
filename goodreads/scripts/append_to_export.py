@@ -4,6 +4,7 @@ import pandas as pd
 import re
 import logging
 import argparse
+from datetime import datetime
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
 import django
@@ -129,10 +130,15 @@ def merge_with_existing(df, db, id_col_df="Book.Id", id_col_db="Book.Id"):
 
 if __name__ == "__main__":
     """
-    Usage: python append_to_export.py filepath.csv [--update] [wait]
+    Usage: python append_to_export.py filepath.csv --username [--update] [wait]
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("file_path")
+    parser.add_argument(
+        "--username",
+        dest="username",
+        help="The username which will be stored in goodreads.exportbooks",
+    )
     parser.add_argument(
         "--update",
         dest="update",
@@ -146,7 +152,7 @@ if __name__ == "__main__":
     wait = int(args.wait)
     export_path = re.sub(".csv|.xlsx", "_appended.csv", file_path)
     if update is False:
-        apply_append(file_path).to_csv(export_path, index=False)
+        apply_append(file_path, username).to_csv(export_path, index=False)
         fix_date(export_path)
     elif update is True:
         df = pd.read_csv(file_path)

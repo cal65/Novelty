@@ -17,9 +17,7 @@ def start():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-    finally:
-        if connection is not None:
-            connection.close()
+
     engine = create_engine(
         "postgresql+psycopg2://cal65:"
         + os.environ["cal65_pass"]
@@ -27,16 +25,6 @@ def start():
     )
     ## populate authors
     authors_db = pd.read_csv("artifacts/authors_sql_database.csv")
-    authors_db = authors_db[
-        ["Author", "gender_fixed", "nationality1", "nationality2", "Country.Chosen"]
-    ]
-    authors_db.columns = [
-        "author_name",
-        "gender",
-        "nationality1",
-        "nationality2",
-        "nationality_chosen",
-    ]
     authors_db.to_sql("goodreads_authors", engine, if_exists="replace", index=False)
     ## populate books
     books_db = pd.read_csv("artifacts/books_database.csv")

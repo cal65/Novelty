@@ -14,7 +14,7 @@ def run_script_function(request):
 
     print("running python script")
     os.system(
-        "python goodreads/scripts/append_to_export.py goodreads/Graphs/{}/sample_export_{}.csv".format(
+        "python goodreads/scripts/append_to_export.py goodreads/Graphs/{}/sample_export_{}.csv {} 3".format(
             user, user
         )
     )
@@ -108,6 +108,14 @@ def runscript(request):
         py_script_function(request)
     return render(request, "goodreads/run.html")
 
+def process_export_upload(df, date_col = 'Date_Read'):
+    df.columns = df.columns.str.replace(
+        " |\.", "_"
+    )  # standard export comes in with spaces. R would turn these into dots
+    df[date_col] = pd.to_datetime(df[date_col])
+    df["Number_of_Pages"].fillna(0, inplace=True)
+    return df
+
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def upload_view(request):
@@ -145,10 +153,7 @@ def upload_view(request):
 
     # save csv file in database
     df = pd.read_csv(csv_file)
-    df.columns = df.columns.str.replace(
-        " |\.", "_"
-    )  # standard export comes in with spaces. R would turn these into dots
-    df["Number_of_Pages"].fillna(0, inplace=True)
+    df = process_export_upload(df)
     for row in df.itertuples():
         _, book = ExportData.objects.update_or_create(
             book_id=row.Book_Id,
@@ -157,7 +162,8 @@ def upload_view(request):
             number_of_pages=row.Number_of_Pages,
             my_rating=row.My_Rating,
             original_publication_year=row.Original_Publication_Year,
-            user=user,
+            #date_read=row.Date_Read,
+            username=user,
         )
 
     df.columns = df.columns.str.replace("_", ".")
