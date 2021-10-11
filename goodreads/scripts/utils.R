@@ -37,16 +37,15 @@ narrative <- function(dt){
 read_percentage <- function(dt){
   # It seems sometimes the "added by" value is off by a factor of 10. When the 
   # number of people listing the book as "to read" is larger than total added by, multiply by 10
-  dt[To_reads > Added_by, Added_by := Added_by * 10] 
-  dt$Read <- with(dt, Added_by - To_reads)
-  dt$Read.Percentage <- with(dt, Read / Added_by)
+  dt[to_reads > added_by, added_by := added_by * 10] 
+  dt$read <- with(dt, added_by - to_reads)
+  dt$read.Percentage <- with(dt, read / added_by)
   
   return(dt)
 }
 
-run_all <- function(csv_path){
-  dt <- fread(csv_path)
-  dt <- preprocess(dt)
+run_all <- function(df){
+  dt <- preprocess(df)
   dt <- narrative(dt)
   dt <- read_percentage(dt)
   return(dt)
@@ -54,8 +53,8 @@ run_all <- function(csv_path){
 
 preprocess_dt <- function(dt){
   dt <- dt[Title != '']
-  dt$Added_by[is.na(dt$Added_by)] <- 0
-  dt$To_reads[is.na(dt$To_reads)] <- 0
+  dt$added_by[is.na(dt$added_by)] <- 0
+  dt$to_reads[is.na(dt$to_reads)] <- 0
   dt$Edition_published <- unlist(lapply(str_extract_all(dt$date_published, '[0-9]{4}') , function(x) x[1]))
   dt$Edition_published <- as.numeric(dt$Edition_published)
   dt$Original.Publication.Year <- unlist(lapply(str_extract_all(dt$Publish_info, 'first published .*') , 
@@ -150,7 +149,7 @@ read_plot <- function(df,
                       min_break = 3, 
                       plot=F, 
                       plot_name = 'popularity_spectrum_',
-                      date_col='Date.Read',
+                      date_col='date_read',
                       start_year=NA){
   max_read <- as.integer(max(df[[read_col]], na.rm=T))
   df <- df[!is.na(get(read_col))]
@@ -203,7 +202,7 @@ finish_plot <- function(df,
   ggplot(df_read, aes(x=Title.Simple)) +
     geom_col(aes( y=1), fill='Dark Blue') +
        geom_col(aes( y=get(read_col)), fill='red') +
-    geom_text(aes(y=get(read_col)/2, label = paste0(Read, ' / ', Added_by)), 
+    geom_text(aes(y=get(read_col)/2, label = paste0(Read, ' / ', added_by)), 
               size=n * 3/5, color='white', hjust=0) +
     ylim(0, 1) +
     xlab('Title') +
