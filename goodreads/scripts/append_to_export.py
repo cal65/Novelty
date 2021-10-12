@@ -8,18 +8,22 @@ from datetime import datetime
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
 import django
-from goodreads.models import ExportData, Authors, Books
+from .models import ExportData, Authors, Books
 import scrape_goodreads
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+def get_field_names(djangoClass):
+    fields = djangoClass._meta.get_fields()
+    f_names = [f.name for f in fields]
+    return set(f_names)
+
 def convert_to_ExportData(row, username):
     djangoObj = ExportData()
-    fields = ExportData._meta.get_fields()
-    f_names = [f.name for f in fields]
-    common_fields = list(set(row.keys()).intersection(set(f_names)))
+    f_names = get_field_names(ExportData)
+    common_fields = list(set(row.keys()).intersection(f_names))
     for f in common_fields:
         value = row.get(f)
         if pd.isnull(value):
@@ -48,6 +52,17 @@ def append_scraping(goodreads_data):
     scraped_df.drop(columns=["Title", "Author", "Publish_info"], inplace=True)
     goodreads_data_merged = pd.concat([goodreads_data, scraped_df], axis=1)
     return goodreads_data_merged
+
+
+def database_append(book_id):
+    djangoBook = Books.objects.get(book_id=book_id)
+    djangoExport = ExportData.objects.get(book_id=book_id)
+    book_fields = get_field_names(Books)
+    export_fields = get_field_names(ExportData)
+    common_fields = book_fields.intersection(export_fields)
+    for field in common_fields:
+        setattr(djangoExport, field, getattr(djangoBook, field))
+    djangoExport.save()
 
 
 def apply_append(file_path, username):

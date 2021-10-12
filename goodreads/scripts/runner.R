@@ -41,7 +41,7 @@ generate_plots <- function(name){
   #   authors_database$gender_fixed, warn_missing = F)
   # read plot
   read_plot(dt, name=name, 
-            read_col='Read', title_col = 'Title.Simple', plot=T)
+            read_col='read', title_col = 'Title.Simple', plot=T)
   # finish plot
   finish_plot(dt, name = name, plot=T)
   # plot world maps
