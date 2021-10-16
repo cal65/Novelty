@@ -166,7 +166,7 @@ def upload_view(request):
         #     username=user,
         # )
         ExportData.objects.update_or_create(djangoExport)
-        
+
     df.columns = df.columns.str.replace("_", ".")
 
     # save csv file to user's folder
