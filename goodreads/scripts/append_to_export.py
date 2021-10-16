@@ -8,8 +8,8 @@ from datetime import datetime
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
 import django
-from .models import ExportData, Authors, Books
-import scrape_goodreads
+from ..models import ExportData, Authors, Books
+from . import scrape_goodreads
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

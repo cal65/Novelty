@@ -7,6 +7,7 @@ from .models import ExportData
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from .scripts.append_to_export import convert_to_ExportData
 
 
 def run_script_function(request):
@@ -153,16 +154,18 @@ def upload_view(request):
     df = pd.read_csv(csv_file)
     df = process_export_upload(df)
     for row in df.itertuples():
-        _, book = ExportData.objects.update_or_create(
-            book_id=row.Book_Id,
-            title=row.Title,
-            author=row.Author,
-            number_of_pages=row.Number_of_Pages,
-            my_rating=row.My_Rating,
-            original_publication_year=row.Original_Publication_Year,
-            #date_read=row.Date_Read,
-            username=user,
-        )
+        djangoExport = convert_to_ExportData(row.Book_Id)
+        # _, book = ExportData.objects.update_or_create(
+        #     book_id=row.Book_Id,
+        #     title=row.Title,
+        #     author=row.Author,
+        #     number_of_pages=row.Number_of_Pages,
+        #     my_rating=row.My_Rating,
+        #     original_publication_year=row.Original_Publication_Year,
+        #     #date_read=row.Date_Read,
+        #     username=user,
+        # )
+        ExportData.objects.update_or_create(djangoExport)
 
     df.columns = df.columns.str.replace("_", ".")
 
