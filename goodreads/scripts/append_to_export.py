@@ -55,7 +55,11 @@ def append_scraping(goodreads_data):
 
 
 def database_append(book_id):
-    djangoBook = Books.objects.get(book_id=book_id)
+    try:
+        djangoBook = Books.objects.get(book_id=book_id)
+    except:
+        logger.info("Book not in database")
+        return
     djangoExport = ExportData.objects.get(book_id=book_id)
     book_fields = get_field_names(Books)
     export_fields = get_field_names(ExportData)

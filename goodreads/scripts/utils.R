@@ -39,7 +39,7 @@ read_percentage <- function(dt){
   # number of people listing the book as "to read" is larger than total added by, multiply by 10
   dt[to_reads > added_by, added_by := added_by * 10] 
   dt$read <- with(dt, added_by - to_reads)
-  dt$read.Percentage <- with(dt, read / added_by)
+  dt$read.percentage <- with(dt, read / added_by)
   
   return(dt)
 }
@@ -189,7 +189,7 @@ read_plot <- function(df,
 ### % finish plot
 finish_plot <- function(df, 
                       name, 
-                      read_col = 'Read.Percentage',
+                      read_col = 'read.percentage',
                       n = 10, 
                       plot=F, 
                       plot_name = 'finish_plot_'){

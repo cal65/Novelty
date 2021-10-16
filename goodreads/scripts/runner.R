@@ -7,7 +7,7 @@ require(stringi)
 require(rworldmap)
 require(RColorBrewer)
 require(ggthemes)
-setwd('Documents/Personal/Repository/Novelty/')
+setwd('~/Documents/Personal/Repository/Novelty/')
 source('goodreads/scripts/utils.R')
 args = commandArgs(trailingOnly=TRUE)
 file_path <- args[1]
@@ -32,6 +32,7 @@ generate_plots <- function(name){
   dt <- run_all(dt)
   dt$Source <- name
   dir.create(paste0('Graphs/', name), showWarnings = F)
+  print(dt)
   # authors_database <- read.csv('goodreads/scripts/authors_database.csv')
   # # update the authors database based on potential new data from dt
   # authors_database <- update_authors_artifact(authors_database, dt)
@@ -64,4 +65,4 @@ generate_plots <- function(name){
                narrative_col='Narrative', nationality_col='Country.Chosen', 
                authors_database = authors_database, name = name)
 }
-generate_plots(file_path, name)
+generate_plots(name)
