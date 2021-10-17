@@ -15,20 +15,18 @@ preprocess <- function(dt){
                                        from = c('mostly_male', 'mostly_female'),
                                        to = c('male', 'female'), warn_missing = FALSE)
   names(dt) <- gsub(' ', '.', names(dt))
-  dt$Date.Read <- as.Date(dt$Date.Read, format = '%Y-%m-%d')
-  dt$Title.Simple <- gsub(':.*', '', dt$Title)
-  dt$Title.Simple <- gsub('\\(.*\\)', '', dt$Title.Simple)
-  dt$Exclusive.Shelf <- mapvalues(dt$Exclusive.Shelf,
-                                  from = c('2020-books', 'currently-reading', 'to-read'),
-                                  to=c('unread', 'unread', 'unread'), warn_missing = FALSE)
+  dt$date_read <- as.Date(dt$date_read, format = '%Y-%m-%d')
+  dt$title.simple <- gsub(':.*', '', dt$title)
+  dt$title.simple <- gsub('\\(.*\\)', '', dt$title.simple)
   
   return(dt)
 }
 
 narrative <- function(dt){
+  shelf_columns = grep('shelf', names(dt), value=T)
   dt$Narrative <- apply(
     dt, 1, function(x) ifelse(any(
-    grepl('Nonfiction|Memoir', x[c('Shelf1', 'Shelf2', 'Shelf3', 'Shelf4')])
+    grepl('Nonfiction|Memoir', x[shelf_columns])
     ), 'Nonfiction', 'Fiction')
   )
   return(dt)
@@ -37,16 +35,15 @@ narrative <- function(dt){
 read_percentage <- function(dt){
   # It seems sometimes the "added by" value is off by a factor of 10. When the 
   # number of people listing the book as "to read" is larger than total added by, multiply by 10
-  dt[To_reads > Added_by, Added_by := Added_by * 10] 
-  dt$Read <- with(dt, Added_by - To_reads)
-  dt$Read.Percentage <- with(dt, Read / Added_by)
+  dt[to_reads > added_by, added_by := added_by * 10] 
+  dt$read <- with(dt, added_by - to_reads)
+  dt$read.percentage <- with(dt, read / added_by)
   
   return(dt)
 }
 
-run_all <- function(csv_path){
-  dt <- fread(csv_path)
-  dt <- preprocess(dt)
+run_all <- function(df){
+  dt <- preprocess(df)
   dt <- narrative(dt)
   dt <- read_percentage(dt)
   return(dt)
@@ -54,8 +51,8 @@ run_all <- function(csv_path){
 
 preprocess_dt <- function(dt){
   dt <- dt[Title != '']
-  dt$Added_by[is.na(dt$Added_by)] <- 0
-  dt$To_reads[is.na(dt$To_reads)] <- 0
+  dt$added_by[is.na(dt$added_by)] <- 0
+  dt$to_reads[is.na(dt$to_reads)] <- 0
   dt$Edition_published <- unlist(lapply(str_extract_all(dt$date_published, '[0-9]{4}') , function(x) x[1]))
   dt$Edition_published <- as.numeric(dt$Edition_published)
   dt$Original.Publication.Year <- unlist(lapply(str_extract_all(dt$Publish_info, 'first published .*') , 
@@ -90,7 +87,7 @@ month_plot <- function(df, name, date_col, page_col, title_col,
          aes(x=Month.Read, y=get(page_col), group=fct_rev(fct_inorder(get(title_col))))) + 
     geom_col(aes(fill=get(author_gender_col)), width=1, alpha=0.65, color='black') + 
     facet_grid(Year.Read ~ .) +
-    scale_fill_brewer('Author Gender', palette = 'Pastel1', guide=F) +
+    scale_fill_brewer('Author Gender', palette = 'Pastel1', guide = "none") +
     scale_color_brewer('Type', palette = 'Dark2') +
     scale_linetype_discrete('Type') +
     geom_text(aes(label=Author), position = position_stack(0.5), 
@@ -150,7 +147,7 @@ read_plot <- function(df,
                       min_break = 3, 
                       plot=F, 
                       plot_name = 'popularity_spectrum_',
-                      date_col='Date.Read',
+                      date_col='date_read',
                       start_year=NA){
   max_read <- as.integer(max(df[[read_col]], na.rm=T))
   df <- df[!is.na(get(read_col))]
@@ -175,7 +172,7 @@ read_plot <- function(df,
     geom_text(aes(label = get(title_col), size = text_size)) +
     facet_wrap(strats ~ ., scales='free', nrow=1) +
     scale_fill_manual(values = c('hotpink2', 'darkolivegreen')) +
-    scale_size_continuous(guide=F, range=c(3, 10)) +
+    scale_size_continuous(guide = "none", range=c(3, 10)) +
     xlab('Number of Readers') + 
     ylab('Title') +
     ggtitle(paste0('Readership Spectrum - ', name)) +
@@ -190,7 +187,7 @@ read_plot <- function(df,
 ### % finish plot
 finish_plot <- function(df, 
                       name, 
-                      read_col = 'Read.Percentage',
+                      read_col = 'read.percentage',
                       n = 10, 
                       plot=F, 
                       plot_name = 'finish_plot_'){
@@ -198,12 +195,12 @@ finish_plot <- function(df,
   df_read <- df_read[!is.na(get(read_col))]
   # keep only bottom n
   df_read <- head(df_read, n)
-  df_read$Title.Simple <- factor(df_read$Title.Simple,
-                                 levels = unique(df_read$Title.Simple))
-  ggplot(df_read, aes(x=Title.Simple)) +
+  df_read$title.simple <- factor(df_read$title.simple,
+                                 levels = unique(df_read$title.simple))
+  ggplot(df_read, aes(x=title.simple)) +
     geom_col(aes( y=1), fill='Dark Blue') +
        geom_col(aes( y=get(read_col)), fill='red') +
-    geom_text(aes(y=get(read_col)/2, label = paste0(Read, ' / ', Added_by)), 
+    geom_text(aes(y=get(read_col)/2, label = paste0(read, ' / ', added_by)), 
               size=n * 3/5, color='white', hjust=0) +
     ylim(0, 1) +
     xlab('Title') +
@@ -266,12 +263,13 @@ update_authors_artifact <- function(artifact, df_new, id_col='Author', gender_co
 }
 
 merge_nationalities <- function(df, authors_db, country_col = 'Country.Chosen'){
-  df <- merge(df, authors_db[,c('Author', country_col)], by='Author', all.x=T)
+  df <- merge(df, authors_db[,c('author_name', country_col), with=F], by.x='author', by.y='author_name', all.x=T)
   return (df)
 }
 
-plot_map_data <- function(df, region_dict, world_df, user, country_col = 'Country.Chosen'){
-  country_df <- merge(df, region_dict, by.x='Country.Chosen', by.y='nationality', all.x=T)
+plot_map_data <- function(df, region_dict, world_df, user, country_col = 'nationality_chosen'){
+  print(df)
+  country_df <- merge(df, region_dict, by.x='nationality_chosen', by.y='nationality', all.x=T)
   regions_count <- data.frame(table(country_df$region))
   names(regions_count) <- c('region', 'count')
   world_df <- merge(world_df, regions_count, all.x=T)
@@ -296,7 +294,7 @@ export_user_authors <- function(user, list='goodreads_list', authors_db){
 }
 
 create_melted_genre_df <- function(dt) {
-  genre_df <- dt[,c('Source', grep('^Shelf', names(dt), value=T)),with=F]
+  genre_df <- dt[,c('Source', grep('^shelf', names(dt), value=T)),with=F]
   genre_df.m <- setDT(melt(genre_df, 
                            id.var='Source', value.name = 'Shelf'))
   genre_df.m <- genre_df.m[!Shelf %in% c('Fiction', 'Nonfiction', '')]
@@ -312,7 +310,7 @@ genre_plot <- function(genre_df,
                       plot=F, 
                       plot_name = 'genre_comparison_',
                       source_col= 'Source',
-                      date_col='Date.Read',
+                      date_col='date_read',
                       random_seed=337,
                       start_year=NA){
   #random_seed
@@ -393,8 +391,8 @@ gender_bar_plot <- function(dt, gender_col, narrative_col, name){
     ggtitle('Summary Plots')
 }
 
-nationality_bar_plot <- function(dt, authors_database, nationality_col='Country.Chosen'){
-  dt <- setDT(merge(dt, authors_database, by='Author'))
+nationality_bar_plot <- function(dt, authors_database, nationality_col='nationality_chosen'){
+  dt <- setDT(merge(dt, authors_database, by.x='author', by.y='author_name'))
   dt_sub <- dt[get(nationality_col) != '']
   nation_table_df <- data.frame(table(dt_sub[,get(nationality_col)]))
   names(nation_table_df) <- c('Nationality', 'Count')
@@ -431,20 +429,20 @@ genre_bar_plot <- function(dt, n_shelves=4, min_count=2){
     coord_flip() + theme_pander()
 }
 
-get_highest_rated_book <- function(dt, rating_col='Average.Rating', 
-                                   title_col='Title.Simple', author_col='Author'){
+get_highest_rated_book <- function(dt, rating_col='average_rating', 
+                                   title_col='title.simple', author_col='author'){
   most_popular <- dt[which.max(get(rating_col))][, c((author_col), (title_col)), with=F]
   return (paste0(most_popular, collapse = ': '))
 }
 
-plot_highest_rated_books <- function(dt, n=10, rating_col='Average.Rating',
-                                     my_rating_col='My.Rating',
-                                     title_col='Title.Simple'){
+plot_highest_rated_books <- function(dt, n=10, rating_col='average_rating',
+                                     my_rating_col='my_rating',
+                                     title_col='title.simple'){
   highest <- tail(dt[order(get(rating_col))], n)
   highest[[title_col]] <- factor(highest[[(title_col)]],
                                      levels = unique(highest[[(title_col)]]))
   highest[[my_rating_col]] <- as.factor(highest[[my_rating_col]])
-  ggplot(highest, aes(x=Title.Simple)) + 
+  ggplot(highest, aes(x=title.simple)) + 
     geom_col(aes(y=get(rating_col), fill=get(my_rating_col))) +
       geom_text(aes(y=get(rating_col)/2, label=get(rating_col))) +
     xlab('Title') + ylab('Average Rating') +
