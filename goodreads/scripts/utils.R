@@ -23,9 +23,10 @@ preprocess <- function(dt){
 }
 
 narrative <- function(dt){
+  shelf_columns = grep('shelf', names(dt), value=T)
   dt$Narrative <- apply(
     dt, 1, function(x) ifelse(any(
-    grepl('Nonfiction|Memoir', x[c('Shelf1', 'Shelf2', 'Shelf3', 'Shelf4')])
+    grepl('Nonfiction|Memoir', x[shelf_columns])
     ), 'Nonfiction', 'Fiction')
   )
   return(dt)
@@ -293,7 +294,7 @@ export_user_authors <- function(user, list='goodreads_list', authors_db){
 }
 
 create_melted_genre_df <- function(dt) {
-  genre_df <- dt[,c('Source', grep('^Shelf', names(dt), value=T)),with=F]
+  genre_df <- dt[,c('Source', grep('^shelf', names(dt), value=T)),with=F]
   genre_df.m <- setDT(melt(genre_df, 
                            id.var='Source', value.name = 'Shelf'))
   genre_df.m <- genre_df.m[!Shelf %in% c('Fiction', 'Nonfiction', '')]
@@ -390,8 +391,8 @@ gender_bar_plot <- function(dt, gender_col, narrative_col, name){
     ggtitle('Summary Plots')
 }
 
-nationality_bar_plot <- function(dt, authors_database, nationality_col='Country.Chosen'){
-  dt <- setDT(merge(dt, authors_database, by='Author'))
+nationality_bar_plot <- function(dt, authors_database, nationality_col='nationality_chosen'){
+  dt <- setDT(merge(dt, authors_database, by.x='author', by.y='author_name'))
   dt_sub <- dt[get(nationality_col) != '']
   nation_table_df <- data.frame(table(dt_sub[,get(nationality_col)]))
   names(nation_table_df) <- c('Nationality', 'Count')
@@ -428,14 +429,14 @@ genre_bar_plot <- function(dt, n_shelves=4, min_count=2){
     coord_flip() + theme_pander()
 }
 
-get_highest_rated_book <- function(dt, rating_col='Average.Rating', 
-                                   title_col='title.simple', author_col='Author'){
+get_highest_rated_book <- function(dt, rating_col='average_rating', 
+                                   title_col='title.simple', author_col='author'){
   most_popular <- dt[which.max(get(rating_col))][, c((author_col), (title_col)), with=F]
   return (paste0(most_popular, collapse = ': '))
 }
 
-plot_highest_rated_books <- function(dt, n=10, rating_col='Average.Rating',
-                                     my_rating_col='My.Rating',
+plot_highest_rated_books <- function(dt, n=10, rating_col='average_rating',
+                                     my_rating_col='my_rating',
                                      title_col='title.simple'){
   highest <- tail(dt[order(get(rating_col))], n)
   highest[[title_col]] <- factor(highest[[(title_col)]],

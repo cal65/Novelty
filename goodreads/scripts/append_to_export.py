@@ -5,7 +5,7 @@ import re
 import logging
 import argparse
 from datetime import datetime
-
+sys.path.append("..")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
 import django
 from ..models import ExportData, Authors, Books
@@ -60,13 +60,13 @@ def append_scraping(goodreads_data):
     return goodreads_data_merged
 
 
-def database_append(book_id):
+def database_append(book_id, username):
     try:
         djangoBook = Books.objects.get(book_id=book_id)
     except:
         logger.info("Book not in database")
         return
-    djangoExport = ExportData.objects.get(book_id=book_id)
+    djangoExport = ExportData.objects.get(book_id=book_id, username=username)
     book_fields = get_field_names(Books)
     export_fields = get_field_names(ExportData)
     common_fields = book_fields.intersection(export_fields)
