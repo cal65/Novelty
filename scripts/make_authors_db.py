@@ -2,6 +2,7 @@ import psycopg2
 import os
 from sqlalchemy import create_engine, insert
 import pandas as pd
+from datetime import datetime
 
 
 def start():
@@ -25,6 +26,7 @@ def start():
     )
     ## populate authors
     authors_db = pd.read_csv("artifacts/authors_sql_database.csv")
+    authors_db['ts_updated'] = datetime.now()
     authors_db.to_sql("goodreads_authors", engine, if_exists="replace", index=False)
     ## populate books
     books_db = pd.read_csv("artifacts/books_database.csv")
@@ -54,6 +56,8 @@ def start():
             "added_by",
             "to_reads",
         ]
+    books_db['book_id'] = books_db['book_id'].astype(str)
+    books_db['ts_updated'] = datetime.now()
     books_db.to_sql("goodreads_books", engine, if_exists="replace", index=False)
     connection.close()
 

@@ -21,7 +21,11 @@ def get_field_names(djangoClass):
     return set(f_names)
 
 def convert_to_ExportData(row, username):
-    djangoObj = ExportData()
+    try:
+        # check if ExportData table already has this book
+        djangoObj = ExportData.get(book_id=row.book_id, username=username)
+    except:
+        djangoObj = ExportData()
     f_names = get_field_names(ExportData)
     common_fields = list(set(row.keys()).intersection(f_names))
     for f in common_fields:
@@ -31,7 +35,9 @@ def convert_to_ExportData(row, username):
         setattr(djangoObj, f, value)
     djangoObj.username = username
     djangoObj.ts_updated = datetime.now()
+    djangoObj.save()
     return djangoObj
+
 
 def clean_df(goodreads_data):
     goodreads_data.columns = [c.replace(" ", "_") for c in goodreads_data.columns]
@@ -67,6 +73,7 @@ def database_append(book_id):
     for field in common_fields:
         setattr(djangoExport, field, getattr(djangoBook, field))
     djangoExport.save()
+    logger.info(f"Book {djangoBook.book_id} updated in database")
 
 
 def apply_append(file_path, username):

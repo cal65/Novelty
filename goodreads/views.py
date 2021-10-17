@@ -7,7 +7,7 @@ from .models import ExportData
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .scripts.append_to_export import convert_to_ExportData
+from .scripts.append_to_export import convert_to_ExportData, database_append
 
 
 def run_script_function(request):
@@ -21,8 +21,8 @@ def run_script_function(request):
 
     print("running R scripts")
     os.system(
-        "Rscript goodreads/scripts/runner.R goodreads/Graphs/{}/sample_export_{}_appended.csv {}".format(
-            user, user, user
+        "Rscript goodreads/scripts/runner.R {}".format(
+            user
         )
     )
 
@@ -112,7 +112,8 @@ def process_export_upload(df, date_col = 'Date_Read'):
         " |\.", "_"
     )  # standard export comes in with spaces. R would turn these into dots
     df[date_col] = pd.to_datetime(df[date_col])
-    df["Number_of_Pages"].fillna(0, inplace=True)
+    df.columns = df.columns.str.lower()
+    df["number_of_pages"].fillna(0, inplace=True)
     return df
 
 
@@ -122,7 +123,7 @@ def upload_view(request):
     user = request.user
     # check if user has uploaded a csv file before running the analysis
     file_path = "goodreads/Graphs/{}/sample_export_{}.csv".format(
-        request.user, request.user
+        user, user
     )
     if os.path.isfile(file_path):
         file_exists = True
@@ -153,28 +154,19 @@ def upload_view(request):
     # save csv file in database
     df = pd.read_csv(csv_file)
     df = process_export_upload(df)
-    for row in df.itertuples():
-        djangoExport = convert_to_ExportData(row.Book_Id)
-        # _, book = ExportData.objects.update_or_create(
-        #     book_id=row.Book_Id,
-        #     title=row.Title,
-        #     author=row.Author,
-        #     number_of_pages=row.Number_of_Pages,
-        #     my_rating=row.My_Rating,
-        #     original_publication_year=row.Original_Publication_Year,
-        #     #date_read=row.Date_Read,
-        #     username=user,
-        # )
-        ExportData.objects.update_or_create(djangoExport)
+    for _, row in df.iterrows():
+        obj = convert_to_ExportData(row, str(user))
+        #obj.create_or_update()
+        print(obj.title)
+        database_append(obj.book_id)
 
     df.columns = df.columns.str.replace("_", ".")
 
     # save csv file to user's folder
-    username = request.user
     try:
-        df.to_csv("goodreads/Graphs/{}/sample_export_{}.csv".format(username, username))
+        df.to_csv("goodreads/Graphs/{}/sample_export_{}.csv".format(user, user))
     except OSError:
-        os.mkdir("goodreads/Graphs/{}".format(username))
-        df.to_csv("goodreads/Graphs/{}/sample_export_{}.csv".format(username, username))
+        os.mkdir("goodreads/Graphs/{}".format(user))
+        df.to_csv("goodreads/Graphs/{}/sample_export_{}.csv".format(user, user))
 
     return render(request, template, {"file_exists": file_exists})

@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    replaces = [('goodreads', '0004_auto_20210922_0305'), ('goodreads', '0005_auto_20210923_0319'), ('goodreads', '0006_auto_20210923_0326'), ('goodreads', '0007_auto_20210928_0443'), ('goodreads', '0008_auto_20210928_1820'), ('goodreads', '0009_auto_20210930_0327'), ('goodreads', '0010_exportdata_ts_updated')]
+    #replaces = [('goodreads', '0004_auto_20210922_0305'), ('goodreads', '0005_auto_20210923_0319'), ('goodreads', '0006_auto_20210923_0326'), ('goodreads', '0007_auto_20210928_0443'), ('goodreads', '0008_auto_20210928_1820'), ('goodreads', '0009_auto_20210930_0327'), ('goodreads', '0010_exportdata_ts_updated')]
 
     dependencies = [
         ('goodreads', '0003_authors'),
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='exportdata',
             name='narrative',
-            field=models.CharField(default='Fiction', max_length=250),
+            field=models.CharField(default='Fiction', max_length=250, null=True),
             preserve_default=False,
         ),
         migrations.AddField(
@@ -31,11 +31,6 @@ class Migration(migrations.Migration):
         migrations.RemoveField(
             model_name='exportdata',
             name='id',
-        ),
-        migrations.AlterField(
-            model_name='exportdata',
-            name='book_id',
-            field=models.CharField(max_length=250, primary_key=True, serialize=False),
         ),
         migrations.RemoveField(
             model_name='authors',

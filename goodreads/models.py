@@ -1,8 +1,10 @@
 from django.db import models
 
-
 class ExportData(models.Model):
-    book_id = models.CharField(max_length=250, primary_key=True)
+    class Meta:
+        managed = True
+        models.UniqueConstraint(fields=['book_id', 'username'], name='book_per_user')
+    book_id = models.CharField(max_length=250)
     title = models.CharField(max_length=250)
     author = models.CharField(max_length=250)
     number_of_pages = models.IntegerField(blank=True, null=True)
@@ -18,7 +20,7 @@ class ExportData(models.Model):
     shelf7 = models.CharField(max_length=250, blank=True, null=True)
     added_by = models.IntegerField(blank=True, null=True, default=0)
     to_reads = models.IntegerField(blank=True, null=True, default=0)
-    narrative = models.CharField(max_length=250)
+    narrative = models.CharField(max_length=250, null=True)
     date_read = models.DateField(auto_now=False, blank=True, null=True)
     username = models.CharField(max_length=30, default="Random")
     ts_updated = models.DateTimeField(auto_now=True)
@@ -29,10 +31,6 @@ class ExportData(models.Model):
     # publisher = models.CharField(max_length=250)
     # binding = models.CharField(max_length=250)
     # year_published = models.CharField(max_length=250)
-    # original_pub_year = models.CharField(max_length=250)
-    # date_read = models.CharField(max_length=250)
-    # bookshelves = models.CharField(max_length=250)
-    # bookshelves_with_positions = models.CharField(max_length=250)
     # exclusive_shelf = models.CharField(max_length=250)
     # my_review = models.TextField()
     # spoiler = models.CharField(max_length=2500)
