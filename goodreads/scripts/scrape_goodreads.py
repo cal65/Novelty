@@ -22,23 +22,23 @@ def get_stats(url, wait=0):
     Returns a dictionary of that extract
     """
     null_return = {
-        "Added_by": None,
-        "To_reads": None,
-        "Title": None,
-        "Author": None,
-        "Publish_info": None,
-        "Language": None,
-        "Rating": None,
-        "Shelf1": None,
-        "Shelf2": None,
-        "Shelf3": None,
-        "Shelf4": None,
-        "Shelf5": None,
-        "Shelf6": None,
-        "Shelf7": None,
-        "Original_title": None,
+        "added_by": None,
+        "to_reads": None,
+        "title": None,
+        "author": None,
+        "publish_info": None,
+        "language": None,
+        "rating": None,
+        "shelf1": None,
+        "shelf2": None,
+        "shelf3": None,
+        "shelf4": None,
+        "shelf5": None,
+        "shelf6": None,
+        "shelf7": None,
+        "original_title": None,
         "url": url,
-        "numberOfPages": None,
+        "number_of_pages": None,
     }
 
     try: 
@@ -139,27 +139,27 @@ def get_stats(url, wait=0):
     time.sleep(wait)
 
     return {
-        "Added_by": added_by,
-        "To_reads": to_reads,
-        "Title": title,
-        "Author": author,
-        "Publish_info": publish_info,
-        "Language": language,
-        "Rating": rating,
-        "Shelf1": shelf1,
-        "Shelf2": shelf2,
-        "Shelf3": shelf3,
-        "Shelf4": shelf4,
-        "Shelf5": shelf5,
-        "Shelf6": shelf6,
-        "Shelf7": shelf7,
-        "Original_title": original_title,
+        "added_by": added_by,
+        "to_reads": to_reads,
+        "title": title,
+        "author": author,
+        "publish_info": publish_info,
+        "language": language,
+        "rating": rating,
+        "shelf1": shelf1,
+        "shelf2": shelf2,
+        "shelf3": shelf3,
+        "shelf4": shelf4,
+        "shelf5": shelf5,
+        "shelf6": shelf6,
+        "shelf7": shelf7,
+        "original_title": original_title,
         "url": url,
-        "numberOfPages": numberOfPages,
+        "number_of_pages": numberOfPages,
     }
 
 
-def create_url(id, name):
+def create_url(id):
 
     return "https://www.goodreads.com/book/show/" + str(id)
 
@@ -170,14 +170,6 @@ def read_goodreads_export(file_path):
     elif file_path.endswith(".xlsx"):
         goodreads_data = pd.read_excel(file_path)
     return goodreads_data
-
-
-def return_urls(goodreads_data, id_col="Book.Id"):
-    if not is_string_dtype(goodreads_data["Title"]):
-        goodreads_data["Title"] = goodreads_data["Title"].astype(str)
-    urls = goodreads_data.apply(lambda x: create_url(x[id_col], x["Title"]), axis=1)
-
-    return urls
 
 
 def apply_added_by(urls, wait=4):
@@ -197,12 +189,12 @@ def apply_added_by(urls, wait=4):
 
 def guess_gender(goodreads_data, gender_col="gender"):
     d = gender.Detector()
-    goodreads_data["First.Name"] = [
+    goodreads_data["first.name"] = [
         name[0] if name != "" else ""
-        for name in goodreads_data["Author"].str.split(" ").fillna("")
+        for name in goodreads_data["author"].str.split(" ").fillna("")
     ]
     goodreads_data[gender_col] = [
-        d.get_gender(name) for name in goodreads_data["First.Name"]
+        d.get_gender(name) for name in goodreads_data["first.name"]
     ]
     return goodreads_data
 

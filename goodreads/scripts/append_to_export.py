@@ -23,8 +23,10 @@ def get_field_names(djangoClass):
 def convert_to_ExportData(row, username):
     try:
         # check if ExportData table already has this book
-        djangoObj = ExportData.get(book_id=row.book_id, username=username)
+        djangoObj = ExportData.objects.get(book_id=str(row.book_id), username=username)
+        print('book found')
     except:
+        print('book not found')
         djangoObj = ExportData()
     f_names = get_field_names(ExportData)
     common_fields = list(set(row.keys()).intersection(f_names))
@@ -35,6 +37,7 @@ def convert_to_ExportData(row, username):
         setattr(djangoObj, f, value)
     djangoObj.username = username
     djangoObj.ts_updated = datetime.now()
+    logger.info(f"Saving book {djangoObj.title}")
     djangoObj.save()
     return djangoObj
 
@@ -47,28 +50,32 @@ def clean_df(goodreads_data):
         goodreads_data[c] = goodreads_data[[c]].astype(object).where(goodreads_data[[c]].notnull(), None)
     return goodreads_data
 
-def append_scraping(goodreads_data):
+def append_scraping(book_id, wait):
     """
     Take data meant to be in the Goodreads export format
     Scrape additional fields and add them as columns
     """
-    goodreads_data = clean_df(goodreads_data)
-    urls = scrape_goodreads.return_urls(goodreads_data)
-    scraped_df = scrape_goodreads.apply_added_by(urls)
-    scraped_df.drop(columns=["Title", "Author", "Publish_info"], inplace=True)
-    goodreads_data_merged = pd.concat([goodreads_data, scraped_df], axis=1)
-    return goodreads_data_merged
+    djangoBook = Books()
+    book_fields = get_field_names(Books)
+    url = scrape_goodreads.create_url(book_id)
+    scraped_dict = scrape_goodreads.get_stats(url, wait=wait)
+    for k, v in scraped_dict.items():
+        if k in book_fields:
+            setattr(djangoBook, k, v)
+    djangoBook.save()
+    return djangoBook
 
 
-def database_append(book_id, username):
-    try:
-        djangoBook = Books.objects.get(book_id=book_id)
-    except:
-        logger.info("Book not in database")
-        return
+def database_append(book_id, username, wait=4):
     djangoExport = ExportData.objects.get(book_id=book_id, username=username)
     book_fields = get_field_names(Books)
     export_fields = get_field_names(ExportData)
+    try:
+        djangoBook = Books.objects.get(book_id=book_id)
+    except:
+        logger.info("Book not in database - must scrape")
+        djangoBook = append_scraping(book_id, wait=wait)
+
     common_fields = book_fields.intersection(export_fields)
     for field in common_fields:
         setattr(djangoExport, field, getattr(djangoBook, field))

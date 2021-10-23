@@ -74,19 +74,19 @@ preprocess_dt <- function(dt){
 month_plot <- function(df, name, date_col, page_col, title_col,
                        author_gender_col, lims=NULL, save=F){
   setDT(df)
-  df$Year.Read <- as.numeric(format(df[[date_col]], '%Y'))
+  df$year_read <- as.numeric(format(df[[date_col]], '%Y'))
   df$Month.Read  <- as.numeric(format(df[[date_col]], '%m'))
-  if (length(unique(df$Year.Read)) < 1) {
+  if (length(unique(df$year_read)) < 1) {
     return()
   }
-  df <- df[!is.na(Year.Read)]
+  df <- df[!is.na(year_read)]
   if (!is.null(lims)){
-    df <- df[Year.Read > lims[1] & Year.Read < lims[2]]
+    df <- df[year_read > lims[1] & year_read < lims[2]]
   }
   ggplot(df, 
          aes(x=Month.Read, y=get(page_col), group=fct_rev(fct_inorder(get(title_col))))) + 
     geom_col(aes(fill=get(author_gender_col)), width=1, alpha=0.65, color='black') + 
-    facet_grid(Year.Read ~ .) +
+    facet_grid(year_read ~ .) +
     scale_fill_brewer('Author Gender', palette = 'Pastel1', guide = "none") +
     scale_color_brewer('Type', palette = 'Dark2') +
     scale_linetype_discrete('Type') +
@@ -108,14 +108,14 @@ year_plot <- function(df, name, fiction_col, date_col, page_col,
   divergent_df <- df
   divergent_df$Pages <- with(divergent_df, ifelse(get(fiction_col) == 'Fiction', -1*get(page_col), get(page_col)))
   str_len <- str_len
-  divergent_df$Year.Read <- format(divergent_df[[date_col]], '%Y')
+  divergent_df$year_read <- format(divergent_df[[date_col]], '%Y')
   # exit function if there is no date data
-  if (length(unique(divergent_df$Year.Read)) < 1) {
+  if (length(unique(divergent_df$year_read)) < 1) {
     return()
   }
   divergent_df[[title_col]] <- sapply(divergent_df[[title_col]],
                                function(x) paste(stri_wrap(x, width=str_len), collapse='\n'))
-  ggplot(divergent_df[Year.Read >= start_year], aes(x=Year.Read, y=Pages, group=fct_rev(fct_inorder(get(title_col))))) +
+  ggplot(divergent_df[year_read >= start_year], aes(x=year_read, y=Pages, group=fct_rev(fct_inorder(get(title_col))))) +
     geom_col(aes(color=get(fiction_col), fill=get(author_gender_col)), 
              size=0.7, width = .7, alpha=0.7) +
     geom_hline(yintercept=0, linetype='solid', size=1, color='white') +

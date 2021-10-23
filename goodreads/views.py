@@ -157,8 +157,7 @@ def upload_view(request):
     for _, row in df.iterrows():
         obj = convert_to_ExportData(row, str(user))
         #obj.create_or_update()
-        print(obj.title)
-        database_append(obj.book_id)
+        database_append(str(obj.book_id), str(user))
 
     df.columns = df.columns.str.replace("_", ".")
 
