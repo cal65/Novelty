@@ -32,6 +32,8 @@ a img {
     border: none;
 }
 
+.border {  border: 15px solid red; } 
+
 a.section:link, a.section:visited {
     color: #fff;
     text-decoration: none;
