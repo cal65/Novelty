@@ -62,6 +62,7 @@ def append_scraping(book_id, wait):
     for k, v in scraped_dict.items():
         if k in book_fields:
             setattr(djangoBook, k, v)
+    djangoBook.book_id = book_id
     djangoBook.save()
     return djangoBook
 
