@@ -10,4 +10,5 @@ urlpatterns = [
     path('popularity-spectrum/', popularity_spectrum_view, name='popularity-spectrum'),
     path('summary-plot/', summary_plot_view, name='summary-plot'),
     path('yearly-pages-read/', yearly_pages_read_view, name='yearly-pages-read'),
+    path('about-this', about_this, name='about-this')
 ]
