@@ -41,7 +41,7 @@ def get_stats(url, wait=0):
         "number_of_pages": None,
     }
 
-    try: 
+    try:
         page = requests.get(url)
     except requests.exceptions.ConnectionError:
         logger.info("Connection refused - too many requests")
