@@ -8,8 +8,6 @@ require(rworldmap)
 require(RColorBrewer)
 require(ggthemes)
 setwd(Sys.getenv('repo'))
-setwd('~/Documents/CAL/Real_Life/Repository/Novelty/')
-#setwd('~/Documents/Personal/Repository/Novelty/')
 source('goodreads/scripts/utils.R')
 args = commandArgs(trailingOnly=TRUE)
 name <- args[1]
