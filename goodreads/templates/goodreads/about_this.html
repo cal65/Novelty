@@ -2,11 +2,28 @@
 
 {% block content %}
 <body>
-
+	<br>
+	<div class = "info">
+		About Novelty Insights
+	</div>
+	<br>
+	<br>
+	<div class = "center">
 	I began this project initially to analyze my own book reading history. After years where I absorbed information largely through podcasts, websites and conversations, reading was becoming more and more important to me. I don't read particularly fast, and each finished book felt like an achievement. I started by creating a spreadsheet to track the books I'd read and slowly filled it in and added more fields I found interesting, such as number of pages and the nationality of the author.
 	<br>
 	<br>
 	Later I discovered the book cataloguing website Goodreads. I realized here was a data repository that would have the data fields I wanted, as well as interesting new crowd-sourced insights made possible only by mass adoption. This includes the "shelf names", user-defined genres, as well as readership numbers. Goodreads allows users to export their books data, but it does not include a lot of these more insightful fields. I started building a pipeline to scrape those additional fields, and later added functions to look up the gender (via Wikipedia) and nationality (via Google) of the author. The pipeline generates plots of the reading data including a map of world authors and a plot facetted by popularity (the number of other users who have added this book to their account). I have been able to refine the graphs and the code with the help of a number of friends who have exported me their Goodreads data.
-
+	<br>
+	<br>
+	</div>
+	<div class = "info">
+		How does it work?
+	</div>
+	<br> <br>
+	<div class = "center">
+	This analysis is for those with a Goodreads account. You can add the books that you've read or want to read to your library on Goodreads. On the desktop verion of www.goodreads.com, you can go to <bold> My Books </bold>. There is a tab on the left - if you scroll to the bottom you should find "Import and Export".
+	<img style="width: 40%; height: 40%; margin-left: auto; margin-right: auto;" src="../static/admin/img/goodreads-export.png">
+	Click on this link. It will direct you to a page with "Export" at the top. Below there is a button "Export Library". Click on this button.
+</div>
 </body>
 {% endblock content %}
