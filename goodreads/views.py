@@ -196,3 +196,8 @@ def upload_view(request):
         df.to_csv("goodreads/Graphs/{}/sample_export_{}.csv".format(user, user))
 
     return render(request, template, {"file_exists": file_exists})
+
+
+### Geography
+def geography(request):
+    return render(request, "goodreads/geography.html")   
