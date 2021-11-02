@@ -292,9 +292,9 @@ export_user_authors <- function(user, list='goodreads_list', authors_db){
 }
 
 create_melted_genre_df <- function(dt) {
-  genre_df <- dt[,c('Source', grep('^shelf', names(dt), value=T)),with=F]
+  genre_df <- dt[,c('username', grep('^shelf', names(dt), value=T)),with=F]
   genre_df.m <- setDT(melt(genre_df, 
-                           id.var='Source', value.name = 'Shelf'))
+                           id.var='username', value.name = 'Shelf'))
   genre_df.m <- genre_df.m[!Shelf %in% c('Fiction', 'Nonfiction', '')]
   genre_df.m <- genre_df.m[!is.na(Shelf)]
   return (genre_df.m)
@@ -344,7 +344,7 @@ genre_plot <- function(genre_df,
     theme_pander() + theme(plot.title=element_text(hjust=0.5), 
                            legend.position = 'bottom', legend.key.width = unit(1.5, 'cm')) 
   if (plot==T){
-    ggsave(paste0('goodreads/static/Graphs/', name, '/', plot_name, name, '.jpeg'), width=14, height=8)
+    ggsave(paste0('Novelty/goodreads/static/Graphs/', name, '/', plot_name, name, '.jpeg'), width=14, height=8)
     
   }
 }
@@ -358,14 +358,14 @@ summary_plot <- function(dt, date_col,
   # 2. Barplot of highest rated books
   # 3. Histogram of publication date
   # 4. Top genres
-  source('goodreads/scripts/multiplot.R')
+  source('Novelty/goodreads/scripts/multiplot.R')
   p1 <- gender_bar_plot(dt, gender_col, narrative_col, name)
   p2 <- plot_highest_rated_books(dt)
   p3 <- publication_histogram(dt, date_col)
   p3 <- p3 + ggtitle(paste0('for ', name))
   min_count <- round(nrow(dt)/40)
   p4 <- genre_bar_plot(dt, min_count=min_count)
-  jpeg(filename = paste0('goodreads/static/Graphs/', name, '/Summary_plot.jpeg'), 
+  jpeg(filename = paste0('Novelty/goodreads/static/Graphs/', name, '/Summary_plot.jpeg'), 
        res = 200, width = 3200, height=2400)
   multiplot(p1, p2, p3, p4, cols=2)
   dev.off()
@@ -414,7 +414,7 @@ publication_histogram <- function(dt, date_col, start_year=1800){
 
 genre_bar_plot <- function(dt, n_shelves=4, min_count=2){
   genre_df.m <- create_melted_genre_df(dt)
-  genre_df.m <- genre_df.m[variable %in% paste0('Shelf', 1:n_shelves)]
+  genre_df.m <- genre_df.m[variable %in% paste0('shelf', 1:n_shelves)]
   genre_df.m <- genre_df.m[!is.na(Shelf)]
   shelf_table_df <- data.frame(table(genre_df.m$Shelf))
   names(shelf_table_df) <- c('Shelf', 'Count')
