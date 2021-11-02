@@ -17,7 +17,6 @@ def run_script_function(request):
     os.system(
         f"python goodreads/scripts/append_to_export.py goodreads/Graphs/{user}/sample_export_{user}.csv --username {user} 3"
     )
-    time.sleep(3)
 
     print("running R scripts")
     os.system("Rscript goodreads/scripts/runner.R {}".format(user))
