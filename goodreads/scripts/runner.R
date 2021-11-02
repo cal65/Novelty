@@ -8,7 +8,7 @@ require(rworldmap)
 require(RColorBrewer)
 require(ggthemes)
 setwd(Sys.getenv('repo'))
-source('goodreads/scripts/utils.R')
+source('Novelty/goodreads/scripts/utils.R')
 args = commandArgs(trailingOnly=TRUE)
 name <- args[1]
 library('RPostgres')
