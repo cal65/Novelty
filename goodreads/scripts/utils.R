@@ -7,8 +7,6 @@ library(plyr)
 library(stringi)
 library(rworldmap)
 library(RColorBrewer)
-# setwd('~/Documents/CAL/Real_Life/Repository/Books/')
-setwd('.')
 
 preprocess <- function(dt){
   dt$gender <- mapvalues(dt$gender,
@@ -98,7 +96,7 @@ month_plot <- function(df, name, date_col, page_col, title_col,
     theme(strip.text.y=element_text(angle=0), plot.title = element_text(hjust=0.5),
           panel.background = element_rect(color='black', fill=NA))
   if (save == T){
-    ggsave(paste0('goodreads/static/Graphs/', name, '/Monthly_pages_read_', name, '.jpeg'), width=15, height=9, dpi=180)
+    ggsave(paste0('Novelty/goodreads/static/Graphs/', name, '/Monthly_pages_read_', name, '.jpeg'), width=15, height=9, dpi=180)
   }
 }
 
@@ -127,7 +125,7 @@ year_plot <- function(df, name, fiction_col, date_col, page_col,
     theme_pander() + theme(plot.title=element_text(hjust=0.5), 
                            legend.position = 'bottom') 
   if (save == T){
-    ggsave(paste0('goodreads/static/Graphs/',  name, '/Yearly_pages_read_', name, '.jpeg'), width=15, height=9)
+    ggsave(paste0('Novelty/goodreads/static/Graphs/',  name, '/Yearly_pages_read_', name, '.jpeg'), width=15, height=9)
   }
 }
 
@@ -180,7 +178,7 @@ read_plot <- function(df,
           plot.title = element_text(hjust=0.5),
           panel.background = element_blank())
   if (plot){
-    ggsave(paste0('goodreads/static/Graphs/', name, '/', plot_name, name, '.jpeg'), width = 16, height=9)
+    ggsave(paste0('Novelty/goodreads/static/Graphs/', name, '/', plot_name, name, '.jpeg'), width = 16, height=9)
   }
 }
 
@@ -210,7 +208,7 @@ finish_plot <- function(df,
        theme_pander() +
        theme(plot.title = element_text(hjust=0.5))
   if (plot == T){
-    ggsave(paste0('goodreads/static/Graphs/', name, '/', plot_name, name, '.jpeg'), width=12, height=8)
+    ggsave(paste0('Novelty/goodreads/static/Graphs/', name, '/', plot_name, name, '.jpeg'), width=12, height=8)
   }
 }
 
@@ -236,7 +234,7 @@ year_comparison <- function(l, year_col, year_start, user, plot=T) {
     theme_dark() +
     ggtitle('Publication Year Comparison')
   if (plot == T){
-    ggsave(paste0('goodreads/static/Graphs/', user, '/publication_year_', user, '.jpeg'), width=12, height=8)
+    ggsave(paste0('Novelty/goodreads/static/Graphs/', user, '/publication_year_', user, '.jpeg'), width=12, height=8)
   }
 }
 
@@ -282,7 +280,7 @@ plot_map_data <- function(df, region_dict, world_df, user, country_col = 'nation
     ggtitle(paste0('Author Nationality Map - ', user)) +
     theme_pander() + theme(plot.title=element_text(hjust=0.5), 
                            legend.position = 'bottom', legend.key.width = unit(1.5, 'cm')) 
-  ggsave(paste0('goodreads/static/Graphs/', user, '/nationality_map_', user, '.jpeg'), width=12, height=8)
+  ggsave(paste0('Novelty/goodreads/static/Graphs/', user, '/nationality_map_', user, '.jpeg'), width=12, height=8)
 }
 
 export_user_authors <- function(user, list='goodreads_list', authors_db){
@@ -362,7 +360,6 @@ summary_plot <- function(dt, date_col,
   # 4. Top genres
   source('goodreads/scripts/multiplot.R')
   p1 <- gender_bar_plot(dt, gender_col, narrative_col, name)
-  # p2 <- nationality_bar_plot(dt, authors_database, nationality_col)
   p2 <- plot_highest_rated_books(dt)
   p3 <- publication_histogram(dt, date_col)
   p3 <- p3 + ggtitle(paste0('for ', name))
