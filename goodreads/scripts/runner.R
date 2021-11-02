@@ -30,7 +30,7 @@ generate_plots <- function(name){
   dt <- setDT(dbGetQuery(con, query))
   dt <- run_all(dt)
   dt$Source <- name
-  dir.create(paste0('Graphs/', name), showWarnings = F)
+  dir.create(paste0('Novelty/goodreads/static/Graphs/', name), showWarnings = F)
   print(dt)
   # authors_database <- read.csv('goodreads/scripts/authors_database.csv')
   # # update the authors database based on potential new data from dt
@@ -46,7 +46,7 @@ generate_plots <- function(name){
   finish_plot(dt, name = name, plot=T)
   # plot world maps
   world_df <- setDT(map_data('world'))
-  region_dict <- fread('goodreads/scripts/world_regions_dict.csv')
+  region_dict <- fread('Novelty/goodreads/scripts/world_regions_dict.csv')
   region_dict <- region_dict[nationality != '']
   authorQuery <- "Select * from goodreads_authors"
   authors_database <- setDT(dbGetQuery(con, authorQuery))

@@ -7,8 +7,6 @@ library(plyr)
 library(stringi)
 library(rworldmap)
 library(RColorBrewer)
-# setwd('~/Documents/CAL/Real_Life/Repository/Books/')
-setwd('.')
 
 preprocess <- function(dt){
   dt$gender <- mapvalues(dt$gender,
@@ -98,7 +96,7 @@ month_plot <- function(df, name, date_col, page_col, title_col,
     theme(strip.text.y=element_text(angle=0), plot.title = element_text(hjust=0.5),
           panel.background = element_rect(color='black', fill=NA))
   if (save == T){
-    ggsave(paste0('goodreads/static/Graphs/', name, '/Monthly_pages_read_', name, '.jpeg'), width=15, height=9, dpi=180)
+    ggsave(paste0('Novelty/goodreads/static/Graphs/', name, '/Monthly_pages_read_', name, '.jpeg'), width=15, height=9, dpi=180)
   }
 }
 
@@ -127,7 +125,7 @@ year_plot <- function(df, name, fiction_col, date_col, page_col,
     theme_pander() + theme(plot.title=element_text(hjust=0.5), 
                            legend.position = 'bottom') 
   if (save == T){
-    ggsave(paste0('goodreads/static/Graphs/',  name, '/Yearly_pages_read_', name, '.jpeg'), width=15, height=9)
+    ggsave(paste0('Novelty/goodreads/static/Graphs/',  name, '/Yearly_pages_read_', name, '.jpeg'), width=15, height=9)
   }
 }
 
@@ -180,7 +178,7 @@ read_plot <- function(df,
           plot.title = element_text(hjust=0.5),
           panel.background = element_blank())
   if (plot){
-    ggsave(paste0('goodreads/static/Graphs/', name, '/', plot_name, name, '.jpeg'), width = 16, height=9)
+    ggsave(paste0('Novelty/goodreads/static/Graphs/', name, '/', plot_name, name, '.jpeg'), width = 16, height=9)
   }
 }
 
@@ -210,7 +208,7 @@ finish_plot <- function(df,
        theme_pander() +
        theme(plot.title = element_text(hjust=0.5))
   if (plot == T){
-    ggsave(paste0('goodreads/static/Graphs/', name, '/', plot_name, name, '.jpeg'), width=12, height=8)
+    ggsave(paste0('Novelty/goodreads/static/Graphs/', name, '/', plot_name, name, '.jpeg'), width=12, height=8)
   }
 }
 
@@ -236,7 +234,7 @@ year_comparison <- function(l, year_col, year_start, user, plot=T) {
     theme_dark() +
     ggtitle('Publication Year Comparison')
   if (plot == T){
-    ggsave(paste0('goodreads/static/Graphs/', user, '/publication_year_', user, '.jpeg'), width=12, height=8)
+    ggsave(paste0('Novelty/goodreads/static/Graphs/', user, '/publication_year_', user, '.jpeg'), width=12, height=8)
   }
 }
 
@@ -282,7 +280,7 @@ plot_map_data <- function(df, region_dict, world_df, user, country_col = 'nation
     ggtitle(paste0('Author Nationality Map - ', user)) +
     theme_pander() + theme(plot.title=element_text(hjust=0.5), 
                            legend.position = 'bottom', legend.key.width = unit(1.5, 'cm')) 
-  ggsave(paste0('goodreads/static/Graphs/', user, '/nationality_map_', user, '.jpeg'), width=12, height=8)
+  ggsave(paste0('Novelty/goodreads/static/Graphs/', user, '/nationality_map_', user, '.jpeg'), width=12, height=8)
 }
 
 export_user_authors <- function(user, list='goodreads_list', authors_db){
@@ -362,21 +360,16 @@ summary_plot <- function(dt, date_col,
   # 4. Top genres
   source('goodreads/scripts/multiplot.R')
   p1 <- gender_bar_plot(dt, gender_col, narrative_col, name)
-  p2 <- plot_longest_books(dt) + ggtitle('Longest Books')
-  p3 <- publication_histogram(dt, date_col) + ggtitle('Publication Years')
+  p2 <- plot_highest_rated_books(dt)
+  p3 <- publication_histogram(dt, date_col)
   p3 <- p3 + ggtitle(paste0('for ', name))
   min_count <- round(nrow(dt)/40)
-  p4 <- genre_bar_plot(dt, min_count=min_count) + ggtitle('Most Common Genres')
+  p4 <- genre_bar_plot(dt, min_count=min_count)
   jpeg(filename = paste0('goodreads/static/Graphs/', name, '/Summary_plot.jpeg'), 
        res = 200, width = 3200, height=2400)
   multiplot(p1, p2, p3, p4, cols=2)
   dev.off()
 }
-
-# define a summary theme for all summary plots
-theme_summary <- theme_pander() + 
-  theme(plot.background = element_rect(colour = "black", fill=NA, size=0.5),
-        plot.margin = unit(c(.2,.2,.2,.2), "cm")) 
 
 gender_bar_plot <- function(dt, gender_col, narrative_col, name){
   name <- gsub('_', ' ', name)
@@ -385,22 +378,18 @@ gender_bar_plot <- function(dt, gender_col, narrative_col, name){
                                 to = rep('unknown or other', 3),
                                 warn_missing = F)
   ggplot(dt) + 
-    # preserve parameter allows for equal bar heights
-    geom_bar(aes(x=get(narrative_col), fill=get(gender_col)), 
-             position=position_dodge2(preserve = 'single')) +
+    geom_bar(aes(x=get(narrative_col), fill=get(gender_col)), position=position_dodge()) +
     theme_pander() +
-    xlab('') + ylab('Count') +
+    xlab('') +
     scale_fill_brewer('Gender', palette='Set1') +
     coord_flip() +
-    theme_summary +
     theme(legend.position = 'bottom', plot.title=element_text(hjust=1),
-          axis.text = element_text(size=12)) + 
-    ggtitle('Summary Plots  ')
+          panel.border = element_rect(colour = "black", fill=NA, size=1)) + 
+    ggtitle('Summary Plots')
 }
 
-nationality_bar_plot <- function(dt, authors_database, name,
-                                 nationality_col='nationality_chosen', save=F){
-  dt <- setDT(merge(dt, authors_database, by='Author'))
+nationality_bar_plot <- function(dt, authors_database, nationality_col='nationality_chosen'){
+  dt <- setDT(merge(dt, authors_database, by.x='author', by.y='author_name'))
   dt_sub <- dt[get(nationality_col) != '']
   nation_table_df <- data.frame(table(dt_sub[,get(nationality_col)]))
   names(nation_table_df) <- c('Nationality', 'Count')
@@ -409,11 +398,12 @@ nationality_bar_plot <- function(dt, authors_database, name,
   dt_sub$Nationality <-
     factor(dt_sub[,get(nationality_col)], levels = nation_table_df$Nationality)
   ggplot(dt_sub) + geom_bar(aes(x=Nationality), color='black', fill='blue') + 
-    coord_flip() + theme_summary
-  if (save == T){
-    ggsave(paste0('Graphs/', name, '/nationality_barplot_' , name, '.jpeg'), width=11, height=8)
-  }
-}blication_histogram <- function(dt, date_col, start_year=1800){
+    coord_flip() + theme_pander() +
+    theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) 
+}
+
+
+publication_histogram <- function(dt, date_col, start_year=1800){
   dt_sub <- dt[get(date_col) > start_year]
   n_bins <- max(nrow(dt_sub) / 10, 10)
   ggplot(dt_sub) + geom_histogram(aes(x=get(date_col)), fill='black', bins=n_bins) + 
@@ -456,84 +446,4 @@ plot_highest_rated_books <- function(dt, n=10, rating_col='average_rating',
     ylim(0, 5) +
     scale_fill_brewer(palette='Blues', 'Your Rating', type='seq') +
     coord_flip() + theme_pander()
-}
-
-plot_longest_books <- function(dt, n=15, pages_col='Number.of.Pages', 
-                               title_col='Title.Simple',
-                               my_rating_col='My.Rating'){
-  
-  highest <- tail(dt[!is.na(get(pages_col))][order(get(pages_col))], n)
-  highest[[title_col]] <- factor(highest[[(title_col)]],
-                                 levels = unique(highest[[(title_col)]]))
-  highest[[my_rating_col]] <- as.factor(highest[[my_rating_col]])
-  ggplot(highest, aes(x=Title.Simple)) + 
-    geom_col(aes(y=get(pages_col), fill=get(my_rating_col))) +
-    geom_text(aes(y=get(pages_col)/2, label=get(pages_col))) +
-    xlab('') + ylab('Number of Pages') +
-    scale_fill_brewer(palette='Blues', 'Your Rating', type='seq') +
-    coord_flip() + theme_summary +
-    theme(plot.title = element_text(hjust=0.5))
-}
-
-yearly_gender_graph <- function(dt, name, date_col, gender_col, year_start=NA,
-                                plot_name="gender_breakdown_by_year_", save=F){
-  dt$Year.Read <- as.numeric(format(dt[[date_col]], '%Y'))
-  if (length(unique(dt$Year.Read)) < 2) {
-    print("Not enough years to graph")
-    return()
-  }
-  if (!is.na(year_start)){
-    dt <- dt[Year.Read >= year_start]
-  }
-  min_year = min(dt$Year.Read, na.rm=T)
-  max_year = max(dt$Year.Read, na.rm=T)
-  ggplot(dt) + 
-    geom_bar(aes(x=get(gender_col), fill=get(gender_col)), 
-             position = position_dodge2(0.7, preserve = 'single')) +
-    scale_fill_brewer(palette='Set1', 'Author Gender') +
-    facet_grid(. ~ Year.Read) +
-    theme_pander() + xlab('') +
-    ggtitle('Gender Breakdown by Year') +
-    theme(axis.text.x=element_blank(), axis.title.x = element_blank(), 
-          panel.border=element_rect(colour="black",size=1),
-          plot.title = element_text(hjust=0.5))
-  if (save==T){
-    print("Saving yearly gender breakdown plot")
-    ggsave(paste0('Graphs/', name, '/', plot_name, name, '.jpeg'), width=14, height=8)
-  }
-}
-
-graph_list <- function(dt, list_name, plot_name, save=F){
-  top_list_df <- fread(list_name)
-  # merging just by Book.Id may miss near matches with similar titles
-  # for now, check if titles are the same and change the book.id
-  top_list_df$Title.Upper <- toupper(top_list_df$Title)
-  
-  dt$Title.Upper <- toupper(dt$Title.Simple)
-  dt$Title.Upper <- gsub('-', ' ', df$Title.Upper)
-  top_list_df$Title.Upper <- gsub('-', ' ', top_list_df$Title.Upper)
-  dt$Match <- dt$Book.Id %in% top_list_df$Book.Id
-  unmatched_titles <- dt[Match==F & Title.Upper %in% top_list_df$Title.Upper]$Title.Upper
-  for (title in unmatched_titles){
-    dt[Title.Upper==title]$Book.Id <- top_list_df[Title.Upper == title]$Book.Id
-  }
-  top_books <- merge(top_list_df, dt[,c('Book.Id', 'Source', 'gender', 'Date.Read')], 
-                     by='Book.Id', all.x=T)
-  setDT(top_books)
-  top_books$Read <- ifelse(is.na(top_books$Source), F, T)
-  top_books$Year.Read <- format(top_books$Date.Read, '%Y')
-  palette <- c('grey40', 'Purple')
-  plot_title <- gsub('_', ' ', plot_name)
-  ggplot(top_books, aes(x=1, y=Title)) +
-    geom_tile(aes(fill=Read), color='black') +
-    geom_text(aes(label=Year.Read)) +
-    facet_wrap(Facet ~ ., scales='free') +
-    scale_fill_manual(values = palette) +
-    ggtitle(paste0(plot_title, ' - ', name)) +
-    theme_pander() +
-    theme(axis.text.x = element_blank(), plot.title=element_text(hjust=0.5),
-          axis.title.x = element_blank())
-  if (save == T){
-    ggsave(paste0('Graphs/', name, '/', plot_name, '_', name, '.jpeg'), width=9.5, height=7)
-  }
 }
