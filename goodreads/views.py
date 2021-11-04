@@ -39,6 +39,8 @@ def index(request):
         base_auth_template = "goodreads/base2.html"
     return render(request, "goodreads/home.html", {"basefile": base_auth_template})
 
+def books_home(request):
+    return render(request, "goodreads/books_home.html")
 
 def about_this(request):
     return render(request, "goodreads/about_this.html")
