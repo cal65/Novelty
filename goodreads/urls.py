@@ -15,6 +15,6 @@ urlpatterns = [
     path('about-this/', about_this, name='about-this'),
     path('books-home/', books_home, name='books-home'),
     path('plots/', plots_view, name='plots'),
-    path('geography/', geography, name='geography'),
+    path('geography/', geography, name='geography-home'),
     url(r'^favicon\.ico$',RedirectView.as_view(url='/static/admin/img/favicon.ico')),
 ]
