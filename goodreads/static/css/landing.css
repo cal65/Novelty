@@ -29,6 +29,10 @@
   font-size: 18px;
 }
 
+.link {
+  color: mediumblue;
+}
+
 .info {
     display: block;
     text-indent: 50px;
