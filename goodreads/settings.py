@@ -64,7 +64,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "goodreads_history.urls"
+ROOT_URLCONF = "goodreads.urls"
 
 TEMPLATES = [
     {
@@ -82,7 +82,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "goodreads_history.wsgi.application"
+WSGI_APPLICATION = "goodreads.wsgi.application"
 
 # remove in production
 AUTH_PASSWORD_VALIDATORS = []
