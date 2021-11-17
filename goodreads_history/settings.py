@@ -27,12 +27,11 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "35.175.111.52",
-    "54.159.113.87",
     "localhost",
     "127.0.0.1",
     "0.0.0.0",
     "novelty-insights.com",
+    "www.novelty-insights.com"
 ]
 
 
