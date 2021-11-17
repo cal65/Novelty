@@ -1,4 +1,6 @@
 __pycache__
 env
 *.sqlite3
+novelty-multiple.pem
+noveltyenv/
 .DS_Store
