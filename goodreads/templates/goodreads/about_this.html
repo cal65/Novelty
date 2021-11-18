@@ -15,17 +15,11 @@
 	Later I discovered the book cataloguing website Goodreads. I realized here was a data repository that would have the data fields I wanted, as well as interesting new crowd-sourced insights made possible only by mass adoption. This includes the "shelf names", user-defined genres, as well as readership numbers. Goodreads allows users to export their books data, but it does not include a lot of these more insightful fields. I started building a pipeline to scrape those additional fields, and later added functions to look up the gender (via Wikipedia) and nationality (via Google) of the author. The pipeline generates plots of the reading data including a map of world authors and a plot facetted by popularity (the number of other users who have added this book to their account). I have been able to refine the graphs and the code with the help of a number of friends who have exported me their Goodreads data.
 	<br>
 	<br>
-	</div>
-	<div class = "info">
-		How does it work?
-	</div>
-	<br> <br>
-	<div class = "center">
-	This analysis is for those with a Goodreads account. You can add the books that you've read or want to read to your library on Goodreads. On the desktop verion of www.goodreads.com, you can go to <bold> My Books </bold>. There is a tab on the left - if you scroll to the bottom you should find "Import and Export".
-	<img style="width: 40%; height: 40%; margin-left: auto; margin-right: auto;" src="/static/admin/img/goodreads-export.png">
-	Click on this link. It will direct you to a page with "Export" at the top. Below there is a button "Export Library". Click on this button. In a few seconds, a link will then be generated called "My Export", and finally clicking on that link will download a csv of your Goodreads library.
+	This site is not about recommendations. Everyone else on the internet is already using your data to serve your "recommendations", so that you buy what they want you to buy. This site is about you profiting off of your data instead.
 	<br>
-	In the "Upload CSV" section of this site, upload that csv file. Then click Analyze. After a bit, depending on the number of books you've read, plots will be available under "Plots".
+	<br>
+	</div>
+
 </div>
 </body>
 {% endblock content %}
