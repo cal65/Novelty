@@ -28,7 +28,6 @@ def register(request):
 
             return redirect('user-login')
     else:
-        print('form not valid')
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
 
