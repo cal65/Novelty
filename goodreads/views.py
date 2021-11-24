@@ -14,13 +14,6 @@ from .scripts.append_to_export import convert_to_ExportData, database_append
 
 def run_script_function(request):
     user = request.user
-
-    print("running python script")
-    os.system(
-        f"python goodreads/scripts/append_to_export.py goodreads/Graphs/{user}/sample_export_{user}.csv --username {user} 3"
-    )
-
-    print("running R scripts")
     os.system("Rscript goodreads/scripts/runner.R {}".format(user))
 
 
