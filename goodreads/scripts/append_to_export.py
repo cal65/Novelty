@@ -24,9 +24,7 @@ def convert_to_ExportData(row, username):
     try:
         # check if ExportData table already has this book
         djangoObj = ExportData.objects.get(book_id=str(row.book_id), username=username)
-        print('book found')
     except:
-        print('book not found')
         djangoObj = ExportData()
     f_names = get_field_names(ExportData)
     common_fields = list(set(row.keys()).intersection(f_names))

@@ -1,10 +1,9 @@
 require(ggplot2)
 require(data.table)
-require(ggrepel)
 require(forcats)
 require(plyr)
 require(stringi)
-require(rworldmap)
+library(rnaturalearth) # for map data
 require(RColorBrewer)
 require(ggthemes)
 setwd(Sys.getenv('repo'))
