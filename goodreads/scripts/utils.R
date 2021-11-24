@@ -158,19 +158,22 @@ read_plot <- function(df,
   breaks <- c(0, 10^c(min_break : max_digits))
   df[[read_col]] <- as.numeric(df[[read_col]])
   df$title_length <- nchar(df[[title_col]])
-  df$text_size <- pmax(3, 70/df$title_length)
   # order title text by popularity
   df <- df[order(get(read_col))]
   df[[title_col]] <- factor(df[[title_col]], levels = unique(df[[title_col]]))
   labels = generate_labels(prettyNum(breaks, big.mark = ',', scientific=F))
   df$strats <- cut(df[[read_col]], breaks = breaks, 
                    labels = labels)
+  # 1 text size for each strat
+  text_sizes <- df[, .(text_size = 120/max(title_length)), by = strats]
+  df <- merge(df, text_sizes, by='strats', all.x=T)
+  
   ggplot(df, aes(x=strats, y=get(title_col))) +
     geom_tile(aes(fill=Narrative), color='black') +
     geom_text(aes(label = get(title_col), size = text_size)) +
     facet_wrap(strats ~ ., scales='free', nrow=1) +
     scale_fill_manual(values = c('hotpink2', 'darkolivegreen')) +
-    scale_size_continuous(guide = "none", range=c(3, 10)) +
+    scale_size_continuous(guide = "none", range=c(2, 5)) +
     xlab('Number of Readers') + 
     ylab('Title') +
     ggtitle(paste0('Readership Spectrum - ', name)) +
@@ -371,6 +374,11 @@ summary_plot <- function(dt, date_col,
   dev.off()
 }
 
+# define a summary theme for all summary plots
+theme_summary <- theme_pander() + 
+  theme(plot.background = element_rect(colour = "black", fill=NA, size=0.5),
+        plot.margin = unit(c(.2,.2,.2,.2), "cm")) 
+
 gender_bar_plot <- function(dt, gender_col, narrative_col, name){
   name <- gsub('_', ' ', name)
   dt[[gender_col]] <- mapvalues(dt[[gender_col]],
@@ -383,9 +391,10 @@ gender_bar_plot <- function(dt, gender_col, narrative_col, name){
     xlab('') +
     scale_fill_brewer('Gender', palette='Set1') +
     coord_flip() +
+    theme_summary +
     theme(legend.position = 'bottom', plot.title=element_text(hjust=1),
-          panel.border = element_rect(colour = "black", fill=NA, size=1)) + 
-    ggtitle('Summary Plots')
+          axis.text = element_text(size=12)) + 
+    ggtitle('Summary Plots  ')
 }
 
 nationality_bar_plot <- function(dt, authors_database, nationality_col='nationality_chosen'){
@@ -408,8 +417,8 @@ publication_histogram <- function(dt, date_col, start_year=1800){
   n_bins <- max(nrow(dt_sub) / 10, 10)
   ggplot(dt_sub) + geom_histogram(aes(x=get(date_col)), fill='black', bins=n_bins) + 
     theme_pander() +
-    xlab('Year of Publication') +
-    theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) 
+    xlab('Year of Publication') + ylab('Count') +
+    theme_summary 
 }
 
 genre_bar_plot <- function(dt, n_shelves=4, min_count=2){
@@ -423,7 +432,9 @@ genre_bar_plot <- function(dt, n_shelves=4, min_count=2){
   shelf_table_df$Shelf <- factor(shelf_table_df$Shelf, levels = shelf_table_df$Shelf)
   ggplot(shelf_table_df[Count > min_count]) + 
     geom_col(aes(x=Shelf, y=Count), color='black', fill='red') +
-    coord_flip() + theme_pander()
+    coord_flip() + theme_pander() + ylab('Number of Books') +
+    theme_summary +
+    theme(plot.title = element_text(hjust=0.5))
 }
 
 get_highest_rated_book <- function(dt, rating_col='average_rating', 
@@ -445,5 +456,5 @@ plot_highest_rated_books <- function(dt, n=10, rating_col='average_rating',
     xlab('Title') + ylab('Average Rating') +
     ylim(0, 5) +
     scale_fill_brewer(palette='Blues', 'Your Rating', type='seq') +
-    coord_flip() + theme_pander()
+    coord_flip() + theme_summary
 }
