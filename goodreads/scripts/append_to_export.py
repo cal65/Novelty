@@ -11,7 +11,9 @@ import django
 from ..models import ExportData, Authors, Books
 from . import scrape_goodreads
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(filename='logs.txt', 
+    filemode='a',
+    level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -55,7 +57,7 @@ def append_scraping(book_id, wait):
     """
     djangoBook = Books()
     book_fields = get_field_names(Books)
-    url = scrape_goodreads.create_url(book_id)
+    url = scrape_goodreads.create_url(str(book_id))
     scraped_dict = scrape_goodreads.get_stats(url, wait=wait)
     for k, v in scraped_dict.items():
         if k in book_fields:
