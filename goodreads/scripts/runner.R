@@ -67,4 +67,7 @@ generate_plots <- function(name){
                narrative_col='Narrative', nationality_col='nationality_chosen', 
                authors_database = authors_database, name = name)
 }
+
+# create folder in static
+dir.create(file.path('Novelty/goodreads/static/Graphs', name), showWarnings = FALSE)
 generate_plots(name)
