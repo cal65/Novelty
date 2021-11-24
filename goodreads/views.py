@@ -2,7 +2,9 @@ import io
 import os
 import csv
 import time
+from datetime import datetime
 import pandas as pd
+import csv
 from .models import ExportData
 from django.shortcuts import render
 from django.contrib import messages
@@ -183,12 +185,24 @@ def upload_view(request):
     # save csv file in database
     df = pd.read_csv(csv_file)
     df = process_export_upload(df)
+
+    # saving metrics
+    found = 0
+    not_found = 0
+    now = datetime.now()
     for _, row in df.iterrows():
         obj = convert_to_ExportData(row, str(user))
         # obj.create_or_update()
-        database_append(str(obj.book_id), str(user))
+        status = database_append(str(obj.book_id), str(user))
+        if status == 'found':
+            found += 1
+        else:
+            not_found += 1
 
     df.columns = df.columns.str.replace("_", ".")
+
+    #output metrics
+    write_metrics(user, time=now, found=found, not_found=not_found)
 
     # save csv file to user's folder
     try:
@@ -198,6 +212,13 @@ def upload_view(request):
         df.to_csv("goodreads/Graphs/{}/sample_export_{}.csv".format(user, user))
 
     return render(request, template, {"file_exists": file_exists})
+
+def write_metrics(user, time, found, not_found, file_path='metrics.csv'):
+    time_now = datetime.now()
+    fields=[user, time, time_now, found, not_found]
+    with open(file_path, 'a') as f:
+        writer = csv.writer(f)
+        writer.writerow(fields)
 
 
 ### Geography

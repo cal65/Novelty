@@ -73,15 +73,18 @@ def database_append(book_id, username, wait=4):
     export_fields = get_field_names(ExportData)
     try:
         djangoBook = Books.objects.get(book_id=book_id)
+        status = 'found'
     except:
         logger.info("Book not in database - must scrape")
         djangoBook = append_scraping(book_id, wait=wait)
+        status = 'not found'
 
     common_fields = book_fields.intersection(export_fields)
     for field in common_fields:
         setattr(djangoExport, field, getattr(djangoBook, field))
     djangoExport.save()
     logger.info(f"Book {djangoBook.book_id} updated in database")
+    return status
 
 
 def apply_append(file_path, username):
