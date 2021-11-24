@@ -147,6 +147,8 @@ def process_export_upload(df, date_col="Date_Read"):
     df[date_col] = pd.to_datetime(df[date_col])
     df.columns = df.columns.str.lower()
     df["number_of_pages"].fillna(0, inplace=True)
+    df['book_id'] = df['book_id'].astype(str)
+    df = df[pd.notnull(df['book_id'])]
     return df
 
 
