@@ -64,7 +64,7 @@ def get_stats(url, wait=0):
     try:
         n = navig.find(add_string)
     except Exception as exception:
-        print(str(exception) + " - for url: " + url)
+        logger.info(str(exception) + " - for url: " + url)
         return null_return
     added_by_raw = navig[(n + len(add_string)) : (n + len(add_string) + 9)]
     added_by_parsed = re.findall("\d+", added_by_raw)  # extract numbers

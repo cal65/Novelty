@@ -5,7 +5,7 @@ import numpy as np
 import sys
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(filename="logs.txt", filemode="a", level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 S = requests.Session()
@@ -53,7 +53,7 @@ def lookup_author_nationality(author):
     answers = [a for answer in answers for a in answer]  # flatten list
     answers = pd.unique(answers)
     if len(answers) == 0:
-        print("No results found for " + str(author))
+        logger.info("No results found for " + str(author))
     return answers
 
 

@@ -5,15 +5,14 @@ import re
 import logging
 import argparse
 from datetime import datetime
+
 sys.path.append("..")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
 import django
 from ..models import ExportData, Authors, Books
 from . import scrape_goodreads
 
-logging.basicConfig(filename='logs.txt', 
-    filemode='a',
-    level=logging.INFO)
+logging.basicConfig(filename="logs.txt", filemode="a", level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -21,6 +20,7 @@ def get_field_names(djangoClass):
     fields = djangoClass._meta.get_fields()
     f_names = [f.name for f in fields]
     return set(f_names)
+
 
 def convert_to_ExportData(row, username):
     try:
@@ -44,11 +44,16 @@ def convert_to_ExportData(row, username):
 
 def clean_df(goodreads_data):
     goodreads_data.columns = [c.replace(" ", "_") for c in goodreads_data.columns]
-    date_columns = [c for c in goodreads_data.columns if 'date' in c.lower()]
+    date_columns = [c for c in goodreads_data.columns if "date" in c.lower()]
     for c in date_columns:
-        goodreads_data[c] = pd.to_datetime(goodreads_data[c], errors='coerce')
-        goodreads_data[c] = goodreads_data[[c]].astype(object).where(goodreads_data[[c]].notnull(), None)
+        goodreads_data[c] = pd.to_datetime(goodreads_data[c], errors="coerce")
+        goodreads_data[c] = (
+            goodreads_data[[c]]
+            .astype(object)
+            .where(goodreads_data[[c]].notnull(), None)
+        )
     return goodreads_data
+
 
 def append_scraping(book_id, wait):
     """
@@ -73,11 +78,11 @@ def database_append(book_id, username, wait=4):
     export_fields = get_field_names(ExportData)
     try:
         djangoBook = Books.objects.get(book_id=book_id)
-        status = 'found'
+        status = "found"
     except:
         logger.info("Book not in database - must scrape")
         djangoBook = append_scraping(book_id, wait=wait)
-        status = 'not found'
+        status = "not found"
 
     common_fields = book_fields.intersection(export_fields)
     for field in common_fields:
@@ -89,7 +94,9 @@ def database_append(book_id, username, wait=4):
 
 def apply_append(file_path, username):
     goodreads_data = scrape_goodreads.read_goodreads_export(file_path)
-    goodreads_data.apply(lambda x: convert_to_ExportData(x, username=username).save(), axis=1)
+    goodreads_data.apply(
+        lambda x: convert_to_ExportData(x, username=username).save(), axis=1
+    )
     return append_scraping(goodreads_data)
 
 
@@ -147,7 +154,7 @@ def fix_date(file_path):
     This function ensures that the csv in a file path has the Date.Added and Date.Read columns in datetime
     """
     df = pd.read_csv(file_path)
-    date_columns = [c for c in df.columns if 'date' in c.lower()]
+    date_columns = [c for c in df.columns if "date" in c.lower()]
     for c in date_columns:
         df[c] = pd.to_datetime(df[c])
     df.to_csv(file_path, index=False)
