@@ -11,6 +11,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .scripts.append_to_export import convert_to_ExportData, database_append
 
+import logging
+
+logging.basicConfig(filename="logs.txt", filemode="a", level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 def run_script_function(request):
     user = request.user
@@ -20,7 +25,7 @@ def run_script_function(request):
 def py_script_function(request):
     user = request.user
     os.system(
-        "python goodreads/scripts/append_to_export.py goodreads/Graphs/{}/sample_export_{}.csv".format(
+        "python goodreads/scripts/append_to_export.py goodreads/Graphs/{}/export_{}.csv".format(
             user, user
         )
     )
@@ -34,8 +39,10 @@ def index(request):
         base_auth_template = "goodreads/base2.html"
     return render(request, "goodreads/home.html", {"basefile": base_auth_template})
 
+
 def books_home(request):
     return render(request, "goodreads/books_home.html")
+
 
 def about_this(request):
     return render(request, "goodreads/about_this.html")
@@ -68,8 +75,8 @@ def nationality_map_view(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def popularity_spectrum_view(request):
     username = request.user
-    popularity_spectrum_url = (
-        "goodreads/Graphs/{}/popularity_spectrum_{}.jpeg".format(username, username)
+    popularity_spectrum_url = "goodreads/Graphs/{}/popularity_spectrum_{}.jpeg".format(
+        username, username
     )
     return render(
         request,
@@ -90,14 +97,10 @@ def summary_plot_view(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def plots_view(request):
     username = request.user
-    finish_plot_url = "Graphs/{}/finish_plot_{}.jpeg".format(
+    finish_plot_url = "Graphs/{}/finish_plot_{}.jpeg".format(username, username)
+    nationality_map_url = "Graphs/{}/nationality_map_{}.jpeg".format(username, username)
+    popularity_spectrum_url = "Graphs/{}/popularity_spectrum_{}.jpeg".format(
         username, username
-    )
-    nationality_map_url = "Graphs/{}/nationality_map_{}.jpeg".format(
-        username, username
-    )
-    popularity_spectrum_url = (
-        "Graphs/{}/popularity_spectrum_{}.jpeg".format(username, username)
     )
     summary_plot_url = "Graphs/{}/Summary_plot.jpeg".format(username, username)
     return render(
@@ -140,8 +143,8 @@ def process_export_upload(df, date_col="Date_Read"):
     df[date_col] = pd.to_datetime(df[date_col])
     df.columns = df.columns.str.lower()
     df["number_of_pages"].fillna(0, inplace=True)
-    df['book_id'] = df['book_id'].astype(str)
-    df = df[pd.notnull(df['book_id'])]
+    df["book_id"] = df["book_id"].astype(str)
+    df = df[pd.notnull(df["book_id"])]
     return df
 
 
@@ -149,8 +152,9 @@ def process_export_upload(df, date_col="Date_Read"):
 def upload_view(request):
     template = "goodreads/csv_upload.html"
     user = request.user
+    logger.info(f"upload started for {user}")
     # check if user has uploaded a csv file before running the analysis
-    file_path = "goodreads/Graphs/{}/sample_export_{}.csv".format(user, user)
+    file_path = "goodreads/Graphs/{}/export_{}.csv".format(user, user)
     if os.path.isfile(file_path):
         file_exists = True
     else:
@@ -185,37 +189,39 @@ def upload_view(request):
     found = 0
     not_found = 0
     now = datetime.now()
+    logger.info(f"starting database addition for {str(len(df))} rows")
     for _, row in df.iterrows():
         obj = convert_to_ExportData(row, str(user))
         # obj.create_or_update()
         status = database_append(str(obj.book_id), str(user))
-        if status == 'found':
+        if status == "found":
             found += 1
         else:
             not_found += 1
 
     df.columns = df.columns.str.replace("_", ".")
 
-    #output metrics
+    # output metrics
     write_metrics(user, time=now, found=found, not_found=not_found)
 
     # save csv file to user's folder
     try:
-        df.to_csv("goodreads/Graphs/{}/sample_export_{}.csv".format(user, user))
+        df.to_csv("goodreads/Graphs/{}/export_{}.csv".format(user, user))
     except OSError:
         os.mkdir("goodreads/Graphs/{}".format(user))
-        df.to_csv("goodreads/Graphs/{}/sample_export_{}.csv".format(user, user))
+        df.to_csv("goodreads/Graphs/{}/export_{}.csv".format(user, user))
 
     return render(request, template, {"file_exists": file_exists})
 
-def write_metrics(user, time, found, not_found, file_path='metrics.csv'):
+
+def write_metrics(user, time, found, not_found, file_path="metrics.csv"):
     time_now = datetime.now()
-    fields=[user, time, time_now, found, not_found]
-    with open(file_path, 'a') as f:
+    fields = [user, time, time_now, found, not_found]
+    with open(file_path, "a") as f:
         writer = csv.writer(f)
         writer.writerow(fields)
 
 
 ### Geography
 def geography(request):
-    return render(request, "goodreads/geography.html")   
+    return render(request, "goodreads/geography.html")
