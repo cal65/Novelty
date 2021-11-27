@@ -181,7 +181,7 @@ read_plot <- function(df,
           plot.title = element_text(hjust=0.5),
           panel.background = element_blank())
   if (plot){
-    ggsave(paste0('Novelty/goodreads/static/Graphs/', name, '/', plot_name, name, '.jpeg'), width = 16, height=9)
+    ggsave(paste0('Novelty/goodreads/static/Graphs/', name, '/', plot_name, name, '.jpeg'), width = 16, height=12)
   }
 }
 
@@ -443,18 +443,98 @@ get_highest_rated_book <- function(dt, rating_col='average_rating',
   return (paste0(most_popular, collapse = ': '))
 }
 
-plot_highest_rated_books <- function(dt, n=10, rating_col='average_rating',
-                                     my_rating_col='my_rating',
-                                     title_col='title.simple'){
+plot_highest_rated_books <- function(dt, n=10, rating_col='Average.Rating',
+                                     my_rating_col='My.Rating',
+                                     title_col='Title.Simple'){
   highest <- tail(dt[order(get(rating_col))], n)
   highest[[title_col]] <- factor(highest[[(title_col)]],
-                                     levels = unique(highest[[(title_col)]]))
+                                 levels = unique(highest[[(title_col)]]))
   highest[[my_rating_col]] <- as.factor(highest[[my_rating_col]])
-  ggplot(highest, aes(x=title.simple)) + 
+  ggplot(highest, aes(x=Title.Simple)) + 
     geom_col(aes(y=get(rating_col), fill=get(my_rating_col))) +
-      geom_text(aes(y=get(rating_col)/2, label=get(rating_col))) +
+    geom_text(aes(y=get(rating_col)/2, label=get(rating_col))) +
     xlab('Title') + ylab('Average Rating') +
     ylim(0, 5) +
     scale_fill_brewer(palette='Blues', 'Your Rating', type='seq') +
     coord_flip() + theme_summary
+}
+
+plot_longest_books <- function(dt, n=15, pages_col='Number.of.Pages', 
+                               title_col='Title.Simple',
+                               my_rating_col='My.Rating'){
+  
+  highest <- tail(dt[!is.na(get(pages_col))][order(get(pages_col))], n)
+  highest[[title_col]] <- factor(highest[[(title_col)]],
+                                 levels = unique(highest[[(title_col)]]))
+  highest[[my_rating_col]] <- as.factor(highest[[my_rating_col]])
+  ggplot(highest, aes(x=Title.Simple)) + 
+    geom_col(aes(y=get(pages_col), fill=get(my_rating_col))) +
+    geom_text(aes(y=get(pages_col)/2, label=get(pages_col))) +
+    xlab('') + ylab('Number of Pages') +
+    scale_fill_brewer(palette='Blues', 'Your Rating', type='seq') +
+    coord_flip() + theme_summary +
+    theme(plot.title = element_text(hjust=0.5))
+}
+
+yearly_gender_graph <- function(dt, name, date_col, gender_col, year_start=NA,
+                                plot_name="gender_breakdown_by_year_", save=F){
+  dt$Year.Read <- as.numeric(format(dt[[date_col]], '%Y'))
+  if (length(unique(dt$Year.Read)) < 2) {
+    print("Not enough years to graph")
+    return()
+  }
+  if (!is.na(year_start)){
+    dt <- dt[Year.Read >= year_start]
+  }
+  min_year = min(dt$Year.Read, na.rm=T)
+  max_year = max(dt$Year.Read, na.rm=T)
+  ggplot(dt) + 
+    geom_bar(aes(x=get(gender_col), fill=get(gender_col)), 
+             position = position_dodge2(0.7, preserve = 'single')) +
+    scale_fill_brewer(palette='Set1', 'Author Gender') +
+    facet_grid(. ~ Year.Read) +
+    theme_pander() + xlab('') +
+    ggtitle('Gender Breakdown by Year') +
+    theme(axis.text.x=element_blank(), axis.title.x = element_blank(), 
+          panel.border=element_rect(colour="black",size=1),
+          plot.title = element_text(hjust=0.5))
+  if (save==T){
+    print("Saving yearly gender breakdown plot")
+    ggsave(paste0('Graphs/', name, '/', plot_name, name, '.jpeg'), width=14, height=8)
+  }
+}
+
+graph_list <- function(dt, list_name, plot_name, save=F){
+  top_list_df <- fread(list_name)
+  # merging just by Book.Id may miss near matches with similar titles
+  # for now, check if titles are the same and change the book.id
+  top_list_df$Title.Upper <- toupper(top_list_df$Title)
+  
+  dt$Title.Upper <- toupper(dt$Title.Simple)
+  dt$Title.Upper <- gsub('-', ' ', df$Title.Upper)
+  top_list_df$Title.Upper <- gsub('-', ' ', top_list_df$Title.Upper)
+  dt$Match <- dt$Book.Id %in% top_list_df$Book.Id
+  unmatched_titles <- dt[Match==F & Title.Upper %in% top_list_df$Title.Upper]$Title.Upper
+  for (title in unmatched_titles){
+    dt[Title.Upper==title]$Book.Id <- top_list_df[Title.Upper == title]$Book.Id
+  }
+  top_books <- merge(top_list_df, dt[,c('Book.Id', 'Source', 'gender', 'Date.Read')], 
+                     by='Book.Id', all.x=T)
+  setDT(top_books)
+  top_books$Read <- ifelse(is.na(top_books$Source), F, T)
+  top_books$Year.Read <- format(top_books$Date.Read, '%Y')
+  palette <- c('grey40', 'Purple')
+  plot_title <- gsub('_', ' ', plot_name)
+  ggplot(top_books, aes(x=1, y=Title)) +
+    geom_tile(aes(fill=Read), color='black') +
+    geom_text(aes(label=Year.Read)) +
+    facet_wrap(Facet ~ ., scales='free') +
+    scale_fill_manual(values = palette) +
+    ggtitle(paste0(plot_title, ' - ', name)) +
+    theme_pander() +
+    theme(axis.text.x = element_blank(), plot.title=element_text(hjust=0.5),
+          axis.title.x = element_blank())
+  if (save == T){
+    ggsave(paste0('Graphs/', name, '/', plot_name, '_', name, '.jpeg'), width=9.5, height=7)
+  }
 }
