@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 def run_script_function(request):
     user = request.user
+    logger.info(f"Running graphs for user {user} based on request {request.method}")
     os.system("Rscript goodreads/scripts/runner.R {}".format(user))
 
 
