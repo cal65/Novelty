@@ -193,7 +193,6 @@ def upload_view(request):
     logger.info(f"starting database addition for {str(len(df))} rows")
     for _, row in df.iterrows():
         obj = convert_to_ExportData(row, str(user))
-        # obj.create_or_update()
         status = database_append(str(obj.book_id), str(user))
         if status == "found":
             found += 1

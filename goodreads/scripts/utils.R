@@ -389,7 +389,9 @@ gender_bar_plot <- function(dt, gender_col, narrative_col, name){
     geom_bar(aes(x=get(narrative_col), fill=get(gender_col)), position=position_dodge()) +
     theme_pander() +
     xlab('') +
-    scale_fill_brewer('Gender', palette='Set1') +
+    scale_fill_manual('Gender', values = c('blue', 'red', 'green'),
+                      labels = c('male', 'female', 'unknown or other'),
+                      drop = F) +
     coord_flip() +
     theme_summary +
     theme(legend.position = 'bottom', plot.title=element_text(hjust=1),
