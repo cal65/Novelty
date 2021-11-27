@@ -279,7 +279,7 @@ plot_map_data <- function(df, region_dict, world_df, user, country_col = 'nation
   ggplot(world_df) + 
     geom_polygon((aes(x=long, y=lat, group=group, fill=count))) +
     scale_fill_gradientn(name = "count", trans = "log", breaks=my_breaks,
-                        colors=rev(brewer.pal(8, 'RdBu'))) +
+                        colors=rev(brewer.pal(9, 'YlOrRd'))) +
     ggtitle(paste0('Author Nationality Map - ', user)) +
     theme_pander() + theme(plot.title=element_text(hjust=0.5), 
                            legend.position = 'bottom', legend.key.width = unit(1.5, 'cm')) 

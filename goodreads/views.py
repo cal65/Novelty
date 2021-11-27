@@ -131,9 +131,9 @@ def runscript(request):
         run_script_function(request)
 
     if request.method == "POST" and "pythonscript" in request.POST:
-        print("running python script")
+        logger.info("running python script")
         py_script_function(request)
-    return render(request, "goodreads/run.html")
+    return plots_view(request)
 
 
 def process_export_upload(df, date_col="Date_Read"):
