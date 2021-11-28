@@ -72,7 +72,7 @@ def append_scraping(book_id, wait):
     return djangoBook
 
 
-def database_append(book_id, username, wait=4):
+def database_append(book_id, username, wait=2):
     djangoExport = ExportData.objects.get(book_id=book_id, username=username)
     book_fields = get_field_names(Books)
     export_fields = get_field_names(ExportData)
