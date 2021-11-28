@@ -269,7 +269,6 @@ merge_nationalities <- function(df, authors_db, country_col = 'Country.Chosen'){
 }
 
 plot_map_data <- function(df, region_dict, world_df, user, country_col = 'nationality_chosen'){
-  print(df)
   country_df <- merge(df, region_dict, by.x='nationality_chosen', by.y='nationality', all.x=T)
   regions_count <- data.frame(table(country_df$region))
   names(regions_count) <- c('region', 'count')

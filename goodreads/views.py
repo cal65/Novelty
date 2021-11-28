@@ -48,6 +48,7 @@ def books_home(request):
 def about_this(request):
     return render(request, "goodreads/about_this.html")
 
+
 def faq(request):
     return render(request, "goodreads/faq.html")
 
