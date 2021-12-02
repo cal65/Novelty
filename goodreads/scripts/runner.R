@@ -28,7 +28,8 @@ generate_plots <- function(name){
                            on e.author = a.author_name where e.username = '", name, "'")
   dt <- setDT(dbGetQuery(con, query))
   dt <- run_all(dt)
-  dt$Source <- name
+  dt$source <- name
+  print(head(dt))
   dir.create(paste0('Novelty/goodreads/static/Graphs/', name), showWarnings = F)
   # # update the authors database based on potential new data from dt
   # authors_database <- update_authors_artifact(authors_database, dt)
@@ -38,7 +39,7 @@ generate_plots <- function(name){
   #   authors_database$gender_fixed, warn_missing = F)
   # read plot
   read_plot(dt, name=name, 
-            read_col='read', title_col = 'title.simple', plot=T)
+            read_col='read', title_col = 'title_simple', plot=T)
   # finish plot
   finish_plot(dt, name = name, plot=T)
   # plot world maps
@@ -52,15 +53,15 @@ generate_plots <- function(name){
   # cannot do genre plot with just an individual's data. To figure out better path
   # month plot
   if (length(unique(dt$date.read) > 2)){
-    month_plot(dt, name=name, date_col='date.read', 
-               page_col='number.of.pages', title_col='title.simple',
+    month_plot(dt, name=name, date_col='date_read', 
+               page_col='number_of_pages', title_col='title_simple',
                author_gender_col='gender', lims=c(2010, 2022), save=T)
   }
 
   # # year plot
   year_plot(dt, name=name, fiction_col='Narrative', 
             date_col='date_read', page_col='number_of_pages', 
-            title_col='title.simple', author_gender_col='gender', save=T)
+            title_col='title_simple', author_gender_col='gender', save=T)
   # # summary plot
   summary_plot(dt, date_col='original_publication_year', gender_col = 'gender', 
                narrative_col='Narrative', nationality_col='nationality_chosen', 
