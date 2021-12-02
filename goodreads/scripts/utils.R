@@ -14,8 +14,8 @@ preprocess <- function(dt){
                                        to = c('male', 'female'), warn_missing = FALSE)
   names(dt) <- gsub(' ', '.', names(dt))
   dt$date_read <- as.Date(dt$date_read, format = '%Y-%m-%d')
-  dt$title.simple <- gsub(':.*', '', dt$title)
-  dt$title.simple <- gsub('\\(.*\\)', '', dt$title.simple)
+  dt$title_simple <- gsub(':.*', '', dt$title)
+  dt$title_simple <- gsub('\\(.*\\)', '', dt$title_simple)
   
   return(dt)
 }
@@ -150,6 +150,7 @@ read_plot <- function(df,
   max_read <- as.integer(max(df[[read_col]], na.rm=T))
   df <- df[!is.na(get(read_col))]
   if (!is.na(start_year)){
+    print(start_year)
     start_date <- as.Date(paste0(start_year, '-01-01'))
     df <- df[get(date_col) > start_date]
   }
@@ -196,9 +197,9 @@ finish_plot <- function(df,
   df_read <- df_read[!is.na(get(read_col))]
   # keep only bottom n
   df_read <- head(df_read, n)
-  df_read$title.simple <- factor(df_read$title.simple,
-                                 levels = unique(df_read$title.simple))
-  ggplot(df_read, aes(x=title.simple)) +
+  df_read$title_simple <- factor(df_read$title_simple,
+                                 levels = unique(df_read$title_simple))
+  ggplot(df_read, aes(x=title_simple)) +
     geom_col(aes( y=1), fill='Dark Blue') +
        geom_col(aes( y=get(read_col)), fill='red') +
     geom_text(aes(y=get(read_col)/2, label = paste0(read, ' / ', added_by)), 
@@ -278,7 +279,7 @@ plot_map_data <- function(df, region_dict, world_df, user, country_col = 'nation
   ggplot(world_df) + 
     geom_polygon((aes(x=long, y=lat, group=group, fill=count))) +
     scale_fill_gradientn(name = "count", trans = "log", breaks=my_breaks,
-                        colors=rev(brewer.pal(9, 'YlOrRd'))) +
+                        colors=brewer.pal(9, 'YlOrRd')) +
     ggtitle(paste0('Author Nationality Map - ', user)) +
     theme_pander() + theme(plot.title=element_text(hjust=0.5), 
                            legend.position = 'bottom', legend.key.width = unit(1.5, 'cm')) 
@@ -439,19 +440,19 @@ genre_bar_plot <- function(dt, n_shelves=4, min_count=2){
 }
 
 get_highest_rated_book <- function(dt, rating_col='average_rating', 
-                                   title_col='title.simple', author_col='author'){
+                                   title_col='title_simple', author_col='author'){
   most_popular <- dt[which.max(get(rating_col))][, c((author_col), (title_col)), with=F]
   return (paste0(most_popular, collapse = ': '))
 }
 
-plot_highest_rated_books <- function(dt, n=10, rating_col='Average.Rating',
-                                     my_rating_col='My.Rating',
-                                     title_col='Title.Simple'){
+plot_highest_rated_books <- function(dt, n=10, rating_col='average_rating',
+                                     my_rating_col='my_rating',
+                                     title_col='title_simple'){
   highest <- tail(dt[order(get(rating_col))], n)
   highest[[title_col]] <- factor(highest[[(title_col)]],
                                  levels = unique(highest[[(title_col)]]))
   highest[[my_rating_col]] <- as.factor(highest[[my_rating_col]])
-  ggplot(highest, aes(x=Title.Simple)) + 
+  ggplot(highest, aes(x=title_simple)) + 
     geom_col(aes(y=get(rating_col), fill=get(my_rating_col))) +
     geom_text(aes(y=get(rating_col)/2, label=get(rating_col))) +
     xlab('Title') + ylab('Average Rating') +
@@ -460,15 +461,15 @@ plot_highest_rated_books <- function(dt, n=10, rating_col='Average.Rating',
     coord_flip() + theme_summary
 }
 
-plot_longest_books <- function(dt, n=15, pages_col='Number.of.Pages', 
-                               title_col='Title.Simple',
+plot_longest_books <- function(dt, n=15, pages_col='number_of_pages', 
+                               title_col='title_simple',
                                my_rating_col='My.Rating'){
   
   highest <- tail(dt[!is.na(get(pages_col))][order(get(pages_col))], n)
   highest[[title_col]] <- factor(highest[[(title_col)]],
                                  levels = unique(highest[[(title_col)]]))
   highest[[my_rating_col]] <- as.factor(highest[[my_rating_col]])
-  ggplot(highest, aes(x=Title.Simple)) + 
+  ggplot(highest, aes(x=title_simple)) + 
     geom_col(aes(y=get(pages_col), fill=get(my_rating_col))) +
     geom_text(aes(y=get(pages_col)/2, label=get(pages_col))) +
     xlab('') + ylab('Number of Pages') +
@@ -511,7 +512,7 @@ graph_list <- function(dt, list_name, plot_name, save=F){
   # for now, check if titles are the same and change the book.id
   top_list_df$Title.Upper <- toupper(top_list_df$Title)
   
-  dt$Title.Upper <- toupper(dt$Title.Simple)
+  dt$Title.Upper <- toupper(dt$title_simple)
   dt$Title.Upper <- gsub('-', ' ', df$Title.Upper)
   top_list_df$Title.Upper <- gsub('-', ' ', top_list_df$Title.Upper)
   dt$Match <- dt$Book.Id %in% top_list_df$Book.Id
@@ -526,7 +527,7 @@ graph_list <- function(dt, list_name, plot_name, save=F){
   top_books$Year.Read <- format(top_books$Date.Read, '%Y')
   palette <- c('grey40', 'Purple')
   plot_title <- gsub('_', ' ', plot_name)
-  ggplot(top_books, aes(x=1, y=Title)) +
+  ggplot(top_books, aes(x=1, y=title)) +
     geom_tile(aes(fill=Read), color='black') +
     geom_text(aes(label=Year.Read)) +
     facet_wrap(Facet ~ ., scales='free') +
