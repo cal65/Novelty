@@ -463,7 +463,7 @@ plot_highest_rated_books <- function(dt, n=10, rating_col='average_rating',
 
 plot_longest_books <- function(dt, n=15, pages_col='number_of_pages', 
                                title_col='title_simple',
-                               my_rating_col='My.Rating'){
+                               my_rating_col='my_rating'){
   
   highest <- tail(dt[!is.na(get(pages_col))][order(get(pages_col))], n)
   highest[[title_col]] <- factor(highest[[(title_col)]],
