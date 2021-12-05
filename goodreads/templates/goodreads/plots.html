@@ -2,7 +2,36 @@
 {% load static %}
 
 {% block content %}
-<div class="center">
+<script>
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    function reanalyze(){
+        const csrftoken = getCookie('csrftoken');
+        $.post({ 
+            url: "/run-script/", 
+            data: {runscript:true}, 
+            headers: { "X-CSRFToken": csrftoken } })
+        .done(response => console.log("done!", response))
+    }
+</script>
+<button onclick="reanalyze()" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 pb-2 px-4 rounded">
+                Re-Analyze
+</button>
+<div class="center-text">
+    <br>
 	<p>
         Welcome to your plots!
     This opening graph shows some summary statistics about your library. How much fiction and non-fiction do you read? How does that look in terms of the authors' genders? When were your books written?
@@ -12,21 +41,22 @@
     <div style="display: flex; justify-content: center;">
         <img style="width: 80%; height: 650px;" src="{% static summary_plot_url %}" %}" class="text-center" alt="summary-plot" />
     </div>
-    <div class="center center-text">
-    <p>
-    This shows the books that are the least commonly finished in your library.
-    The numbers represent how many people marked a book as "to read" and the number that marked it is "finished"
-</p> </div>
+
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">FINISH PLOT IMAGE</div>
     <div style="display: flex; justify-content: center;">
         <img style="width: 80%; height: 650px;" src="{% static finish_plot_url %}" %}" class="text-center" alt="finish-plot" />
     </div>
-    <div class="center">
-    	This shows the number of Goodreads users who have read this book, or its popularity. It is divided into logarithmic tiers.
-    </div>
+    <div class="center-text">
+    <p>
+    This shows the books that are the least commonly finished in your library.
+    The numbers represent how many people marked a book as "to read" and the number that marked it is "finished"
+</p> </div>
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">POPULARITY SPECTRUM IMAGE</div>
     <div style="display: flex; justify-content: center;">
         <img style="width: 80%; height: 650px;" src="{% static popularity_spectrum_url %}" %}" class="text-center" alt="popularity-spectrum" />
+    </div>
+        <div class="center-text">
+        This shows the number of Goodreads users who have read this book, or its popularity. It is divided into logarithmic tiers.
     </div>
     <div class="center">
         This shows a map of the countries where the authors you have read represent.
@@ -35,5 +65,6 @@
     <div style="display: flex; justify-content: center;">
         <img style="width: 80%; height: 650px;" src="{% static nationality_map_url %}" %}" class="text-center" alt="nationality-map" />
     </div>
+    <br><br><br>
 
 {% endblock content %}

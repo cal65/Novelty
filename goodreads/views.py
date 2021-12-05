@@ -108,6 +108,9 @@ def plots_view(request):
         username, username
     )
     summary_plot_url = "Graphs/{}/Summary_plot.jpeg".format(username, username)
+
+    if "run_script_function" in request.POST:
+        run_script_function(request)
     return render(
         request,
         "goodreads/plots.html",
@@ -132,6 +135,7 @@ def yearly_pages_read_view(request):
 
 
 def runscript(request):
+    logger.info(f"Running script with request method {request.method}")
     if request.method == "POST" and "runscript" in request.POST:
         run_script_function(request)
 
@@ -171,6 +175,7 @@ def upload_view(request):
     # run analysis when user clicks on Analyze button
     if request.method == "POST" and "runscript" in request.POST:
         if os.path.isfile(file_path):
+            logger.info(f"Got running with request {request.method}")
             run_script_function(request)
             return render(request, template, {"file_exists": file_exists})
         else:
