@@ -41,6 +41,22 @@ def convert_to_ExportData(row, username):
     djangoObj.save()
     return djangoObj
 
+def convert_to_Authors(row):
+    name = row.author
+    if Authors.objects.filter(author_name == name).exists()
+        return
+    else:
+            djangoObj = Author()
+            djangoObj.author_name = name
+            lookup_gender(name)
+            lookup_nationality(name)
+
+def lookup_gender(name):
+    return
+
+def lookup_nationality(name):
+    return
+
 
 def clean_df(goodreads_data):
     goodreads_data.columns = [c.replace(" ", "_") for c in goodreads_data.columns]
