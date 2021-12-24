@@ -4,7 +4,7 @@ from celery import Celery
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'goodreads.settings')
 
-app = Celery('proj')
+app = Celery('goodreads')
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
 # - namespace='CELERY' means all celery-related configuration keys

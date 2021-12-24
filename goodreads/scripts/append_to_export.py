@@ -43,7 +43,7 @@ def convert_to_ExportData(row, username):
 
 def convert_to_Authors(row):
     name = row.author
-    if Authors.objects.filter(author_name == name).exists()
+    if Authors.objects.filter(author_name == name).exists():
         return
     else:
             djangoObj = Author()

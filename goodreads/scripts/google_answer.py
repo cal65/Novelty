@@ -66,14 +66,16 @@ def convert_nats_list_to_df(nats_list):
     columns = ["author"] + ["nationality_" + str(i) for i in np.arange(1, max_nat + 1)]
     output_dicts = []
     for nationality in nats_list:
-        output_dict = {}
+        # create a dictionary with keys nationality1, nationality2 etc.
+        indiv_dict = {}
         for i in np.arange(0, max_nat):
             c = "nationality" + str(i + 1)
             if i < len(nationality):
-                output_dict[c] = [nationality[i]]
+                indiv_dict[c] = [nationality[i]]
             else:
-                output_dict[c] = [None]
-        output_dicts.append(pd.DataFrame(output_dict))
+                indiv_dict[c] = [None]
+        # combine dicts as dataframes
+        output_dicts.append(pd.DataFrame(indiv_dict))
     return pd.concat(output_dicts).reset_index(drop=True)
 
 

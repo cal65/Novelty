@@ -1,10 +1,9 @@
 import io
 import os
-import csv
 import time
 from datetime import datetime
 import pandas as pd
-import csv
+from multiprocessing import Pool
 from .models import ExportData
 from django.shortcuts import render
 from django.contrib import messages
