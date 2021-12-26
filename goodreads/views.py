@@ -1,9 +1,10 @@
 import io
 import os
 import time
+import csv
 from datetime import datetime
 import pandas as pd
-from multiprocessing import Pool
+from multiprocessing import Pool, Process
 from .models import ExportData
 from django.shortcuts import render
 from django.contrib import messages
@@ -155,6 +156,22 @@ def process_export_upload(df, date_col="Date_Read"):
     df = df[pd.notnull(df["book_id"])]
     return df
 
+def insert_dataframe_into_database(df, user, metrics=True):
+    found = 0
+    not_found = 0
+    now = datetime.now()
+    for _, row in df.iterrows():
+        obj = convert_to_ExportData(row, str(user))
+        status = database_append(str(obj.book_id), str(user))
+        if metrics:
+            if status == "found":
+                found += 1
+            else:
+                not_found += 1
+    if metrics:
+        # output metrics
+        write_metrics(user, time=now, found=found, not_found=not_found)
+
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def upload_view(request):
@@ -194,23 +211,14 @@ def upload_view(request):
     df = pd.read_csv(csv_file)
     df = process_export_upload(df)
 
-    # saving metrics
-    found = 0
-    not_found = 0
-    now = datetime.now()
+
     logger.info(f"starting database addition for {str(len(df))} rows")
-    for _, row in df.iterrows():
-        obj = convert_to_ExportData(row, str(user))
-        status = database_append(str(obj.book_id), str(user))
-        if status == "found":
-            found += 1
-        else:
-            not_found += 1
+    p = Process(target = insert_dataframe_into_database, args =(df, user, True))
+    #params = [*zip(df, [user]*len(df), [True]*len(df))]
+    p.start()
 
     df.columns = df.columns.str.replace("_", ".")
-
-    # output metrics
-    write_metrics(user, time=now, found=found, not_found=not_found)
+    
 
     # save csv file to user's folder
     try:

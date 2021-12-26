@@ -11,6 +11,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
 import django
 from ..models import ExportData, Authors, Books
 from . import scrape_goodreads
+from goodreads import google_answer
 
 logging.basicConfig(filename="logs.txt", filemode="a", level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -55,7 +56,8 @@ def lookup_gender(name):
     return
 
 def lookup_nationality(name):
-    return
+    nationalities = google_answer.lookup_author_nationality(name)
+    return nationalities
 
 
 def clean_df(goodreads_data):
@@ -89,6 +91,12 @@ def append_scraping(book_id, wait):
 
 
 def database_append(book_id, username, wait=2):
+    """
+    If book is in books table, return status "found"
+    If book is not in books table, scrape it, add the scraped fields to the books table, return status "not found"
+    Add the scraped fields to the exportdata table
+    Save to user goodreads exportdata table
+    """
     djangoExport = ExportData.objects.get(book_id=book_id, username=username)
     book_fields = get_field_names(Books)
     export_fields = get_field_names(ExportData)
