@@ -156,6 +156,7 @@ def process_export_upload(df, date_col="Date_Read"):
     df = df[pd.notnull(df["book_id"])]
     return df
 
+
 def insert_dataframe_into_database(df, user, metrics=True):
     found = 0
     not_found = 0
@@ -211,14 +212,12 @@ def upload_view(request):
     df = pd.read_csv(csv_file)
     df = process_export_upload(df)
 
-
     logger.info(f"starting database addition for {str(len(df))} rows")
-    p = Process(target = insert_dataframe_into_database, args =(df, user, True))
-    #params = [*zip(df, [user]*len(df), [True]*len(df))]
+    p = Process(target=insert_dataframe_into_database, args=(df, user, True))
+    # params = [*zip(df, [user]*len(df), [True]*len(df))]
     p.start()
 
     df.columns = df.columns.str.replace("_", ".")
-    
 
     # save csv file to user's folder
     try:

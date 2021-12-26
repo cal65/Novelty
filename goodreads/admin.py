@@ -22,6 +22,7 @@ class ExportDataAdmin(admin.ModelAdmin):
         "username",
     )
 
+
 @admin.register(Authors)
 class AuthorsAdmin(admin.ModelAdmin):
     list_display = (

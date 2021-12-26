@@ -1,9 +1,11 @@
 from django.db import models
 
+
 class ExportData(models.Model):
     class Meta:
         managed = True
-        models.UniqueConstraint(fields=['book_id', 'username'], name='book_per_user')
+        models.UniqueConstraint(fields=["book_id", "username"], name="book_per_user")
+
     book_id = models.CharField(max_length=250)
     title = models.CharField(max_length=250)
     author = models.CharField(max_length=250)
