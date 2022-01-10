@@ -47,7 +47,7 @@ def convert_to_Authors(row):
     if Authors.objects.filter(author_name == name).exists():
         return
     else:
-            djangoObj = Author()
+            djangoObj = Authors()
             djangoObj.author_name = name
             lookup_gender(name)
             lookup_nationality(name)
@@ -90,14 +90,14 @@ def append_scraping(book_id, wait):
     return djangoBook
 
 
-def database_append(book_id, username, wait=2):
+def database_append(djangoExport, wait=2):
     """
     If book is in books table, return status "found"
     If book is not in books table, scrape it, add the scraped fields to the books table, return status "not found"
     Add the scraped fields to the exportdata table
     Save to user goodreads exportdata table
     """
-    djangoExport = ExportData.objects.get(book_id=book_id, username=username)
+    book_id = djangoExport.book_id
     book_fields = get_field_names(Books)
     export_fields = get_field_names(ExportData)
     try:

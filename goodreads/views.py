@@ -1,4 +1,3 @@
-import io
 import os
 import time
 import csv
@@ -6,6 +5,7 @@ from datetime import datetime
 import pandas as pd
 from multiprocessing import Pool, Process
 from .models import ExportData
+import concurrent.futures
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -157,13 +157,15 @@ def process_export_upload(df, date_col="Date_Read"):
     return df
 
 
-def insert_dataframe_into_database(df, user, metrics=True):
+def insert_dataframe_into_database(df, user, wait=2, metrics=True):
     found = 0
     not_found = 0
     now = datetime.now()
     for _, row in df.iterrows():
+        # save book csv info to exportdata table
         obj = convert_to_ExportData(row, str(user))
-        status = database_append(str(obj.book_id), str(user))
+        # if book is not in books table, scrape it and save additional parameters
+        status = database_append(obj, wait=wait)
         if metrics:
             if status == "found":
                 found += 1
@@ -172,6 +174,13 @@ def insert_dataframe_into_database(df, user, metrics=True):
     if metrics:
         # output metrics
         write_metrics(user, time=now, found=found, not_found=not_found)
+
+def  insert_row_into_db(row, user, wait=2):
+    # save row info to exportdata table
+    obj = convert_to_ExportData(row, str(user))
+    # if book is not in books table, scrape it and save additional parameters
+    status = database_append(obj, wait=wait)
+    return status
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
@@ -213,9 +222,12 @@ def upload_view(request):
     df = process_export_upload(df)
 
     logger.info(f"starting database addition for {str(len(df))} rows")
-    p = Process(target=insert_dataframe_into_database, args=(df, user, True))
-    # params = [*zip(df, [user]*len(df), [True]*len(df))]
-    p.start()
+    num_processes = 8
+    pool = concurrent.futures.ProcessPoolExecutor(num_processes)
+    df_rows = df.values.tolist()
+    # asynchronously insert rows into db
+    pool.map(insert_row_into_db, df_rows, [user]*len(df), [2]*len(df))
+
 
     df.columns = df.columns.str.replace("_", ".")
 
