@@ -254,9 +254,6 @@ update_authors_artifact <- function(artifact, df_new, id_col='Author', gender_co
   system('/home/bitnami/Reading-History/Novelty/env/bin/python goodreads/scripts/google_answer.py goodreads/scripts/new_authors_data.csv')
   system('/home/bitnami/Reading-History/Novelty/env/bin/python goodreads/scripts/choose_nationality.py goodreads/scripts/new_authors_data.csv')
   system('/home/bitnami/Reading-History/Novelty/env/bin/python goodreads/scripts/wikipedia.py goodreads/scripts/new_authors_data.csv')
-  # system('/Users/apple/opt/anaconda3/bin/python goodreads/scripts/google_answer.py goodreads/scripts/new_authors_data.csv')
-  # system('/Users/apple/opt/anaconda3/bin/python goodreads/scripts/choose_nationality.py goodreads/scripts/new_authors_data.csv')
-  # system('/Users/apple/opt/anaconda3/bin/python goodreads/scripts/wikipedia.py goodreads/scripts/new_authors_data.csv')
   new_data <- read.csv('goodreads/scripts/new_authors_data.csv')
   artifact <- rbind.fill(artifact, new_data)
   # because of the multiple programming languages, have this awkward write python read pipeline
