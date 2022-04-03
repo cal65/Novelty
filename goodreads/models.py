@@ -24,6 +24,7 @@ class ExportData(models.Model):
     to_reads = models.IntegerField(blank=True, null=True, default=0)
     narrative = models.CharField(max_length=250, null=True)
     date_read = models.DateField(auto_now=False, blank=True, null=True)
+    exclusive_shelf = models.CharField(max_length=30, default="read")
     username = models.CharField(max_length=30, default="Random")
     ts_updated = models.DateTimeField(auto_now=True)
     # author_l_f = models.CharField(max_length=250)
@@ -33,7 +34,7 @@ class ExportData(models.Model):
     # publisher = models.CharField(max_length=250)
     # binding = models.CharField(max_length=250)
     # year_published = models.CharField(max_length=250)
-    # exclusive_shelf = models.CharField(max_length=250)
+
     # my_review = models.TextField()
     # spoiler = models.CharField(max_length=2500)
     # private_notes = models.CharField(max_length=2500)
