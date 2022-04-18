@@ -520,10 +520,10 @@ graph_list <- function(dt, list_name, plot_name, save=F){
   for (title in unmatched_titles){
     dt[Title.Upper==title]$Book.Id <- top_list_df[Title.Upper == title]$Book.Id
   }
-  top_books <- merge(top_list_df, dt[,c('Book.Id', 'Source', 'gender', 'Date.Read')], 
-                     by='Book.Id', all.x=T)
+  top_books <- merge(top_list_df, dt[,c('book_id', 'username', 'gender', 'date_read')], 
+                     by='book_id', all.x=T)
   setDT(top_books)
-  top_books$Read <- ifelse(is.na(top_books$Source), F, T)
+  top_books$Read <- ifelse(is.na(top_books$username), F, T)
   top_books$Year.Read <- format(top_books$Date.Read, '%Y')
   palette <- c('grey40', 'Purple')
   plot_title <- gsub('_', ' ', plot_name)
