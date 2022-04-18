@@ -26,7 +26,6 @@ con <- RPostgres::dbConnect(drv =Postgres(),
 generate_plots <- function(name){
   query <- paste0("Select * from goodreads_exportdata e left join goodreads_authors as a 
                            on e.author = a.author_name where e.username = '", name, "'")
-  print(query)
   dt <- setDT(dbGetQuery(con, query))
   dt <- run_all(dt)
   print(head(dt))

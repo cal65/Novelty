@@ -251,10 +251,12 @@ def upload_view(request):
 
     logger.info(f"starting database addition for {str(len(df))} rows")
     num_processes = 8
-    pool = concurrent.futures.ProcessPoolExecutor(num_processes)
     df_rows = df.values.tolist()
     # asynchronously insert rows into db
-    pool.map(insert_row_into_db, df_rows, [user] * len(df), [2] * len(df))
+    with concurrent.futures.ProcessPoolExecutor(num_processes) as executor:
+        result = executor.map(insert_row_into_db, df_rows, [user]*len(df), [2]*len(df))
+
+    logger.info(result)
 
     df.columns = df.columns.str.replace("_", ".")
 

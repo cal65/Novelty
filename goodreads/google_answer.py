@@ -5,7 +5,13 @@ import numpy as np
 import sys
 import logging
 
-logging.basicConfig(filename="logs.txt", filemode="a", level=logging.INFO)
+logging.basicConfig(
+    filename="logs.txt",
+    filemode="a",
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    level=logging.INFO,
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 logger = logging.getLogger(__name__)
 
 S = requests.Session()
