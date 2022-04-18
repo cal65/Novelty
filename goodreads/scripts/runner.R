@@ -9,7 +9,7 @@ require(ggthemes)
 setwd(Sys.getenv('repo'))
 source('Novelty/goodreads/scripts/utils.R')
 args = commandArgs(trailingOnly=TRUE)
-name <- args[1]
+cmd_line_name <- args[1]
 library('RPostgres')
 
 #create connection object
@@ -26,9 +26,9 @@ con <- RPostgres::dbConnect(drv =Postgres(),
 generate_plots <- function(name){
   query <- paste0("Select * from goodreads_exportdata e left join goodreads_authors as a 
                            on e.author = a.author_name where e.username = '", name, "'")
+  print(query)
   dt <- setDT(dbGetQuery(con, query))
   dt <- run_all(dt)
-  dt$source <- name
   print(head(dt))
   dir.create(paste0('Novelty/goodreads/static/Graphs/', name), showWarnings = F)
   # # update the authors database based on potential new data from dt
@@ -69,5 +69,4 @@ generate_plots <- function(name){
 }
 
 # create folder in static
-dir.create(file.path('Novelty/goodreads/static/Graphs', name), showWarnings = FALSE)
-generate_plots(name)
+generate_plots(cmd_line_name)

@@ -4,6 +4,7 @@ import csv
 from datetime import datetime
 import pandas as pd
 from multiprocessing import Pool, Process
+import pyRserve
 from .models import ExportData
 import concurrent.futures
 from django.shortcuts import render
@@ -22,6 +23,20 @@ def run_script_function(request):
     logger.info(f"Running graphs for user {user} based on request {request.method}")
     os.system("Rscript goodreads/scripts/runner.R {}".format(user))
 
+def run_script_function_rserve(request):
+    user = request.user
+    try: 
+        conn = pyRserve.connect()
+    except:
+        # Rserve fails
+        logger.info(f"Rserve failed to connect. Running graphs for user {user} based on request {request.method}")
+        os.system("Rscript goodreads/scripts/runner.R {}".format(user))
+    cwd = os.getcwd()
+    conn.r.cwd = cwd
+    conn.r.name = user
+    conn.r("source(paste0(cwd, '/goodreads/scripts/runner.R'))")
+    conn.r("generate_plots(name)")
+    logger.info(f"Graphs generated for user {user} based on request {request.method}")
 
 def py_script_function(request):
     user = request.user
