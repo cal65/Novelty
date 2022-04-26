@@ -1,19 +1,27 @@
 import os
-import time
 import csv
 from datetime import datetime
 import pandas as pd
 from multiprocessing import Pool, Process
+import pyRserve
 from .models import ExportData
 import concurrent.futures
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
 from django.contrib import messages
+
 from django.contrib.auth.decorators import login_required
 from .scripts.append_to_export import convert_to_ExportData, database_append
 
 import logging
 
-logging.basicConfig(filename="logs.txt", filemode="a", level=logging.INFO)
+logging.basicConfig(
+    filename="logs.txt",
+    filemode="a",
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    level=logging.INFO,
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 logger = logging.getLogger(__name__)
 
 
@@ -21,6 +29,25 @@ def run_script_function(request):
     user = request.user
     logger.info(f"Running graphs for user {user} based on request {request.method}")
     os.system("Rscript goodreads/scripts/runner.R {}".format(user))
+
+
+def run_script_function_rserve(request):
+    user = request.user.username
+    try:
+        conn = pyRserve.connect()
+    except:
+        # Rserve fails
+        logger.info(
+            f"Rserve failed to connect. "
+        )
+        return
+    cwd = os.getcwd()
+    conn.r.cwd = cwd
+    logger.info(f"we have user {user} with type {str(type(user))} in cwd {cwd}")
+    conn.r.name = user
+    conn.r("source(paste0(cwd, '/goodreads/scripts/runner.R'))")
+    conn.r("generate_plots(name)")
+    logger.info(f"Graphs generated for user {user} based on request {request.method}")
 
 
 def py_script_function(request):
@@ -175,11 +202,15 @@ def insert_dataframe_into_database(df, user, wait=2, metrics=True):
         # output metrics
         write_metrics(user, time=now, found=found, not_found=not_found)
 
-def  insert_row_into_db(row, user, wait=2):
+
+def insert_row_into_db(row, user, wait=2):
     # save row info to exportdata table
     obj = convert_to_ExportData(row, str(user))
     # if book is not in books table, scrape it and save additional parameters
+    logger.info('Insert row - obj converted')
     status = database_append(obj, wait=wait)
+    logger.info(f"insert row being called for {user} with status: {status}")
+
     return status
 
 
@@ -202,8 +233,9 @@ def upload_view(request):
     if request.method == "POST" and "runscript" in request.POST:
         if os.path.isfile(file_path):
             logger.info(f"Got running with request {request.method}")
-            run_script_function(request)
-            return render(request, template, {"file_exists": file_exists})
+            run_script_function_rserve(request)
+            # when script finishes, move user to plots view
+            return HttpResponseRedirect("/plots/")
         else:
             return render(request, template)
 
@@ -222,12 +254,10 @@ def upload_view(request):
     df = process_export_upload(df)
 
     logger.info(f"starting database addition for {str(len(df))} rows")
-    num_processes = 8
-    pool = concurrent.futures.ProcessPoolExecutor(num_processes)
-    df_rows = df.values.tolist()
-    # asynchronously insert rows into db
-    pool.map(insert_row_into_db, df_rows, [user]*len(df), [2]*len(df))
+    p = Pool()
+    res = p.apply_async(insert_dataframe_into_database, args=(df, user, True))
 
+    logger.info('pool joined')
 
     df.columns = df.columns.str.replace("_", ".")
 

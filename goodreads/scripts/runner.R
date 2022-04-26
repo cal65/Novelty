@@ -8,8 +8,7 @@ require(RColorBrewer)
 require(ggthemes)
 setwd(Sys.getenv('repo'))
 source('Novelty/goodreads/scripts/utils.R')
-args = commandArgs(trailingOnly=TRUE)
-name <- args[1]
+
 library('RPostgres')
 
 #create connection object
@@ -28,7 +27,6 @@ generate_plots <- function(name){
                            on e.author = a.author_name where e.username = '", name, "'")
   dt <- setDT(dbGetQuery(con, query))
   dt <- run_all(dt)
-  dt$source <- name
   print(head(dt))
   dir.create(paste0('Novelty/goodreads/static/Graphs/', name), showWarnings = F)
   # # update the authors database based on potential new data from dt
@@ -69,5 +67,3 @@ generate_plots <- function(name){
 }
 
 # create folder in static
-dir.create(file.path('Novelty/goodreads/static/Graphs', name), showWarnings = FALSE)
-generate_plots(name)

@@ -13,7 +13,13 @@ from ..models import ExportData, Authors, Books
 from . import scrape_goodreads
 from goodreads import google_answer
 
-logging.basicConfig(filename="logs.txt", filemode="a", level=logging.INFO)
+logging.basicConfig(
+    filename="logs.txt",
+    filemode="a",
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    level=logging.INFO,
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 logger = logging.getLogger(__name__)
 
 
@@ -27,8 +33,12 @@ def convert_to_ExportData(row, username):
     try:
         # check if ExportData table already has this book
         djangoObj = ExportData.objects.get(book_id=str(row.book_id), username=username)
+        logger.info('convert to export data - try successful')
     except:
         djangoObj = ExportData()
+        logger.info(f'convert to export data - except for book id ')
+        logger.info(f'with book id {row.book_id}')
+
     f_names = get_field_names(ExportData)
     common_fields = list(set(row.keys()).intersection(f_names))
     for f in common_fields:
