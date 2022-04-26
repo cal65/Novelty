@@ -8,8 +8,7 @@ require(RColorBrewer)
 require(ggthemes)
 setwd(Sys.getenv('repo'))
 source('Novelty/goodreads/scripts/utils.R')
-args = commandArgs(trailingOnly=TRUE)
-cmd_line_name <- args[1]
+
 library('RPostgres')
 
 #create connection object
@@ -68,4 +67,3 @@ generate_plots <- function(name){
 }
 
 # create folder in static
-generate_plots(cmd_line_name)

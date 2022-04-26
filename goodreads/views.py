@@ -1,5 +1,4 @@
 import os
-import time
 import csv
 from datetime import datetime
 import pandas as pd
@@ -10,6 +9,7 @@ import concurrent.futures
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+
 from django.contrib.auth.decorators import login_required
 from .scripts.append_to_export import convert_to_ExportData, database_append
 
@@ -32,17 +32,18 @@ def run_script_function(request):
 
 
 def run_script_function_rserve(request):
-    user = request.user
+    user = request.user.username
     try:
         conn = pyRserve.connect()
     except:
         # Rserve fails
         logger.info(
-            f"Rserve failed to connect. Running graphs for user {user} based on request {request.method}"
+            f"Rserve failed to connect. "
         )
-        os.system("Rscript goodreads/scripts/runner.R {}".format(user))
+        return
     cwd = os.getcwd()
     conn.r.cwd = cwd
+    logger.info(f"we have user {user} with type {str(type(user))} in cwd {cwd}")
     conn.r.name = user
     conn.r("source(paste0(cwd, '/goodreads/scripts/runner.R'))")
     conn.r("generate_plots(name)")
@@ -206,7 +207,10 @@ def insert_row_into_db(row, user, wait=2):
     # save row info to exportdata table
     obj = convert_to_ExportData(row, str(user))
     # if book is not in books table, scrape it and save additional parameters
+    logger.info('Insert row - obj converted')
     status = database_append(obj, wait=wait)
+    logger.info(f"insert row being called for {user} with status: {status}")
+
     return status
 
 
@@ -229,7 +233,7 @@ def upload_view(request):
     if request.method == "POST" and "runscript" in request.POST:
         if os.path.isfile(file_path):
             logger.info(f"Got running with request {request.method}")
-            run_script_function(request)
+            run_script_function_rserve(request)
             # when script finishes, move user to plots view
             return HttpResponseRedirect("/plots/")
         else:
@@ -250,13 +254,10 @@ def upload_view(request):
     df = process_export_upload(df)
 
     logger.info(f"starting database addition for {str(len(df))} rows")
-    num_processes = 8
-    df_rows = df.values.tolist()
-    # asynchronously insert rows into db
-    with concurrent.futures.ProcessPoolExecutor(num_processes) as executor:
-        result = executor.map(insert_row_into_db, df_rows, [user]*len(df), [2]*len(df))
+    p = Pool()
+    res = p.apply_async(insert_dataframe_into_database, args=(df, user, True))
 
-    logger.info(result)
+    logger.info('pool joined')
 
     df.columns = df.columns.str.replace("_", ".")
 
