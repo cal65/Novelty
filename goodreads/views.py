@@ -256,7 +256,7 @@ def upload_view(request):
     logger.info(f"starting database addition for {str(len(df))} rows")
     p = Pool()
     res = p.apply_async(insert_dataframe_into_database, args=(df, user, True))
-
+    p.close()
     logger.info('pool joined')
 
     df.columns = df.columns.str.replace("_", ".")
