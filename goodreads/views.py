@@ -257,6 +257,7 @@ def upload_view(request):
     p = Pool()
     res = p.apply_async(insert_dataframe_into_database, args=(df, user, True))
     p.close()
+    p.join()
     logger.info('pool joined')
 
     df.columns = df.columns.str.replace("_", ".")
