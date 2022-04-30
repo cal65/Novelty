@@ -51,8 +51,8 @@ def narrative(df):
 def read_percentage(df):
     # It seems sometimes the "added by" value is off by a factor of 10. When the
     # number of people listing the book as "to read" is larger than total added by, multiply by 10
-    df.iloc[df["to_reads"] > df["added_by"], "added_by"] = (
-        df.iloc[df["to_reads"] > df["added_by"], "added_by"] * 10
+    df.loc[df["to_reads"] > df["added_by"], "added_by"] = (
+        df.loc[df["to_reads"] > df["added_by"], "added_by"] * 10
     )
     df["read"] = df["added_by"] - df["to_reads"]
     df["read_percentage"] = df["read"] / df["added_by"]
