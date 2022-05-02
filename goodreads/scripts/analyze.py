@@ -64,6 +64,7 @@ def run_all(df):
     df = read_percentage(narrative(preprocess(df)))
     return df
 
+
 def generate_labels(breaks):
     if len(breaks) == 2:
         return [f"{breaks[0]} - {breaks[1]}"]
@@ -71,63 +72,97 @@ def generate_labels(breaks):
         return [f"{breaks[0]} - {breaks[1]}"] + generate_labels(breaks[1:])
 
 
-def read_plot(df, name, read_col, title_col, min_break=3, plot=F, plot_name ='popularity_spectrum_', date_col='date_read', start_year=None):
+def read_plot(
+    df,
+    name,
+    read_col="read",
+    title_col="title_simple",
+    min_break=3,
+    plot_name="popularity_spectrum_",
+    date_col="date_read",
+    start_year=None,
+):
     max_read = int(df[read_col].max())
     df = df[pd.notnull(df[read_col])]
     if start_year is not None:
         df = df[df[date_col].dt.year >= start_year]
     max_digits = len(str(max_read))
-    digit_range = list(range(min_break, max_digits+1))
-    breaks = [0] + [10**d for d in digit_range]
-    df['title_length'] = df[title_col].apply(lambda x: len(x))
+    digit_range = list(range(min_break, max_digits + 1))
+    breaks = [0] + [10 ** d for d in digit_range]
+    df["title_length"] = df[title_col].apply(lambda x: len(x))
     # order title text by popularity
-    df.sort_values(by='read', inplace=True)
-    df[title_col] = df[title_col].astype('category')
+    df.sort_values(by="read", inplace=True)
+    df[title_col] = df[title_col].astype("category")
     # ['0 - 1,000', '1,000 - 10,000', '10,000 - 100,000', '100,000 - 1,000,000'] using fancy local-aware f:, hack
     labels = generate_labels([f"{b:,}" for b in breaks])
     # adding obscure and bestsellers commentary
     labels[0] = f"{labels[0]} \n Obscure"
     labels[-1] = f"{labels[-1]} \n Bestsellers"
-    df['strats'] = pd.cut(df[read_col], bins = breaks, labels = labels, include_lowest = True)
-    text_sizes = pd.pivot_table(df, index='strats', aggfunc={'title_length': lambda x: 120/max(x)})
-    text_sizes.rename(columns = {'title_length': 'text_size'}, inplace=True)
-    df = pd.merge(df, text_sizes, on='strats', how='left')
-    (ggplot(df, aes('strats', 'title_simple'))
-    + aes(fill='narrative')
-    + geom_tile() 
-    + geom_text(aes(label='title_simple', size='text_size')) 
-    + facet_wrap('strats', scales='free', nrow=1)
-    + scale_fill_manual(values = ['mediumvioletred', 'darkolivegreen'])
-    + scale_size_continuous(guide = False, range=[4, 6])
-    + xlab('Number of Readers')
-    + ylab('Title')
-    + theme(axis_text_y = element_blank())
+    df["strats"] = pd.cut(df[read_col], bins=breaks, labels=labels, include_lowest=True)
+    text_sizes = pd.pivot_table(
+        df, index="strats", aggfunc={"title_length": lambda x: 120 / max(x)}
+    )
+    text_sizes.rename(columns={"title_length": "text_size"}, inplace=True)
+    df = pd.merge(df, text_sizes, on="strats", how="left")
+    p = (
+        ggplot(df, aes("strats", "title_simple"))
+        + aes(fill="narrative")
+        + geom_tile()
+        + geom_text(aes(label="title_simple", size="text_size"))
+        + facet_wrap("strats", scales="free", nrow=1)
+        + scale_fill_manual(values=["mediumvioletred", "darkolivegreen"])
+        + scale_size_continuous(guide=False, range=[7, 10])
+        + xlab("Number of Readers")
+        + ylab("Title")
+        + ggtitle(f"Readership Spectrum - {name}")
+        + theme_light()
+        + theme(axis_text_y=element_blank(), plot_title=element_text(hjust=0.5))
+    )
+    p.save(
+        f"goodreads/Graphs/{name}/{plot_name}{name}.jpeg", width=16, height=15, dpi=300
     )
 
-read_plot <- function(df, 
-                      name, 
-                      read_col, 
-                      title_col, 
-                      min_break = 3, 
-                      plot=F, 
-                      plot_name = 'popularity_spectrum_',
-                      date_col='date_read',
-                      start_year=NA){
-  
-  
-  ggplot(df, aes(x=strats, y=get(title_col))) +
-    geom_tile(aes(fill=Narrative), color='black') +
-    geom_text(aes(label = get(title_col), size = text_size)) +
-    facet_wrap(strats ~ ., scales='free', nrow=1) +
-    scale_fill_manual(values = c('hotpink2', 'darkolivegreen')) +
-    scale_size_continuous(guide = "none", range=c(2, 5)) +
-    xlab('Number of Readers') + 
-    ylab('Title') +
-    ggtitle(paste0('Readership Spectrum - ', name)) +
-    theme(axis.text.y = element_blank(),
-          plot.title = element_text(hjust=0.5),
-          panel.background = element_blank())
-  if (plot){
-    ggsave(paste0('Novelty/goodreads/static/Graphs/', name, '/', plot_name, name, '.jpeg'), width = 16, height=15)
-  }
-}    
+
+def finish_plot(
+    df,
+    name,
+    exclusive_shelf="exclusive_shelf",
+    read_col="read_percentage",
+    title_col="title_simple",
+    n=10,
+    plot_name="finish_plot_",
+):
+    df[exclusive_shelf] = df[exclusive_shelf].replace(
+        {"currently-reading": "unread", "to-read": "unread"}
+    )
+    df_read = df.sort_values(read_col)
+    df_read = df_read[pd.notnull(df[read_col])]
+    # keep only bottom n
+    df_read_n = df_read.groupby(exclusive_shelf).apply(lambda x: x.head(n)).reset_index(drop=True)
+    cat_type = CategoricalDtype(categories=pd.unique(df_read_n[title_col]), ordered=True)
+    df_read_n[title_col] = df_read_n[title_col].astype(cat_type)
+    df_read_n['read_half'] = df_read_n[read_col]/2
+    df_read_n['display_text'] = df_read_n.apply(lambda x: f"{x['read']} / {x['added_by']}", axis=1)
+    p = (
+        ggplot(df_read_n, aes(x=title_col))
+        + geom_col(aes(y=1), fill="darkblue")
+        + geom_col(aes(y=read_col), fill="darkred")
+        + geom_text(
+            aes(y='read_half', label='display_text'),
+            size=n * 3 / 5,
+            color="white",
+            ha='left',
+        )
+        + facet_grid('exclusive_shelf ~ .', scales='free', space='free')
+        + ylim(0, 1)
+        + xlab("Title")
+        + ylab("Reading Percentage")
+        + coord_flip()
+        + ggtitle("Least Finished Reads")
+        + theme(plot_title=element_text(hjust=0.5))
+    )
+    p.save(f"goodreads/Graphs/{name}/{plot_name}{name}.jpeg", width=12, height=8)
+
+
+if __name__ == '__main__':
+    import sys
