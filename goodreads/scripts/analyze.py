@@ -1,17 +1,20 @@
 import os
 import warnings
+import argparse
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 import pandas as pd
 import psycopg2
 from plotnine import *
 
+from pandas.api.types import CategoricalDtype
+
 from .models import ExportData
 
 post_pass = os.getenv("cal65_pass")
 
 
-def get_data(user):
+def get_data(username):
     conn = psycopg2.connect(
         host="localhost", database="goodreads", user="cal65", password=post_pass
     )
@@ -22,7 +25,7 @@ def get_data(user):
     date_read, exclusive_shelf, added_by, to_reads,
     gender, nationality1, nationality2, nationality_chosen
     from goodreads_exportdata e left join goodreads_authors as a 
-    on e.author = a.author_name where e.username = '{user}'
+    on e.author = a.author_name where e.username = '{username}'
     """
     try:
         df = pd.read_sql(query, con=conn)
@@ -116,7 +119,11 @@ def read_plot(
         + ylab("Title")
         + ggtitle(f"Readership Spectrum - {name}")
         + theme_light()
-        + theme(axis_text_y=element_blank(), plot_title=element_text(hjust=0.5))
+        + theme(
+            axis_text_y=element_blank(),
+            plot_title=element_text(hjust=0.5),
+            panel_background=element_blank(),
+        )
     )
     p.save(
         f"goodreads/Graphs/{name}/{plot_name}{name}.jpeg", width=16, height=15, dpi=300
@@ -138,31 +145,72 @@ def finish_plot(
     df_read = df.sort_values(read_col)
     df_read = df_read[pd.notnull(df[read_col])]
     # keep only bottom n
-    df_read_n = df_read.groupby(exclusive_shelf).apply(lambda x: x.head(n)).reset_index(drop=True)
-    cat_type = CategoricalDtype(categories=pd.unique(df_read_n[title_col]), ordered=True)
+    df_read_n = (
+        df_read.groupby(exclusive_shelf)
+        .apply(lambda x: x.head(n))
+        .reset_index(drop=True)
+    )
+    cat_type = CategoricalDtype(
+        categories=pd.unique(df_read_n[title_col]), ordered=True
+    )
     df_read_n[title_col] = df_read_n[title_col].astype(cat_type)
-    df_read_n['read_half'] = df_read_n[read_col]/2
-    df_read_n['display_text'] = df_read_n.apply(lambda x: f"{x['read']} / {x['added_by']}", axis=1)
+    df_read_n["read_half"] = df_read_n[read_col] / 2
+    df_read_n["display_text"] = df_read_n.apply(
+        lambda x: f"{x['read']} / {x['added_by']}", axis=1
+    )
     p = (
         ggplot(df_read_n, aes(x=title_col))
         + geom_col(aes(y=1), fill="darkblue")
         + geom_col(aes(y=read_col), fill="darkred")
         + geom_text(
-            aes(y='read_half', label='display_text'),
+            aes(y="read_half", label="display_text"),
             size=n * 3 / 5,
             color="white",
-            ha='left',
+            ha="left",
         )
-        + facet_grid('exclusive_shelf ~ .', scales='free', space='free')
+        + facet_grid("exclusive_shelf ~ .", scales="free", space="free")
         + ylim(0, 1)
         + xlab("Title")
         + ylab("Reading Percentage")
         + coord_flip()
         + ggtitle("Least Finished Reads")
-        + theme(plot_title=element_text(hjust=0.5))
+        + theme(plot_title=element_text(hjust=0.5), panel_background=element_blank())
     )
     p.save(f"goodreads/Graphs/{name}/{plot_name}{name}.jpeg", width=12, height=8)
 
 
-if __name__ == '__main__':
+def gender_bar_plot(df, username, gender_col="gender", narrative_col="narrative"):
+    p, gp = (
+        ggplot(df)
+        + geom_bar(aes(x=narrative_col, fill=gender_col), position=position_dodge())
+        + xlab("")
+        + scale_fill_manual(
+            name="Gender",
+            values={"male": "blue", "female": "red", "other": "green"},
+            drop=False,
+        )
+        + coord_flip()
+        + theme(
+            legend_position="bottom",
+            plot_title=element_text(hjust=1),
+            axis_text=element_text(size=12),
+        )
+        + ggtitle("Summary Plots  ")
+        + theme_classic()
+    ).draw(show=False, return_ggplot=True)
+    return gp
+
+
+if __name__ == "__main__":
     import sys
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--username",
+        dest="username",
+        help="The username which data is queried from goodreads.exportbooks",
+    )
+    df = get_data(username)
+    df = run_all(df)
+    read_plot(df, username)
+    finish_plot(df, username)
