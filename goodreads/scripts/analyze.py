@@ -4,8 +4,10 @@ import argparse
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 import pandas as pd
+import numpy as np
 import psycopg2
 from plotnine import *
+import patchworklib as pw
 
 from pandas.api.types import CategoricalDtype
 
@@ -130,6 +132,13 @@ def read_plot(
     )
 
 
+def factorize(series):
+    # take a series, return it as an ordered category typed series
+    cat_type = CategoricalDtype(categories=pd.unique(series), ordered=True)
+    series = series.astype(cat_type)
+    return series
+
+
 def finish_plot(
     df,
     name,
@@ -176,11 +185,13 @@ def finish_plot(
         + ggtitle("Least Finished Reads")
         + theme(plot_title=element_text(hjust=0.5), panel_background=element_blank())
     )
-    p.save(f"goodreads/Graphs/{name}/{plot_name}{name}.jpeg", width=12, height=8)
+    p.save(
+        f"goodreads/Graphs/{name}/{plot_name}{name}.jpeg", width=12, height=8, dpi=300
+    )
 
 
 def gender_bar_plot(df, username, gender_col="gender", narrative_col="narrative"):
-    p, gp = (
+    p = (
         ggplot(df)
         + geom_bar(aes(x=narrative_col, fill=gender_col), position=position_dodge())
         + xlab("")
@@ -190,15 +201,119 @@ def gender_bar_plot(df, username, gender_col="gender", narrative_col="narrative"
             drop=False,
         )
         + coord_flip()
+        + theme_classic()
         + theme(
             legend_position="bottom",
             plot_title=element_text(hjust=1),
             axis_text=element_text(size=12),
         )
         + ggtitle("Summary Plots  ")
+    )
+    return p
+
+
+def publication_histogram(df, date_col="original_publication_year", start_year=1800):
+    df_recent = df[df[date_col] > start_year]
+    n_bins = max(len(df_recent) / 10, 10)
+    p = (
+        ggplot(df_recent)
+        + geom_histogram(aes(x=date_col), fill="black", bins=n_bins)
         + theme_classic()
-    ).draw(show=False, return_ggplot=True)
-    return gp
+        + xlab("Year of Publication")
+        + ylab("Count")
+    )
+    return p
+
+
+def plot_longest_books(
+    df,
+    n=15,
+    pages_col="number_of_pages",
+    title_col="title_simple",
+    my_rating_col="my_rating",
+):
+    highest = df[pd.notnull(df[pages_col])].sort_values(pages_col).tail(n)
+    highest[title_col] = factorize(highest[title_col])
+    highest[my_rating_col] = factorize(highest[my_rating_col])
+    p = (
+        ggplot(highest, aes(x=title_col))
+        + geom_col(aes(y=pages_col, fill=my_rating_col))
+        + geom_text(aes(y=pages_col, label=pages_col), ha="right")
+        + xlab("")
+        + ylab("Number of Pages")
+        + scale_fill_brewer(palette="Blues", name="Your Rating", type="seq")
+        + coord_flip()
+    )
+    return p
+
+
+def genre_bar_plot(df, n_shelves=4, min_count=2):
+    def create_melted_genre_df(df):
+        shelf_columns = [s for s in df.columns if s.startswith("shelf")]
+        genre_df = df[shelf_columns]
+        genre_df_m = pd.melt(df[shelf_columns], value_name="Shelf")
+        genre_df_m = genre_df_m[
+            ~genre_df_m["Shelf"].isin(["Fiction", "Nonfiction", ""])
+        ]
+        genre_df_m = genre_df_m[pd.notnull(genre_df_m["Shelf"])]
+        return genre_df_m
+
+    genre_df_m = create_melted_genre_df(df)
+    genre_df_m["shelf_number"] = (
+        genre_df_m["variable"].str.replace("shelf", "").astype(int)
+    )
+    genre_df_m = genre_df_m[genre_df_m["shelf_number"] <= n_shelves]
+    shelf_table_df = pd.DataFrame(genre_df_m["Shelf"].value_counts()).reset_index()
+    shelf_table_df.columns = ["Shelf", "Count"]
+    shelf_table_df.sort_values("Count", inplace=True)
+    shelf_table_df["Shelf"] = factorize(shelf_table_df["Shelf"])
+    p = (
+        ggplot(shelf_table_df[shelf_table_df["Count"] > min_count])
+        + geom_col(aes(x="Shelf", y="Count"), color="black", fill="red")
+        + coord_flip()
+        + theme_classic()
+        + ylab("Number of Books")
+        + theme(plot_title=element_text(hjust=0.5))
+    )
+    return p
+
+
+def summary_plot(
+    df,
+    username,
+    date_col="original_publication_year",
+    start_year=1800,
+    gender_col="gender",
+    narrative_col="narrative",
+    pages_col="number_of_pages",
+    title_col="title_simple",
+    my_rating_col="my_rating",
+    n_shelves=4,
+    min_count=2,
+):
+    p1 = gender_bar_plot(
+        df, username, gender_col=gender_col, narrative_col=narrative_col
+    )
+    p2 = publication_histogram(df, date_col=date_col, start_year=start_year)
+    p3 = plot_longest_books(
+        df, n=15, pages_col=pages_col, title_col=title_col, my_rating_col=my_rating_col
+    )
+    p4 = genre_bar_plot(df, n_shelves=n_shelves, min_count=min_count)
+
+    p1 = pw.load_ggplot(p1, figsize=(4, 3))
+    p2 = pw.load_ggplot(p2, figsize=(4, 3))
+    p3 = pw.load_ggplot(p3, figsize=(4, 3))
+    p4 = pw.load_ggplot(p4, figsize=(4, 3))
+
+    p1234 = (p1 | p2 ) / (p3 | p4)
+    p1234.savefig(
+        f"goodreads/Graphs/{username}/summary_plot_{name}.jpeg",
+        dpi=300,
+        width=12,
+        height=8,
+    )
+
+    return p1234
 
 
 if __name__ == "__main__":
@@ -212,5 +327,6 @@ if __name__ == "__main__":
     )
     df = get_data(username)
     df = run_all(df)
+    summary_plot(df, username)
     read_plot(df, username)
     finish_plot(df, username)
