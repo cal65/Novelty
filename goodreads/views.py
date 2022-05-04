@@ -1,5 +1,6 @@
 import os
 import csv
+import sys
 from datetime import datetime
 import pandas as pd
 from multiprocessing import Pool, Process
@@ -9,7 +10,9 @@ import concurrent.futures
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib import messages
-import analyze 
+sys.path.append("..")
+
+from .plotting import plotting
 
 from django.contrib.auth.decorators import login_required
 from .scripts.append_to_export import convert_to_ExportData, database_append
@@ -29,7 +32,7 @@ logger = logging.getLogger(__name__)
 def run_script_function(request):
     user = request.user
     logger.info(f"Running graphs for user {user} based on request {request.method}")
-    analyze.main(user)
+    plotting.main(user)
 
 
 def run_script_function_rserve(request):
@@ -121,7 +124,7 @@ def popularity_spectrum_view(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def summary_plot_view(request):
     username = request.user
-    summary_plot_url = "{}/Summary_plot.jpeg".format(username, username)
+    summary_plot_url = "{}/Summary_plot_{}.jpeg".format(username, username)
     return render(
         request, "goodreads/summary_plot.html", {"summary_plot_url": summary_plot_url}
     )
@@ -135,7 +138,7 @@ def plots_view(request):
     popularity_spectrum_url = "Graphs/{}/popularity_spectrum_{}.jpeg".format(
         username, username
     )
-    summary_plot_url = "Graphs/{}/Summary_plot.jpeg".format(username, username)
+    summary_plot_url = "Graphs/{}/Summary_plot_{}.jpeg".format(username, username)
 
     if "run_script_function" in request.POST:
         run_script_function(request)
