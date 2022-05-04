@@ -9,6 +9,7 @@ import concurrent.futures
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+import analyze 
 
 from django.contrib.auth.decorators import login_required
 from .scripts.append_to_export import convert_to_ExportData, database_append
@@ -28,7 +29,7 @@ logger = logging.getLogger(__name__)
 def run_script_function(request):
     user = request.user
     logger.info(f"Running graphs for user {user} based on request {request.method}")
-    os.system("Rscript goodreads/scripts/runner.R {}".format(user))
+    analyze.main(user)
 
 
 def run_script_function_rserve(request):
@@ -233,7 +234,7 @@ def upload_view(request):
     if request.method == "POST" and "runscript" in request.POST:
         if os.path.isfile(file_path):
             logger.info(f"Got running with request {request.method}")
-            run_script_function_rserve(request)
+            run_script_function(request)
             # when script finishes, move user to plots view
             return HttpResponseRedirect("/plots/")
         else:
