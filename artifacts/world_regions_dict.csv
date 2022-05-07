@@ -5,44 +5,45 @@ Algeria,Algerian
 American Samoa,American Samoan
 Andorra,Andorran
 Angola,Angolan
-Anguilla,
-Antarctica,
+Anguilla,Anguillan
+Antarctica,Antarctican
 Antigua,Antiguan
 Argentina,Argentine
 Armenia,Armenian
 Aruba,Aruban
-Ascension Island,
+Ascension Island,Saint Helenian
 Australia,Australian
 Austria,Austrian
 Azerbaijan,Azeri
-Azores,
+Azores,Azorean
 Bahamas,Bahamanian
-Bahrain,
+Bahrain,Bahraini
 Bangladesh,Bangladeshi
 Barbados,Barbadian
 Belarus,Belarusian
 Belgium,Belgian
-Belize,
-Benin,
+Belize,Belizean
+Benin,Beninese
 Bermuda,Bermudian
-Bhutan,
+Bhutan,Bhutanese
 Bolivia,Bolivian
-Bonaire,
+Bonaire,Bonairean
 Bosnia and Herzegovina,Bosnian
+Bosnia and Herz.,Bosnian
 Botswana,Botswanan
 Brazil,Brazilian
-Brunei,
+Brunei,Bruneian
 Bulgaria,Bulgarian
 Burkina Faso,Burkinabe
-Burundi,
+Burundi,Umurundi
 Cambodia,Cambodian
 Cameroon,Cameroonian
 Canada,Canadian
-Canary Islands,
+Canary Islands,Canarian
 Cape Verde,Cape Verdian
-Cayman Islands,
-Central African Republic,
-Chad,
+Cayman Islands,Caymanian
+Central African Republic,Central African
+Chad,Chadian
 Chagos Archipelago,
 Chile,Chilean
 China,Chinese
@@ -54,49 +55,47 @@ Cook Islands,
 Costa Rica,Costa Rican
 Croatia,Croatian
 Cuba,Cuban
-Curacao,
+Curacao,Curaçaoan
 Cyprus,Cypriot
 Czech Republic,Czech
 Czech Republic,Czechoslovak
 Democratic Republic of the Congo,Congolese
 Denmark,Danish
-Djibouti,
-Dominica,
+Djibouti,Djiboutian
+Dominica,Dominica
 Dominican Republic,Dominican
 Ecuador,Ecuadorian
 Egypt,Egyptian
 England,English
 El Salvador,El Salvadoran
-Equatorial Guinea,
+Equatorial Guinea,Equatoguinean
 Eritrea,Eritrean
 Estonia,Estonian
 Ethiopia,Ethiopian
-Falkland Islands,
+Falkland Islands,Falkland Islander
 Faroe Islands,Faroese
 Fiji,Fijian
 Finland,Finnish
 France,French
 French Guiana,French Guianese
 French Polynesia,Polynesian
-French Southern and Antarctic Lands,
-Gabon,
-Gambia,
+Gabon,Gabonese
+Gambia,Gambian
 Georgia,Georgian
 Germany,German
 Ghana,Ghanaian
 Greece,Greek
 Greenland,Greenlandic
 Grenada,Grenadian
-Grenadines,
-Guadeloupe,
+Grenadines,Vincentian
+Guadeloupe,Guadeloupean
 Guam,Guam
 Guatemala,Guatemalan
 Guernsey,Giernesi
 Guinea,Guinean
-Guinea-Bissau,
+Guinea-Bissau,Bissau-Guinean
 Guyana,Guyanese
 Haiti,Haitian
-Heard Island,
 Honduras,Honduran
 Hong Kong S.A.R.,Hong Kong
 Hungary,Hungarian
@@ -112,55 +111,55 @@ Italy,Italian
 Ivory Coast,Ivorian
 Jamaica,Jamaican
 Japan,Japanese
-Jersey,
+Jersey,Jerseyman
 Jordan,Jordanian
 Kazakhstan,Kazakh
 Kenya,Kenyan
-Kiribati,
-Kosovo,
-Kuwait,
+Kiribati,I-Kiribati
+Kosovo,Kosovar
+Kuwait,Kuwaiti
 Kyrgyzstan,Kyrgyz
 Laos,Laotian
 Latvia,Latvian
 Lebanon,Lebanese
-Lesotho,
+Lesotho,Mosotho
 Liberia,Liberian
 Libya,Libyan
-Liechtenstein,
+Liechtenstein,Liechtensteiner
 Lithuania,Lithuanian
 Luxembourg,Luxembourgish
-Macedonia,
-Madagascar,
+Macedonia,Macedonian
+Madagascar,Malagasy
 Madeira Islands,
 Malawi,Malawian
 Malaysia,Malaysian
-Maldives,
-Mali,
+Maldives,Maldivian
+Mali,Malian
 Malta,Maltese
 Marshall Islands,
-Martinique,
+Martinique,Martinican
 Mauritania,Mauritanian
 Mauritius,Mauritian
 Mayotte,
 Mexico,Mexican
-Micronesia,
+Micronesia,Micronesian
 Moldova,Moldovan
 Monaco,Monégasque
 Mongolia,Mongolian
 Montenegro,Montenegrin
 Montserrat,Montserratian
 Morocco,Moroccan
-Mozambique,
+Mozambique,Mozambican
 Myanmar,Burmese
 Namibia,Namibian
 Nauru,
 Nepal,Nepalese
 Netherlands,Dutch
 Nevis,
-New Caledonia,
+New Caledonia,New Caledonian
 New Zealand,New Zealand
 Nicaragua,Nicaraguan
-Niger,
+Niger,Nigerien
 Nigeria,Nigerian
 Niue,
 Norfolk Island,
@@ -173,8 +172,8 @@ Pakistan,Pakistani
 Palau,Palauan
 Palestine,Palestinian
 Panama,Panamanian
-Papua New Guinea,
-Paraguay,
+Papua New Guinea,Papua New Guinean
+Paraguay,Paraguayan
 Peru,Peruvian
 Philippines,Philippine
 Pitcairn Islands,
@@ -182,27 +181,27 @@ Poland,Polish
 Portugal,Portuguese
 Puerto Rico,Puerto Rican
 Qatar,Qatari
-Republic of Congo,
+Republic of Congo,Congolese
 Reunion,
 Romania,Romanian
 Russia,Russian
 Rwanda,Rwandan
 Saba,
 Saint Barthelemy,
-Saint Helena,
+Saint Helena,Saint Helenian
 Saint Kitts,Kittitian
 Saint Lucia,
 Saint Martin,
 Saint Pierre and Miquelon,
-Saint Vincent,
-Samoa,
+Saint Vincent,Vincentian
+Samoa,Samoan
 San Marino,
-Sao Tome and Principe,
+Sao Tome and Principe,Sao Tomean
 Saudi Arabia,Saudi
 Scotland,Scottish
 Senegal,Senegalese
 Serbia,Serbian
-Seychelles,
+Seychelles,Seychellois
 Siachen Glacier,
 Sierra Leone,Sierra Leonean
 Singapore,Singaporean
@@ -220,6 +219,7 @@ South Sudan,South Sudanese
 Spain,Spanish
 Sri Lanka,Sri Lankan
 Sudan,Sudanese
+S. Sudan,South Sudanese
 Suriname,Surinamese
 Swaziland,
 Sweden,Swedish
@@ -229,11 +229,13 @@ Taiwan,Taiwanese
 Tajikistan,Tajik
 Tanzania,Tanzanian
 Thailand,Thai
-Timor-Leste,
+Timor-Leste,East Timorese
 Tobago,Trinidadian and Tobagonian
-Togo,
-Tonga,
+Togo,Togolese
+Tonga,Tongan
 Trinidad,Trinidadian and Tobagonian
+Trinidad,Trinidadian
+Trinidad and Tobago,Trinidadian
 Tunisia,Tunisian
 Turkey,Turkish
 Turkmenistan,Turkmen
@@ -245,11 +247,11 @@ United Arab Emirates,Emirati
 Uruguay,Uruguayan
 United States of America,American
 Uzbekistan,Uzbek
-Vanuatu,
+Vanuatu,Vanuatuan
 Vatican,
 Venezuela,Venezuelan
 Vietnam,Vietnamese
-Virgin Islands,
+Virgin Islands,Virgin Islander
 Wales,Welsh
 Wallis and Futuna,
 Western Sahara,
