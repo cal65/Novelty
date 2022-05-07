@@ -23,7 +23,7 @@ def populate_table_from_csv(csv_file_path, table, database="goodreads"):
         + os.environ["cal65_pass"]
         + "@127.0.0.1/goodreads"
     )
-    df = pd.read_csv(csv_file_path)
+    df = pd.read_csv(csv_file_path, encoding = "ISO-8859-1")
     df.to_sql(table, engine, if_exists="replace", index=False)
     connection.close()
 

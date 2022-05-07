@@ -33,20 +33,7 @@ class ExportData(models.Model):
     # isbn13 = models.CharField(max_length=250)
     # publisher = models.CharField(max_length=250)
     # binding = models.CharField(max_length=250)
-    # year_published = models.CharField(max_length=250)
-
     # my_review = models.TextField()
-    # spoiler = models.CharField(max_length=2500)
-    # private_notes = models.CharField(max_length=2500)
-    # read_count = models.CharField(max_length=250)
-    # recommended_for = models.CharField(max_length=250)
-    # recommended_by = models.CharField(max_length=250)
-    # owned_copies = models.CharField(max_length=250)
-    # original_purchase_date = models.CharField(max_length=250)
-    # original_purchase_location = models.CharField(max_length=250)
-    # condition = models.CharField(max_length=250)
-    # condition_description = models.CharField(max_length=250)
-    # bcid = models.CharField(max_length=250)
 
 
 class Authors(models.Model):
@@ -70,3 +57,8 @@ class Books(models.Model):
     added_by = models.IntegerField(blank=True, null=True, default=0)
     to_reads = models.IntegerField(blank=True, null=True, default=0)
     ts_updated = models.DateTimeField(auto_now=True)
+
+class RefNationality(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    region = models.CharField(max_length=250, null=True)
+    nationality = models.CharField(max_length=250, blank=True, null=True)

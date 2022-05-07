@@ -13,4 +13,4 @@ How popular are the books you read? Do you have a mix of obscure books and bests
 
 [!Popularity Spectrum](goodreads/Graphs/cal/popularity_spectrum_cal.jpeg)
 
-Novelty Insights is meant to return the value of your data to you.
+Novelty Insights is the modern anti-bias tool to return the value of your data to you.
