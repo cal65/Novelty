@@ -10,6 +10,7 @@ import concurrent.futures
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+
 sys.path.append("..")
 
 from .plotting import plotting
@@ -30,28 +31,12 @@ logger = logging.getLogger(__name__)
 
 
 def run_script_function(request):
+    """
+    Main script that generates and saves plots for a user
+    """
     user = request.user
     logger.info(f"Running graphs for user {user} based on request {request.method}")
     plotting.main(user)
-
-
-def run_script_function_rserve(request):
-    user = request.user.username
-    try:
-        conn = pyRserve.connect()
-    except:
-        # Rserve fails
-        logger.info(
-            f"Rserve failed to connect. "
-        )
-        return
-    cwd = os.getcwd()
-    conn.r.cwd = cwd
-    logger.info(f"we have user {user} with type {str(type(user))} in cwd {cwd}")
-    conn.r.name = user
-    conn.r("source(paste0(cwd, '/goodreads/scripts/runner.R'))")
-    conn.r("generate_plots(name)")
-    logger.info(f"Graphs generated for user {user} based on request {request.method}")
 
 
 def py_script_function(request):
@@ -111,8 +96,10 @@ def nationality_map_view(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def popularity_spectrum_view(request):
     username = request.user
-    popularity_spectrum_url = "goodreads/static/Graphs/{}/popularity_spectrum_{}.jpeg".format(
-        username, username
+    popularity_spectrum_url = (
+        "goodreads/static/Graphs/{}/popularity_spectrum_{}.jpeg".format(
+            username, username
+        )
     )
     return render(
         request,
@@ -211,7 +198,7 @@ def insert_row_into_db(row, user, wait=2):
     # save row info to exportdata table
     obj = convert_to_ExportData(row, str(user))
     # if book is not in books table, scrape it and save additional parameters
-    logger.info('Insert row - obj converted')
+    logger.info("Insert row - obj converted")
     status = database_append(obj, wait=wait)
     logger.info(f"insert row being called for {user} with status: {status}")
 
@@ -262,7 +249,7 @@ def upload_view(request):
     res = p.apply_async(insert_dataframe_into_database, args=(df, user, True))
     p.close()
     p.join()
-    logger.info('pool joined')
+    logger.info("pool joined")
 
     df.columns = df.columns.str.replace("_", ".")
 

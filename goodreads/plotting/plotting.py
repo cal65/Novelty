@@ -38,6 +38,7 @@ def get_data(query):
         print(error)
         return
 
+
 def userdata_query(username):
     query = f"""
     select id, book_id, title, author, number_of_pages,
@@ -49,6 +50,7 @@ def userdata_query(username):
     on e.author = a.author_name where e.username = '{username}'
     """
     return query
+
 
 def preprocess(df):
     gender_dict = {"mostly_male": "male", "mostly_female": "female"}
@@ -272,6 +274,7 @@ def genre_bar_plot(df, n_shelves=4, min_count=2):
     Currently 7 shelves are stored, but including them all can lead to a busy graph
     Default is to only show top 4
     """
+
     def create_melted_genre_df(df):
         shelf_columns = [s for s in df.columns if s.startswith("shelf")]
         genre_df = df[shelf_columns]
@@ -384,7 +387,11 @@ def bokeh_world_plot(world_df, username):
         Slider,
     )
     from bokeh.palettes import brewer
-    output_file(filename=f"goodreads/static/Graphs/{username}/author_map_{username}.html", title=f"Author Map - {username}")
+
+    output_file(
+        filename=f"goodreads/static/Graphs/{username}/author_map_{username}.html",
+        title=f"Author Map - {username}",
+    )
     palette = brewer["BuGn"][8]
     palette = palette[
         ::-1
@@ -428,9 +435,8 @@ def bokeh_world_plot(world_df, username):
     )
 
     p.add_layout(color_bar, "below")
-    
-    save(p)
 
+    save(p)
 
 
 def main(username):
@@ -444,6 +450,7 @@ def main(username):
     nationality_count = return_nationality_count(df)
     world_df = merge_map_data(world_df, nationality_count)
     bokeh_world_plot(world_df, username)
+
 
 if __name__ == "__main__":
     import sys
