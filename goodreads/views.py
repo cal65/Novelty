@@ -87,7 +87,7 @@ def faq(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def finish_plot_view(request):
     username = request.user
-    finish_plot_url = "goodreads/Graphs/{}/finish_plot_{}.jpeg".format(
+    finish_plot_url = "goodreads/static/Graphs/{}/finish_plot_{}.jpeg".format(
         username, username
     )
     return render(
@@ -98,7 +98,7 @@ def finish_plot_view(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def nationality_map_view(request):
     username = request.user
-    nationality_map_url = "goodreads/Graphs/{}/nationality_map_{}.jpeg".format(
+    nationality_map_url = "goodreads/static/Graphs/{}/author_map_{}.html".format(
         username, username
     )
     return render(
@@ -111,7 +111,7 @@ def nationality_map_view(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def popularity_spectrum_view(request):
     username = request.user
-    popularity_spectrum_url = "goodreads/Graphs/{}/popularity_spectrum_{}.jpeg".format(
+    popularity_spectrum_url = "goodreads/static/Graphs/{}/popularity_spectrum_{}.jpeg".format(
         username, username
     )
     return render(
@@ -124,7 +124,7 @@ def popularity_spectrum_view(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def summary_plot_view(request):
     username = request.user
-    summary_plot_url = "{}/Summary_plot_{}.jpeg".format(username, username)
+    summary_plot_url = "Graphs/{}/Summary_plot_{}.jpeg".format(username, username)
     return render(
         request, "goodreads/summary_plot.html", {"summary_plot_url": summary_plot_url}
     )
@@ -134,7 +134,7 @@ def summary_plot_view(request):
 def plots_view(request):
     username = request.user
     finish_plot_url = "Graphs/{}/finish_plot_{}.jpeg".format(username, username)
-    nationality_map_url = "Graphs/{}/nationality_map_{}.jpeg".format(username, username)
+    nationality_map_url = "Graphs/{}/author_map_{}.html".format(username, username)
     popularity_spectrum_url = "Graphs/{}/popularity_spectrum_{}.jpeg".format(
         username, username
     )
