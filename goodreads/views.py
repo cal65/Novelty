@@ -42,7 +42,7 @@ def run_script_function(request):
 def py_script_function(request):
     user = request.user
     os.system(
-        "python goodreads/scripts/append_to_export.py goodreads/Graphs/{}/export_{}.csv".format(
+        "python goodreads/scripts/append_to_export.py goodreads/static/Graphs/{}/export_{}.csv".format(
             user, user
         )
     )
@@ -211,24 +211,9 @@ def upload_view(request):
     user = request.user
     logger.info(f"upload started for {user}")
     # check if user has uploaded a csv file before running the analysis
-    file_path = "goodreads/Graphs/{}/export_{}.csv".format(user, user)
-    if os.path.isfile(file_path):
-        file_exists = True
-    else:
-        file_exists = False
 
     if request.method == "GET":
-        return render(request, template, {"file_exists": file_exists})
-
-    # run analysis when user clicks on Analyze button
-    if request.method == "POST" and "runscript" in request.POST:
-        if os.path.isfile(file_path):
-            logger.info(f"Got running with request {request.method}")
-            run_script_function(request)
-            # when script finishes, move user to plots view
-            return HttpResponseRedirect("/plots/")
-        else:
-            return render(request, template)
+        return render(request, template)
 
     # upload csv file
     csv_file = request.FILES["file"]
@@ -245,11 +230,10 @@ def upload_view(request):
     df = process_export_upload(df)
 
     logger.info(f"starting database addition for {str(len(df))} rows")
-    p = Pool()
-    res = p.apply_async(insert_dataframe_into_database, args=(df, user, True))
-    p.close()
-    p.join()
-    logger.info("pool joined")
+    for _, row in df.iterrows():
+        obj = convert_to_ExportData(row, str(user))
+        #obj.create_or_update()
+        database_append(obj, 3)
 
     df.columns = df.columns.str.replace("_", ".")
 
@@ -260,7 +244,15 @@ def upload_view(request):
         os.mkdir("goodreads/static/Graphs/{}".format(user))
         df.to_csv("goodreads/static/Graphs/{}/export_{}.csv".format(user, user))
 
-    return render(request, template, {"file_exists": file_exists})
+    # run analysis when user clicks on Analyze button
+    if request.method == "POST" and "runscript" in request.POST:
+        logger.info(f"Got running with request {request.method}")
+        run_script_function(request)
+        # when script finishes, move user to plots view
+        return HttpResponseRedirect("/plots/")
+    else:
+        return render(request, template)
+    return render(request, template)
 
 
 def write_metrics(user, time, found, not_found, file_path="metrics.csv"):

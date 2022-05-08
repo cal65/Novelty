@@ -58,6 +58,7 @@ class Books(models.Model):
     to_reads = models.IntegerField(blank=True, null=True, default=0)
     ts_updated = models.DateTimeField(auto_now=True)
 
+
 class RefNationality(models.Model):
     id = models.BigAutoField(primary_key=True)
     region = models.CharField(max_length=250, null=True)
