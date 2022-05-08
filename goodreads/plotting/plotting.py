@@ -1,6 +1,7 @@
 import os
 import warnings
 import argparse
+import geopandas as gpd
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 import pandas as pd
@@ -33,6 +34,7 @@ def get_data(query):
     )
     try:
         df = pd.read_sql(query, con=conn)
+        logger.info(f"Returning data from query with nrows {len(df)}")
         return df
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
@@ -212,8 +214,10 @@ def finish_plot(
 
 
 def gender_bar_plot(df, username, gender_col="gender", narrative_col="narrative"):
+    # ignore nones
+    plot_df = df[(pd.notnull(df[gender_col])) & (pd.notnull(df[narrative_col]))]
     p = (
-        ggplot(df)
+        ggplot(plot_df)
         + geom_bar(aes(x=narrative_col, fill=gender_col), position=position_dodge())
         + xlab("")
         + scale_fill_manual(
@@ -294,15 +298,21 @@ def genre_bar_plot(df, n_shelves=4, min_count=2):
     shelf_table_df.columns = ["Shelf", "Count"]
     shelf_table_df.sort_values("Count", inplace=True)
     shelf_table_df["Shelf"] = factorize(shelf_table_df["Shelf"])
-    p = (
-        ggplot(shelf_table_df[shelf_table_df["Count"] > min_count])
-        + geom_col(aes(x="Shelf", y="Count"), color="black", fill="red")
-        + coord_flip()
-        + theme_classic()
-        + ylab("Number of Books")
-        + theme(plot_title=element_text(hjust=0.5))
-    )
-    return p
+
+    plot_df = shelf_table_df[shelf_table_df["Count"] > min_count]
+    if len(plot_df) > 3:
+        p = (
+            ggplot(plot_df)
+            + geom_col(aes(x="Shelf", y="Count"), color="black", fill="red")
+            + coord_flip()
+            + theme_classic()
+            + ylab("Number of Books")
+            + theme(plot_title=element_text(hjust=0.5))
+        )
+        return p
+    else:
+        logger.info(f"length of eligible data is too small, only {len(plot_df)} rows")
+        return None
 
 
 def summary_plot(
@@ -442,12 +452,16 @@ def bokeh_world_plot(world_df, username):
 def main(username):
     df = get_data(userdata_query(username))
     df = run_all(df)
-    summary_plot(df, username)
+    read_df = df[df['exclusive_shelf']=='read'] # ignore the books that haven't been read
+    try:
+        summary_plot(read_df, username)
+    except Exception as exception:
+        logger.info( " summary plot failed: " + str(exception))
     read_plot(df, username)
-    finish_plot(df, username)
+    finish_plot(read_df, username)
     # world map plotting
     world_df = load_map()
-    nationality_count = return_nationality_count(df)
+    nationality_count = return_nationality_count(read_df)
     world_df = merge_map_data(world_df, nationality_count)
     bokeh_world_plot(world_df, username)
 

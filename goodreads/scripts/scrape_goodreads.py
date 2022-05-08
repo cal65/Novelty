@@ -40,14 +40,13 @@ def get_stats(url, wait=0):
         "url": url,
         "number_of_pages": None,
     }
-
+    logger.info(f"Initiating scrape for url {url}")
     try:
-        page = requests.get(url)
+        page = requests.get(url, timeout=5)
     except requests.exceptions.ConnectionError:
         logger.info("Connection refused - too many requests")
         return null_return
     soup = BeautifulSoup(page.content, "html.parser")
-
     scripts = soup.findAll("script")
     try:
         navig = scripts[18].string
@@ -135,7 +134,7 @@ def get_stats(url, wait=0):
         )
     except:
         numberOfPages = None
-
+    logger.info(f"Scraped - shelf1 = {shelf1} and number of pages = {numberOfPages}")
     time.sleep(wait)
 
     return {
