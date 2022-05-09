@@ -267,6 +267,7 @@ def plot_longest_books(
         + xlab("")
         + ylab("Number of Pages")
         + scale_fill_brewer(palette="Blues", name="Your Rating", type="seq")
+        + theme_classic()
         + coord_flip()
     )
     return p
