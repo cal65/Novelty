@@ -4,6 +4,7 @@ import pandas as pd
 import re
 import logging
 import argparse
+import psycopg2
 from datetime import datetime
 
 sys.path.append("..")
@@ -12,6 +13,7 @@ import django
 from ..models import ExportData, Authors, Books
 from . import scrape_goodreads
 from goodreads import google_answer
+from . import wikipedia
 
 logging.basicConfig(
     filename="logs.txt",
@@ -21,6 +23,8 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger(__name__)
+
+post_pass = os.getenv("cal65_pass")
 
 
 def get_field_names(djangoClass):
@@ -33,11 +37,11 @@ def convert_to_ExportData(row, username):
     try:
         # check if ExportData table already has this book
         djangoObj = ExportData.objects.get(book_id=str(row.book_id), username=username)
-        logger.info('convert to export data - try successful')
+        logger.info("convert to export data - try successful")
     except:
         djangoObj = ExportData()
-        logger.info(f'convert to export data - except for book id ')
-        logger.info(f'with book id {row.book_id}')
+        logger.info(f"convert to export data - except for book id ")
+        logger.info(f"with book id {row.book_id}")
 
     f_names = get_field_names(ExportData)
     common_fields = list(set(row.keys()).intersection(f_names))
@@ -52,22 +56,85 @@ def convert_to_ExportData(row, username):
     djangoObj.save()
     return djangoObj
 
+
 def convert_to_Authors(row):
     name = row.author
     if Authors.objects.filter(author_name == name).exists():
         return
     else:
-            djangoObj = Authors()
-            djangoObj.author_name = name
-            lookup_gender(name)
-            lookup_nationality(name)
+        djangoObj = Authors()
+        djangoObj.author_name = name
+        djangoObj.gender = lookup_gender(name)
+        nationalities = lookup_nationality(name)
+
+        djangoObj.nationality1 = nationalities[0]
+        if (
+            len(nationalities) > 1
+        ):  # too lazy to figure out if there's a more elegant way to do this
+            djangoObj.nationality2 = nationalities[1]
+
+        logger.info(f"Saving book {djangoObj.title}")
+        djangoObj.save()
+
 
 def lookup_gender(name):
-    return
+    # gender
+    first_name = get_first_name(name)
+    gender = guess_gender(goodreads_data, gender_col="gender")
+    # outcomes from this package can be male, female, andy, or unknown
+    if gender not in ["male", "female"]:
+        gender = wikipedia.search_person_for_gender(name)
+    # gender will now be either male, female or unknown
+    return gender
+
+
+def get_first_name(name):
+    names = name.split(" ")
+    if len(names) > 0:
+        return names[0]
+    else:
+        return ""
+
+
+def guess_gender(name):
+    d = gender.Detector()
+    gender = d.get_gender(name)
+
+    return gender
+
 
 def lookup_nationality(name):
     nationalities = google_answer.lookup_author_nationality(name)
     return nationalities
+
+
+def nationality_counts(df):
+    """
+    return count of all nationalities in authors table in order to choose the least common one
+    """
+    nationality_cols = [n for n in df.columns if "nationality" in n]
+    nationality_series = [df[c] for c in nationality_cols]
+    nationalities_all = functools.reduce(lambda a, b: a.append(b), nationality_series)
+    counts_df = pd.DataFrame(nationalities_all.value_counts())
+    counts_df.columns = ["Count"]
+    count_dict = counts_df.to_dict()["Count"]
+    return count_dict
+
+
+def query_authors():
+    conn = psycopg2.connect(
+        host="localhost", database="goodreads", user="cal65", password=post_pass
+    )
+    query = f"""
+    select * from goodreads_authors
+    """
+    try:
+        df = pd.read_sql(query, con=conn)
+        logger.info(f"Returning data from query with nrows {len(df)}")
+        return df
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        return
 
 
 def clean_df(goodreads_data):

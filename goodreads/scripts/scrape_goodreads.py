@@ -180,30 +180,7 @@ def apply_added_by(urls, wait=4):
         .str.split("by ")
         .apply(lambda x: x[0] if x is not None else None)
     )
-    # gender
-    goodreads_data = guess_gender(goodreads_data, gender_col="gender")
-    # shelves
     return goodreads_data
-
-
-def guess_gender(goodreads_data, gender_col="gender"):
-    d = gender.Detector()
-    goodreads_data["first.name"] = [
-        name[0] if name != "" else ""
-        for name in goodreads_data["author"].str.split(" ").fillna("")
-    ]
-    goodreads_data[gender_col] = [
-        d.get_gender(name) for name in goodreads_data["first.name"]
-    ]
-    return goodreads_data
-
-
-def get_first_name(name):
-    names = name.split(" ")
-    if len(names) > 0:
-        return names[0]
-    else:
-        return ""
 
 
 def generate_random_urls(max, n, seed):
