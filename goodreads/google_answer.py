@@ -34,7 +34,8 @@ def get_soup(url):
 
 
 def get_result(soup):
-    raw_results = soup.findAll("div", {"data-attrid": "kc:/people/person:nationality"})
+    raw_results = soup.findAll('div', {'class': 'BNeawe iBp4i AP7Wnd'})
+
     results = []
     for raw in raw_results:
         children = raw.findChildren("a", recursive=True)
