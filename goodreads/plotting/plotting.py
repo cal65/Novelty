@@ -335,12 +335,15 @@ def summary_plot(
     p1 = gender_bar_plot(
         df, username, gender_col=gender_col, narrative_col=narrative_col
     )
+    logger.info('gender bar plot')
     p2 = publication_histogram(df, date_col=date_col, start_year=start_year)
+    logger.info('publication histogram')
     p3 = plot_longest_books(
         df, n=15, pages_col=pages_col, title_col=title_col, my_rating_col=my_rating_col
     )
+    logger.info('longest books')
     p4 = genre_bar_plot(df, n_shelves=n_shelves, min_count=min_count)
-
+    logger.info('genre bar plot')
     p1 = pw.load_ggplot(p1, figsize=(4, 3))
     p2 = pw.load_ggplot(p2, figsize=(4, 3))
     p3 = pw.load_ggplot(p3, figsize=(4, 3))

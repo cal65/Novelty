@@ -225,26 +225,25 @@ def upload_view(request):
         return render(request, template)
         
     # upload csv file
-    if request.method == "POST":
-        csv_file = request.FILES["file"]
-        # check if file uploaded is csv
-        if not csv_file.name.endswith(".csv"):
-            messages.error(
-                request, "Wrong file format chosen. Please upload .csv file instead."
-            )
-            return render(request, template)
-        # save csv file in database
-        df = pd.read_csv(csv_file)
-        df = process_export_upload(df)
-        logger.info(f"starting database addition for {str(len(df))} rows")
-        insert_dataframe_into_database(df, user, wait=3, metrics=True)
+    csv_file = request.FILES["file"]
+    # check if file uploaded is csv
+    if not csv_file.name.endswith(".csv"):
+        messages.error(
+            request, "Wrong file format chosen. Please upload .csv file instead."
+        )
+        return render(request, template)
+    # save csv file in database
+    df = pd.read_csv(csv_file)
+    df = process_export_upload(df)
+    logger.info(f"starting database addition for {str(len(df))} rows")
+    insert_dataframe_into_database(df, user, wait=3, metrics=True)
 
-        # save csv file to user's folder
-        try:
-            df.to_csv("goodreads/static/Graphs/{}/export_{}.csv".format(user, user))
-        except OSError:
-            os.mkdir("goodreads/static/Graphs/{}".format(user))
-            df.to_csv("goodreads/static/Graphs/{}/export_{}.csv".format(user, user))
+    # save csv file to user's folder
+    try:
+        df.to_csv("goodreads/static/Graphs/{}/export_{}.csv".format(user, user))
+    except OSError:
+        os.mkdir("goodreads/static/Graphs/{}".format(user))
+        df.to_csv("goodreads/static/Graphs/{}/export_{}.csv".format(user, user))
 
     return render(request, template)
 
