@@ -185,7 +185,7 @@ def finish_plot(
     df_read_n[title_col] = df_read_n[title_col].astype(cat_type)
     df_read_n["read_half"] = df_read_n[read_col] / 2
     df_read_n["display_text"] = df_read_n.apply(
-        lambda x: f"{x['read']} / {x['added_by']}", axis=1
+        lambda x: f"{int(x['read'])} / {int(x['added_by'])}", axis=1
     )
     p = (
         ggplot(df_read_n, aes(x=title_col))
@@ -222,7 +222,7 @@ def gender_bar_plot(df, username, gender_col="gender", narrative_col="narrative"
         + xlab("")
         + scale_fill_manual(
             name="Gender",
-            values={"male": "blue", "female": "red", "other": "green"},
+            values={"male": "darkblue", "female": "darkred", "other": "green"},
             drop=False,
         )
         + coord_flip()
@@ -273,7 +273,7 @@ def plot_longest_books(
     return p
 
 
-def genre_bar_plot(df, n_shelves=4, min_count=2):
+def genre_bar_plot(df, n_shelves=4, min_count=3):
     """
     Because genres are stored in multiple columns starting with 'shelf', to plot them we need to melt the shelves
     Currently 7 shelves are stored, but including them all can lead to a busy graph
@@ -327,7 +327,7 @@ def summary_plot(
     title_col="title_simple",
     my_rating_col="my_rating",
     n_shelves=4,
-    min_count=2,
+    min_count=3,
 ):
     """
     Call 4 distinct plot generators. Load them up into a 2x2 grid. Save and return figure.
@@ -366,6 +366,9 @@ def load_map():
     select * from goodreads_refnationality
     """
     region_df = get_data(region_query)
+    country_mapper = {'England': 'United Kingdom', 'Bosnia': 'Bosnia and Herz.',
+                      'Dominican Republic': 'Dominican Rep.'}
+    region_df["region"] = region_df["region"].replace(country_mapper)
     region_dict = region_df.set_index("region").to_dict()["nationality"]
     world["nationality"] = world["name"].map(region_dict)
     return world
