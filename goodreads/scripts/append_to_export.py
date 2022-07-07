@@ -75,6 +75,7 @@ def convert_to_Authors(row):
 
         logger.info(f"Saving book {djangoObj.title}")
         djangoObj.save()
+        return djangoObj
 
 
 def lookup_gender(name):

@@ -16,7 +16,7 @@ sys.path.append("..")
 from .plotting import plotting
 
 from django.contrib.auth.decorators import login_required
-from .scripts.append_to_export import convert_to_ExportData, database_append
+from .scripts.append_to_export import convert_to_ExportData, convert_to_Authors, database_append
 
 import logging
 
@@ -230,12 +230,7 @@ def upload_view(request):
     df = process_export_upload(df)
 
     logger.info(f"starting database addition for {str(len(df))} rows")
-    for _, row in df.iterrows():
-        obj = convert_to_ExportData(row, str(user))
-        #obj.create_or_update()
-        database_append(obj, 3)
-
-    df.columns = df.columns.str.replace("_", ".")
+    insert_dataframe_into_database(df, user, wait=3, metrics=True)
 
     # save csv file to user's folder
     try:
