@@ -215,6 +215,15 @@ def upload_view(request):
     if request.method == "GET":
         return render(request, template)
 
+    # run analysis when user clicks on Analyze button
+    if request.method == "POST" and "runscript" in request.POST:
+        logger.info(f"Got running with request {request.method}")
+        run_script_function(request)
+        # when script finishes, move user to plots view
+        return HttpResponseRedirect("/plots/")
+    else:
+        return render(request, template)
+        
     # upload csv file
     csv_file = request.FILES["file"]
 
@@ -239,14 +248,7 @@ def upload_view(request):
         os.mkdir("goodreads/static/Graphs/{}".format(user))
         df.to_csv("goodreads/static/Graphs/{}/export_{}.csv".format(user, user))
 
-    # run analysis when user clicks on Analyze button
-    if request.method == "POST" and "runscript" in request.POST:
-        logger.info(f"Got running with request {request.method}")
-        run_script_function(request)
-        # when script finishes, move user to plots view
-        return HttpResponseRedirect("/plots/")
-    else:
-        return render(request, template)
+
     return render(request, template)
 
 
