@@ -216,7 +216,7 @@ def upload_view(request):
         return render(request, template)
 
     # run analysis when user clicks on Analyze button
-    if request.method == "POST" and "runscript" in request.POST:
+    if request.method == "POST" in request.POST:
         logger.info(f"Got running with request {request.method}")
         run_script_function(request)
         # when script finishes, move user to plots view
