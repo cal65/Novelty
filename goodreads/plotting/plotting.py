@@ -460,9 +460,9 @@ def main(username):
     try:
         summary_plot(read_df, username)
     except Exception as exception:
-        logger.info( " summary plot failed: " + str(exception))
-    read_plot(df, username)
-    finish_plot(read_df, username)
+        logger.info(" summary plot failed: " + str(exception))
+    read_plot(read_df, username)
+    finish_plot(df, username)
     # world map plotting
     world_df = load_map()
     nationality_count = return_nationality_count(read_df)
