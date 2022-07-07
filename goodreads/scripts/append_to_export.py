@@ -1,5 +1,7 @@
 import os
 import sys
+
+import gender as gender
 import pandas as pd
 import re
 import logging
@@ -12,7 +14,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
 import django
 from ..models import ExportData, Authors, Books
 from . import scrape_goodreads
-from goodreads import google_answer
+import gender_guesser.detector as gender
+from .. import google_answer
 from . import wikipedia
 
 logging.basicConfig(
@@ -81,7 +84,7 @@ def convert_to_Authors(row):
 def lookup_gender(name):
     # gender
     first_name = get_first_name(name)
-    gender = guess_gender(goodreads_data, gender_col="gender")
+    gender = guess_gender(first_name, gender_col="gender")
     # outcomes from this package can be male, female, andy, or unknown
     if gender not in ["male", "female"]:
         gender = wikipedia.search_person_for_gender(name)
