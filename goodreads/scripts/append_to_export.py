@@ -1,11 +1,11 @@
 import os
 import sys
 
-import gender as gender
 import pandas as pd
 import re
 import logging
 import argparse
+import functools
 import psycopg2
 from datetime import datetime
 
@@ -43,7 +43,7 @@ def convert_to_ExportData(row, username):
         logger.info("convert to export data - try successful")
     except:
         djangoObj = ExportData()
-        logger.info(f"convert to export data - except for book id ")
+        logger.info(f"convert to export data - except for book ")
         logger.info(f"with book id {row.book_id}")
 
     f_names = get_field_names(ExportData)
@@ -52,7 +52,9 @@ def convert_to_ExportData(row, username):
         value = row.get(f)
         if pd.isnull(value):
             value = None
-        setattr(djangoObj, f, value)
+        if value != getattr(djangoObj, f):
+            logger.info(f"updating djangoObj for field {f} with value {value}")
+            setattr(djangoObj, f, value)
     djangoObj.username = username
     djangoObj.ts_updated = datetime.now()
     logger.info(f"Saving book {djangoObj.title}")
@@ -192,6 +194,8 @@ def database_append(djangoExport, wait=2):
     common_fields = book_fields.intersection(export_fields)
     for field in common_fields:
         setattr(djangoExport, field, getattr(djangoBook, field))
+    if djangoExport.book_id == '48717712':
+        logger.info(f"Putin's World - shelf {djangoExport.exclusive_shelf}")
     djangoExport.save()
     logger.info(f"Book {djangoBook.book_id} updated in database")
     return status
@@ -265,16 +269,6 @@ def fix_date(file_path):
     df.to_csv(file_path, index=False)
     # return just for proof
     return df[["Title", "Date.Added", "Date.Read"]]
-
-
-def merge_with_existing(df, db, id_col_df="Book.Id", id_col_db="Book.Id"):
-    """
-    df is a dataframe of a goodreads export (not yet appended)
-    db is a dataframe of an existing library of goodreads books with only Book.Id and scraped columns (and unique)
-    Merge the db fields into df, so as to save scraping time
-    """
-    df = pd.merge(df, db, left_on=id_col_df, right_on=id_col_db, how="left")
-    return df
 
 
 if __name__ == "__main__":

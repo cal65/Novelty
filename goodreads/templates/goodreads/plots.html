@@ -27,9 +27,12 @@
         .done(response => console.log("done!", response))
     }
 </script>
-<button onclick="reanalyze()" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 pb-2 px-4 rounded">
+<form method="POST">
+    {% csrf_token %}
+    <button name="runscript" onclick="reanalyze()" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 pb-2 px-4 rounded">
                 Re-Analyze
 </button>
+</form>
 <div class="center-text">
     <br>
 	<p>
@@ -53,7 +56,7 @@
 </p> </div>
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">POPULARITY SPECTRUM IMAGE</div>
     <div style="display: flex; justify-content: center;">
-        <img style="width: 80%; height: 650px;" src="{% static popularity_spectrum_url %}" %}" class="text-center" alt="popularity-spectrum" />
+        <img style="width: 80%; height: 650px;" src="{% static popularity_spectrum_url %}"  class="text-center" alt="popularity-spectrum" />
     </div>
         <div class="center-text">
         This shows the number of Goodreads users who have read this book, or its popularity. It is divided into logarithmic tiers.
@@ -64,7 +67,7 @@
     </div>
         <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">NATIONALITY MAP IMAGE</div>
     <div style="display: flex; justify-content: center;">
-        <iframe style="width: 80%; height: 650px;" src="{% static nationality_map_url %}" %}" class="text-center" alt="nationality-map" />
+        <iframe style="width: 80%; height: 650px;" src="{% static nationality_map_url %}" class="text-center" alt="nationality-map" />
     </iframe>
     </div>
     <br><br><br>

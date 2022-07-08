@@ -10,6 +10,8 @@ import psycopg2
 import matplotlib
 from plotnine import *
 import patchworklib as pw
+from mizani.formatters import percent_format
+
 
 from pandas.api.types import CategoricalDtype
 
@@ -179,6 +181,8 @@ def finish_plot(
         .apply(lambda x: x.head(n))
         .reset_index(drop=True)
     )
+    logger.info(f"what is df_read {df_read_n[[title_col, exclusive_shelf]]}")
+
     cat_type = CategoricalDtype(
         categories=pd.unique(df_read_n[title_col]), ordered=True
     )
@@ -201,6 +205,7 @@ def finish_plot(
         + ylim(0, 1)
         + xlab("Title")
         + ylab("Reading Percentage")
+        + scale_y_continuous(labels=percent_format())
         + coord_flip()
         + ggtitle("Least Finished Reads")
         + theme(plot_title=element_text(hjust=0.5), panel_background=element_blank())
@@ -283,7 +288,7 @@ def genre_bar_plot(df, n_shelves=4, min_count=3):
     def create_melted_genre_df(df):
         shelf_columns = [s for s in df.columns if s.startswith("shelf")]
         genre_df = df[shelf_columns]
-        genre_df_m = pd.melt(df[shelf_columns], value_name="Shelf")
+        genre_df_m = pd.melt(genre_df, value_name="Shelf")
         genre_df_m = genre_df_m[
             ~genre_df_m["Shelf"].isin(["Fiction", "Nonfiction", ""])
         ]
@@ -304,11 +309,11 @@ def genre_bar_plot(df, n_shelves=4, min_count=3):
     if len(plot_df) > 3:
         p = (
             ggplot(plot_df)
-            + geom_col(aes(x="Shelf", y="Count"), color="black", fill="red")
+            + geom_col(aes(x="Shelf", y="Count"), color="black", fill="darkred")
             + coord_flip()
             + theme_classic()
             + ylab("Number of Books")
-            + theme(plot_title=element_text(hjust=0.5))
+            + theme(axis_text_y=element_text(size=250/len(plot_df)))
         )
         return p
     else:
@@ -409,7 +414,7 @@ def bokeh_world_plot(world_df, username):
         filename=f"goodreads/static/Graphs/{username}/author_map_{username}.html",
         title=f"Author Map - {username}",
     )
-    palette = brewer["BuGn"][8]
+    palette = brewer["OrRd"][8]
     palette = palette[
         ::-1
     ]  # reverse order of colors so higher values have darker colors
