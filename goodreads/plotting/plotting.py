@@ -181,7 +181,6 @@ def finish_plot(
         .apply(lambda x: x.head(n))
         .reset_index(drop=True)
     )
-    logger.info(f"what is df_read {df_read_n[[title_col, exclusive_shelf]]}")
 
     cat_type = CategoricalDtype(
         categories=pd.unique(df_read_n[title_col]), ordered=True

@@ -37,14 +37,15 @@ def get_field_names(djangoClass):
 
 
 def convert_to_ExportData(row, username):
+    update_needed = False
     try:
         # check if ExportData table already has this book
-        djangoObj = ExportData.objects.get(book_id=str(row.book_id), username=username)
+        djangoExport = ExportData.objects.get(book_id=str(row.book_id), username=username)
         logger.info("convert to export data - try successful")
     except:
-        djangoObj = ExportData()
-        logger.info(f"convert to export data - except for book ")
-        logger.info(f"with book id {row.book_id}")
+        djangoExport = ExportData()
+        logger.info(f"convert to export data - new book id {row.book_id}")
+        update_needed = True
 
     f_names = get_field_names(ExportData)
     common_fields = list(set(row.keys()).intersection(f_names))
@@ -52,14 +53,14 @@ def convert_to_ExportData(row, username):
         value = row.get(f)
         if pd.isnull(value):
             value = None
-        if value != getattr(djangoObj, f):
-            logger.info(f"updating djangoObj for field {f} with value {value}")
-            setattr(djangoObj, f, value)
-    djangoObj.username = username
-    djangoObj.ts_updated = datetime.now()
-    logger.info(f"Saving book {djangoObj.title}")
-    djangoObj.save()
-    return djangoObj
+        if value != getattr(djangoExport, f):
+            logger.info(f"updating djangoExport {row.title} for field {f} with value {value}")
+            setattr(djangoExport, f, value)
+            update_needed = True
+    djangoExport.username = username
+    if update_needed:
+        djangoExport.ts_updated = datetime.now()
+    return djangoExport
 
 
 def convert_to_Authors(row):
@@ -194,8 +195,6 @@ def database_append(djangoExport, wait=2):
     common_fields = book_fields.intersection(export_fields)
     for field in common_fields:
         setattr(djangoExport, field, getattr(djangoBook, field))
-    if djangoExport.book_id == '48717712':
-        logger.info(f"Putin's World - shelf {djangoExport.exclusive_shelf}")
     djangoExport.save()
     logger.info(f"Book {djangoBook.book_id} updated in database")
     return status
