@@ -312,7 +312,7 @@ def genre_bar_plot(df, n_shelves=4, min_count=3):
             + coord_flip()
             + theme_classic()
             + ylab("Number of Books")
-            + theme(axis_text_y=element_text(size=250/len(plot_df)))
+            + theme(axis_text_y=element_text(size=250 / len(plot_df)))
         )
         return p
     else:
@@ -339,15 +339,15 @@ def summary_plot(
     p1 = gender_bar_plot(
         df, username, gender_col=gender_col, narrative_col=narrative_col
     )
-    logger.info('gender bar plot')
+    logger.info("gender bar plot")
     p2 = publication_histogram(df, date_col=date_col, start_year=start_year)
-    logger.info('publication histogram')
+    logger.info("publication histogram")
     p3 = plot_longest_books(
         df, n=15, pages_col=pages_col, title_col=title_col, my_rating_col=my_rating_col
     )
-    logger.info('longest books')
+    logger.info("longest books")
     p4 = genre_bar_plot(df, n_shelves=n_shelves, min_count=min_count)
-    logger.info('genre bar plot')
+    logger.info("genre bar plot")
     p1 = pw.load_ggplot(p1, figsize=(4, 3))
     p2 = pw.load_ggplot(p2, figsize=(4, 3))
     p3 = pw.load_ggplot(p3, figsize=(4, 3))
@@ -370,8 +370,11 @@ def load_map():
     select * from goodreads_refnationality
     """
     region_df = get_data(region_query)
-    country_mapper = {'England': 'United Kingdom', 'Bosnia': 'Bosnia and Herz.',
-                      'Dominican Republic': 'Dominican Rep.'}
+    country_mapper = {
+        "England": "United Kingdom",
+        "Bosnia": "Bosnia and Herz.",
+        "Dominican Republic": "Dominican Rep.",
+    }
     region_df["region"] = region_df["region"].replace(country_mapper)
     region_dict = region_df.set_index("region").to_dict()["nationality"]
     world["nationality"] = world["name"].map(region_dict)
@@ -463,7 +466,9 @@ def bokeh_world_plot(world_df, username):
 def main(username):
     df = get_data(userdata_query(username))
     df = run_all(df)
-    read_df = df[df['exclusive_shelf']=='read'] # ignore the books that haven't been read
+    read_df = df[
+        df["exclusive_shelf"] == "read"
+    ]  # ignore the books that haven't been read
     try:
         summary_plot(read_df, username)
     except Exception as exception:
