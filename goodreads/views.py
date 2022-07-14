@@ -16,7 +16,7 @@ sys.path.append("..")
 from .plotting import plotting
 
 from django.contrib.auth.decorators import login_required
-from .scripts.append_to_export import convert_to_ExportData, convert_to_Authors, database_append
+from .scripts.append_to_export import convert_to_ExportData, convert_to_Authors, convert_to_Book
 
 import logging
 
@@ -111,7 +111,7 @@ def popularity_spectrum_view(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def summary_plot_view(request):
     username = request.user
-    summary_plot_url = "Graphs/{}/Summary_plot_{}.jpeg".format(username, username)
+    summary_plot_url = "Graphs/{}/summary_plot_{}.jpeg".format(username, username)
     return render(
         request, "goodreads/summary_plot.html", {"summary_plot_url": summary_plot_url}
     )
@@ -182,8 +182,8 @@ def insert_dataframe_into_database(df, user, wait=2, metrics=True):
     for _, row in df.iterrows():
         # save book csv info to exportdata table
         obj = convert_to_ExportData(row, str(user))
-        # if book is not in books table, scrape it and save additional parameters
-        status = database_append(obj, wait=wait) # append to books database
+        # if book is not in books table, scrape it and save to books table
+        status = convert_to_Book(obj, wait=wait)
         if metrics:
             if status == "found":
                 found += 1
@@ -193,17 +193,6 @@ def insert_dataframe_into_database(df, user, wait=2, metrics=True):
     if metrics:
         # output metrics
         write_metrics(user, time=now, found=found, not_found=not_found)
-
-
-def insert_row_into_db(row, user, wait=2):
-    # save row info to exportdata table
-    obj = convert_to_ExportData(row, str(user))
-    # if book is not in books table, scrape it and save additional parameters
-    logger.info("Insert row - obj converted")
-    status = database_append(obj, wait=wait)
-    logger.info(f"insert row being called for {user} with status: {status}")
-
-    return status
 
 
 @login_required(redirect_field_name="next", login_url="user-login")

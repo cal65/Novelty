@@ -66,6 +66,7 @@ def convert_to_ExportData(row, username):
     djangoExport.username = username
     if update_needed:
         djangoExport.ts_updated = datetime.now()
+    djangoExport.save() # update ExportsData table
     return djangoExport
 
 
@@ -85,7 +86,7 @@ def convert_to_Authors(row):
         ):  # too lazy to figure out if there's a more elegant way to do this
             djangoObj.nationality2 = nationalities[1]
 
-        logger.info(f"Saving author {djangoObj.author_name}")
+        logger.info(f"Saving new author {djangoObj.author_name}")
         djangoObj.save()
         return djangoObj
 
@@ -176,11 +177,10 @@ def append_scraping(book_id, wait):
         if k in book_fields:
             setattr(djangoBook, k, v)
     djangoBook.book_id = book_id
-    djangoBook.save()
     return djangoBook
 
 
-def database_append(djangoExport, wait=2):
+def convert_to_Book(djangoExport, wait=2):
     """
     If book is in books table, return status "found"
     If book is not in books table, scrape it, add the scraped fields to the books table, return status "not found"
@@ -188,21 +188,16 @@ def database_append(djangoExport, wait=2):
     Save to user goodreads exportdata table
     """
     book_id = djangoExport.book_id
-    book_fields = get_field_names(Books)
-    export_fields = get_field_names(ExportData)
-    try:
-        djangoBook = Books.objects.get(book_id=book_id)
+
+    if Books.objects.filter(book_id=book_id).exists():
         status = "found"
-    except:
-        logger.info("Book not in database - must scrape")
+        return status
+    else:
+        logger.info(f"{djangoExport.title} not in database - must scrape")
         djangoBook = append_scraping(book_id, wait=wait)
         status = "not found"
-
-    common_fields = book_fields.intersection(export_fields)
-    for field in common_fields:
-        setattr(djangoExport, field, getattr(djangoBook, field))
-    djangoExport.save()
-    logger.info(f"Book {djangoBook.book_id} updated in books table")
+        djangoBook.save()
+        logger.info(f"Book {djangoBook.book_id} updated in books table")
     return status
 
 
