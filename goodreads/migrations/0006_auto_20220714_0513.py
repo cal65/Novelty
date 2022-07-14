@@ -56,10 +56,4 @@ class Migration(migrations.Migration):
             name='narrative',
             field=models.CharField(default='Fiction', max_length=250),
         ),
-        migrations.AddField(
-            model_name='exportdata',
-            name='id',
-            field=models.AutoField(auto_created=True, default=builtins.id, primary_key=True, serialize=False, verbose_name='ID'),
-            preserve_default=False,
-        ),
     ]

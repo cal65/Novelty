@@ -11,7 +11,6 @@ from datetime import datetime
 
 sys.path.append("..")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
-import django
 from ..models import ExportData, Authors, Books
 from . import scrape_goodreads
 import gender_guesser.detector as gender_detector
@@ -43,7 +42,9 @@ def convert_to_ExportData(row, username):
     update_needed = False
     try:
         # check if ExportData table already has this book
-        djangoExport = ExportData.objects.get(book_id=str(row.book_id), username=username)
+        djangoExport = ExportData.objects.get(
+            book_id=str(row.book_id), username=username
+        )
         logger.info("convert to export data - try successful")
     except:
         djangoExport = ExportData()
@@ -57,7 +58,9 @@ def convert_to_ExportData(row, username):
         if pd.isnull(value):
             value = None
         if value != getattr(djangoExport, f):
-            logger.info(f"updating djangoExport {row.title} for field {f} with value {value}")
+            logger.info(
+                f"updating djangoExport {row.title} for field {f} with value {value}"
+            )
             setattr(djangoExport, f, value)
             update_needed = True
     djangoExport.username = username

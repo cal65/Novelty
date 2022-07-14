@@ -50,8 +50,12 @@ def userdata_query(username):
     shelf1, shelf2, shelf3, shelf4, shelf5, shelf6, shelf7,
     date_read, exclusive_shelf, added_by, to_reads,
     gender, nationality1, nationality2, nationality_chosen
-    from goodreads_exportdata e left join goodreads_authors as a 
-    on e.author = a.author_name where e.username = '{username}'
+    from goodreads_exportdata e 
+    left join goodreads_authors as a 
+    on e.author = a.author_name
+    left join goodreads_books as b
+    on e.book_id = b.book_id
+    where e.username = '{username}'
     """
     return query
 

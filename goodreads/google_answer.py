@@ -34,7 +34,7 @@ def get_soup(url):
 
 
 def get_result(soup):
-    raw_results = soup.findAll('div', {'class': 'BNeawe iBp4i AP7Wnd'})
+    raw_results = soup.findAll("div", {"class": "BNeawe iBp4i AP7Wnd"})
 
     results = []
     for raw in raw_results:
@@ -92,7 +92,7 @@ def append_nationalities(df, author_col="Author"):
     return pd.concat([df.reset_index(drop=True), nats_df], axis=1)
 
 
-def lookup_unfound(df, nationality_col="nationality_1", author_col="Author"):
+def lookup_unfound(df, nationality_col="nationality1", author_col="Author"):
     # for a file without the base schema
     if nationality_col not in df.columns:
         return append_nationalities(df)
