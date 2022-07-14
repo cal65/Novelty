@@ -85,6 +85,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("file_path", help="The path to a books csv file")
     parser.add_argument("username", help="name of user")
-    file_path = parser.file_path
-    username = parser.username
+    args = parser.parse_args()
+    file_path = args.file_path
+    username = args.username
     start(file_path, username)
