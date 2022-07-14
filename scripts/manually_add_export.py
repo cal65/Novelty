@@ -29,7 +29,7 @@ def populate_table_from_csv(csv_file_path, table, database="goodreads"):
     connection.close()
 
 
-def start():
+def start(file_path, username):
     """ populate authors table in the PostgreSQL database"""
     try:
         connection = psycopg2.connect(
@@ -49,11 +49,6 @@ def start():
         + "@127.0.0.1/goodreads"
     )
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("file_path", help="The path to a books csv file")
-    parser.add_argument("username", help="name of user")
-    file_path = parser.file_path
-    username= parser.username
     ## populate authors
     ## populate books
     books = pd.read_csv(file_path)
@@ -87,4 +82,9 @@ def start():
 
 
 if __name__ == "__main__":
-    start()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("file_path", help="The path to a books csv file")
+    parser.add_argument("username", help="name of user")
+    file_path = parser.file_path
+    username = parser.username
+    start(file_path, username)
