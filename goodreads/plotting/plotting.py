@@ -50,7 +50,7 @@ def userdata_query(username):
     e.my_rating, e.average_rating, e.original_publication_year,
     e.date_read, e.exclusive_shelf, 
     b.shelf1, b.shelf2, b.shelf3, b.shelf4, b.shelf5, b.shelf6, b.shelf7,
-    b.dded_by, b.to_reads,
+    b.added_by, b.to_reads,
     a.gender, a.nationality1, a.nationality2, a.nationality_chosen
     from goodreads_exportdata e 
     left join goodreads_authors as a 
