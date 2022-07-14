@@ -183,12 +183,13 @@ def insert_dataframe_into_database(df, user, wait=2, metrics=True):
         # save book csv info to exportdata table
         obj = convert_to_ExportData(row, str(user))
         # if book is not in books table, scrape it and save additional parameters
-        status = database_append(obj, wait=wait)
+        status = database_append(obj, wait=wait) # append to books database
         if metrics:
             if status == "found":
                 found += 1
             else:
                 not_found += 1
+        author = convert_to_Authors(row)
     if metrics:
         # output metrics
         write_metrics(user, time=now, found=found, not_found=not_found)
