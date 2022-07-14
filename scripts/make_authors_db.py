@@ -53,8 +53,7 @@ def start():
     authors_db.to_sql("goodreads_authors", engine, if_exists="replace", index=False)
     ## populate books
     books_db = pd.read_csv("artifacts/books_database.csv")
-    books_db = books_db[
-        [
+    book_cols = [
             "Book.Id",
             "Shelf1",
             "Shelf2",
@@ -66,19 +65,8 @@ def start():
             "Added_by",
             "To_reads",
         ]
-    ]
-    books_db.columns = [
-            "book_id",
-            "shelf1",
-            "shelf2",
-            "shelf3",
-            "shelf4",
-            "shelf5",
-            "shelf6",
-            "shelf7",
-            "added_by",
-            "to_reads",
-        ]
+    rename_cols = [c.lower().replace('.', '_') for c in book_cols]   
+    books_db = books_db[book_cols].rename(columns={book_cols:rename_cols})
     books_db['book_id'] = books_db['book_id'].astype(str)
     books_db['ts_updated'] = datetime.now()
     books_db.to_sql("goodreads_books", engine, if_exists="replace", index=False)
