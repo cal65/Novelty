@@ -14,7 +14,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
 import django
 from ..models import ExportData, Authors, Books
 from . import scrape_goodreads
-import gender_guesser.detector as gender
+import gender_guesser.detector as gender_detector
 from .. import google_answer
 from . import wikipedia
 
@@ -37,6 +37,9 @@ def get_field_names(djangoClass):
 
 
 def convert_to_ExportData(row, username):
+    """
+    Take a row from a goodreads export
+    """
     update_needed = False
     try:
         # check if ExportData table already has this book
@@ -65,7 +68,7 @@ def convert_to_ExportData(row, username):
 
 def convert_to_Authors(row):
     name = row.author
-    if Authors.objects.filter(author_name == name).exists():
+    if Authors.objects.filter(author_name=name).exists():
         return
     else:
         djangoObj = Authors()
@@ -79,7 +82,7 @@ def convert_to_Authors(row):
         ):  # too lazy to figure out if there's a more elegant way to do this
             djangoObj.nationality2 = nationalities[1]
 
-        logger.info(f"Saving book {djangoObj.title}")
+        logger.info(f"Saving author {djangoObj.author_name}")
         djangoObj.save()
         return djangoObj
 
@@ -87,7 +90,7 @@ def convert_to_Authors(row):
 def lookup_gender(name):
     # gender
     first_name = get_first_name(name)
-    gender = guess_gender(first_name, gender_col="gender")
+    gender = guess_gender(first_name)
     # outcomes from this package can be male, female, andy, or unknown
     if gender not in ["male", "female"]:
         gender = wikipedia.search_person_for_gender(name)
@@ -104,7 +107,7 @@ def get_first_name(name):
 
 
 def guess_gender(name):
-    d = gender.Detector()
+    d = gender_detector.Detector()
     gender = d.get_gender(name)
 
     return gender
@@ -196,7 +199,7 @@ def database_append(djangoExport, wait=2):
     for field in common_fields:
         setattr(djangoExport, field, getattr(djangoBook, field))
     djangoExport.save()
-    logger.info(f"Book {djangoBook.book_id} updated in database")
+    logger.info(f"Book {djangoBook.book_id} updated in books table")
     return status
 
 
