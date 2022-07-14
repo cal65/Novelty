@@ -64,9 +64,10 @@ def start():
             "Shelf7",
             "Added_by",
             "To_reads",
+            "Narrative"
         ]
     rename_cols = [c.lower().replace('.', '_') for c in book_cols]   
-    books_db = books_db[book_cols].rename(columns={book_cols:rename_cols})
+    books_db = books_db[book_cols].rename(columns=dict(zip(book_cols, rename_cols)))
     books_db['book_id'] = books_db['book_id'].astype(str)
     books_db['ts_updated'] = datetime.now()
     books_db.to_sql("goodreads_books", engine, if_exists="replace", index=False)
