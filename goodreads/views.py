@@ -125,7 +125,7 @@ def plots_view(request):
     popularity_spectrum_url = "Graphs/{}/popularity_spectrum_{}.jpeg".format(
         username, username
     )
-    summary_plot_url = "Graphs/{}/Summary_plot_{}.jpeg".format(username, username)
+    summary_plot_url = "Graphs/{}/summary_plot_{}.jpeg".format(username, username)
 
     if "run_script_function" in request.POST:
         run_script_function(request)

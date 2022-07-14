@@ -471,6 +471,7 @@ def bokeh_world_plot(world_df, username):
 
 def main(username):
     df = get_data(userdata_query(username))
+    logger.info(f"Data read with {len(df)} rows \n : {df.head()}")
     df = run_all(df)
     read_df = df[
         df["exclusive_shelf"] == "read"
