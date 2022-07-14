@@ -45,11 +45,13 @@ def get_data(query):
 
 def userdata_query(username):
     query = f"""
-    select id, book_id, title, author, number_of_pages,
-    my_rating, average_rating, original_publication_year,
-    shelf1, shelf2, shelf3, shelf4, shelf5, shelf6, shelf7,
-    date_read, exclusive_shelf, added_by, to_reads,
-    gender, nationality1, nationality2, nationality_chosen
+    select 
+    e.id, e.book_id, e.title, e.author, e.number_of_pages,
+    e.my_rating, e.average_rating, e.original_publication_year,
+    e.date_read, e.exclusive_shelf, 
+    b.shelf1, b.shelf2, b.shelf3, b.shelf4, b.shelf5, b.shelf6, b.shelf7,
+    b.dded_by, b.to_reads,
+    a.gender, a.nationality1, a.nationality2, a.nationality_chosen
     from goodreads_exportdata e 
     left join goodreads_authors as a 
     on e.author = a.author_name
