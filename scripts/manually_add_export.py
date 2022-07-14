@@ -77,7 +77,7 @@ def start(file_path, username):
     'original_publication_year', 'date_read', 'exclusive_shelf']
     books['ts_updated'] = datetime.now()
     books['username'] = username
-    books[exportdata_cols].to_sql("goodreads_exportdata", engine, if_exists="replace", index=False)
+    books[exportdata_cols + ['ts_updated', 'username']].to_sql("goodreads_exportdata", engine, if_exists="replace", index=False)
     connection.close()
 
 
