@@ -12,13 +12,6 @@ class ExportDataAdmin(admin.ModelAdmin):
         "my_rating",
         "average_rating",
         "original_publication_year",
-        "shelf1",
-        "shelf2",
-        "shelf3",
-        "shelf4",
-        "shelf5",
-        "shelf6",
-        "shelf7",
         "username",
     )
 
