@@ -52,7 +52,7 @@ def start(file_path, username):
     ## populate authors
     ## populate books
     books = pd.read_csv(file_path)
-    books_db['Book.Id'] = books_db['Book.Id'].astype(str)
+    books['Book.Id'] = books['Book.Id'].astype(str)
 
     book_cols = [
             "Book.Id",
