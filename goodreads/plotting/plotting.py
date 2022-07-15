@@ -233,7 +233,7 @@ def gender_bar_plot(df, username, gender_col="gender", narrative_col="narrative"
         + xlab("")
         + scale_fill_manual(
             name="Gender",
-            values={"male": "darkblue", "female": "darkred", "other": "green"},
+            values={"male": "darkblue", "female": "darkred", "unknown": "green"},
             drop=False,
         )
         + coord_flip()
@@ -243,7 +243,7 @@ def gender_bar_plot(df, username, gender_col="gender", narrative_col="narrative"
             plot_title=element_text(hjust=1),
             axis_text=element_text(size=12),
         )
-        + ggtitle("Summary Plots  ")
+        + ggtitle(f"Summary Plots for {username}")
     )
     return p
 

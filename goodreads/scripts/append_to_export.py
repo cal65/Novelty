@@ -49,7 +49,7 @@ def convert_to_ExportData(row, username):
     except:
         djangoExport = ExportData()
         logger.info(f"convert to export data - new book id {row.book_id}")
-        update_needed = True
+        new = True
 
     f_names = get_field_names(ExportData)
     common_fields = list(set(row.keys()).intersection(f_names))
@@ -59,16 +59,19 @@ def convert_to_ExportData(row, username):
         if pd.isnull(value):
             value = None
         if value != getattr(djangoExport, f):
-            logger.info(
-                f"updating djangoExport {row.title} for field {f} from {existing_value} to value {value}"
-            )
+            if not new:
+                logger.info(
+                    f"updating djangoExport {row.title} for field {f} from {existing_value} to value {value}"
+                )
             setattr(djangoExport, f, value)
-            update_needed = True
-    if update_needed:
+            # update ExportsData table with updated book
+            djangoExport.save()
+    if new:
         djangoExport.username = username
         djangoExport.ts_updated = datetime.now()
-    # update ExportsData table
-    djangoExport.save()
+        # update ExportsData table with new book
+        djangoExport.save()
+
     return djangoExport
 
 
