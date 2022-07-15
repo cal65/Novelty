@@ -196,6 +196,7 @@ def finish_plot(
     df_read_n["display_text"] = df_read_n.apply(
         lambda x: f"{int(x['read'])} / {int(x['added_by'])}", axis=1
     )
+    logger.info(f"Debugging df_read_n: {df_read_n[[title_col, read_col, exclusive_shelf]]}")
     p = (
         ggplot(df_read_n, aes(x=title_col))
         + geom_col(aes(y=1), fill="darkblue")
