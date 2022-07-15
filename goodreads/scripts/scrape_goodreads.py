@@ -134,7 +134,7 @@ def get_stats(url, wait=0):
         )
     except:
         numberOfPages = None
-    logger.info(f"Scraped - shelf1 = {shelf1} and number of pages = {numberOfPages}")
+    logger.info(f"Scraped - shelf1 = {shelf1} and readers = {to_reads}")
     time.sleep(wait)
 
     return {
