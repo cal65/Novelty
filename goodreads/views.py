@@ -216,16 +216,17 @@ def upload_view(request):
             return render(request, template)
         # save csv file in database
         df = pd.read_csv(csv_file)
-        df = process_export_upload(df)
-        logger.info(f"starting database addition for {str(len(df))} rows")
-        insert_dataframe_into_database(df, user, wait=3, metrics=True)
-
         # save csv file to user's folder
         try:
             df.to_csv("goodreads/static/Graphs/{}/export_{}.csv".format(user, user))
         except OSError:
             os.mkdir("goodreads/static/Graphs/{}".format(user))
             df.to_csv("goodreads/static/Graphs/{}/export_{}.csv".format(user, user))
+
+        df = process_export_upload(df)
+        logger.info(f"starting database addition for {str(len(df))} rows")
+        insert_dataframe_into_database(df, user, wait=3, metrics=True)
+
     # run analysis when user clicks on Analyze button
     elif request.method == "POST" and "runscript" in request.POST:
         logger.info(f"Got running with request {request.method} and post {request.POST}")

@@ -101,17 +101,12 @@ def generate_labels(breaks):
     else:
         return [f"{breaks[0]} - {breaks[1]}"] + generate_labels(breaks[1:])
 
-
-def read_plot(
-    df,
-    name,
-    read_col="read",
-    title_col="title_simple",
-    min_break=3,
-    plot_name="popularity_spectrum_",
-    date_col="date_read",
-    start_year=None,
-):
+def read_plot_munge(df,
+                   read_col="read",
+                    title_col="title_simple",
+                    min_break=3,
+                    date_col="date_read",
+                   start_year=1700):
     max_read = int(df[read_col].max())
     df = df[pd.notnull(df[read_col])]
     if start_year is not None:
@@ -134,6 +129,22 @@ def read_plot(
     )
     text_sizes.rename(columns={"title_length": "text_size"}, inplace=True)
     df = pd.merge(df, text_sizes, on="strats", how="left")
+    return df
+
+def read_plot(
+    df,
+    name,
+    read_col="read",
+    title_col="title_simple",
+    min_break=3,
+    plot_name="popularity_spectrum_",
+    date_col="date_read",
+    start_year=None,
+):
+
+    df = read_plot_munge(df, read_col=read_col, title_col=title_col,
+                         min_break=min_break, date_col=date_col, start_year=start_year)
+
     p = (
         ggplot(df, aes("strats", "title_simple"))
         + aes(fill="narrative")
