@@ -5,6 +5,7 @@ import argparse
 import pandas as pd
 from datetime import datetime
 
+
 def populate_table_from_csv(csv_file_path, table, database="goodreads"):
     """ populate table in the PostgreSQL database"""
     try:
@@ -24,7 +25,7 @@ def populate_table_from_csv(csv_file_path, table, database="goodreads"):
         + os.environ["cal65_pass"]
         + "@127.0.0.1/goodreads"
     )
-    df = pd.read_csv(csv_file_path, encoding = "ISO-8859-1")
+    df = pd.read_csv(csv_file_path, encoding="ISO-8859-1")
     df.to_sql(table, engine, if_exists="replace", index=False)
     connection.close()
 
@@ -52,33 +53,44 @@ def start(file_path, username):
     ## populate authors
     ## populate books
     books = pd.read_csv(file_path)
-    books['Book.Id'] = books['Book.Id'].astype(str)
+    books["Book.Id"] = books["Book.Id"].astype(str)
 
     book_cols = [
-            "Book.Id",
-            "Shelf1",
-            "Shelf2",
-            "Shelf3",
-            "Shelf4",
-            "Shelf5",
-            "Shelf6",
-            "Shelf7",
-            "Added_by",
-            "To_reads",
-            "Narrative"
-        ]
-    rename_cols = [c.lower().replace('.', '_') for c in book_cols]   
+        "Book.Id",
+        "Shelf1",
+        "Shelf2",
+        "Shelf3",
+        "Shelf4",
+        "Shelf5",
+        "Shelf6",
+        "Shelf7",
+        "Added_by",
+        "To_reads",
+        "Narrative",
+    ]
+    rename_cols = [c.lower().replace(".", "_") for c in book_cols]
     books_db = books[book_cols].rename(columns=dict(zip(book_cols, rename_cols)))
-    books_db['ts_updated'] = datetime.now()
+    books_db["ts_updated"] = datetime.now()
     books_db.to_sql("goodreads_books", engine, if_exists="replace", index=False)
 
-    books.columns = [c.lower().replace('.', '_') for c in books.columns]  
-    exportdata_cols = ['book_id', 'title', 'author', 'number_of_pages', 'my_rating', 'average_rating',
-    'original_publication_year', 'date_read', 'exclusive_shelf']
-    books['ts_updated'] = datetime.now()
-    books['username'] = username
-    books['id'] = books.index
-    books[exportdata_cols + ['id', 'ts_updated', 'username']].to_sql("goodreads_exportdata", engine, if_exists="replace", index=False)
+    books.columns = [c.lower().replace(".", "_") for c in books.columns]
+    exportdata_cols = [
+        "book_id",
+        "title",
+        "author",
+        "number_of_pages",
+        "my_rating",
+        "average_rating",
+        "original_publication_year",
+        "date_read",
+        "exclusive_shelf",
+    ]
+    books["ts_updated"] = datetime.now()
+    books["username"] = username
+    books["id"] = books.index
+    books[exportdata_cols + ["id", "ts_updated", "username"]].to_sql(
+        "goodreads_exportdata", engine, if_exists="replace", index=False
+    )
     connection.close()
 
 

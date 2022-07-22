@@ -37,7 +37,7 @@ def sync(
     books_addon, authors_db, book_author_col="Author", authors_author_col="Author"
 ):
     books_addon = books_addon[pd.notnull(books_addon["nationality1"])]
-    books_addon = guess_gender(books_addon, gender_col = "gender_fixed")
+    books_addon = guess_gender(books_addon, gender_col="gender_fixed")
     common_cols = list(set(books_addon.columns).intersection(set(authors_db.columns)))
     authors_db = pd.concat([authors_db, books_addon[common_cols]])
     return authors_db

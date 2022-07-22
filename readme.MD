@@ -7,10 +7,10 @@ Later I discovered the book cataloguing website Goodreads. I realized here was a
 
 Data is neutral. The graphs simply present truth about what a person has read, putting the books in a context that is likely novel to the reader. I believe some people will look at their graphs and find some confirmation about their patterns and interests and perhaps some surprises. Some may see genres that they have not read, nationalities that they have not read, and be inspired to search for books they would have never searched for. Some will feel a sense of achievement for the diligence of their past selves - some will feel motivated to read more.
 
-![Author Map](goodreads/Graphs/cal/nationality_map_cal.jpeg)
+![Author Map](goodreads/Graphs/static/cal/nationality_map_cal.jpeg)
 
 How popular are the books you read? Do you have a mix of obscure books and bestsellers?
 
-[!Popularity Spectrum](goodreads/Graphs/cal/popularity_spectrum_cal.jpeg)
+[!Popularity Spectrum](goodreads/static/Graphs/cal/popularity_spectrum_cal.jpeg)
 
 Novelty Insights is the modern anti-bias tool to return the value of your data to you.

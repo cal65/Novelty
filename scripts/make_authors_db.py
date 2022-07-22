@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, insert
 import pandas as pd
 from datetime import datetime
 
+
 def populate_table_from_csv(csv_file_path, table, database="goodreads"):
     """ populate table in the PostgreSQL database"""
     try:
@@ -23,7 +24,7 @@ def populate_table_from_csv(csv_file_path, table, database="goodreads"):
         + os.environ["cal65_pass"]
         + "@127.0.0.1/goodreads"
     )
-    df = pd.read_csv(csv_file_path, encoding = "ISO-8859-1")
+    df = pd.read_csv(csv_file_path, encoding="ISO-8859-1")
     df.to_sql(table, engine, if_exists="append", index=False)
     connection.close()
 
@@ -49,27 +50,27 @@ def start():
     )
     ## populate authors
     authors_db = pd.read_csv("artifacts/authors_sql_database.csv")
-    authors_db['ts_updated'] = datetime.now()
+    authors_db["ts_updated"] = datetime.now()
     authors_db.to_sql("goodreads_authors", engine, if_exists="append", index=False)
     ## populate books
     books_db = pd.read_csv("artifacts/books_database.csv")
     book_cols = [
-            "Book.Id",
-            "Shelf1",
-            "Shelf2",
-            "Shelf3",
-            "Shelf4",
-            "Shelf5",
-            "Shelf6",
-            "Shelf7",
-            "Added_by",
-            "To_reads",
-            "Narrative"
-        ]
-    rename_cols = [c.lower().replace('.', '_') for c in book_cols]   
+        "Book.Id",
+        "Shelf1",
+        "Shelf2",
+        "Shelf3",
+        "Shelf4",
+        "Shelf5",
+        "Shelf6",
+        "Shelf7",
+        "Added_by",
+        "To_reads",
+        "Narrative",
+    ]
+    rename_cols = [c.lower().replace(".", "_") for c in book_cols]
     books_db = books_db[book_cols].rename(columns=dict(zip(book_cols, rename_cols)))
-    books_db['book_id'] = books_db['book_id'].astype(str)
-    books_db['ts_updated'] = datetime.now()
+    books_db["book_id"] = books_db["book_id"].astype(str)
+    books_db["ts_updated"] = datetime.now()
     books_db.to_sql("goodreads_books", engine, if_exists="append", index=False)
     connection.close()
 
