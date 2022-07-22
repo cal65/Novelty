@@ -398,31 +398,30 @@ def load_map():
     world["nationality"] = world["name"].map(region_dict)
     return world
 
+def join_titles(titles, limit=3):
+    return ', '.join(titles[: min(len(titles), limit)])
 
-def return_nationality_count(df, nationality_col="nationality_chosen"):
-    nationality_count = pd.DataFrame(df[nationality_col].value_counts())
-    nationality_count = nationality_count.reset_index().rename(
-        columns={"index": nationality_col, nationality_col: "count"}
-    )
+
+def return_nationality_count(df, nationality_col="nationality_chosen", title_col="title_simple", limit=3):
+
+    nationality_count = pd.pivot_table(df, index=nationality_col,
+                                       values=title_col,
+                                       aggfunc=[len, lambda x: join_titles(x, limit)]).reset_index()
+    nationality_count.columns = [nationality_col, 'count', title_col]
+
     return nationality_count
 
 
-def merge_map_data(world_df, nationality_count):
-    world_df["count"] = world_df["nationality"].map(
-        nationality_count.set_index("nationality_chosen").to_dict()["count"]
-    )
+def merge_map_data(world_df, nationality_count, nationality_col):
+    world_df = pd.merge(world_df, nationality_count, how='left',
+                        left_on="nationality", right_on=nationality_col)
     return world_df
 
 
 def bokeh_world_plot(world_df, username):
-    from bokeh.io import show
     from bokeh.plotting import figure, output_file, save
     from bokeh.models import (
-        CDSView,
         ColorBar,
-        ColumnDataSource,
-        CustomJS,
-        CustomJSFilter,
         GeoJSONDataSource,
         HoverTool,
         LogColorMapper,
@@ -472,7 +471,7 @@ def bokeh_world_plot(world_df, username):
     p.add_tools(
         HoverTool(
             renderers=[author_map],
-            tooltips=[("Country", "@name"), ("Author Count", "@count")],
+            tooltips=[("Country", "@name"), ("Author Count", "@count"), ("Titles", "@title_simple")],
         )
     )
 
@@ -497,7 +496,7 @@ def main(username):
     # world map plotting
     world_df = load_map()
     nationality_count = return_nationality_count(read_df)
-    world_df = merge_map_data(world_df, nationality_count)
+    world_df = merge_map_data(world_df, nationality_count, nationality_col="nationality_chosen")
     bokeh_world_plot(world_df, username)
 
 
