@@ -39,7 +39,7 @@ def convert_to_ExportData(row, username):
     """
     Take a row from a goodreads export
     """
-    update_needed = False
+    new = False
     try:
         # check if ExportData table already has this book
         djangoExport = ExportData.objects.get(

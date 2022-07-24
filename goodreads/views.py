@@ -4,7 +4,6 @@ import sys
 from datetime import datetime
 import pandas as pd
 from multiprocessing import Pool, Process
-import pyRserve
 from .models import ExportData
 import concurrent.futures
 from django.shortcuts import render
@@ -174,25 +173,29 @@ def process_export_upload(df, date_col="Date_Read"):
     df = df[pd.notnull(df["book_id"])]
     return df
 
+def populateExportData(df, user):
+    exportDataObjs = df.apply(lambda x: convert_to_ExportData(x, username=str(user)), axis=1)
+    return exportDataObjs
 
-def insert_dataframe_into_database(df, user, wait=2, metrics=True):
+def populateBooks(exportDataObjs, user, wait=2, metrics=True):
     found = 0
     not_found = 0
     now = datetime.now()
-    for _, row in df.iterrows():
-        # save book csv info to exportdata table
-        obj = convert_to_ExportData(row, str(user))
-        # if book is not in books table, scrape it and save to books table
+    for obj in exportDataObjs:
         status = convert_to_Book(obj, wait=wait)
         if metrics:
             if status == "found":
                 found += 1
             else:
                 not_found += 1
-        author = convert_to_Authors(row)
     if metrics:
         # output metrics
         write_metrics(user, time=now, found=found, not_found=not_found)
+
+def populateAuthors(df):
+    authors = df.apply(lambda x: convert_to_Authors(x), axis=1)
+    return authors
+
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
@@ -224,8 +227,12 @@ def upload_view(request):
             df.to_csv("goodreads/static/Graphs/{}/export_{}.csv".format(user, user))
 
         df = process_export_upload(df)
-        logger.info(f"starting database addition for {str(len(df))} rows")
-        insert_dataframe_into_database(df, user, wait=3, metrics=True)
+        logger.info(f"starting export table addition for {str(len(df))} rows")
+        exportDataObjs = populateExportData(df, user)
+        logger.info(f"starting books table addition")
+        populateBooks(exportDataObjs, user, wait=3, metrics=True)
+        logger.info(f"starting authors table addition")
+        populateAuthors(df)
 
     # run analysis when user clicks on Analyze button
     elif request.method == "POST" and "runscript" in request.POST:
