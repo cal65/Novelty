@@ -11,6 +11,9 @@ import matplotlib
 from plotnine import *
 import patchworklib as pw
 from mizani.formatters import percent_format
+import plotly.graph_objects as go
+import plotly.figure_factory as ff
+from plotly.subplots import make_subplots
 
 
 from pandas.api.types import CategoricalDtype
@@ -101,12 +104,15 @@ def generate_labels(breaks):
     else:
         return [f"{breaks[0]} - {breaks[1]}"] + generate_labels(breaks[1:])
 
-def read_plot_munge(df,
-                   read_col="read",
-                    title_col="title_simple",
-                    min_break=3,
-                    date_col="date_read",
-                   start_year=1700):
+
+def read_plot_munge(
+    df,
+    read_col="read",
+    title_col="title_simple",
+    min_break=3,
+    date_col="date_read",
+    start_year=2010,
+):
     max_read = int(df[read_col].max())
     df = df[pd.notnull(df[read_col])]
     if start_year is not None:
@@ -131,6 +137,7 @@ def read_plot_munge(df,
     df = pd.merge(df, text_sizes, on="strats", how="left")
     return df
 
+
 def read_plot(
     df,
     name,
@@ -142,8 +149,14 @@ def read_plot(
     start_year=None,
 ):
 
-    df = read_plot_munge(df, read_col=read_col, title_col=title_col,
-                         min_break=min_break, date_col=date_col, start_year=start_year)
+    df = read_plot_munge(
+        df,
+        read_col=read_col,
+        title_col=title_col,
+        min_break=min_break,
+        date_col=date_col,
+        start_year=start_year,
+    )
 
     p = (
         ggplot(df, aes("strats", "title_simple"))
@@ -207,7 +220,9 @@ def finish_plot(
     df_read_n["display_text"] = df_read_n.apply(
         lambda x: f"{int(x['read'])} / {int(x['added_by'])}", axis=1
     )
-    logger.info(f"Debugging df_read_n: {df_read_n[[title_col, read_col, exclusive_shelf]].sample(2)}")
+    logger.info(
+        f"Debugging df_read_n: {df_read_n[[title_col, read_col, exclusive_shelf]].sample(2)}"
+    )
     p = (
         ggplot(df_read_n, aes(x=title_col))
         + geom_col(aes(y=1), fill="darkblue")
@@ -398,23 +413,35 @@ def load_map():
     world["nationality"] = world["name"].map(region_dict)
     return world
 
+
 def join_titles(titles, limit=3):
-    return ', '.join(titles[: min(len(titles), limit)])
+    return ", ".join(titles[: min(len(titles), limit)])
 
 
-def return_nationality_count(df, nationality_col="nationality_chosen", title_col="title_simple", limit=3):
+def return_nationality_count(
+    df, nationality_col="nationality_chosen", title_col="title_simple", limit=3
+):
 
-    nationality_count = pd.pivot_table(df, index=nationality_col,
-                                       values=title_col,
-                                       aggfunc=[len, lambda x: join_titles(x, limit)]).reset_index()
-    nationality_count.columns = [nationality_col, 'count', title_col]
+    nationality_count = pd.pivot_table(
+        df,
+        index=nationality_col,
+        values=title_col,
+        aggfunc=[len, lambda x: join_titles(x, limit)],
+    ).reset_index()
+    nationality_count.columns = [nationality_col, "count", title_col]
 
     return nationality_count
 
 
 def merge_map_data(world_df, nationality_count, nationality_col):
-    world_df = pd.merge(world_df, nationality_count, how='left',
-                        left_on="nationality", right_on=nationality_col)
+    world_df = pd.merge(
+        world_df,
+        nationality_count,
+        how="left",
+        left_on="nationality",
+        right_on=nationality_col,
+    )
+    logger.info(f"Map data merged with {len(pd.unique(world_df['nationality']))} unique nationalities")
     return world_df
 
 
@@ -471,13 +498,87 @@ def bokeh_world_plot(world_df, username):
     p.add_tools(
         HoverTool(
             renderers=[author_map],
-            tooltips=[("Country", "@name"), ("Author Count", "@count"), ("Titles", "@title_simple")],
+            tooltips=[
+                ("Country", "@name"),
+                ("Author Count", "@count"),
+                ("Titles", "@title_simple"),
+            ],
         )
     )
 
     p.add_layout(color_bar, "below")
 
     save(p)
+
+
+def create_read_plot_heatmap(
+    df,
+    username,
+    read_col="read",
+    title_col="title_simple",
+    min_break=3,
+    date_col="date_read",
+    start_year=2010,
+):
+    df = read_plot_munge(
+        df,
+        read_col=read_col,
+        title_col=title_col,
+        min_break=min_break,
+        date_col=date_col,
+        start_year=start_year,
+    )
+    strats = pd.unique(df["strats"])
+    df["narrative_int"] = df["narrative"].map({"Fiction": 1, "Nonfiction": 0})
+    df["hover_text"] = df.apply(
+        lambda x: f"Readers: {'{:,.0f}'.format(x.read)} <br> Title: {x.title_simple}",
+        axis=1,
+    )
+    fig = make_subplots(
+        rows=1,
+        cols=len(strats),
+        horizontal_spacing=0.015,
+        column_widths=[3] * len(strats),
+    )
+    heatmaps = []
+    for i in range(len(strats)):
+        r_strat = df[df["strats"] == strats[i]]
+        heatmaps.append(
+            ff.create_annotated_heatmap(
+                x=[strats[i]],
+                z=[[r] for r in r_strat["narrative_int"]],
+                annotation_text=[[r] for r in r_strat["title_simple"]],
+                text=[[r] for r in r_strat["hover_text"]],
+                hoverinfo="text",
+                colorscale="geyser",
+            )
+        )
+        heatmaps[i].layout.width = 300
+        fig.add_trace(heatmaps[i].data[0], row=1, col=i + 1)
+
+        annotations = heatmaps[i].layout.annotations
+        for k in range(len(annotations)):
+            annotations[k]["xref"] = f"x{i + 1}"
+            annotations[k]["yref"] = f"y{i + 1}"
+        for ano in annotations:
+            fig.add_annotation(ano)
+
+        if i == 0:
+            fig.update_layout(yaxis=dict(visible=False, categoryorder="array"))
+        else:
+            fig.layout[f"yaxis{i + 1}"] = dict(visible=False, categoryorder="array")
+
+    fig.update_layout(
+        title="Popularity Spectrum",
+        width=1600,
+        height=1000,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+    )
+
+    filename = (f"goodreads/static/Graphs/{username}/read_heatmap_{username}.html")
+    fig.write_html(file=filename)
+    return fig
 
 
 def main(username):
@@ -491,12 +592,14 @@ def main(username):
         summary_plot(read_df, username)
     except Exception as exception:
         logger.info(" summary plot failed: " + str(exception))
-    read_plot(read_df, username)
+    create_read_plot_heatmap(read_df, username)
     finish_plot(df, username)
     # world map plotting
     world_df = load_map()
     nationality_count = return_nationality_count(read_df)
-    world_df = merge_map_data(world_df, nationality_count, nationality_col="nationality_chosen")
+    world_df = merge_map_data(
+        world_df, nationality_count, nationality_col="nationality_chosen"
+    )
     bokeh_world_plot(world_df, username)
 
 

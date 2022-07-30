@@ -1,3 +1,5 @@
+import argparse
+
 import psycopg2
 import os
 from sqlalchemy import create_engine, insert
@@ -50,3 +52,16 @@ def sync_books(books_df):
     books_df.rename(columns={"book.id": "book_id"}, inplace=True)
     for _, row in books_df.iterrows():
         create_Books_object(row)
+
+if __name__ == "__main__":
+    """
+    Usage: python append_to_export.py filepath.csv
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("file_path")
+
+    args = parser.parse_args()
+    file_path = args.file_path
+    books_df = pd.read_csv(file_path)
+    # to do: check schema
+    sync_books(books_df)
