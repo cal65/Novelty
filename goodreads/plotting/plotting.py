@@ -531,7 +531,7 @@ def create_read_plot_heatmap(
     strats = pd.unique(df["strats"])
     df["narrative_int"] = df["narrative"].map({"Fiction": 1, "Nonfiction": 0})
     df["hover_text"] = df.apply(
-        lambda x: f"Readers: {'{:,.0f}'.format(x.read)} <br> Title: {x.title_simple}",
+        lambda x: f"Readers: {'{:,.0f}'.format(x.read)} <br> Title: {x.title_simple} <br> Author: {x.author}",
         axis=1,
     )
     fig = make_subplots(

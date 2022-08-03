@@ -1,14 +1,16 @@
 import argparse
 
-import psycopg2
+import sys
 import os
-from sqlalchemy import create_engine, insert
 import pandas as pd
-from datetime import datetime
 import logging
+import django
 
-from goodreads.models import ExportData, Books, Authors
-from goodreads.scripts.append_to_export import (
+sys.path.append("..")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
+
+from goodreads.models import Books
+from append_to_export import (
     convert_to_ExportData,
     convert_to_Book,
     convert_to_Authors,
@@ -24,6 +26,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+django.setup()
 
 def create_Books_object(row):
     f_names = get_field_names(Books)
@@ -52,6 +55,7 @@ def sync_books(books_df):
     books_df.rename(columns={"book.id": "book_id"}, inplace=True)
     for _, row in books_df.iterrows():
         create_Books_object(row)
+
 
 if __name__ == "__main__":
     """
