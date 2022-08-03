@@ -551,6 +551,7 @@ def create_read_plot_heatmap(
                 text=[[r] for r in r_strat["hover_text"]],
                 hoverinfo="text",
                 colorscale="geyser",
+                font_colors=['black', 'black']
             )
         )
         heatmaps[i].layout.width = 300
@@ -570,8 +571,8 @@ def create_read_plot_heatmap(
 
     fig.update_layout(
         title="Popularity Spectrum",
-        width=1600,
-        height=1000,
+        width=1200,
+        height=900,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
     )

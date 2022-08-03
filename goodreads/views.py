@@ -96,7 +96,7 @@ def nationality_map_view(request):
 def popularity_spectrum_view(request):
     username = request.user
     popularity_spectrum_url = (
-        "goodreads/static/Graphs/{}/popularity_spectrum_{}.jpeg".format(
+        "goodreads/static/Graphs/{}/read_heatmap_{}.html".format(
             username, username
         )
     )
@@ -121,7 +121,7 @@ def plots_view(request):
     username = request.user
     finish_plot_url = "Graphs/{}/finish_plot_{}.jpeg".format(username, username)
     nationality_map_url = "Graphs/{}/author_map_{}.html".format(username, username)
-    popularity_spectrum_url = "Graphs/{}/popularity_spectrum_{}.jpeg".format(
+    popularity_spectrum_url = "Graphs/{}/read_heatmap_{}.html".format(
         username, username
     )
     summary_plot_url = "Graphs/{}/summary_plot_{}.jpeg".format(username, username)
