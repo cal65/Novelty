@@ -36,36 +36,48 @@
 <div class="center-text">
     <br>
 	<p>
-        Welcome to your plots! <br>
-    This opening graph shows some summary statistics about your library. How much fiction and non-fiction do you read? How does that look in terms of the authors' genders? When were your books written?
+        <font size="+10"><b> Welcome to your plots! </b></font>
+        <br><br>
+    This opening graph shows some summary statistics about your library. Your library is split up into fiction and
+        non-fiction, male and female authors.
+        Other graphs show the distribution of when the books were written, what the longest ones are, and the most
+        common genres you've read.
 </p>
 </div>
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">SUMMARY IMAGE</div>
     <div style="display: flex; justify-content: center;">
         <img style="width: 80%; height: 650px;" src="{% static summary_plot_url %}" class="text-center" alt="summary-plot" />
     </div>
-
+<br> <br>
+    <div class="center-text">
+    This shows the books that are the least commonly finished in your library.
+    The numbers represent how many people marked a book as "to read" and the number that marked it is "finished"
+        </div>
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">FINISH PLOT IMAGE</div>
     <div style="display: flex; justify-content: center;">
         <img style="width: 80%; height: 650px;" src="{% static finish_plot_url %}"  class="text-center" alt="finish-plot" />
     </div>
-    <div class="center-text">
     <p>
-    This shows the books that are the least commonly finished in your library.
-    The numbers represent how many people marked a book as "to read" and the number that marked it is "finished"
+        <br>
+        <br>
+
 </p> </div>
-    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">POPULARITY SPECTRUM IMAGE</div>
-    <div style="display: flex; justify-content: center;">
-        <img style="width: 80%; height: 650px;" src="{% static popularity_spectrum_url %}"  class="text-center" alt="popularity-spectrum" />
-    </div>
+
         <div class="center-text">
         This shows the number of Goodreads users who have read this book, i.e. its popularity. It is divided into logarithmic tiers. <br>
             Most people read primarily popular books, and the 100,000-1,000,000 band is generally the most crowded. <br>
             It may surprise you how few other people have read some of your books.
     </div>
+    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">POPULARITY SPECTRUM IMAGE</div>
+    <div style="display: flex; justify-content: center;">
+        <iframe style="width: 80%; height: 650px;" src="{% static popularity_spectrum_url %}"  class="text-center"
+                alt="popularity-spectrum" width="90%"/>
+        </iframe>
+    </div>
+
     <br>
-    <div class="center">
-        This shows a map of the countries represented by the authors you have read.
+    <div class="center-text">
+        Below is an interactive map of the countries represented by the authors you have read.
     </div>
         <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">NATIONALITY MAP IMAGE</div>
     <div style="display: flex; justify-content: center;">
