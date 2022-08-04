@@ -1,0 +1,32 @@
+{% extends "goodreads/basefile.html" %}
+
+{% block content %}
+<body>
+	<br>
+	<div class = "center" >
+	<img class = "center" src="/static/admin/img/noun_video streaming_749860.png" alt="Novelty" style="height:30% width: 30%;">
+	</div>
+	<div class = "info">
+		Welcome to Novelty Insights - Streaming
+	</div>
+	<br>
+	<div class = "center">
+		Come and understand better what you have watched over the years.
+	</div>
+	<br>
+	<div class = "info">
+		How does it work?
+	</div>
+	<br>
+	<div class = "center">
+	This analysis is for those with a Netflix account. You can export the shows/movies that you've
+		watched.
+	Instructions on how to export Netflix data. Netflix.com -> Select User -> Top Right Corner -> Account ->
+	Select Profile ->
+	<br>
+	At the header of this site, there is an <a href="{% url 'csv-upload' %}" class= "link">Upload CSV </a> section of this site, upload that csv file. Then click Analyze. After a bit, depending on the number of books you've read, plots will be available under "Plots".
+		</div>
+	<br> <br>
+	<br> <br>
+</body>
+{% endblock content %}

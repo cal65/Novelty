@@ -259,3 +259,6 @@ def write_metrics(user, time, found, not_found, file_path="metrics.csv"):
 ### Geography
 def geography(request):
     return render(request, "goodreads/geography.html")
+
+def netflix_home(request):
+    return render(request, "netflix/netflix_home.html")
