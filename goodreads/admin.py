@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ExportData, Authors
+from .models import ExportData, Authors, Books
 
 
 @admin.register(ExportData)
@@ -24,4 +24,22 @@ class AuthorsAdmin(admin.ModelAdmin):
         "nationality1",
         "nationality2",
         "nationality_chosen",
+    )
+
+
+@admin.register(Books)
+class BooksAdmin(admin.ModelAdmin):
+    list_display = (
+        "book_id",
+        "shelf1",
+        "shelf2",
+        "shelf3",
+        "shelf4",
+        "shelf5",
+        "shelf6",
+        "shelf7",
+        "added_by",
+        "to_reads",
+        "narrative",
+        "ts_updated",
     )

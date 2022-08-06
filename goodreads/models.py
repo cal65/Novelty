@@ -54,3 +54,26 @@ class RefNationality(models.Model):
     id = models.BigAutoField(primary_key=True)
     region = models.CharField(max_length=250, null=True)
     nationality = models.CharField(max_length=250, blank=True, null=True)
+
+class NetflixTitles(models.Model):
+    title = models.CharField(max_length=250, primary_key=True)
+    name = models.CharField(max_length=250)
+    type = models.CharField(max_length=250)
+    director = models.CharField(max_length=250, null=True)
+    cast = models.TextField(max_length=500, null=True)
+    date_added = models.DateField(auto_now=False, blank=True, null=True)
+    release_year = models.IntegerField(blank=True, null=True)
+    rating = models.CharField(max_length=250, null=True)
+    duration = models.CharField(max_length=250, null=True)
+    country1 = models.CharField(max_length=250, null=True)
+    country2 = models.CharField(max_length=250, null=True)
+    country3 = models.CharField(max_length=250, null=True)
+    description = models.TextField(max_length=2000, null=True)
+    listed_in = models.CharField(max_length=250)
+    ts_updated = models.DateTimeField(auto_now=True)
+
+class NetflixUsers(models.Model):
+    title = models.CharField(max_length=250, primary_key=True)
+    name = models.CharField(max_length=250)
+    date = models.DateField(auto_now=False, blank=True, null=False)
+    username = models.CharField(max_length=30, null=False)
