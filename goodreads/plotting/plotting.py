@@ -441,7 +441,9 @@ def merge_map_data(world_df, nationality_count, nationality_col):
         left_on="nationality",
         right_on=nationality_col,
     )
-    logger.info(f"Map data merged with {len(pd.unique(world_df['nationality']))} unique nationalities")
+    logger.info(
+        f"Map data merged with {len(pd.unique(world_df['nationality']))} unique nationalities"
+    )
     return world_df
 
 
@@ -551,7 +553,7 @@ def create_read_plot_heatmap(
                 text=[[r] for r in r_strat["hover_text"]],
                 hoverinfo="text",
                 colorscale="geyser",
-                font_colors=['black', 'black']
+                font_colors=["black", "black"],
             )
         )
         heatmaps[i].layout.width = 300
@@ -577,8 +579,91 @@ def create_read_plot_heatmap(
         plot_bgcolor="rgba(0,0,0,0)",
     )
 
-    filename = (f"goodreads/static/Graphs/{username}/read_heatmap_{username}.html")
+    filename = f"goodreads/static/Graphs/{username}/read_heatmap_{username}.html"
     fig.write_html(file=filename)
+    return fig
+
+
+def month_plot(
+    df, username, date_col, page_col, title_col, author_gender_col, lims=None
+):
+    filename = f"goodreads/static/Graphs/{username}/monthly_pages_read_{username}.html"
+    df["year_read"] = df[date_col].dt.year
+    df["month_read"] = df[date_col].dt.month
+
+    df = df[pd.notnull(df["year_read"])]
+    if len(df) < 3:
+        logger.info("Not enough date data to plot month plot")
+        fig = go.Figure()
+        fig.add_trace(
+            go.Bar(
+                x=[5],
+                y=[0],
+                text="Not Enough Data with Date Read Inputted to Plot",
+                width=5,
+            )
+        )
+        fig.write_html(file=filename)
+
+    if lims is not None:
+        df = df[(df["year_read"] >= lims[0]) & (df["year_read"] <= lims[1])]
+
+    n_years = len(pd.unique(df["year_read"]))
+
+    df["color"] = df[author_gender_col].map(
+        {"female": "lightsalmon", "male": "deepskyblue", "other": "green"}
+    )
+    df["text"] = df["text"] = (
+        df[title_col] + "<br>" + df["author"] + "<br>" + df[date_col].astype(str)
+    )
+    fig = make_subplots(rows=n_years, cols=1, shared_xaxes=True, vertical_spacing=0.01)
+    for i, year in enumerate(sorted(pd.unique(df["year_read"]))):
+        df_year = df[df["year_read"] == year]
+        df_month_totals = pd.pivot_table(
+            df_year, index="month_read", values=page_col, aggfunc=sum
+        )
+        fig.add_trace(
+            go.Bar(
+                x=df_year["month_read"],
+                y=df_year[page_col],
+                marker_color=df_year["color"],
+                hovertext=df_year["text"],
+                text=df_year["author"],
+                textposition="inside",
+                textangle=0,
+                textfont=dict(size=8),
+                width=1,
+            ),
+            row=i + 1,
+            col=1,
+        )
+        fig.add_annotation(
+            x=12,
+            y=max(df_month_totals[page_col]),
+            text=str(int(year)),
+            xref=f"x{i+1}",
+            yref=f"y{i+1}",
+            showarrow=False,
+        )
+    fig.update_layout(
+        showlegend=False,
+        title={"text": f"Month Breakdown - {username}", "xanchor": "center"},
+        height=n_years * 125,
+        plot_bgcolor="rgba(0,0,0,0)",
+    )
+    fig.update_xaxes(
+        tickvals=np.arange(1, 13),
+        showgrid=False,
+        zeroline=True,
+        zerolinewidth=2,
+        zerolinecolor="black",
+    )
+    fig.update_yaxes(zeroline=True, zerolinewidth=2, zerolinecolor="black")
+
+    fig["layout"][f"xaxis{n_years}"]["title"] = {"text": "Month"}
+
+    fig.write_html(file=filename)
+
     return fig
 
 
@@ -602,6 +687,15 @@ def main(username):
         world_df, nationality_count, nationality_col="nationality_chosen"
     )
     bokeh_world_plot(world_df, username)
+    month_plot(
+        df,
+        username,
+        date_col="date_read",
+        page_col="number_of_pages",
+        title_col="title",
+        author_gender_col="gender",
+        lims=[2012, 2022],
+    )
 
 
 if __name__ == "__main__":
