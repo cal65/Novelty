@@ -590,7 +590,8 @@ def month_plot(
     filename = f"goodreads/static/Graphs/{username}/monthly_pages_read_{username}.html"
     df["year_read"] = df[date_col].dt.year
     df["month_read"] = df[date_col].dt.month
-
+    logger.info(f"Starting Monthly pages read plot for data with \
+    years {pd.unique(df['year_read'])}")
     df = df[pd.notnull(df["year_read"])]
     if len(df) < 3:
         logger.info("Not enough date data to plot month plot")
@@ -647,7 +648,8 @@ def month_plot(
         )
     fig.update_layout(
         showlegend=False,
-        title={"text": f"Month Breakdown - {username}", "xanchor": "center"},
+        title_text=f"Month Breakdown - {username}",
+        title_x=0.5,
         height=n_years * 125,
         plot_bgcolor="rgba(0,0,0,0)",
     )

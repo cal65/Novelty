@@ -125,7 +125,7 @@ def plots_view(request):
         username, username
     )
     summary_plot_url = "Graphs/{}/summary_plot_{}.jpeg".format(username, username)
-    monthly_pages_read_url = "{}/monthly_pages_read_{}.html".format(username, username)
+    monthly_pages_read_url = "Graphs/{}/monthly_pages_read_{}.html".format(username, username)
 
     if "run_script_function" in request.POST:
         run_script_function(request)
