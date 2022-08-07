@@ -125,6 +125,7 @@ def plots_view(request):
         username, username
     )
     summary_plot_url = "Graphs/{}/summary_plot_{}.jpeg".format(username, username)
+    monthly_pages_read_url = "Graphs/{}/monthly_pages_read_{}.html".format(username, username)
 
     if "run_script_function" in request.POST:
         run_script_function(request)
@@ -136,6 +137,7 @@ def plots_view(request):
             "finish_plot_url": finish_plot_url,
             "nationality_map_url": nationality_map_url,
             "summary_plot_url": summary_plot_url,
+            "monthly_pages_read_url": monthly_pages_read_url,
         },
     )
 
@@ -148,6 +150,16 @@ def yearly_pages_read_view(request):
         request,
         "goodreads/yearly_pages_read.html",
         {"yearly_pages_read_url": yearly_pages_read_url},
+    )
+
+@login_required(redirect_field_name="next", login_url="user-login")
+def monthly_pages_read_view(request):
+    username = request.user
+    monthly_pages_read_url = "{}/monthly_pages_read_{}.html".format(username, username)
+    return render(
+        request,
+        "goodreads/monthly_pages_read.html",
+        {"monthly_pages_read_url": monthly_pages_read_url},
     )
 
 
