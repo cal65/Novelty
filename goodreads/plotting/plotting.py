@@ -419,16 +419,16 @@ def join_titles(titles, limit=3):
 
 
 def return_nationality_count(
-    df, nationality_col="nationality_chosen", title_col="title_simple", limit=3
+    df, nationality_col="nationality_chosen", title_col="title_simple", author_col="author", limit=3
 ):
 
     nationality_count = pd.pivot_table(
         df,
         index=nationality_col,
-        values=title_col,
+        values=[title_col, author_col],
         aggfunc=[len, lambda x: join_titles(x, limit)],
     ).reset_index()
-    nationality_count.columns = [nationality_col, "count", title_col]
+    nationality_count.columns = [nationality_col, "count", "count2", title_col, author_col]
 
     return nationality_count
 
@@ -504,6 +504,7 @@ def bokeh_world_plot(world_df, username):
                 ("Country", "@name"),
                 ("Author Count", "@count"),
                 ("Titles", "@title_simple"),
+                ("Authors", "@author"),
             ],
         )
     )
