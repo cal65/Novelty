@@ -85,11 +85,12 @@ def convert_to_Authors(row):
         djangoObj.gender = lookup_gender(name)
         nationalities = lookup_nationality(name)
 
-        djangoObj.nationality1 = nationalities[0]
-        if (
-            len(nationalities) > 1
-        ):  # too lazy to figure out if there's a more elegant way to do this
+        if len(nationalities) > 0:
+            djangoObj.nationality1 = nationalities[0]
+        elif len(nationalities) > 1:  # too lazy to figure out if there's a more elegant way to do this
             djangoObj.nationality2 = nationalities[1]
+        else:
+            djangoObj.nationality1 = ''
 
         logger.info(f"Saving new author {djangoObj.author_name}")
         djangoObj.save()
