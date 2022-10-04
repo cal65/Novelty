@@ -652,6 +652,8 @@ def month_plot(
         title_text=f"Month Breakdown - {username}",
         title_x=0.5,
         height=n_years * 125,
+        uniformtext_minsize=6,
+        uniformtext_mode='hide',
         plot_bgcolor="rgba(0,0,0,0)",
     )
     fig.update_xaxes(
