@@ -3,12 +3,12 @@ import csv
 import sys
 from datetime import datetime
 import pandas as pd
-from multiprocessing import Pool, Process
 from .models import ExportData
-import concurrent.futures
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+import asyncio
+from httpx import AsyncClient
 
 sys.path.append("..")
 
@@ -189,20 +189,27 @@ def populateExportData(df, user):
     exportDataObjs = df.apply(lambda x: convert_to_ExportData(x, username=str(user)), axis=1)
     return exportDataObjs
 
-def populateBooks(exportDataObjs, user, wait=2, metrics=True):
+async def populateBooks(exportDataObjs, user, wait=2, metrics=True):
     found = 0
     not_found = 0
     now = datetime.now()
-    for obj in exportDataObjs:
-        status = convert_to_Book(obj, wait=wait)
-        if metrics:
-            if status == "found":
-                found += 1
-            else:
-                not_found += 1
-    if metrics:
-        # output metrics
-        write_metrics(user, time=now, found=found, not_found=not_found)
+    async with AsyncClient() as session:
+        tasks = []
+        for obj in exportDataObjs:
+            tasks.append(convert_to_Book(obj, wait=wait))
+        results = await asyncio.gather(*tasks)
+        logger.info("printing results: ")
+        logger.info(results)
+    #         if metrics:
+    #             if status == "found":
+    #                 found += 1
+    #             else:
+    #                 not_found += 1
+        found = len([s for s in results if s == 'found'])
+        not_found = len([s for s in results if s == 'not_found'])
+    # if metrics:
+    #     # output metrics
+    #     write_metrics(user, time=now, found=found, not_found=not_found)
 
 def populateAuthors(df):
     authors = df.apply(lambda x: convert_to_Authors(x), axis=1)

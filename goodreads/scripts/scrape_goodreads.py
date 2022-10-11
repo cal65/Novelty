@@ -1,13 +1,12 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
-from pandas.api.types import is_string_dtype
 import numpy as np
-import json
 import random
 import time
 import sys
 import re
+import asyncio
 import gender_guesser.detector as gender
 import logging
 
@@ -15,7 +14,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def get_stats(url, wait=0):
+async def get_stats(url, wait=0):
     """
     Mega block to pull Goodreads website contents using BeautifulSoup
     Extract numerous useful book info from the page

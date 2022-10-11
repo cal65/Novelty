@@ -7,6 +7,7 @@ import logging
 import argparse
 import functools
 import psycopg2
+import asyncio
 from datetime import datetime
 
 sys.path.append("..")
@@ -45,10 +46,8 @@ def convert_to_ExportData(row, username):
         djangoExport = ExportData.objects.get(
             book_id=str(row.book_id), username=username
         )
-        logger.info("convert to export data - already in database")
     except:
         djangoExport = ExportData()
-        logger.info(f"convert to export data - new book id {row.book_id}")
         new = True
 
     f_names = get_field_names(ExportData)
@@ -170,7 +169,7 @@ def clean_df(goodreads_data):
     return goodreads_data
 
 
-def append_scraping(book_id, wait):
+async def append_scraping(book_id, wait):
     """
     Take data meant to be in the Goodreads export format
     Scrape additional fields and add them as columns
@@ -183,10 +182,10 @@ def append_scraping(book_id, wait):
         if k in book_fields:
             setattr(djangoBook, k, v)
     djangoBook.book_id = book_id
-    return djangoBook
+    return await djangoBook
 
 
-def convert_to_Book(djangoExport, wait=2):
+async def convert_to_Book(djangoExport, wait=2):
     """
     If book is in books table, return status "found"
     If book is not in books table, scrape it, add the scraped fields to the books table, return status "not found"
@@ -197,14 +196,14 @@ def convert_to_Book(djangoExport, wait=2):
 
     if Books.objects.filter(book_id=book_id).exists():
         status = "found"
-        return status
+        return await status
     else:
         logger.info(f"{djangoExport.title} not in database - must scrape")
         djangoBook = append_scraping(book_id, wait=wait)
         status = "not found"
         djangoBook.save()
-        logger.info(f"Book {djangoBook.book_id} updated in books table")
-    return status
+       # logger.info(f"Book {djangoBook.book_id} updated in books table")
+    return await status
 
 
 def apply_append(file_path, username):
