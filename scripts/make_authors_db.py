@@ -25,7 +25,7 @@ def populate_table_from_csv(csv_file_path, table, database="goodreads"):
         + "@127.0.0.1/goodreads"
     )
     df = pd.read_csv(csv_file_path, encoding="ISO-8859-1")
-    df.to_sql(table, engine, if_exists="replace", index=False)
+    df.to_sql(table, engine, if_exists="append", index=False)
     connection.close()
 
 
@@ -71,7 +71,7 @@ def start():
     books_db = books_db[book_cols].rename(columns=dict(zip(book_cols, rename_cols)))
     books_db["book_id"] = books_db["book_id"].astype(str)
     books_db["ts_updated"] = datetime.now()
-    books_db.to_sql("goodreads_books", engine, if_exists="append", index=False)
+    books_db.to_sql("goodreads_books", engine, if_exists="replace", index=False)
     connection.close()
 
 
