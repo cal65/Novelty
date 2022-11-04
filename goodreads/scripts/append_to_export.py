@@ -45,7 +45,6 @@ def convert_to_ExportData(row, username):
         djangoExport = ExportData.objects.get(
             book_id=str(row.book_id), username=username
         )
-        logger.info("convert to export data - already in database")
     except:
         djangoExport = ExportData()
         logger.info(f"convert to export data - new book id {row.book_id}")

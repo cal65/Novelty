@@ -1,5 +1,20 @@
 {% extends "goodreads/basefile.html" %}
 {% block content %}
+
+<script>
+function upload(){
+        $.post({  
+          url: "upload-csv/",
+          data: {file: file1}, 
+          success: function(data) {
+                console.log(data)
+              },
+          error: function(data ){
+                console.log("Something went wrong");
+              }
+      })
+    }
+</script>
 <div style="text-align: center;" class="font-bold pt-4 text-3xl">GOODREADS ANALYSIS</div>
     {% if messages %}
         {% for message in messages %}
@@ -13,7 +28,9 @@
       <form action="" method="POST" enctype="multipart/form-data">
          {% csrf_token %}
          <input type="file" id="file1" name="file">
-         <div class="pt-4"><button class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded" type="submit">Upload</button></div>
+         <div class="pt-4"><button class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded" onclick="upload()">
+             Upload
+         </button></div>
       </form>
    </div>
 </div>

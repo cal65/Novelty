@@ -205,6 +205,8 @@ def finish_plot(
     )
     df_read = df.sort_values(read_col)
     df_read = df_read[pd.notnull(df[read_col])]
+    # have a duplicate data problem occasionally with multiple book versions
+    df_read = df_read.drop_duplicates(subset=title_col)
     # keep only bottom n
     df_read_n = (
         df_read.groupby(exclusive_shelf)

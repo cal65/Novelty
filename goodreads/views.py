@@ -3,9 +3,6 @@ import csv
 import sys
 from datetime import datetime
 import pandas as pd
-from multiprocessing import Pool, Process
-from .models import ExportData
-import concurrent.futures
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -36,15 +33,6 @@ def run_script_function(request):
     user = request.user
     logger.info(f"Running graphs for user {user} based on request {request.method}")
     plotting.main(user)
-
-
-def py_script_function(request):
-    user = request.user
-    os.system(
-        "python goodreads/scripts/append_to_export.py goodreads/static/Graphs/{}/export_{}.csv".format(
-            user, user
-        )
-    )
 
 
 def index(request):
@@ -168,9 +156,6 @@ def runscript(request):
     if request.method == "POST" and "runscript" in request.POST:
         run_script_function(request)
 
-    if request.method == "POST" and "pythonscript" in request.POST:
-        logger.info("running python script")
-        py_script_function(request)
     return plots_view(request)
 
 
@@ -208,15 +193,33 @@ def populateAuthors(df):
     authors = df.apply(lambda x: convert_to_Authors(x), axis=1)
     return authors
 
+def upload(request):
+    template = "goodreads/csv_upload.html"
+    user = request.user
+    csv_file = request.FILES["file"]
+    # check if file uploaded is csv
+    if not csv_file.name.endswith(".csv"):
+        messages.error(
+            request, "Wrong file format chosen. Please upload .csv file instead."
+        )
+        return render(request, template)
+    # save csv file in database
+    df = pd.read_csv(csv_file)
+    df = process_export_upload(df)
+    logger.info(f"starting export table addition for {str(len(df))} rows")
+    exportDataObjs = populateExportData(df, user)
+    logger.info(f"starting books table addition")
+    populateBooks(exportDataObjs, user, wait=3, metrics=True)
+    logger.info(f"starting authors table addition")
+    populateAuthors(df)
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def upload_view(request):
     template = "goodreads/csv_upload.html"
     user = request.user
-    logger.info(f"upload started for {user}")
     # check if user has uploaded a csv file before running the analysis
-
+    logger.info(request)
     if request.method == "GET":
         return render(request, template)
     logger.info(f"request post is {request.POST}")
@@ -231,6 +234,7 @@ def upload_view(request):
             return render(request, template)
         # save csv file in database
         df = pd.read_csv(csv_file)
+        logger.info(f"upload started for {user}")
         # save csv file to user's folder
         try:
             df.to_csv("goodreads/static/Graphs/{}/export_{}.csv".format(user, user))
