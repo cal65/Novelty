@@ -429,7 +429,7 @@ def return_nationality_count(
         index=nationality_col,
         values=[title_col, author_col],
         aggfunc=[len, lambda x: join_titles(x, limit)],
-    ).reset_index()
+    ).reindex(columns=[title_col, author_col], level=1).reset_index()
     nationality_count.columns = [nationality_col, "count", "count2", title_col, author_col]
 
     return nationality_count
