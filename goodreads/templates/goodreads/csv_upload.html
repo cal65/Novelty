@@ -2,14 +2,15 @@
 {% block content %}
 
 <script>
-function upload(){
-        $.post({  
-          url: "upload-csv/",
+function upload(file1){
+        $.ajax({  
+          method: "POST",
+          url: "upload-backend/",
           data: {file: file1}, 
-          success: function(data) {
-                console.log(data)
+          success: function() {
+                console.log("Yay")
               },
-          error: function(data ){
+          error: function(){
                 console.log("Something went wrong");
               }
       })
@@ -25,12 +26,14 @@ function upload(){
     {% endif %}
 <div class="pt-8" style="display: flex; justify-content: center;">
    <div class="border-2 border-black p-2 w-1/3">
-      <form action="" method="POST" enctype="multipart/form-data">
+      <form action="" enctype="multipart/form-data">
          {% csrf_token %}
          <input type="file" id="file1" name="file">
-         <div class="pt-4"><button type="button" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded" onclick="upload()">
+         <div class="pt-4">
+          <button class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded" onclick="upload(file)">
              Upload
-         </button></div>
+         </button>
+       </div>
       </form>
    </div>
 </div>

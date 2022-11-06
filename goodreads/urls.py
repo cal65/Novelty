@@ -7,6 +7,7 @@ urlpatterns = [
     path("", index, name="index-view"),
     path("upload-csv/", upload_view, name="csv-upload"),
     path("run-script/", runscript, name="run-script"),
+    path("upload-backend/", upload_backend, name="upload-backend"),
     path("finish-plot/", finish_plot_view, name="finish-plot"),
     path("nationality-map/", nationality_map_view, name="nationality-map"),
     path("popularity-spectrum/", popularity_spectrum_view, name="popularity-spectrum"),

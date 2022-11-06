@@ -193,7 +193,7 @@ def populateAuthors(df):
     authors = df.apply(lambda x: convert_to_Authors(x), axis=1)
     return authors
 
-def upload(request):
+def upload_backend(request):
     template = "goodreads/csv_upload.html"
     user = request.user
     csv_file = request.FILES["file"]
@@ -212,7 +212,7 @@ def upload(request):
     populateBooks(exportDataObjs, user, wait=3, metrics=True)
     logger.info(f"starting authors table addition")
     populateAuthors(df)
-
+    logger.info(f"it fucking worked")
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def upload_view(request):
