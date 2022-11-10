@@ -194,15 +194,10 @@ def populateAuthors(df):
     return authors
 
 def upload(request):
-    template = "goodreads/csv_upload.html"
+    #template = "goodreads/csv_upload.html"
     user = request.user
+    logger.info(f"The request looks like: {request}")
     csv_file = request.FILES["file"]
-    # check if file uploaded is csv
-    if not csv_file.name.endswith(".csv"):
-        messages.error(
-            request, "Wrong file format chosen. Please upload .csv file instead."
-        )
-        return render(request, template)
     # save csv file in database
     df = pd.read_csv(csv_file)
     df = process_export_upload(df)
