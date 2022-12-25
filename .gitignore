@@ -2,5 +2,6 @@ __pycache__
 env
 *.sqlite3
 novelty-multiple.pem
+*.txt
 noveltyenv/
 .DS_Store

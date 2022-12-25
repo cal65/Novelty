@@ -6,6 +6,7 @@ import geopandas as gpd
 warnings.simplefilter(action="ignore", category=FutureWarning)
 import pandas as pd
 import numpy as np
+from pandas.api.types import is_numeric_dtype
 import psycopg2
 import matplotlib
 from plotnine import *
@@ -113,8 +114,10 @@ def read_plot_munge(
     date_col="date_read",
     start_year=2010,
 ):
-    max_read = int(df[read_col].max())
     df = df[pd.notnull(df[read_col])]
+    if len(df) > 0:
+        return df
+    max_read = int(df[read_col].max())
     if start_year is not None:
         df = df[df[date_col].dt.year >= start_year]
     max_digits = len(str(max_read))
@@ -185,8 +188,13 @@ def read_plot(
 
 
 def factorize(series):
+    # order numeric series from low to high
+    uniques = pd.unique(series)
+    if is_numeric_dtype(series):
+        uniques = sorted(uniques)
+
     # take a series, return it as an ordered category typed series
-    cat_type = CategoricalDtype(categories=pd.unique(series), ordered=True)
+    cat_type = CategoricalDtype(categories=uniques, ordered=True)
     series = series.astype(cat_type)
     return series
 
@@ -336,10 +344,12 @@ def genre_bar_plot(df, n_shelves=4, min_count=3):
     genre_df_m = genre_df_m[genre_df_m["shelf_number"] <= n_shelves]
     shelf_table_df = pd.DataFrame(genre_df_m["Shelf"].value_counts()).reset_index()
     shelf_table_df.columns = ["Shelf", "Count"]
-    shelf_table_df.sort_values("Count", inplace=True)
+    shelf_table_df.sort_values("Count", ascending=False, inplace=True)
     shelf_table_df["Shelf"] = factorize(shelf_table_df["Shelf"])
 
     plot_df = shelf_table_df[shelf_table_df["Count"] > min_count]
+    plot_df = plot_df.head(30)
+
     if len(plot_df) > 3:
         p = (
             ggplot(plot_df)
@@ -695,7 +705,7 @@ def main(username):
     )
     bokeh_world_plot(world_df, username)
     month_plot(
-        df,
+        read_df,
         username,
         date_col="date_read",
         page_col="number_of_pages",
