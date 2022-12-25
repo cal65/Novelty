@@ -23,7 +23,7 @@ def register(request):
 
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            path = 'goodreads/Graphs/{}'.format(username)
+            path = 'goodreads/static/Graphs/{}'.format(username)
             create_folder(path)
 
             return redirect('user-login')

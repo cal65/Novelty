@@ -114,8 +114,10 @@ def read_plot_munge(
     date_col="date_read",
     start_year=2010,
 ):
-    max_read = int(df[read_col].max())
     df = df[pd.notnull(df[read_col])]
+    if len(df) > 0:
+        return df
+    max_read = int(df[read_col].max())
     if start_year is not None:
         df = df[df[date_col].dt.year >= start_year]
     max_digits = len(str(max_read))
@@ -703,7 +705,7 @@ def main(username):
     )
     bokeh_world_plot(world_df, username)
     month_plot(
-        df,
+        read_df,
         username,
         date_col="date_read",
         page_col="number_of_pages",

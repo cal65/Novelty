@@ -194,11 +194,11 @@ def populateAuthors(df):
     return authors
 
 def upload(request):
-    #template = "goodreads/csv_upload.html"
     user = request.user
-    logger.info(f"The request looks like: {request}")
-    csv_file = request.FILES["file"]
+    logger.info(f"The request looks like: {request}, {type(request)}")
+    csv_file = request.data
     # save csv file in database
+    logger.info(f"upload started for {user}")
     df = pd.read_csv(csv_file)
     df = process_export_upload(df)
     logger.info(f"starting export table addition for {str(len(df))} rows")
@@ -218,42 +218,15 @@ def upload_view(request):
     if request.method == "GET":
         return render(request, template)
     logger.info(f"request post is {request.POST}")
-    if request.method == "POST" and "runscript" not in request.POST:
-        # upload csv file
-        csv_file = request.FILES["file"]
-        # check if file uploaded is csv
-        if not csv_file.name.endswith(".csv"):
-            messages.error(
-                request, "Wrong file format chosen. Please upload .csv file instead."
-            )
-            return render(request, template)
-        # save csv file in database
-        df = pd.read_csv(csv_file)
-        logger.info(f"upload started for {user}")
-        # save csv file to user's folder
-        try:
-            df.to_csv("goodreads/static/Graphs/{}/export_{}.csv".format(user, user))
-        except OSError:
-            os.mkdir("goodreads/static/Graphs/{}".format(user))
-            df.to_csv("goodreads/static/Graphs/{}/export_{}.csv".format(user, user))
-
-        df = process_export_upload(df)
-        logger.info(f"starting export table addition for {str(len(df))} rows")
-        exportDataObjs = populateExportData(df, user)
-        logger.info(f"starting books table addition")
-        populateBooks(exportDataObjs, user, wait=3, metrics=True)
-        logger.info(f"starting authors table addition")
-        populateAuthors(df)
 
     # run analysis when user clicks on Analyze button
-    elif request.method == "POST" and "runscript" in request.POST:
+    if request.method == "POST" and "runscript" in request.POST:
         logger.info(f"Got running with request {request.method} and post {request.POST}")
         run_script_function(request)
         # when script finishes, move user to plots view
         return HttpResponseRedirect("/plots/")
     else:
         return render(request, template)
-        
 
 
     return render(request, template)
