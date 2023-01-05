@@ -115,7 +115,7 @@ def read_plot_munge(
     start_year=2010,
 ):
     df = df[pd.notnull(df[read_col])]
-    if len(df) > 0:
+    if len(df) == 0:
         return df
     max_read = int(df[read_col].max())
     if start_year is not None:
@@ -586,8 +586,8 @@ def create_read_plot_heatmap(
 
     fig.update_layout(
         title="Popularity Spectrum",
-        width=1200,
-        height=900,
+        #width=1200,
+        #height=900,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
     )
@@ -695,7 +695,7 @@ def main(username):
         summary_plot(read_df, username)
     except Exception as exception:
         logger.info(" summary plot failed: " + str(exception))
-    create_read_plot_heatmap(read_df, username)
+    create_read_plot_heatmap(df=read_df, username=username)
     finish_plot(df, username)
     # world map plotting
     world_df = load_map()

@@ -196,7 +196,7 @@ def populateAuthors(df):
 def upload(request):
     user = request.user
     logger.info(f"The request looks like: {request}, {type(request)}")
-    csv_file = request.data
+    csv_file = request.FILES["file"]
     # save csv file in database
     logger.info(f"upload started for {user}")
     df = pd.read_csv(csv_file)
@@ -207,7 +207,9 @@ def upload(request):
     populateBooks(exportDataObjs, user, wait=3, metrics=True)
     logger.info(f"starting authors table addition")
     populateAuthors(df)
-
+    # return
+    template = "goodreads/csv_upload.html"
+    return render(request, template)
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def upload_view(request):
