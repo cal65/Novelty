@@ -59,14 +59,14 @@ def convert_to_ExportData(row, username):
             if pd.isnull(value):
                 value = None
             # check if this data is different from what has been existing
-            if value != getattr(djangoExport, f):
+            setattr(djangoExport, f, value)
+            if value != existing_value:
                 if not new:
                     logger.info(
                         f"updating djangoExport {row.title} for field {f} from {existing_value} to value {value}"
                     )
-                    setattr(djangoExport, f, value)
                     # update ExportsData table with updated book
-                    djangoExport.update()
+                    djangoExport.save()
     if new:
         djangoExport.username = username
         djangoExport.ts_updated = datetime.now()
