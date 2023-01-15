@@ -72,6 +72,12 @@ def start():
     books_db["book_id"] = books_db["book_id"].astype(str)
     books_db["ts_updated"] = datetime.now()
     books_db.to_sql("goodreads_books", engine, if_exists="replace", index=False)
+
+    ## populat refnationalities
+    nationalities_db = pd.read_csv("artifacts/world_regions_dict.csv")
+    nationalities_db.to_sql(
+        "goodreads_refationality", engine, if_exists="replace", index=False
+    )
     connection.close()
 
 
