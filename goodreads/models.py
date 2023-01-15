@@ -6,7 +6,7 @@ class ExportData(models.Model):
         managed = True
         constraints = [models.UniqueConstraint(fields=["book_id", "username"], name="book_per_user")]
 
-
+    id = models.AutoField(primary_key=True)
     book_id = models.CharField(max_length=250)
     title = models.CharField(max_length=250)
     author = models.CharField(max_length=250)

@@ -133,6 +133,9 @@ def read_plot_munge(
     labels[0] = f"{labels[0]} \n Obscure"
     labels[-1] = f"{labels[-1]} \n Bestsellers"
     df["strats"] = pd.cut(df[read_col], bins=breaks, labels=labels, include_lowest=True)
+    # logging
+    strats_count = df["strats"].value_counts()
+    logger.info(f"debugging read plot munge: {strats_count}")
     text_sizes = pd.pivot_table(
         df, index="strats", aggfunc={"title_length": lambda x: 120 / max(x)}
     )
