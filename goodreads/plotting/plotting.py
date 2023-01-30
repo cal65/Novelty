@@ -552,6 +552,7 @@ def create_read_plot_heatmap(
         lambda x: f"Readers: {'{:,.0f}'.format(x.read)} <br> Title: {x.title_simple} <br> Author: {x.author}",
         axis=1,
     )
+    df.to_csv('debugging_heatmap.csv', index=False)
     fig = make_subplots(
         rows=1,
         cols=len(strats),

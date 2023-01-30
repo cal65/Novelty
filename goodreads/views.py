@@ -200,6 +200,7 @@ def upload(request):
     # save csv file in database
     logger.info(f"upload started for {user}")
     df = pd.read_csv(csv_file)
+    df.to_csv(f"goodreads/static/Graphs/{user}/export_{user}.csv")
     df = process_export_upload(df)
     logger.info(f"starting export table addition for {str(len(df))} rows")
     exportDataObjs = populateExportData(df, user)

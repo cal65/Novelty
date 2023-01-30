@@ -2,6 +2,7 @@ import os
 import sys
 
 import pandas as pd
+import numpy as np
 import re
 import logging
 import argparse
@@ -11,20 +12,27 @@ from datetime import datetime
 import networkx as nx
 import itertools
 
-def preprocess(file_path, date_col='Date', title_col='Title'):
+
+def preprocess(file_path, date_col="Date", title_col="Title"):
     df = pd.read_csv(file_path)
     df[date_col] = pd.to_datetime(df[date_col])
-    title_values = df[title_col].str.split(':')
-    df['Name'], df['Secondary'] = zip(*title_values)
+    title_values = df[title_col].str.split(":")
+    df["Name"], df["Secondary"] = zip(*title_values)
     return df
 
+
 def process_kaggle(df):
-    df['name'] = df['title'].apply(lambda x: x.split(':')[0])
-    countries = df['country'].str.split(', ')
-    df['country1'] = [c[0] if isinstance(c, list) else '' for c in countries]
-    df['country2'] = [c[1] if (isinstance(c, list) and len(c) > 1) else '' for c in countries]
-    df['country3'] = [c[2] if (isinstance(c, list) and len(c) > 2) else '' for c in countries]
+    df["name"] = df["title"].apply(lambda x: x.split(":")[0])
+    countries = df["country"].str.split(", ")
+    df["country1"] = [c[0] if isinstance(c, list) else "" for c in countries]
+    df["country2"] = [
+        c[1] if (isinstance(c, list) and len(c) > 1) else "" for c in countries
+    ]
+    df["country3"] = [
+        c[2] if (isinstance(c, list) and len(c) > 2) else "" for c in countries
+    ]
     return df
+
 
 def unique_non_null(s):
     uniques = s.dropna().unique()
@@ -33,7 +41,7 @@ def unique_non_null(s):
     return uniques
 
 
-def unique_cast(df, name='name'):
+def unique_cast(df, name="name"):
     cast_df = pd.pivot_table(
         df, index=[name], values=["cast"], aggfunc=lambda x: unique_non_null(x)
     )
@@ -66,3 +74,22 @@ def return_intersections(cast_dict):
         if not intersections[key]:
             intersections.pop(key)
     return intersections
+
+
+def df_from_set(s):
+    df = pd.DataFrame()
+    for i in np.arange(0, len(s), 2):
+        cast = list(s[i])
+        media = s[i + 1]
+        df = pd.concat([df, pd.DataFrame({"cast": cast, "show2": [media] * len(cast)})])
+    return df
+
+
+def create_cast_array(intersections):
+    cast_array = []
+    for k, v in intersections.items():
+        df_temp = df_from_set(v)
+        df_temp["show1"] = k
+        cast_array.append(df_temp)
+    cast_df = pd.concat(cast_array)
+    return cast_df
