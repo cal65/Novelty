@@ -74,9 +74,9 @@ def start():
     books_db.to_sql("goodreads_books", engine, if_exists="replace", index=False)
 
     ## populat refnationalities
-    nationalities_db = pd.read_csv("artifacts/world_regions_dict.csv")
+    nationalities_db = pd.read_csv("artifacts/world_regions_dict.csv", encoding='unicode_escape')
     nationalities_db.to_sql(
-        "goodreads_refationality", engine, if_exists="replace", index=False
+        "goodreads_refnationality", engine, if_exists="replace", index=False
     )
     connection.close()
 

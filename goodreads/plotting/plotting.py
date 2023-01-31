@@ -418,6 +418,8 @@ def load_map():
     select * from goodreads_refnationality
     """
     region_df = get_data(region_query)
+    if len(region_df) == 0:
+        logger.error("No region data queried")
     country_mapper = {
         "England": "United Kingdom",
         "Bosnia": "Bosnia and Herz.",
@@ -449,6 +451,8 @@ def return_nationality_count(
 
 
 def merge_map_data(world_df, nationality_count, nationality_col):
+    if len(world_df) == 0:
+        return world_df
     world_df = pd.merge(
         world_df,
         nationality_count,
@@ -469,7 +473,6 @@ def bokeh_world_plot(world_df, username):
         GeoJSONDataSource,
         HoverTool,
         LogColorMapper,
-        Slider,
     )
     from bokeh.palettes import brewer
 
@@ -536,7 +539,7 @@ def create_read_plot_heatmap(
     title_col="title_simple",
     min_break=3,
     date_col="date_read",
-    start_year=2010,
+    start_year=None,
 ):
     df = read_plot_munge(
         df,
