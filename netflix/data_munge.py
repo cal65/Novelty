@@ -13,11 +13,20 @@ import networkx as nx
 import itertools
 
 
-def preprocess(file_path, date_col="Date", title_col="Title"):
+def preprocess(file_path, date_col='Date', title_col='Title'):
     df = pd.read_csv(file_path)
     df[date_col] = pd.to_datetime(df[date_col])
-    title_values = df[title_col].str.split(":")
-    df["Name"], df["Secondary"] = zip(*title_values)
+    title_values = df[title_col].str.split(':')
+    names = []
+    secondary = []
+    for title in title_values:
+        names.append(title[0])
+        if len(title) > 1:
+            secondary.append(title[1])
+        else:
+            secondary.append(None)
+    df['Name'] = names
+    df['Secondary'] = secondary
     return df
 
 
@@ -93,3 +102,29 @@ def create_cast_array(intersections):
         cast_array.append(df_temp)
     cast_df = pd.concat(cast_array)
     return cast_df
+
+def return_unmerged(df, ref_df, df_name_col='Name', ref_name_col='title'):
+    """
+    Given a Netflix export and a reference database (either actors or genres),
+    return the shows that are not in the database
+    """
+    return list(set(df[df_name_col]).difference(set(ref_df[ref_name_col])))
+
+def get_actors(netflix_id):
+    url = "https://unogs-unogs-v1.p.rapidapi.com/search/people"
+
+    querystring = {"person_type":"Actor","netflix_id": netflix_id}
+    headers = {
+        "X-RapidAPI-Key": "8fa530a83fmshefefca8d59b379ep162401jsn12c5dd4c222e",
+        "X-RapidAPI-Host": "unogs-unogs-v1.p.rapidapi.com"
+    }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    
+    results = response.json()['results']
+    if results is None:
+        print (f"No response found for {netflix_id}")
+        return
+    actors = [r['full_name'] for r in results]
+    actors_df = pd.DataFrame({'netflix_id': [netflix_id], 'actors': [actors]})
+    return actors_df
