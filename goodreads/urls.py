@@ -5,7 +5,7 @@ from .views import *
 
 urlpatterns = [
     path("", index, name="index-view"),
-    path("upload-csv/", upload_view, name="csv-upload"),
+    path("upload-csv/", upload_view_goodreads, name="csv-upload"),
     path("upload/", upload, name="upload"),
     path("run-script/", runscript, name="run-script"),
     path("finish-plot/", finish_plot_view, name="finish-plot"),
@@ -16,6 +16,7 @@ urlpatterns = [
     path("yearly-pages-read/", yearly_pages_read_view, name="yearly-pages-read"),
     path("about-this/", about_this, name="about-this"),
     path("books-home/", books_home, name="books-home"),
+    path("music-home/", music_home, name="music-home"),
     path("plots/", plots_view, name="plots"),
     path("geography/", geography, name="geography-home"),
     path("faq/", faq, name="faq"),

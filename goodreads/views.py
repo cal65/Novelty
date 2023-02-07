@@ -47,6 +47,9 @@ def index(request):
 def books_home(request):
     return render(request, "goodreads/books_home.html")
 
+def music_home(request):
+    return render(request, "goodreads/music_home.html")
+
 
 def about_this(request):
     return render(request, "goodreads/about_this.html")
@@ -213,7 +216,7 @@ def upload(request):
     return render(request, template)
 
 @login_required(redirect_field_name="next", login_url="user-login")
-def upload_view(request):
+def upload_view_goodreads(request):
     template = "goodreads/csv_upload.html"
     user = request.user
     # check if user has uploaded a csv file before running the analysis
@@ -234,6 +237,23 @@ def upload_view(request):
 
     return render(request, template)
 
+def upload_view_spotify(request):
+    user = request.user
+    logger.info(f"The request looks like: {request}, {type(request)}")
+    csv_file = request.FILES["file"]
+    # save csv file in database
+    logger.info(f"upload started for {user}")
+    df = pd.read_json(csv_file)
+    df.to_csv(f"goodreads/static/Graphs/{user}/spotify_{user}.csv")
+    df = process_spotify(df)
+    logger.info(f"starting spotify table addition for {str(len(df))} rows")
+    # return
+    template = "goodreads/json_upload_spotify.html"
+    return render(request, template)
+
+def process_spotify(df):
+
+    return df
 
 def write_metrics(user, time, found, not_found, file_path="metrics.csv"):
     time_now = datetime.now()

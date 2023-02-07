@@ -110,6 +110,9 @@ def return_unmerged(df, ref_df, df_name_col='Name', ref_name_col='title'):
     """
     return list(set(df[df_name_col]).difference(set(ref_df[ref_name_col])))
 
+
+rapid_api_url = "https://unogs-unogs-v1.p.rapidapi.com/"
+
 def get_actors(netflix_id):
     url = "https://unogs-unogs-v1.p.rapidapi.com/search/people"
 
