@@ -115,7 +115,7 @@ def get_actors(netflix_id):
 
     querystring = {"person_type":"Actor","netflix_id": netflix_id}
     headers = {
-        "X-RapidAPI-Key": "8fa530a83fmshefefca8d59b379ep162401jsn12c5dd4c222e",
+        "X-RapidAPI-Key": os.environ['RAPID_API_NETFLIX'],
         "X-RapidAPI-Host": "unogs-unogs-v1.p.rapidapi.com"
     }
 
