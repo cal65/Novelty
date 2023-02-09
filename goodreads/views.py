@@ -234,22 +234,27 @@ def upload_view_goodreads(request):
     else:
         return render(request, template)
 
-
     return render(request, template)
 
+@login_required(redirect_field_name="next", login_url="user-login")
 def upload_view_spotify(request):
     user = request.user
     logger.info(f"The request looks like: {request}, {type(request)}")
-    csv_file = request.FILES["file"]
-    # save csv file in database
-    logger.info(f"upload started for {user}")
-    df = pd.read_json(csv_file)
-    df.to_csv(f"goodreads/static/Graphs/{user}/spotify_{user}.csv")
-    df = process_spotify(df)
-    logger.info(f"starting spotify table addition for {str(len(df))} rows")
+
     # return
     template = "goodreads/json_upload_spotify.html"
     return render(request, template)
+
+def upload_spotify(request):
+    user = request.user
+    json_file = request.FILES["file"]
+    # save csv file in database
+    logger.info(f"upload started for {user}")
+    df = pd.read_json(json_file)
+    logger.info(f"starting spotify table addition for {str(len(df))} rows")
+    df = process_spotify(df)
+    df.to_csv(f"goodreads/static/Graphs/{user}/spotify_{user}.csv")
+    return df
 
 def process_spotify(df):
 
