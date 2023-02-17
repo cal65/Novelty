@@ -1,15 +1,7 @@
-{% extends "goodreads/basefile.html" %}
+{% extends "goodreads/basefile_music.html" %}
 
 <body>
-		<!-- customize navbar -->
-	{% block domain-home %}
-                  <a class="nav-link" href="{% url 'music-home' %}">Music</a>
-    {% endblock domain-home %}
-	{% block upload %}
-                  <a class="nav-link" href="{% url 'json-upload-spotify' %}">Upload Data</a>
-    {% endblock upload %}
-
-    {% block content %}
+	{% block content %}
 	<br>
 	<div class = "center" >
 	<img class = "center" src="/static/admin/img/music.jpg" alt="Novelty" style="width:20%">

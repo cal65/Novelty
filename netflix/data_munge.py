@@ -1,5 +1,6 @@
 import os
 import sys
+import requests
 
 import pandas as pd
 import numpy as np
@@ -13,10 +14,10 @@ import networkx as nx
 import itertools
 
 
-def preprocess(file_path, date_col='Date', title_col='Title'):
+def preprocess(file_path, date_col="Date", title_col="Title"):
     df = pd.read_csv(file_path)
     df[date_col] = pd.to_datetime(df[date_col])
-    title_values = df[title_col].str.split(':')
+    title_values = df[title_col].str.split(":")
     names = []
     secondary = []
     for title in title_values:
@@ -25,8 +26,8 @@ def preprocess(file_path, date_col='Date', title_col='Title'):
             secondary.append(title[1])
         else:
             secondary.append(None)
-    df['Name'] = names
-    df['Secondary'] = secondary
+    df["Name"] = names
+    df["Secondary"] = secondary
     return df
 
 
@@ -103,7 +104,8 @@ def create_cast_array(intersections):
     cast_df = pd.concat(cast_array)
     return cast_df
 
-def return_unmerged(df, ref_df, df_name_col='Name', ref_name_col='title'):
+
+def return_unmerged(df, ref_df, df_name_col="Name", ref_name_col="title"):
     """
     Given a Netflix export and a reference database (either actors or genres),
     return the shows that are not in the database
@@ -113,21 +115,64 @@ def return_unmerged(df, ref_df, df_name_col='Name', ref_name_col='title'):
 
 rapid_api_url = "https://unogs-unogs-v1.p.rapidapi.com/"
 
-def get_actors(netflix_id):
-    url = "https://unogs-unogs-v1.p.rapidapi.com/search/people"
 
-    querystring = {"person_type":"Actor","netflix_id": netflix_id}
+def query_title(title: str):
+    url = rapid_api_url + "search/titles"
+
+    querystring = {"order_by": "date", "title": title}
+
     headers = {
-        "X-RapidAPI-Key": os.environ['RAPID_API_NETFLIX'],
-        "X-RapidAPI-Host": "unogs-unogs-v1.p.rapidapi.com"
+        "X-RapidAPI-Key": os.environ["RAPID_API_NETFLIX"],
+        "X-RapidAPI-Host": "unogs-unogs-v1.p.rapidapi.com",
     }
 
     response = requests.request("GET", url, headers=headers, params=querystring)
-    
-    results = response.json()['results']
-    if results is None:
-        print (f"No response found for {netflix_id}")
+
+    results_all = response.json()["results"]
+    if results_all is None:
+        print(f"No response found for {title}")
         return
-    actors = [r['full_name'] for r in results]
-    actors_df = pd.DataFrame({'netflix_id': [netflix_id], 'actors': [actors]})
+    results = results_all[0] # take first search
+    series_results = pd.Series(results)
+    return series_results
+
+
+def get_actors(netflix_id):
+    url = rapid_api_url + "search/people"
+
+    querystring = {"person_type": "Actor", "netflix_id": netflix_id}
+    headers = {
+        "X-RapidAPI-Key": os.environ["RAPID_API_NETFLIX"],
+        "X-RapidAPI-Host": "unogs-unogs-v1.p.rapidapi.com",
+    }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+
+    results = response.json()["results"]
+    if results is None:
+        print(f"No response found for {netflix_id}")
+        return
+    actors = [r["full_name"] for r in results]
+    actors_df = pd.DataFrame({"netflix_id": [netflix_id], "actors": [actors]})
     return actors_df
+
+
+def get_genres(netflix_id):
+    url = "https://unogs-unogs-v1.p.rapidapi.com/title/genres"
+
+    querystring = {"netflix_id": netflix_id}
+    headers = {
+        "X-RapidAPI-Key": os.environ["RAPID_API_NETFLIX"],
+        "X-RapidAPI-Host": "unogs-unogs-v1.p.rapidapi.com",
+    }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+
+    results = response.json()["results"]
+    if results is None:
+        print(f"No genre response found for {netflix_id}")
+        return
+    genres = [r["genre"] for r in results]
+    genres = ", ".join(genres)
+    genre_df = pd.DataFrame({"netflix_id": [netflix_id], "genre": [genres]})
+    return genre_df
