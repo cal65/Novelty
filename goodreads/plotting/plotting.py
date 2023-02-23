@@ -34,9 +34,9 @@ post_pass = os.getenv("cal65_pass")
 matplotlib.pyplot.switch_backend("Agg")
 
 
-def get_data(query):
+def get_data(query, database="goodreads"):
     conn = psycopg2.connect(
-        host="localhost", database="goodreads", user="cal65", password=post_pass
+        host="localhost", database=database, user="cal65", password=post_pass
     )
     try:
         df = pd.read_sql(query, con=conn)
