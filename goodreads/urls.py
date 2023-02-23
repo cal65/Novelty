@@ -6,7 +6,8 @@ from .views import *
 urlpatterns = [
     path("", index, name="index-view"),
     path("upload-csv/", upload_view_goodreads, name="csv-upload"),
-    path("upload-json-spotify/", upload_view_spotify, name="json-upload-spotify"),
+    path("upload-spotify-home", upload_view_spotify, name="upload-spotify"),
+    path("upload-json-spotify/", upload_spotify, name="json-upload-spotify"),
     path("upload/", upload, name="upload"),
     path("run-script/", runscript, name="run-script"),
     path("finish-plot/", finish_plot_view, name="finish-plot"),

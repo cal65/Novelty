@@ -67,7 +67,7 @@ def convert_to_SpotifyStreaming(row, username):
     djangoSpotifyStreaming.endTime = row["endTime"]
     djangoSpotifyStreaming.artistName = row["artistName"]
     djangoSpotifyStreaming.trackName = row["trackName"]
-    djangoSpotifyStreaming.msPlayed = row["endTime"]
+    djangoSpotifyStreaming.msPlayed = row["msPlayed"]
     djangoSpotifyStreaming.username = username
     djangoSpotifyStreaming.save()
     return djangoSpotifyStreaming

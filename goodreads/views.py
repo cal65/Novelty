@@ -271,14 +271,16 @@ def upload_spotify(request):
     logger.info(f"upload started for {user}")
     df = pd.read_json(json_file)
     logger.info(f"starting spotify table addition for {str(len(df))} rows")
+    populateSpotifyStreaming(df, user)
     df = data_engineering.preprocess(df)
     df.to_csv(f"goodreads/static/Graphs/{user}/spotify_{user}.csv")
     return df
 
 
 def populateSpotifyStreaming(df, user):
+    logger.info(f"spotify df {df.head()}")
     spotifyStreamingObjs = df.apply(
-        lambda x: convert_to_ExportData(x, username=str(user)), axis=1
+        lambda x: data_engineering.convert_to_SpotifyStreaming(x, username=str(user)), axis=1
     )
     return spotifyStreamingObjs
 
