@@ -4,7 +4,11 @@ from django.db import models
 class ExportData(models.Model):
     class Meta:
         managed = True
-        constraints = [models.UniqueConstraint(fields=["book_id", "username"], name="book_per_user")]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["book_id", "username"], name="book_per_user"
+            )
+        ]
 
     id = models.AutoField(primary_key=True)
     book_id = models.CharField(max_length=250)
@@ -55,3 +59,27 @@ class RefNationality(models.Model):
     id = models.BigAutoField(primary_key=True)
     region = models.CharField(max_length=250, null=True)
     nationality = models.CharField(max_length=250, blank=True, null=True)
+
+
+class SpotifyStreaming(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    endTime = models.DateTimeField()
+    artistName = models.CharField(max_length=250, null=True)
+    trackName = models.CharField(max_length=250, null=True)
+    msPlayed = models.IntegerField(blank=True, null=True, default=0)
+    username = models.CharField(max_length=30, default="Random")
+
+
+class SpotifyTracks(models.Model):
+    uri = models.CharField(max_length=250, primary_key=True)
+    name = models.CharField(max_length=250, null=True)
+    artist = models.CharField(max_length=250, null=True)
+    duration = models.FloatField(blank=True, null=True)
+    popularity = models.IntegerField(blank=True, null=True)
+    release_date = models.CharField(max_length=250, null=True)
+    genres = models.CharField(max_length=1000, null=True)
+    album = models.CharField(max_length=250, null=True)
+    explicit = models.BooleanField(default=False)
+    trackName = models.CharField(max_length=250, null=True)
+    artistName = models.CharField(max_length=250, null=True)
+    podcast = models.BooleanField(default=False)

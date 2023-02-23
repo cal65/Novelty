@@ -116,7 +116,7 @@ def return_unmerged(df, ref_df, df_name_col="Name", ref_name_col="title"):
 rapid_api_url = "https://unogs-unogs-v1.p.rapidapi.com/"
 
 
-def query_title(title: str):
+def query_title(title: str, type=None):
     url = rapid_api_url + "search/titles"
 
     querystring = {"order_by": "date", "title": title}

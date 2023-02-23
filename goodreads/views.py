@@ -8,11 +8,17 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 
 sys.path.append("..")
+sys.path.append("../spotify/")
+from spotify import data_engineering
 
 from .plotting import plotting
 
 from django.contrib.auth.decorators import login_required
-from .scripts.append_to_export import convert_to_ExportData, convert_to_Authors, convert_to_Book
+from .scripts.append_to_export import (
+    convert_to_ExportData,
+    convert_to_Authors,
+    convert_to_Book,
+)
 
 import logging
 
@@ -46,6 +52,7 @@ def index(request):
 
 def books_home(request):
     return render(request, "goodreads/books_home.html")
+
 
 def music_home(request):
     return render(request, "goodreads/music_home.html")
@@ -86,10 +93,8 @@ def nationality_map_view(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def popularity_spectrum_view(request):
     username = request.user
-    popularity_spectrum_url = (
-        "goodreads/static/Graphs/{}/read_heatmap_{}.html".format(
-            username, username
-        )
+    popularity_spectrum_url = "goodreads/static/Graphs/{}/read_heatmap_{}.html".format(
+        username, username
     )
     return render(
         request,
@@ -116,7 +121,9 @@ def plots_view(request):
         username, username
     )
     summary_plot_url = "Graphs/{}/summary_plot_{}.jpeg".format(username, username)
-    monthly_pages_read_url = "Graphs/{}/monthly_pages_read_{}.html".format(username, username)
+    monthly_pages_read_url = "Graphs/{}/monthly_pages_read_{}.html".format(
+        username, username
+    )
 
     if "run_script_function" in request.POST:
         run_script_function(request)
@@ -142,6 +149,7 @@ def yearly_pages_read_view(request):
         "goodreads/yearly_pages_read.html",
         {"yearly_pages_read_url": yearly_pages_read_url},
     )
+
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def monthly_pages_read_view(request):
@@ -173,9 +181,13 @@ def process_export_upload(df, date_col="Date_Read"):
     df = df[pd.notnull(df["book_id"])]
     return df
 
+
 def populateExportData(df, user):
-    exportDataObjs = df.apply(lambda x: convert_to_ExportData(x, username=str(user)), axis=1)
+    exportDataObjs = df.apply(
+        lambda x: convert_to_ExportData(x, username=str(user)), axis=1
+    )
     return exportDataObjs
+
 
 def populateBooks(exportDataObjs, user, wait=2, metrics=True):
     found = 0
@@ -192,9 +204,11 @@ def populateBooks(exportDataObjs, user, wait=2, metrics=True):
         # output metrics
         write_metrics(user, time=now, found=found, not_found=not_found)
 
+
 def populateAuthors(df):
     authors = df.apply(lambda x: convert_to_Authors(x), axis=1)
     return authors
+
 
 def upload(request):
     user = request.user
@@ -215,6 +229,7 @@ def upload(request):
     template = "goodreads/csv_upload.html"
     return render(request, template)
 
+
 @login_required(redirect_field_name="next", login_url="user-login")
 def upload_view_goodreads(request):
     template = "goodreads/csv_upload.html"
@@ -227,7 +242,9 @@ def upload_view_goodreads(request):
 
     # run analysis when user clicks on Analyze button
     if request.method == "POST" and "runscript" in request.POST:
-        logger.info(f"Got running with request {request.method} and post {request.POST}")
+        logger.info(
+            f"Got running with request {request.method} and post {request.POST}"
+        )
         run_script_function(request)
         # when script finishes, move user to plots view
         return HttpResponseRedirect("/plots/")
@@ -235,6 +252,7 @@ def upload_view_goodreads(request):
         return render(request, template)
 
     return render(request, template)
+
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def upload_view_spotify(request):
@@ -245,6 +263,7 @@ def upload_view_spotify(request):
     template = "goodreads/json_upload_spotify.html"
     return render(request, template)
 
+
 def upload_spotify(request):
     user = request.user
     json_file = request.FILES["file"]
@@ -252,13 +271,17 @@ def upload_spotify(request):
     logger.info(f"upload started for {user}")
     df = pd.read_json(json_file)
     logger.info(f"starting spotify table addition for {str(len(df))} rows")
-    df = process_spotify(df)
+    df = data_engineering.preprocess(df)
     df.to_csv(f"goodreads/static/Graphs/{user}/spotify_{user}.csv")
     return df
 
-def process_spotify(df):
 
-    return df
+def populateSpotifyStreaming(df, user):
+    spotifyStreamingObjs = df.apply(
+        lambda x: convert_to_ExportData(x, username=str(user)), axis=1
+    )
+    return spotifyStreamingObjs
+
 
 def write_metrics(user, time, found, not_found, file_path="metrics.csv"):
     time_now = datetime.now()

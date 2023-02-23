@@ -21,7 +21,6 @@ function getCookie(name) {
 function upload(){
   const csrftoken = getCookie('csrftoken');
   var form = document.getElementById('csv-form')
-  console.log('hello')
   console.log(arguments)
   console.log(form)
      $.post({
@@ -73,5 +72,10 @@ function upload(){
    Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Upload</span>. This may take some time for your browser to process, based on the amount of books in your upload. Then click <span class="text-blue-800">Analyze</span> when you can. Afterwards, navigate to your <a href="{% url 'plots' %}">Plots</a> page.
 </div>
 <br><br>
+<div class = "center font-bold pt-4">
+    Example Gallery
+</div>
+<br>
+<br>
 
 {% endblock content %}
