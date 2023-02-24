@@ -10,6 +10,7 @@ from django.contrib import messages
 sys.path.append("..")
 sys.path.append("../spotify/")
 from spotify import data_engineering
+from spotify.plotting import plotting as splot
 
 from .plotting import plotting
 
@@ -270,10 +271,13 @@ def upload_spotify(request):
     # save csv file in database
     logger.info(f"upload started for {user}")
     df = pd.read_json(json_file)
-    logger.info(f"starting spotify table addition for {str(len(df))} rows")
-    populateSpotifyStreaming(df, user)
-    df = data_engineering.preprocess(df)
-    df.to_csv(f"goodreads/static/Graphs/{user}/spotify_{user}.csv")
+    # load up the existing data in databaes for this user
+    loaded_df = splot.load_streaming(user)
+    df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(keep=False)  # nifty line to keep just new data
+    logger.info(f"starting spotify table addition for {str(len(df_new))} rows out of original {str(len(df))}")
+    populateSpotifyStreaming(df_new, user)
+    df_new.to_csv(f"goodreads/static/Graphs/{user}/spotify_{user}.csv")
+
     return df
 
 

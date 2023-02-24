@@ -48,8 +48,12 @@ def get_data(query, database="goodreads"):
 def userdata_query(username):
     query = f"""
     select 
-    *
-    from spotifyStreaming 
+    endTime, artistName, trackName, msPlayed
+    from goodreads_spotifyStreaming 
     where username = '{username}'
     """
     return query
+
+def load_streaming(username):
+    return get_data(userdata_query(username))
+
