@@ -21,6 +21,7 @@ urlpatterns = [
     path("music-home/", music_home, name="music-home"),
     path("plots/", plots_view, name="plots"),
     path("geography/", geography, name="geography-home"),
+    path("streaming/", streaming, name="streaming-home"),
     path("faq/", faq, name="faq"),
     url(r"^favicon\.ico$", RedirectView.as_view(url="/static/admin/img/favicon.ico")),
 ]
