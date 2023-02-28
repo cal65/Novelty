@@ -4,71 +4,89 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Authors',
+            name="Authors",
             fields=[
-                ('author_name', models.CharField(max_length=250, primary_key=True, serialize=False)),
-                ('gender', models.CharField(blank=True, max_length=50, null=True)),
-                ('nationality1', models.CharField(blank=True, max_length=80, null=True)),
-                ('nationality2', models.CharField(blank=True, max_length=80, null=True)),
-                ('nationality_chosen', models.CharField(blank=True, max_length=80, null=True)),
-                ('ts_updated', models.DateTimeField(auto_now=True)),
+                (
+                    "author_name",
+                    models.CharField(max_length=250, primary_key=True, serialize=False),
+                ),
+                ("gender", models.CharField(blank=True, max_length=50, null=True)),
+                (
+                    "nationality1",
+                    models.CharField(blank=True, max_length=80, null=True),
+                ),
+                (
+                    "nationality2",
+                    models.CharField(blank=True, max_length=80, null=True),
+                ),
+                (
+                    "nationality_chosen",
+                    models.CharField(blank=True, max_length=80, null=True),
+                ),
+                ("ts_updated", models.DateTimeField(auto_now=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Books',
+            name="Books",
             fields=[
-                ('book_id', models.CharField(max_length=250, primary_key=True, serialize=False)),
-                ('shelf1', models.CharField(max_length=250, null=True)),
-                ('shelf2', models.CharField(max_length=250, null=True)),
-                ('shelf3', models.CharField(max_length=250, null=True)),
-                ('shelf4', models.CharField(max_length=250, null=True)),
-                ('shelf5', models.CharField(max_length=250, null=True)),
-                ('shelf6', models.CharField(max_length=250, null=True)),
-                ('shelf7', models.CharField(max_length=250, null=True)),
-                ('added_by', models.IntegerField(blank=True, default=0, null=True)),
-                ('to_reads', models.IntegerField(blank=True, default=0, null=True)),
-                ('narrative', models.CharField(default='Fiction', max_length=250)),
-                ('ts_updated', models.DateTimeField(auto_now=True)),
+                (
+                    "book_id",
+                    models.CharField(max_length=250, primary_key=True, serialize=False),
+                ),
+                ("shelf1", models.CharField(max_length=250, null=True)),
+                ("shelf2", models.CharField(max_length=250, null=True)),
+                ("shelf3", models.CharField(max_length=250, null=True)),
+                ("shelf4", models.CharField(max_length=250, null=True)),
+                ("shelf5", models.CharField(max_length=250, null=True)),
+                ("shelf6", models.CharField(max_length=250, null=True)),
+                ("shelf7", models.CharField(max_length=250, null=True)),
+                ("added_by", models.IntegerField(blank=True, default=0, null=True)),
+                ("to_reads", models.IntegerField(blank=True, default=0, null=True)),
+                ("narrative", models.CharField(default="Fiction", max_length=250)),
+                ("ts_updated", models.DateTimeField(auto_now=True)),
             ],
         ),
         migrations.CreateModel(
-            name='ExportData',
+            name="ExportData",
             fields=[
-                ('id', models.BigIntegerField(primary_key=True, serialize=False)),
-                ('book_id', models.CharField(max_length=250)),
-                ('title', models.CharField(max_length=250)),
-                ('author', models.CharField(max_length=250)),
-                ('number_of_pages', models.IntegerField(blank=True, null=True)),
-                ('my_rating', models.FloatField(blank=True, null=True)),
-                ('average_rating', models.FloatField(blank=True, null=True)),
-                ('original_publication_year', models.FloatField(blank=True, null=True)),
-                ('date_read', models.DateField(blank=True, null=True)),
-                ('exclusive_shelf', models.CharField(default='read', max_length=30)),
-                ('username', models.CharField(default='Random', max_length=30)),
-                ('ts_updated', models.DateTimeField(auto_now=True)),
+                ("id", models.BigIntegerField(primary_key=True, serialize=False)),
+                ("book_id", models.CharField(max_length=250)),
+                ("title", models.CharField(max_length=250)),
+                ("author", models.CharField(max_length=250)),
+                ("number_of_pages", models.IntegerField(blank=True, null=True)),
+                ("my_rating", models.FloatField(blank=True, null=True)),
+                ("average_rating", models.FloatField(blank=True, null=True)),
+                ("original_publication_year", models.FloatField(blank=True, null=True)),
+                ("date_read", models.DateField(blank=True, null=True)),
+                ("exclusive_shelf", models.CharField(default="read", max_length=30)),
+                ("username", models.CharField(default="Random", max_length=30)),
+                ("ts_updated", models.DateTimeField(auto_now=True)),
             ],
             options={
-                'managed': True,
+                "managed": True,
             },
         ),
         migrations.CreateModel(
-            name='RefNationality',
+            name="RefNationality",
             fields=[
-                ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('region', models.CharField(max_length=250, null=True)),
-                ('nationality', models.CharField(blank=True, max_length=250, null=True)),
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+                ("region", models.CharField(max_length=250, null=True)),
+                (
+                    "nationality",
+                    models.CharField(blank=True, max_length=250, null=True),
+                ),
             ],
         ),
         migrations.AddConstraint(
-            model_name='exportdata',
-            constraint=models.UniqueConstraint(fields=('book_id', 'username'), name='book_per_user'),
+            model_name="exportdata",
+            constraint=models.UniqueConstraint(
+                fields=("book_id", "username"), name="book_per_user"
+            ),
         ),
     ]

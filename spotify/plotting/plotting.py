@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 post_pass = os.getenv("cal65_pass")
 matplotlib.pyplot.switch_backend("Agg")
 
+ms_per_minute = 60 * 1000
 
 def get_data(query, database="goodreads"):
     conn = psycopg2.connect(
@@ -78,6 +79,64 @@ def tracks_query(username):
     where  stream.username = '{username}'
     """
     return query
+def preprocess(df):
+    df["endTime"] = pd.to_datetime(df["endTime"])
+    df['endTime'] = df['endTime'].dt.tz_localize('utc').dt.tz_convert('US/Pacific')
+    df["date"] = df["endTime"].dt.date
+    df["minutes"] = df["msPlayed"] / ms_per_minute
+
+    # processing for merged data
+    if "release_year" not in df.columns:
+        df["release_year"] = pd.to_numeric(
+            df["release_date"].str[:4], downcast="integer"
+        )
+    df['genre_chosen'] = df['genre_chosen'].fillna('')
+    df['genre_simplified'] = simplify_genre(df['genre_chosen'])
+
+    df['played_ratio'] = df['minutes'] / df['duration']
+
+    return df
+
+
+def format_song_day(df, artist_col, song_col, date_col):
+    df_song_day = pd.DataFrame(
+        df.groupby([artist_col, song_col, date_col]).size()
+    ).reset_index()
+    df_song_day.rename(columns={0: "n"}, inplace=True)
+    top_artists = df[artist_col].value_counts().index[:10]
+    df_song_day_select = df_song_day[df_song_day[artist_col].isin(top_artists)]
+    return df_song_day_select
+
+
+def plot_song_day(df, artist_col, song_col, date_col):
+    num_songs = len(pd.unique(df[song_col]))
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=df[date_col],
+            y=df[song_col] + ", " + df[artist_col],
+            text=df["n"],
+            mode="markers",
+            marker={"size": df["n"] * num_songs / 5, "color": "DarkRed"},
+            hovertemplate="name: %{y} <br>number: %{text} <br> date: %{x} <extra></extra>",
+        )
+    )
+
+    fig.update_layout(
+        title="Song Plays",
+        width=2000,
+        height=max(
+            500, min(num_songs * 20, 3000)
+        ),  # ensure that the plot is between 100 and 3000
+        showlegend=True,
+    )
+    return fig
+
+
+def get_top(df, column, n):
+    return df[column].value_counts().index[:n]
+
 
 def load_streaming(username):
     return get_data(userdata_query(username))

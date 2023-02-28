@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 django.setup()
 
+
 def create_Books_object(row):
     f_names = get_field_names(Books)
     common_fields = list(set(row.keys()).intersection(f_names))

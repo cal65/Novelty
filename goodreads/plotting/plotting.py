@@ -122,7 +122,7 @@ def read_plot_munge(
         df = df[df[date_col].dt.year >= start_year]
     max_digits = len(str(max_read))
     digit_range = list(range(min_break, max_digits + 1))
-    breaks = [0] + [10 ** d for d in digit_range]
+    breaks = [0] + [10**d for d in digit_range]
     df["title_length"] = df[title_col].apply(lambda x: len(x))
     # order title text by popularity
     df.sort_values(by="read", inplace=True)
@@ -154,7 +154,6 @@ def read_plot(
     date_col="date_read",
     start_year=None,
 ):
-
     df = read_plot_munge(
         df,
         read_col=read_col,
@@ -436,16 +435,29 @@ def join_titles(titles, limit=3):
 
 
 def return_nationality_count(
-    df, nationality_col="nationality_chosen", title_col="title_simple", author_col="author", limit=3
+    df,
+    nationality_col="nationality_chosen",
+    title_col="title_simple",
+    author_col="author",
+    limit=3,
 ):
-
-    nationality_count = pd.pivot_table(
-        df,
-        index=nationality_col,
-        values=[title_col, author_col],
-        aggfunc=[len, lambda x: join_titles(x, limit)],
-    ).reindex(columns=[title_col, author_col], level=1).reset_index()
-    nationality_count.columns = [nationality_col, "count", "count2", title_col, author_col]
+    nationality_count = (
+        pd.pivot_table(
+            df,
+            index=nationality_col,
+            values=[title_col, author_col],
+            aggfunc=[len, lambda x: join_titles(x, limit)],
+        )
+        .reindex(columns=[title_col, author_col], level=1)
+        .reset_index()
+    )
+    nationality_count.columns = [
+        nationality_col,
+        "count",
+        "count2",
+        title_col,
+        author_col,
+    ]
 
     return nationality_count
 
@@ -555,7 +567,7 @@ def create_read_plot_heatmap(
         lambda x: f"Readers: {'{:,.0f}'.format(x.read)} <br> Title: {x.title_simple} <br> Author: {x.author}",
         axis=1,
     )
-    df.to_csv('debugging_heatmap.csv', index=False)
+    df.to_csv("debugging_heatmap.csv", index=False)
     fig = make_subplots(
         rows=1,
         cols=len(strats),
@@ -593,8 +605,8 @@ def create_read_plot_heatmap(
 
     fig.update_layout(
         title="Popularity Spectrum",
-        #width=1200,
-        #height=900,
+        # width=1200,
+        # height=900,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
     )
@@ -610,8 +622,10 @@ def month_plot(
     filename = f"goodreads/static/Graphs/{username}/monthly_pages_read_{username}.html"
     df["year_read"] = df[date_col].dt.year
     df["month_read"] = df[date_col].dt.month
-    logger.info(f"Starting Monthly pages read plot for data with \
-    years {pd.unique(df['year_read'])}")
+    logger.info(
+        f"Starting Monthly pages read plot for data with \
+    years {pd.unique(df['year_read'])}"
+    )
     df = df[pd.notnull(df["year_read"])]
     if len(df) < 3:
         logger.info("Not enough date data to plot month plot")
@@ -672,7 +686,7 @@ def month_plot(
         title_x=0.5,
         height=n_years * 125,
         uniformtext_minsize=6,
-        uniformtext_mode='hide',
+        uniformtext_mode="hide",
         plot_bgcolor="rgba(0,0,0,0)",
     )
     fig.update_xaxes(

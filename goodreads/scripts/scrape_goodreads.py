@@ -159,7 +159,6 @@ def get_stats(url, wait=0):
 
 
 def create_url(id):
-
     return "https://www.goodreads.com/book/show/" + str(id)
 
 

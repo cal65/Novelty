@@ -4,38 +4,40 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('goodreads', '0002_alter_exportdata_id'),
+        ("goodreads", "0002_alter_exportdata_id"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='SpotifyStreaming',
+            name="SpotifyStreaming",
             fields=[
-                ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('endTime', models.DateTimeField()),
-                ('artistName', models.CharField(max_length=250, null=True)),
-                ('trackName', models.CharField(max_length=250, null=True)),
-                ('msPlayed', models.IntegerField(blank=True, default=0, null=True)),
-                ('username', models.CharField(default='Random', max_length=30)),
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+                ("endTime", models.DateTimeField()),
+                ("artistName", models.CharField(max_length=250, null=True)),
+                ("trackName", models.CharField(max_length=250, null=True)),
+                ("msPlayed", models.IntegerField(blank=True, default=0, null=True)),
+                ("username", models.CharField(default="Random", max_length=30)),
             ],
         ),
         migrations.CreateModel(
-            name='SpotifyTracks',
+            name="SpotifyTracks",
             fields=[
-                ('uri', models.CharField(max_length=250, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=250, null=True)),
-                ('artist', models.CharField(max_length=250, null=True)),
-                ('duration', models.FloatField(blank=True, null=True)),
-                ('popularity', models.IntegerField(blank=True, null=True)),
-                ('release_date', models.CharField(max_length=250, null=True)),
-                ('genres', models.CharField(max_length=1000, null=True)),
-                ('album', models.CharField(max_length=250, null=True)),
-                ('explicit', models.BooleanField(default=False)),
-                ('trackName', models.CharField(max_length=250, null=True)),
-                ('artistName', models.CharField(max_length=250, null=True)),
-                ('podcast', models.BooleanField(default=False)),
+                (
+                    "uri",
+                    models.CharField(max_length=250, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(max_length=250, null=True)),
+                ("artist", models.CharField(max_length=250, null=True)),
+                ("duration", models.FloatField(blank=True, null=True)),
+                ("popularity", models.IntegerField(blank=True, null=True)),
+                ("release_date", models.CharField(max_length=250, null=True)),
+                ("genres", models.CharField(max_length=1000, null=True)),
+                ("album", models.CharField(max_length=250, null=True)),
+                ("explicit", models.BooleanField(default=False)),
+                ("trackName", models.CharField(max_length=250, null=True)),
+                ("artistName", models.CharField(max_length=250, null=True)),
+                ("podcast", models.BooleanField(default=False)),
             ],
         ),
     ]

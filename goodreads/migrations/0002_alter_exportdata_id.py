@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('goodreads', '0001_initial'),
+        ("goodreads", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='exportdata',
-            name='id',
+            model_name="exportdata",
+            name="id",
             field=models.AutoField(primary_key=True, serialize=False),
         ),
     ]

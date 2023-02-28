@@ -54,19 +54,19 @@ def convert_to_ExportData(row, username):
     common_fields = list(set(row.keys()).intersection(f_names))
 
     for f in common_fields:
-            value = row.get(f)
-            existing_value = getattr(djangoExport, f)
-            if pd.isnull(value):
-                value = None
-            # check if this data is different from what has been existing
-            setattr(djangoExport, f, value)
-            if value != existing_value:
-                if not new:
-                    logger.info(
-                        f"updating djangoExport {row.title} for field {f} from {existing_value} to value {value}"
-                    )
-                    # update ExportsData table with updated book
-                    djangoExport.save()
+        value = row.get(f)
+        existing_value = getattr(djangoExport, f)
+        if pd.isnull(value):
+            value = None
+        # check if this data is different from what has been existing
+        setattr(djangoExport, f, value)
+        if value != existing_value:
+            if not new:
+                logger.info(
+                    f"updating djangoExport {row.title} for field {f} from {existing_value} to value {value}"
+                )
+                # update ExportsData table with updated book
+                djangoExport.save()
     if new:
         djangoExport.username = username
         djangoExport.ts_updated = datetime.now()
@@ -88,10 +88,12 @@ def convert_to_Authors(row):
 
         if len(nationalities) > 0:
             djangoObj.nationality1 = nationalities[0]
-        elif len(nationalities) > 1:  # too lazy to figure out if there's a more elegant way to do this
+        elif (
+            len(nationalities) > 1
+        ):  # too lazy to figure out if there's a more elegant way to do this
             djangoObj.nationality2 = nationalities[1]
         else:
-            djangoObj.nationality1 = ''
+            djangoObj.nationality1 = ""
 
         logger.info(f"Saving new author {djangoObj.author_name}")
         djangoObj.save()
