@@ -12,7 +12,7 @@ sys.path.append("../spotify/")
 from spotify import data_engineering
 from spotify.plotting import plotting as splot
 
-from .plotting import plotting
+from .plotting import plotting as gplot
 
 from django.contrib.auth.decorators import login_required
 from .scripts.append_to_export import (
@@ -39,7 +39,7 @@ def run_script_function(request):
     """
     user = request.user
     logger.info(f"Running graphs for user {user} based on request {request.method}")
-    plotting.main(user)
+    gplot.main(user)
 
 
 def index(request):
@@ -170,6 +170,13 @@ def runscript(request):
 
     return plots_view(request)
 
+def runscriptSpotify(request):
+    logger.info(f"Running script with request method {request.method}")
+    if request.method == "POST" and "runscript" in request.POST:
+        run_script_function(request)
+
+    return plots_view(request)
+
 
 def process_export_upload(df, date_col="Date_Read"):
     df.columns = df.columns.str.replace(
@@ -271,7 +278,7 @@ def upload_spotify(request):
     # save csv file in database
     logger.info(f"upload started for {user}")
     df = pd.read_json(json_file)
-    # load up the existing data in databaes for this user
+    # load up the existing data in database for this user
     loaded_df = splot.load_streaming(user)
     df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(keep=False)  # nifty line to keep just new data
     new_lines = str(len(df_new))

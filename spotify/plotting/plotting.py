@@ -54,6 +54,36 @@ def userdata_query(username):
     """
     return query
 
+def tracks_query(username):
+    query = f""" 
+    select 
+    endTime, 
+    stream.artistName, 
+    stream.trackName, 
+    msPlayed,
+    uri,
+    name, 
+    artist, 
+    duration,
+    popularity,
+    release_date,
+    genres,
+    album,
+    explicit,
+    podcast
+    from goodreads_spotifyStreaming stream 
+    left join goodreads_spotifytracks tracks
+    on stream.artistName = tracks.artistName
+    and stream.trackName = tracks.trackName
+    where  stream.username = '{username}'
+    """
+    return query
+
 def load_streaming(username):
     return get_data(userdata_query(username))
 
+
+def main(username):
+    df = get_data(tracks_query(username))
+    logger.info(f"Spotify data read with {len(df)} rows \n : {df.head()}")
+    df = preprocess(df)
