@@ -63,10 +63,10 @@ class RefNationality(models.Model):
 
 class SpotifyStreaming(models.Model):
     id = models.BigAutoField(primary_key=True)
-    endTime = models.DateTimeField()
-    artistName = models.CharField(max_length=250, null=True)
-    trackName = models.CharField(max_length=250, null=True)
-    msPlayed = models.IntegerField(blank=True, null=True, default=0)
+    endtime = models.DateTimeField()
+    artistname = models.CharField(max_length=250, null=True)
+    trackname = models.CharField(max_length=250, null=True)
+    msplayed = models.IntegerField(blank=True, null=True, default=0)
     username = models.CharField(max_length=30, default="Random")
 
 
@@ -80,7 +80,7 @@ class SpotifyTracks(models.Model):
     genres = models.CharField(max_length=1000, null=True)
     album = models.CharField(max_length=250, null=True)
     explicit = models.BooleanField(default=False, blank=True)
-    trackName = models.CharField(max_length=250, null=True)
-    artistName = models.CharField(max_length=250, null=True)
+    trackname = models.CharField(max_length=250, null=True)
+    artistname = models.CharField(max_length=250, null=True)
     podcast = models.BooleanField(default=False, blank=True)
     genre_chosen = models.CharField(max_length=250, null=True)

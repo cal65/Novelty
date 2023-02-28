@@ -1,0 +1,73 @@
+{% extends "goodreads/basefile_music.html" %}
+{% load static %}
+
+{% block content %}
+<script>
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    function reanalyze(){
+        const csrftoken = getCookie('csrftoken');
+        $.post({ 
+            url: "/run-script-spotify/",
+            data: {runscript:true}, 
+            headers: { "X-CSRFToken": csrftoken } })
+        .done(response => {
+          console.log("done!", response);
+
+          // Set a cache buster parameter on every image URL on the page, to force the browser to reload the image.
+          // The server will ignore the 't' parameter and just serve up the image normally. (The images should have been
+          // regenerated as a side effect of the /run-script/ POST request.)
+          const cacheBuster = String(Date.now());
+          $('img').attr('src', (_, oldSrc) => {
+            const url = new URL(oldSrc);
+            url.searchParams.set('t', cacheBuster);
+            return url.toString();
+          });
+        })
+    }
+</script>
+<button name="runscript" onclick="reanalyze()" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 pb-2 px-4 rounded">
+    Re-Analyze
+</button>
+<div class="center-text">
+    <br>
+	<p>
+        <font size="+10"><b> Welcome to your plots! </b></font>
+        <br><br>
+    This opening graph shows some summary statistics about your Spotify history.
+</p>
+</div>
+    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">POPULARITY IMAGE</div>
+    <div style="display: flex; justify-content: center;">
+        <img style="width: 80%; " src="{% static spot_popularity_view %}" class="text-center" alt="summary-plot" />
+    </div>
+<br> <br>
+    <div class="center-text">
+    This shows the books that are the least commonly finished in your library.
+    The numbers represent how many people marked a book as "to read" and the number that marked it is "finished"
+        </div>
+    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">WEEKDAY USAGE IMAGE</div>
+    <div style="display: flex; justify-content: center; ">
+        <img style="width: 80%;" src="{% static spot_weekly_view %}"  class="text-center" alt="finish-plot" />
+    </div>
+    <p>
+        <br>
+        <br>
+
+</p>
+    <br>
+    <br> <br>
+{% endblock content %}

@@ -55,8 +55,8 @@ def get_data(query, database="goodreads"):
 def userdata_query(username):
     query = f"""
     select 
-    endTime, artistName, trackName, msPlayed
-    from goodreads_spotifyStreaming 
+    endtime, artistname, trackname, msplayed
+    from goodreads_spotifystreaming 
     where username = '{username}'
     """
     return query
@@ -65,10 +65,10 @@ def userdata_query(username):
 def tracks_query(username):
     query = f""" 
     select 
-    endTime, 
-    stream.artistName, 
-    stream.trackName, 
-    msPlayed,
+    endtime, 
+    stream.artistname, 
+    stream.trackname, 
+    msplayed,
     uri,
     name, 
     artist, 
@@ -79,20 +79,20 @@ def tracks_query(username):
     album,
     explicit,
     podcast
-    from goodreads_spotifyStreaming stream 
+    from goodreads_spotifystreaming stream 
     left join goodreads_spotifytracks tracks
-    on stream.artistName = tracks.artistName
-    and stream.trackName = tracks.trackName
+    on stream.artistname = tracks.artistname
+    and stream.trackname = tracks.trackname
     where  stream.username = '{username}'
     """
     return query
 
 
 def preprocess(df):
-    df["endTime"] = pd.to_datetime(df["endTime"])
-    df["endTime"] = df["endTime"].dt.tz_localize("utc").dt.tz_convert("US/Pacific")
-    df["date"] = df["endTime"].dt.date
-    df["minutes"] = df["msPlayed"] / ms_per_minute
+    df["endtime"] = pd.to_datetime(df["endtime"])
+    df["endtime"] = df["endtime"].dt.tz_localize("utc").dt.tz_convert("US/Pacific")
+    df["date"] = df["endtime"].dt.date
+    df["minutes"] = df["msplayed"] / ms_per_minute
 
     # processing for merged data
     if "release_year" not in df.columns:
@@ -186,7 +186,7 @@ def sum_days(df, date_col="date", minutes_col="minutes", win=7, podcast=True):
     return df_sum
 
 
-def new_songs(df, time_col="endTime", index_cols=["artistName", "trackName"]):
+def new_songs(df, time_col="endtime", index_cols=["artistname", "trackname"]):
     first_df = pd.pivot_table(
         data=df, index=index_cols, values=time_col, aggfunc="first"
     ).reset_index()
@@ -199,8 +199,8 @@ def new_songs(df, time_col="endTime", index_cols=["artistName", "trackName"]):
 def count_new(
         df,
         date_col="date",
-        time_col="endTime",
-        index_cols=["artistName", "trackName"],
+        time_col="endtime",
+        index_cols=["artistname", "trackname"],
         win=7,
 ):
     df = new_songs(df, time_col=time_col, index_cols=index_cols)
@@ -266,7 +266,7 @@ def plot_popularity(df, bins=50):
     return figure
 
 
-def format_daily(df, date_col="endTime"):
+def format_daily(df, date_col="endtime"):
     df = df.copy()
     df[date_col] = pd.to_datetime(df[date_col])
     df["wday"] = pd.to_datetime(df["date"]).dt.weekday
@@ -288,7 +288,7 @@ def format_daily(df, date_col="endTime"):
     return df_period
 
 
-def plot_daily(df, date_col="endTime"):
+def plot_daily(df, date_col="endtime"):
     df_period = format_daily(df, date_col=date_col)
     plot = sns.barplot(
         data=df_period, x="time_period", y="minutes_scaled", hue="weekend"
@@ -325,21 +325,26 @@ def main(username):
     df = get_data(tracks_query(username))
     logger.info(f"Spotify data read with {len(df)} rows \n : {df.head()}")
     df = preprocess(df)
-    os.mkdirs(f"../graphs/{username}")
+    os.mkdirs(f"goodreads/static/Graphs/{username}")
     df_sums = sum_days(df, podcast=True)
-    count_news = count_new(music_data)
+    count_news = count_new(df)
     fig = year_plot(df)
+    fig.savefig(f"goodreads/static/Graphs/{username}/spotify_year_plot_{username}.jpeg")
+
     fig.savefig(f"../graphs/{username}/year_plot_{username}.jpeg")
     fig_weekly = plot_weekly(df)
-    fig_weekly.savefig(f"../graphs/{username}/weekday_plot_{username}.jpeg")
+    fig_weekly.savefig(f"../graphs/{username}/spotify_weekday_plot_{username}.jpeg")
 
-    fig = make_subplots(3, 1)
-    overall = [
-        plot_overall(df_sums, podcast=True),
-        plot_new(count_news),
-        plot_top_artists(music_data),
-    ]
-    for i, figure in enumerate(overall):
-        for trace in range(len(figure["data"])):
-            fig.append_trace(figure["data"][trace], row=i + 1, col=1)
-    fig.write_html(f"../graphs/{name}/overall_{name}.html")
+    # fig_popularity = plot_popularity(df, bins=50)
+    # fig_popularity.savefig(f"goodreads/static/Graphs/{username}/spotify_popularity_plot_{username}.jpeg")
+    #
+    # fig = make_subplots(3, 1)
+    # overall = [
+    #     plot_overall(df_sums, podcast=True),
+    #     plot_new(count_news),
+    #     plot_top_artists(music_data),
+    # ]
+    # for i, figure in enumerate(overall):
+    #     for trace in range(len(figure["data"])):
+    #         fig.append_trace(figure["data"][trace], row=i + 1, col=1)
+    # fig.write_html(f"../graphs/{name}/overall_{name}.html")

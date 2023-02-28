@@ -171,12 +171,50 @@ def runscript(request):
     return plots_view(request)
 
 def runscriptSpotify(request):
-    logger.info(f"Running script with request method {request.method}")
-    if request.method == "POST" and "runscript" in request.POST:
-        run_script_function(request)
+    username = request.user
+    logger.info(f"Running Spotify script with request method {request.method}")
+    if request.method == "POST" and "runscriptSpotify" in request.POST:
+        splot.main(username)
 
-    return plots_view(request)
+    return spot_plots_view(request)
 
+
+@login_required(redirect_field_name="next", login_url="user-login")
+def spot_plots_view(request):
+    username = request.user
+    popularity_plot_url = "Graphs/{}/spotify_popularity_plot_{}.jpeg".format(username, username)
+    weekly_plot_url = "Graphs/{}/popularity_plot{}.html".format(username, username)
+
+    if "run_script_function" in request.POST:
+        runscriptSpotify(request)
+    return render(
+        request,
+        "spotify/plots.html",
+        {
+            "popularity_plot_url": popularity_plot_url,
+            "weekly_plot_url": weekly_plot_url,
+        },
+    )
+
+def spot_popularity_view(request):
+    username = request.user
+    popularity_url = "{}/spotify_popularity_plot_{}.jpeg".format(username, username)
+
+    return render(
+        request,
+        "spotify/popularity_plot.html",
+        {"popularity_url": popularity_url},
+    )
+
+def spot_weekly_view(request):
+    username = request.user
+    weekly_url = "{}/spotify_weekday_plot_{}.jpeg".format(username, username)
+
+    return render(
+        request,
+        "spotify/weekly_plot.html",
+        {"weekly_url": weekly_url},
+    )
 
 def process_export_upload(df, date_col="Date_Read"):
     df.columns = df.columns.str.replace(
@@ -266,14 +304,22 @@ def upload_view_goodreads(request):
 def upload_view_spotify(request):
     user = request.user
     logger.info(f"The request looks like: {request}, {type(request)}")
-
     # return
     template = "spotify/json_upload_spotify.html"
+    if request.method == "POST" and "runscriptSpotify" in request.POST:
+        logger.info(
+            f"Got running with spotify request {request.method} and post {request.POST}"
+        )
+        runscriptSpotify(request)
+        # when script finishes, move user to plots view
+        return HttpResponseRedirect("/spotify-plots/")
     return render(request, template)
 
 
 def upload_spotify(request):
+    logger.info(f"upload spotify")
     user = request.user
+    template = "spotify/json_upload_spotify.html"
     json_file = request.FILES["file"]
     # save csv file in database
     logger.info(f"upload started for {user}")
@@ -286,7 +332,7 @@ def upload_spotify(request):
     populateSpotifyStreaming(df_new, user)
     df_new.to_csv(f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv")
 
-    return df
+    return render(request, template)
 
 
 def populateSpotifyStreaming(df, user):

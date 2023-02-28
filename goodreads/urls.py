@@ -10,6 +10,7 @@ urlpatterns = [
     path("upload-json-spotify/", upload_spotify, name="json-upload-spotify"),
     path("upload/", upload, name="upload"),
     path("run-script/", runscript, name="run-script"),
+    path("run-script-spotify/", runscriptSpotify, name="run-script-spotify"),
     path("finish-plot/", finish_plot_view, name="finish-plot"),
     path("nationality-map/", nationality_map_view, name="nationality-map"),
     path("popularity-spectrum/", popularity_spectrum_view, name="popularity-spectrum"),
@@ -24,4 +25,7 @@ urlpatterns = [
     path("streaming/", streaming, name="streaming-home"),
     path("faq/", faq, name="faq"),
     url(r"^favicon\.ico$", RedirectView.as_view(url="/static/admin/img/favicon.ico")),
+    path("spotify-plots/", spot_plots_view, name="spotify-plots"),
+    path("spotify-popularity", spot_popularity_view, name="spotify-popularity"),
+    path("spotify-weekly", spot_weekly_view, name="spotify-weekly"),
 ]

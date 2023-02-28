@@ -35,11 +35,15 @@
                   {% endblock upload %}
                   
                 </li>
+                {% block about %}
                  <li class="nav-item active pr-2">
                   <a class="nav-link" href="{% url 'about-this' %}">About This</a>
+                  {% endblock about %}
                 </li>
                 <li class="nav-item active pr-2">
+                  {% block plots %}
                   <a class="nav-link" href="{% url 'plots' %}">Plots</a>
+                  {% endblock plots %}
                 </li>
                 <li class="list-style-image">
                   <img src="/static/admin/img/logo.png" alt="Novelty" class="logo"> </img>

@@ -62,14 +62,14 @@ function getCookie(name) {
 <div class="pt-2" style="display: flex; justify-content: center;">
    <form method="POST">
       {% csrf_token %}
-      <button type="submit" name="runscript" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
+      <button type="submit" name="runscriptSpotify" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
       Analyze
       </button>
    </form>
 </div>
 
 <div class = "center">
-   Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Upload</span>. This may take some time for your browser to process, based on the amount of books in your upload. Then click <span class="text-blue-800">Analyze</span> when you can. Afterwards, navigate to your <a href="{% url 'plots' %}">Plots</a> page.
+   Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Upload</span>. This may take some time for your browser to process, based on the amount of books in your upload. Then click <span class="text-blue-800">Analyze</span> when you can. Afterwards, navigate to your <span class="text-blue-800"><a href="{% url 'spotify-plots' %}">Plots</a></span> page.
 </div>
 <br><br>
 
