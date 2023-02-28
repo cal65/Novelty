@@ -261,7 +261,7 @@ def upload_view_spotify(request):
     logger.info(f"The request looks like: {request}, {type(request)}")
 
     # return
-    template = "goodreads/json_upload_spotify.html"
+    template = "spotify/json_upload_spotify.html"
     return render(request, template)
 
 
@@ -274,9 +274,10 @@ def upload_spotify(request):
     # load up the existing data in databaes for this user
     loaded_df = splot.load_streaming(user)
     df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(keep=False)  # nifty line to keep just new data
-    logger.info(f"starting spotify table addition for {str(len(df_new))} rows out of original {str(len(df))}")
+    new_lines = str(len(df_new))
+    logger.info(f"starting spotify table addition for {new_lines} rows out of original {str(len(df))}")
     populateSpotifyStreaming(df_new, user)
-    df_new.to_csv(f"goodreads/static/Graphs/{user}/spotify_{user}.csv")
+    df_new.to_csv(f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv")
 
     return df
 

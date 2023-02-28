@@ -1,0 +1,76 @@
+{% extends "goodreads/basefile_music.html" %}
+
+{% block content %}
+
+<script>
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+        }
+  }
+    return cookieValue;
+  }
+  function upload(){
+  const csrftoken = getCookie('csrftoken');
+  var form = document.getElementById('json-form')
+  console.log(arguments)
+  console.log(form)
+     $.post({
+      url: "{% url 'json-upload-spotify' %}",
+      data:  new FormData(form),
+      cache: false,
+      contentType: false,
+      processData: false,
+      headers: { "X-CSRFToken": csrftoken },
+      success: function(data) {
+            console.log(data)
+          },
+      error: function(data ){
+            console.log("Something went wrong");
+          }
+      })
+      return false;
+    }
+</script>
+<div style="text-align: center;" class="font-bold pt-4 text-3xl">MUSIC ANALYSIS</div>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="text-red-600 pb-2">
+               <strong>*{{message|safe}}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+<div class="pt-8" style="display: flex; justify-content: center;">
+   <div class="border-2 border-black p-2 w-1/3">
+      <form action="" id="json-form" method="POST" enctype="multipart/form-data" onsubmit= "event.preventDefault(); return upload();">
+         {% csrf_token %}
+         <input type="file" id="file1" name="file" accept=".json">
+         <div class="pt-4"><button type="submit" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
+                      Streaming Upload
+         </button></div>
+      </form>
+   </div>
+</div>
+<div class="pt-2" style="display: flex; justify-content: center;">
+   <form method="POST">
+      {% csrf_token %}
+      <button type="submit" name="runscript" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
+      Analyze
+      </button>
+   </form>
+</div>
+
+<div class = "center">
+   Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Upload</span>. This may take some time for your browser to process, based on the amount of books in your upload. Then click <span class="text-blue-800">Analyze</span> when you can. Afterwards, navigate to your <a href="{% url 'plots' %}">Plots</a> page.
+</div>
+<br><br>
+
+{% endblock content %}
