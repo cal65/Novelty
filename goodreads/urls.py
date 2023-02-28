@@ -28,4 +28,5 @@ urlpatterns = [
     path("spotify-plots/", spot_plots_view, name="spotify-plots"),
     path("spotify-popularity", spot_popularity_view, name="spotify-popularity"),
     path("spotify-weekly", spot_weekly_view, name="spotify-weekly"),
+    path("spotify-release-year", spot_weekly_view, name="spotify-weekly"),
 ]

@@ -170,6 +170,7 @@ def runscript(request):
 
     return plots_view(request)
 
+
 def runscriptSpotify(request):
     username = request.user
     logger.info(f"Running Spotify script with request method {request.method}")
@@ -182,8 +183,11 @@ def runscriptSpotify(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def spot_plots_view(request):
     username = request.user
-    popularity_plot_url = "Graphs/{}/spotify_popularity_plot_{}.jpeg".format(username, username)
-    weekly_plot_url = "Graphs/{}/popularity_plot{}.html".format(username, username)
+    popularity_url = "Graphs/{}/spotify_popularity_plot_{}.jpeg".format(
+        username, username
+    )
+    weekly_url = "Graphs/{}/spotify_weekday_plot_{}.jpeg".format(username, username)
+    release_year_url = "Graphs/{}/spotify_year_plot_{}.jpeg".format(username, username)
 
     if "run_script_function" in request.POST:
         runscriptSpotify(request)
@@ -191,10 +195,12 @@ def spot_plots_view(request):
         request,
         "spotify/plots.html",
         {
-            "popularity_plot_url": popularity_plot_url,
-            "weekly_plot_url": weekly_plot_url,
+            "popularity_url": popularity_url,
+            "weekly_url": weekly_url,
+            "release_year_url": release_year_url,
         },
     )
+
 
 def spot_popularity_view(request):
     username = request.user
@@ -206,15 +212,27 @@ def spot_popularity_view(request):
         {"popularity_url": popularity_url},
     )
 
+
 def spot_weekly_view(request):
     username = request.user
-    weekly_url = "{}/spotify_weekday_plot_{}.jpeg".format(username, username)
+    weekly_url = "Graphs/{}/spotify_weekday_plot_{}.jpeg".format(username, username)
 
     return render(
         request,
         "spotify/weekly_plot.html",
         {"weekly_url": weekly_url},
     )
+
+
+def spot_release_year(request):
+    username = request.user
+    release_year_url = "Graphs/{}/spotify_year_plot_{}.jpeg".format(username, username)
+    return render(
+        request,
+        "spotify/release_year.html",
+        {"release_year_url": release_year_url},
+    )
+
 
 def process_export_upload(df, date_col="Date_Read"):
     df.columns = df.columns.str.replace(
@@ -326,11 +344,17 @@ def upload_spotify(request):
     df = pd.read_json(json_file)
     # load up the existing data in database for this user
     loaded_df = splot.load_streaming(user)
-    df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(keep=False)  # nifty line to keep just new data
+    df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(
+        keep=False
+    )  # nifty line to keep just new data
     new_lines = str(len(df_new))
-    logger.info(f"starting spotify table addition for {new_lines} rows out of original {str(len(df))}")
+    logger.info(
+        f"starting spotify table addition for {new_lines} rows out of original {str(len(df))}"
+    )
     populateSpotifyStreaming(df_new, user)
-    df_new.to_csv(f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv")
+    df_new.to_csv(
+        f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv", index=False
+    )
 
     return render(request, template)
 
@@ -338,7 +362,8 @@ def upload_spotify(request):
 def populateSpotifyStreaming(df, user):
     logger.info(f"spotify df {df.head()}")
     spotifyStreamingObjs = df.apply(
-        lambda x: data_engineering.convert_to_SpotifyStreaming(x, username=str(user)), axis=1
+        lambda x: data_engineering.convert_to_SpotifyStreaming(x, username=str(user)),
+        axis=1,
     )
     return spotifyStreamingObjs
 
@@ -354,6 +379,7 @@ def write_metrics(user, time, found, not_found, file_path="metrics.csv"):
 ### Geography
 def geography(request):
     return render(request, "goodreads/geography.html")
+
 
 def streaming(request):
     return render(request, "netflix/streaming_home.html")

@@ -1,9 +1,4 @@
 import os
-import warnings
-import argparse
-import geopandas as gpd
-
-warnings.simplefilter(action="ignore", category=FutureWarning)
 import pandas as pd
 import numpy as np
 from pandas.api.types import is_numeric_dtype
@@ -76,6 +71,7 @@ def tracks_query(username):
     popularity,
     release_date,
     genres,
+    genre_chosen,
     album,
     explicit,
     podcast
@@ -89,8 +85,8 @@ def tracks_query(username):
 
 
 def preprocess(df):
-    df["endtime"] = pd.to_datetime(df["endtime"])
-    df["endtime"] = df["endtime"].dt.tz_localize("utc").dt.tz_convert("US/Pacific")
+    df["endtime"] = pd.to_datetime(df["endtime"], utc=True)
+    df["endtime"] = df["endtime"].dt.tz_convert("US/Pacific")
     df["date"] = df["endtime"].dt.date
     df["minutes"] = df["msplayed"] / ms_per_minute
 
@@ -325,18 +321,19 @@ def main(username):
     df = get_data(tracks_query(username))
     logger.info(f"Spotify data read with {len(df)} rows \n : {df.head()}")
     df = preprocess(df)
-    os.mkdirs(f"goodreads/static/Graphs/{username}")
+    path = f"goodreads/static/Graphs/{username}"
+    if not (os.path.exists(path) and os.path.isdir(path)):
+        os.mkdir(path)
     df_sums = sum_days(df, podcast=True)
     count_news = count_new(df)
+    logger.info(f"cwd is : {os.getcwd()}")
     fig = year_plot(df)
     fig.savefig(f"goodreads/static/Graphs/{username}/spotify_year_plot_{username}.jpeg")
-
-    fig.savefig(f"../graphs/{username}/year_plot_{username}.jpeg")
     fig_weekly = plot_weekly(df)
-    fig_weekly.savefig(f"../graphs/{username}/spotify_weekday_plot_{username}.jpeg")
+    fig_weekly.savefig(f"goodreads/static/Graphs/{username}/spotify_weekday_plot_{username}.jpeg")
 
-    # fig_popularity = plot_popularity(df, bins=50)
-    # fig_popularity.savefig(f"goodreads/static/Graphs/{username}/spotify_popularity_plot_{username}.jpeg")
+    fig_popularity = plot_popularity(df, bins=50)
+    fig_popularity.savefig(f"goodreads/static/Graphs/{username}/spotify_popularity_plot_{username}.jpeg")
     #
     # fig = make_subplots(3, 1)
     # overall = [

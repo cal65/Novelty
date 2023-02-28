@@ -64,10 +64,10 @@ def convert_to_SpotifyStreaming(row, username):
     Take a row from a Spotify export and write it to database
     """
     djangoSpotifyStreaming = SpotifyStreaming()
-    djangoSpotifyStreaming.endTime = row["endTime"]
-    djangoSpotifyStreaming.artistName = row["artistName"]
-    djangoSpotifyStreaming.trackName = row["trackName"]
-    djangoSpotifyStreaming.msPlayed = row["msPlayed"]
+    djangoSpotifyStreaming.endtime = row["endTime"]
+    djangoSpotifyStreaming.artistname = row["artistName"]
+    djangoSpotifyStreaming.trackname = row["trackName"]
+    djangoSpotifyStreaming.msplayed = row["msPlayed"]
     djangoSpotifyStreaming.username = username
     djangoSpotifyStreaming.save()
     return djangoSpotifyStreaming
