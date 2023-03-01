@@ -49,6 +49,7 @@ def get_tracks():
 def process_for_db(df):
     df['genres'] = df['genres'].str.join(', ')
     df.drop(columns=['is_local'], inplace=True)
+    df.columns = [c.lower() for c in df.columns]
     return df
 
 
