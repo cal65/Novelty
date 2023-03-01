@@ -237,16 +237,38 @@ def year_plot(df):
     plt.close()
     return figure
 
+def format_genres(df, genre_col, minutes_col='minutes', n=20):
+    genres_df = pd.pivot_table(data=df, index=genre_col, values=minutes_col, aggfunc=sum).reset_index()
 
-def plot_genres(df, genre_col, n=20):
     genres_df = pd.DataFrame(df[genre_col].value_counts()).reset_index()
-    genres_df.rename(columns={"index": "genre", genre_col: "listens"}, inplace=True)
-    genres_df = genres_df[genres_df["genre"] != ""]
-    plot = sns.barplot(data=genres_df[:n], y="genre", x="listens")
-    plot.set(title="Most Listened to Genres")
-    figure = plot.get_figure()
-    plt.close()
-    return figure
+    genres_df.rename(columns={'index': 'genre', genre_col: 'minutes_total'}, inplace=True)
+    # keep only top n and remove blanks
+    genres_df = genres_df[genres_df['genre'] != ''][:n]
+
+    genre_artist_df = pd.pivot_table(data=df, index=[genre_col, 'artistName'], values=minutes_col,
+                                     aggfunc=sum).reset_index()
+    genres_max = pd.pivot_table(genre_artist_df, index=[genre_col], values=minutes_col, aggfunc=max).reset_index()
+    genres_max = pd.merge(genres_max, genre_artist_df, on=[genre_col, minutes_col])
+    genres_max[minutes_col] = genres_max[minutes_col].round(2)
+    return genres_max
+
+
+def plot_genres(df, genre_col, minutes_col='minutes', n=20):
+    genre_df = format_genres(df, genre_col=genre_col, minutes_col=minutes_col, n=n)
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(
+            x=genre_df['minutes_total'],
+            y=genre_df['genre'],
+            text=genre_df["artistName"],
+            customdata=genre_df["minutes"],
+            hovertemplate="top artist: %{text} <br>number of minutes: %{customdata} <extra></extra>",
+            orientation='h'
+        )
+    )
+    fig.update_layout(title='Most Listened to Genres')
+
+    return fig
 
 
 def plot_popularity(df, bins=50):
