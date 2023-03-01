@@ -48,6 +48,10 @@ def get_stats(url, wait=0):
         return null_return
     soup = BeautifulSoup(page.content, "html.parser")
     scripts = soup.findAll("script")
+    details = soup.find("div", {'class': 'FeaturedDetails'})
+    genre_divs = soup.find("div", {'data-testid': 'genresList'})
+    genres = [g.text for g in genre_divs.findAll('a')]
+
     try:
         navig = scripts[18].string
     except IndexError as error:
