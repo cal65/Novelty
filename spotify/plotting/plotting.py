@@ -216,6 +216,201 @@ def count_new(
     return count_new_df
 
 
+def plot_new(count_new_df, date_col="date", firsts_col="first", win=7):
+    fig = go.Figure(
+        [go.Bar(x=count_new_df[date_col], y=count_new_df[firsts_col], name="New Songs")]
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=count_new_df[date_col],
+            y=count_new_df[f"rolling_{firsts_col}"],
+            mode="lines",
+            line=go.scatter.Line(color="purple"),
+            name=f"New Songs - {win} Day Rolling",
+        )
+    )
+    fig.update_layout(
+        title="New Songs",
+        yaxis=dict(
+            title="New Songs",
+        ),
+    )
+    return fig
+
+
+def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=True):
+    fig = go.Figure()
+    if podcast:
+        for p in [True, False]:
+            df_sum_sub = df_sum[df_sum["podcast"] == p]
+            fig.add_trace(
+                go.Bar(
+                    x=df_sum_sub[date_col],
+                    y=df_sum_sub[minutes_col],
+                    name="Daily Minutes",
+                )
+            )
+    else:
+        fig.add_trace(
+            go.Bar(x=df_sum[date_col], y=df_sum[minutes_col], name="Daily Minutes")
+        )
+    fig.add_trace(
+        go.Scatter(
+            x=df_sum[date_col],
+            y=df_sum["rolling_average"],
+            mode="lines",
+            line=go.scatter.Line(color="red"),
+            name=f"{win} Day Rolling Average",
+        )
+    )
+    fig.update_layout(
+        title="Overall Consumption",
+        yaxis=dict(
+            title="Minutes",
+        ),
+    )
+    return fig
+
+
+def format_artist_day(
+    df, artist_col="artistName", date_col="date", minutes_col="minutes", n=5
+):
+    top_artists = get_top(df, artist_col, n)
+    df = df[df[artist_col].isin(top_artists)]
+    df_artist_day = pd.pivot_table(
+        df, index=[artist_col, date_col], values=minutes_col, aggfunc=sum
+    ).reset_index()
+    df_artist_day.columns = [artist_col, date_col, minutes_col]
+
+    return df_artist_day
+
+
+def plot_top_artists(df, n=5):
+    artist_df = format_artist_day(df)
+    unique_artists = pd.unique(artist_df["artistName"])
+    a_dfs = []
+    for a in unique_artists:
+        a_df = artist_df.loc[artist_df.loc[:, "artistName"] == a, :]
+        a_df = fill_date(a_df, "date")
+        a_df["artistName"] = a
+        a_df["minutes"] = a_df["minutes"].fillna(0)
+        a_dfs.append(a_df)
+    artist_df = pd.concat(a_dfs)
+    fig = go.Figure()
+
+    # Add traces
+    for a in unique_artists:
+        a_df = artist_df[artist_df["artistName"] == a]
+        fig.add_trace(
+            go.Scatter(x=a_df["date"], y=a_df["minutes"], name=a, mode="lines+markers")
+        )
+    return fig
+
+
+def format_daily(df, date_col="endTime"):
+    df = df.copy()
+    df["endTime"] = pd.to_datetime(df["endTime"])
+    df["wday"] = pd.to_datetime(df["date"]).dt.weekday
+    df["weekend"] = df["wday"].isin([5, 6])
+    df["time_of_day"] = pd.to_datetime(
+        "2000-01-01 " + df["endTime"].dt.time.astype(str)
+    )
+    df["time_period"] = df["time_of_day"].dt.round("15min").dt.time
+    weekend_count = (
+        df[["date", "weekend"]]
+        .drop_duplicates()
+        .groupby("weekend")
+        .count()
+        .reset_index()
+    )
+    df_period = pd.pivot_table(
+        df, index=["time_period", "weekend"], values="minutes", aggfunc=sum
+    ).reset_index()
+    df_period = pd.merge(df_period, weekend_count, on="weekend")
+    df_period["minutes_scaled"] = df_period["minutes"] / df_period["date"]
+    return df_period
+
+
+def plot_daily(df, date_col="endTime"):
+    df_period = format_daily(df, date_col=date_col)
+    plot = sns.barplot(
+        data=df_period, x="time_period", y="minutes_scaled", hue="weekend"
+    )
+    for ind, label in enumerate(plot.get_xticklabels()):
+        if ind % 10 == 0:  # every 10th label is kept
+            label.set_visible(True)
+        else:
+            label.set_visible(False)
+    figure = plot.get_figure()
+    plt.close()
+    return figure
+
+
+def plot_weekly(df, date_col="date"):
+    d = dict(enumerate(calendar.day_name))
+    df_wday = pd.pivot_table(
+        df, index=date_col, values="minutes", aggfunc=sum
+    ).reset_index()
+    df_wday[date_col] = pd.to_datetime(df_wday[date_col])
+    df_wday["wday"] = df_wday["date"].dt.weekday
+    df_wday["day_of_week"] = df_wday["wday"].map(d)
+    ylim_99 = df_wday["minutes"].quantile(0.99)  # an extreme outlier can ruin the plot
+    plot = sns.boxplot(data=df_wday, x="day_of_week", y="minutes", order=d.values())
+    plot.set(ylim=(-1, ylim_99))
+    for label in plot.get_xticklabels():
+        label.set_visible(True)
+    figure = plot.get_figure()
+    plt.close()
+    return figure
+
+
+def format_one_hit_wonder(music_df, artist_col="artistName", song_col="trackName"):
+    artist_summary = pd.pivot_table(
+        music_df,
+        index=[artist_col],
+        values=[song_col, "msPlayed"],
+        aggfunc={song_col: lambda x: len(pd.unique(x)), "msPlayed": sum},
+    ).reset_index()
+    artist_summary.rename(columns={song_col: "unique_tracks"}, inplace=True)
+    artist_summary.sort_values("msPlayed", ascending=False, inplace=True)
+    one_hit_wonders = artist_summary[artist_summary["unique_tracks"] == 1]
+    return one_hit_wonders
+
+
+def plot_one_hit_wonders(
+    music_df, granularity="month", artist_col="artistName", song_col="trackName", n=4
+):
+    one_hit_wonders_df = format_one_hit_wonder(music_df, artist_col=artist_col)
+    one_hit_artists = one_hit_wonders_df[artist_col][:n]
+    m = music_df[music_df[artist_col].isin(one_hit_artists)]
+    m_pivotted = format_group_granular(
+        m, granularity=granularity, index_cols=[artist_col, song_col]
+    )
+    m_pivotted["hit"] = m_pivotted[song_col] + " - " + m_pivotted[artist_col]
+
+    dates = m_pivotted["date"].unique()
+    dates.sort()
+    m_pivotted["date_cat"] = pd.Categorical(
+        m_pivotted["date"], categories=dates, ordered=True
+    )
+
+    plot = sns.FacetGrid(m_pivotted, row="hit", aspect=3, sharex=True)
+    plot.map_dataframe(sns.barplot, x="date_cat", y="minutes")
+
+    plot.set_titles(col_template="One Hit Wonders")
+    # the axis labels are terrible, fix
+    labels = plot.axes[n - 1][0].get_xticklabels()
+    plot.set_xticklabels([format_datetime(d) for d in dates], rotation=30)
+
+    figure = plot.fig
+    plt.close()
+    return plot
+
+
+def format_datetime(date):
+    ts = pd.to_datetime(str(date))
+    return ts.strftime("%b %Y")
+
 def load_streaming(username):
     return get_data(userdata_query(username))
 
@@ -370,14 +565,13 @@ def main(username):
     fig_genre = plot_genres(df, genre_col='genre_chosen')
     fig_genre.write_html(f"goodreads/static/Graphs/{username}/spotify_genre_plot_{username}.html")
 
-    #
-    # fig = make_subplots(3, 1)
-    # overall = [
-    #     plot_overall(df_sums, podcast=True),
-    #     plot_new(count_news),
-    #     plot_top_artists(music_data),
-    # ]
-    # for i, figure in enumerate(overall):
-    #     for trace in range(len(figure["data"])):
-    #         fig.append_trace(figure["data"][trace], row=i + 1, col=1)
-    # fig.write_html(f"goodreads/static/Graphs/{username}/overall_{username}.html")
+    fig = make_subplots(3, 1)
+    overall = [
+        plot_overall(df_sums, podcast=True),
+        plot_new(count_news),
+        plot_top_artists(df),
+    ]
+    for i, figure in enumerate(overall):
+        for trace in range(len(figure["data"])):
+            fig.append_trace(figure["data"][trace], row=i + 1, col=1)
+    fig.write_html(f"goodreads/static/Graphs/{username}/overall_{username}.html")

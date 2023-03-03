@@ -183,6 +183,7 @@ def runscriptSpotify(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def spot_plots_view(request):
     username = request.user
+
     popularity_url = "Graphs/{}/spotify_popularity_plot_{}.jpeg".format(
         username, username
     )
