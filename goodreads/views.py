@@ -188,6 +188,7 @@ def spot_plots_view(request):
     )
     weekly_url = "Graphs/{}/spotify_weekday_plot_{}.jpeg".format(username, username)
     release_year_url = "Graphs/{}/spotify_year_plot_{}.jpeg".format(username, username)
+    genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
 
     if "run_script_function" in request.POST:
         runscriptSpotify(request)
@@ -198,39 +199,8 @@ def spot_plots_view(request):
             "popularity_url": popularity_url,
             "weekly_url": weekly_url,
             "release_year_url": release_year_url,
+            "genre_url": genre_url,
         },
-    )
-
-
-def spot_popularity_view(request):
-    username = request.user
-    popularity_url = "{}/spotify_popularity_plot_{}.jpeg".format(username, username)
-
-    return render(
-        request,
-        "spotify/popularity_plot.html",
-        {"popularity_url": popularity_url},
-    )
-
-
-def spot_weekly_view(request):
-    username = request.user
-    weekly_url = "Graphs/{}/spotify_weekday_plot_{}.jpeg".format(username, username)
-
-    return render(
-        request,
-        "spotify/weekly_plot.html",
-        {"weekly_url": weekly_url},
-    )
-
-
-def spot_release_year(request):
-    username = request.user
-    release_year_url = "Graphs/{}/spotify_year_plot_{}.jpeg".format(username, username)
-    return render(
-        request,
-        "spotify/release_year.html",
-        {"release_year_url": release_year_url},
     )
 
 

@@ -243,7 +243,7 @@ def format_genres(df, genre_col, minutes_col='minutes', n=20):
     genres_df.rename(columns={minutes_col: 'minutes_total'}, inplace=True)
     genres_df.sort_values('minutes_total', ascending=False, inplace=True)
     # keep only top n and remove blanks
-    genres_df = genres_df[genres_df['genre'] != ''][:n]
+    genres_df = genres_df[genres_df[genre_col] != ''][:n]
 
     genre_artist_df = pd.pivot_table(data=df, index=[genre_col, 'artistname'], values=minutes_col,
                                      aggfunc=sum).reset_index()
@@ -271,7 +271,7 @@ def plot_genres(df, genre_col, minutes_col='minutes', n=20):
         go.Bar(
             x=genre_df[minutes_col],
             y=genre_df[genre_col],
-            customdata=np.stack((genre_df['artistName'], genre_df[minutes_col]), axis=-1),
+            customdata=np.stack((genre_df['artistname'], genre_df[minutes_col]), axis=-1),
             hovertemplate="top artist: %{customdata[0]} <br>number of minutes: %{customdata[1]} <extra></extra>",
             orientation='h',
             name='Minutes - Top Artist'

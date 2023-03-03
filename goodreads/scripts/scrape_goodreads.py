@@ -50,7 +50,7 @@ def get_stats(url, wait=0):
     scripts = soup.findAll("script")
     details = soup.find("div", {'class': 'FeaturedDetails'})
     genre_divs = soup.find("div", {'data-testid': 'genresList'})
-    genres = [g.text for g in genre_divs.findAll('a')]
+    shelves = [g.text for g in genre_divs.findAll('a')]
 
     try:
         navig = scripts[18].string
@@ -91,16 +91,14 @@ def get_stats(url, wait=0):
         title = None
 
     try:
-        author = soup.find("span", {"itemprop": "name"}).text
+        author = soup.find("span", {"data-testid": "name"}).text
     except:
         author = None
 
     try:
-        publish_info = (
-            soup.find("div", {"id": "details"}).findAll("div", {"class": "row"})[1].text
-        )
+        publish_info = details.find('p', {"data-testid": 'publicationInfo'}).text
         publish_info = publish_info.replace("\n", "")
-        publish_info = publish_info.replace("Published", "").strip()
+        publish_info = publish_info.replace("First published", "").strip()
     except:
         publish_info = None
 
@@ -109,12 +107,10 @@ def get_stats(url, wait=0):
     except:
         language = None
     try:
-        rating = soup.find("span", {"itemprop": "ratingValue"}).text.replace("\n", "")
+        rating = soup.find('div', {'class': 'RatingStatistics__rating'}).text
     except:
         rating = None
     try:
-        shelves = soup.findAll("a", {"class": "actionLinkLite bookPageGenreLink"})
-        shelves = [shelf.text for shelf in shelves]
         shelves = pd.unique(
             shelves
         )  # because of the way Goodreads organizes this, there are some repeat shelves
@@ -133,9 +129,8 @@ def get_stats(url, wait=0):
     except:
         original_title = None
     try:
-        numberOfPages = soup.find("span", {"itemprop": "numberOfPages"}).text.replace(
-            "\n", ""
-        )
+        numberOfPages_raw = details.find('p', {'data-testid': 'pagesFormat'}).text
+        numberOfPages = int(re.findall(r'\d+', numberOfPages_raw)[0])
     except:
         numberOfPages = None
     logger.info(f"Scraped - shelf1 = {shelf1} and readers = {to_reads}")
