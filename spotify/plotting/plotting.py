@@ -239,34 +239,47 @@ def year_plot(df):
 
 def format_genres(df, genre_col, minutes_col='minutes', n=20):
     genres_df = pd.pivot_table(data=df, index=genre_col, values=minutes_col, aggfunc=sum).reset_index()
-
-    genres_df = pd.DataFrame(df[genre_col].value_counts()).reset_index()
-    genres_df.rename(columns={'index': 'genre', genre_col: 'minutes_total'}, inplace=True)
+    genres_df[minutes_col] = genres_df[minutes_col].round(1)
+    genres_df.rename(columns={minutes_col: 'minutes_total'}, inplace=True)
+    genres_df.sort_values('minutes_total', ascending=False, inplace=True)
     # keep only top n and remove blanks
     genres_df = genres_df[genres_df['genre'] != ''][:n]
 
-    genre_artist_df = pd.pivot_table(data=df, index=[genre_col, 'artistName'], values=minutes_col,
+    genre_artist_df = pd.pivot_table(data=df, index=[genre_col, 'artistname'], values=minutes_col,
                                      aggfunc=sum).reset_index()
     genres_max = pd.pivot_table(genre_artist_df, index=[genre_col], values=minutes_col, aggfunc=max).reset_index()
     genres_max = pd.merge(genres_max, genre_artist_df, on=[genre_col, minutes_col])
-    genres_max[minutes_col] = genres_max[minutes_col].round(2)
-    return genres_max
+    genres_max[minutes_col] = genres_max[minutes_col].round(1)
+    genre_go = pd.merge(genres_df, genres_max, on=genre_col)
+    return genre_go
 
 
 def plot_genres(df, genre_col, minutes_col='minutes', n=20):
+    logger.info(df.head(5))
     genre_df = format_genres(df, genre_col=genre_col, minutes_col=minutes_col, n=n)
     fig = go.Figure()
     fig.add_trace(
         go.Bar(
             x=genre_df['minutes_total'],
-            y=genre_df['genre'],
-            text=genre_df["artistName"],
-            customdata=genre_df["minutes"],
-            hovertemplate="top artist: %{text} <br>number of minutes: %{customdata} <extra></extra>",
-            orientation='h'
+            y=genre_df[genre_col],
+            hovertemplate="genre: %{y} <br> total minutes: %{x}",
+            orientation='h',
+            name='Minutes - Total',
         )
     )
-    fig.update_layout(title='Most Listened to Genres')
+    fig.add_trace(
+        go.Bar(
+            x=genre_df[minutes_col],
+            y=genre_df[genre_col],
+            customdata=np.stack((genre_df['artistName'], genre_df[minutes_col]), axis=-1),
+            hovertemplate="top artist: %{customdata[0]} <br>number of minutes: %{customdata[1]} <extra></extra>",
+            orientation='h',
+            name='Minutes - Top Artist'
+        )
+    )
+    fig.update_layout(title="Most Listened to Genres", barmode='overlay',
+                      xaxis=dict(title="Minutes"),
+                      yaxis=dict(title='Genre'),)
 
     return fig
 
@@ -353,6 +366,10 @@ def main(username):
 
     fig_popularity = plot_popularity(df, bins=50)
     fig_popularity.savefig(f"goodreads/static/Graphs/{username}/spotify_popularity_plot_{username}.jpeg")
+
+    fig_genre = plot_genres(df, genre_col='genre_chosen')
+    fig_genre.write_html(f"goodreads/static/Graphs/{username}/spotify_genre_plot_{username}.html")
+
     #
     # fig = make_subplots(3, 1)
     # overall = [
@@ -363,4 +380,4 @@ def main(username):
     # for i, figure in enumerate(overall):
     #     for trace in range(len(figure["data"])):
     #         fig.append_trace(figure["data"][trace], row=i + 1, col=1)
-    # fig.write_html(f"../graphs/{name}/overall_{name}.html")
+    # fig.write_html(f"goodreads/static/Graphs/{username}/overall_{username}.html")
