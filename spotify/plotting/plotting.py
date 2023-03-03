@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from matplotlib import dates
 import seaborn as sns
 import plotly.graph_objs as go
+from datetime import timedelta
 
 import logging
 
@@ -185,24 +186,22 @@ def new_songs(df, time_col="endtime", index_cols=["artistname", "trackname"]):
     ).reset_index()
     first_df["first"] = True
 
-    df = pd.merge(df, first_df, on=index_cols + [time_col], how="left")
-    return df
+    new_df = pd.merge(df, first_df, on=index_cols + [time_col], how="left")
+    return new_df
 
 
 def count_new(
         df,
         date_col="date",
-        time_col="endtime",
-        index_cols=["artistname", "trackname"],
         win=7,
 ):
-    df = new_songs(df, time_col=time_col, index_cols=index_cols)
+    ## df should be new df
     df["first"] = df["first"].fillna(0)
     total_df = pd.pivot_table(
         df, index=[date_col], values="minutes", aggfunc=sum
     ).reset_index()
     new_df = pd.pivot_table(
-        df[df["first"] == True], index=[date_col], values="minutes", aggfunc=sum
+        df[df["first"]==True], index=[date_col], values="minutes", aggfunc=sum
     ).reset_index()
     count_first_df = pd.pivot_table(df, index=date_col, values="first", aggfunc=sum)
     new_df.rename(columns={'minutes': 'minutes_first'}, inplace=True)
@@ -237,6 +236,23 @@ def plot_new(count_new_df, date_col="date", firsts_col="first", win=7):
     )
     return fig
 
+
+def get_new_info(df):
+    new_df = p.new_songs(df)
+    count_news = count_new(df)
+    max_new = count_news.loc[np.argmax(count_news['rolling_first'])]
+
+    d1 = max_new['date']
+    d2 = d1 - timedelta(days=4)
+    new_songs = new_df[(new_df['date'] <= d2) & (new_df['date'] >= d2)]
+    new_songs = new_songs[new_songs['first'] == True]
+    sample_df = new_songs.sample(5)
+    songs = [f"{song} by {artist} " for song, artist in zip(sample_df['trackName'], sample_df['artistName'])]
+    text = f"""
+    You listened to the most new songs around {max_new['date'].date()}, such as {songs[0]}, {songs[1]}. \n
+    """
+
+    return text
 
 def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=True):
     fig = go.Figure()
@@ -273,7 +289,7 @@ def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=
 
 
 def format_artist_day(
-    df, artist_col="artistName", date_col="date", minutes_col="minutes", n=5
+    df, artist_col="artistname", date_col="date", minutes_col="minutes", n=5
 ):
     top_artists = get_top(df, artist_col, n)
     df = df[df[artist_col].isin(top_artists)]
@@ -285,35 +301,35 @@ def format_artist_day(
     return df_artist_day
 
 
-def plot_top_artists(df, n=5):
+def plot_top_artists(df, artist_col='artistname', n=5):
     artist_df = format_artist_day(df)
-    unique_artists = pd.unique(artist_df["artistName"])
+    unique_artists = pd.unique(artist_df[artist_col])
     a_dfs = []
     for a in unique_artists:
-        a_df = artist_df.loc[artist_df.loc[:, "artistName"] == a, :]
+        a_df = artist_df.loc[artist_df.loc[:, artist_col] == a, :]
         a_df = fill_date(a_df, "date")
-        a_df["artistName"] = a
+        a_df[artist_col] = a
         a_df["minutes"] = a_df["minutes"].fillna(0)
         a_dfs.append(a_df)
     artist_df = pd.concat(a_dfs)
     fig = go.Figure()
 
     # Add traces
-    for a in unique_artists:
-        a_df = artist_df[artist_df["artistName"] == a]
+    for a in unique_artists[:n]:
+        a_df = artist_df[artist_df[artist_col] == a]
         fig.add_trace(
             go.Scatter(x=a_df["date"], y=a_df["minutes"], name=a, mode="lines+markers")
         )
     return fig
 
 
-def format_daily(df, date_col="endTime"):
+def format_daily(df, date_col="endtime"):
     df = df.copy()
-    df["endTime"] = pd.to_datetime(df["endTime"])
+    df[date_col] = pd.to_datetime(df[date_col])
     df["wday"] = pd.to_datetime(df["date"]).dt.weekday
     df["weekend"] = df["wday"].isin([5, 6])
     df["time_of_day"] = pd.to_datetime(
-        "2000-01-01 " + df["endTime"].dt.time.astype(str)
+        "2000-01-01 " + df[date_col].dt.time.astype(str)
     )
     df["time_period"] = df["time_of_day"].dt.round("15min").dt.time
     weekend_count = (
@@ -410,6 +426,33 @@ def plot_one_hit_wonders(
 def format_datetime(date):
     ts = pd.to_datetime(str(date))
     return ts.strftime("%b %Y")
+
+
+def format_group_granular(
+    df, granularity, index_cols, time_col="endtime", minutes_col="minutes"
+):
+    df = df.copy()
+    if granularity == "week":
+        df["segment"] = df[time_col].dt.week
+    elif granularity == "month":
+        df["segment"] = df[time_col].dt.month
+    else:
+        raise Exception("granularity must be one of day, week, month or year")
+    df["year"] = df[time_col].dt.year
+
+    m_pivotted = pd.pivot_table(
+        df, index=index_cols + ["segment", "year"], values=minutes_col, aggfunc=sum
+    ).reset_index()
+
+    if granularity == "month":
+        m_pivotted["date"] = pd.to_datetime(
+            m_pivotted["year"].astype(str)
+            + "-"
+            + m_pivotted["segment"].astype(str)
+            + "-15"
+        )
+
+    return m_pivotted
 
 def load_streaming(username):
     return get_data(userdata_query(username))
@@ -552,18 +595,8 @@ def main(username):
     if not (os.path.exists(path) and os.path.isdir(path)):
         os.mkdir(path)
     df_sums = sum_days(df, podcast=True)
-    count_news = count_new(df)
-    logger.info(f"cwd is : {os.getcwd()}")
-    fig = year_plot(df)
-    fig.savefig(f"goodreads/static/Graphs/{username}/spotify_year_plot_{username}.jpeg")
-    fig_weekly = plot_weekly(df)
-    fig_weekly.savefig(f"goodreads/static/Graphs/{username}/spotify_weekday_plot_{username}.jpeg")
-
-    fig_popularity = plot_popularity(df, bins=50)
-    fig_popularity.savefig(f"goodreads/static/Graphs/{username}/spotify_popularity_plot_{username}.jpeg")
-
-    fig_genre = plot_genres(df, genre_col='genre_chosen')
-    fig_genre.write_html(f"goodreads/static/Graphs/{username}/spotify_genre_plot_{username}.html")
+    new_df = new_songs(df, time_col="endtime", index_cols=["artistname", "trackname"])
+    count_news = count_new(new_df)
 
     fig = make_subplots(3, 1)
     overall = [
@@ -575,3 +608,17 @@ def main(username):
         for trace in range(len(figure["data"])):
             fig.append_trace(figure["data"][trace], row=i + 1, col=1)
     fig.write_html(f"goodreads/static/Graphs/{username}/overall_{username}.html")
+
+
+    fig_year = year_plot(df)
+    fig_year.savefig(f"goodreads/static/Graphs/{username}/spotify_year_plot_{username}.jpeg")
+    fig_weekly = plot_weekly(df)
+    fig_weekly.savefig(f"goodreads/static/Graphs/{username}/spotify_weekday_plot_{username}.jpeg")
+
+    fig_popularity = plot_popularity(df, bins=50)
+    fig_popularity.savefig(f"goodreads/static/Graphs/{username}/spotify_popularity_plot_{username}.jpeg")
+
+    fig_genre = plot_genres(df, genre_col='genre_chosen')
+    fig_genre.write_html(f"goodreads/static/Graphs/{username}/spotify_genre_plot_{username}.html")
+
+

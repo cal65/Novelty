@@ -184,6 +184,7 @@ def runscriptSpotify(request):
 def spot_plots_view(request):
     username = request.user
 
+    overall_url = "Graphs/{}/overall_{}.html".format(username, username)
     popularity_url = "Graphs/{}/spotify_popularity_plot_{}.jpeg".format(
         username, username
     )
@@ -197,6 +198,7 @@ def spot_plots_view(request):
         request,
         "spotify/plots.html",
         {
+            "overall_url": overall_url,
             "popularity_url": popularity_url,
             "weekly_url": weekly_url,
             "release_year_url": release_year_url,
