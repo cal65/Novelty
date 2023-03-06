@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 post_pass = os.getenv("cal65_pass")
 
+
 def get_tracks():
     query = f"""
     select 
@@ -46,16 +47,17 @@ def get_tracks():
         print(error)
         return
 
+
 def process_for_db(df):
-    df['genres'] = df['genres'].str.join(', ')
-    df.drop(columns=['is_local'], inplace=True)
+    df["genres"] = df["genres"].str.join(", ")
+    df.drop(columns=["is_local"], inplace=True)
     df.columns = [c.lower() for c in df.columns]
     return df
 
 
 if __name__ == "__main__":
     """
-    Usage: python write.py file_path.pkl 
+    Usage: python write.py file_path.pkl
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("file_path")
@@ -85,7 +87,7 @@ if __name__ == "__main__":
     if len(df_existing) < 1:
         df_new = df_pickle.copy()
     else:
-        df_new = df_pickle[~df_pickle['uri'].isin(df_existing['uri'])]
+        df_new = df_pickle[~df_pickle["uri"].isin(df_existing["uri"])]
 
-    df_new.to_sql('goodreads_spotifytracks', engine, if_exists="append", index=False)
+    df_new.to_sql("goodreads_spotifytracks", engine, if_exists="append", index=False)
     connection.close()

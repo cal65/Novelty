@@ -141,11 +141,22 @@ def get_top(df, column, n):
     return df[column].value_counts().index[:n]
 
 
-
 def simplify_genre(genre_list):
-    replace_list = ["pop", "mellow", "funk", "indie", "rap", "house", "rock", "hip hop", "reggae", "soul", "r&b"]
+    replace_list = [
+        "pop",
+        "mellow",
+        "funk",
+        "indie",
+        "rap",
+        "house",
+        "rock",
+        "hip hop",
+        "reggae",
+        "soul",
+        "r&b",
+    ]
     for genre in replace_list:
-        genre_list = [genre if genre in g else g for g in genre_list ]
+        genre_list = [genre if genre in g else g for g in genre_list]
     return genre_list
 
 
@@ -180,7 +191,7 @@ def sum_days(df, date_col="date", minutes_col="minutes", win=7, podcast=True):
     return df_sum
 
 
-def new_songs(df, time_col="endtime", index_cols=["artistname", "trackname"]):
+def format_new_songs(df, time_col="endtime", index_cols=["artistname", "trackname"]):
     first_df = pd.pivot_table(
         data=df, index=index_cols, values=time_col, aggfunc="first"
     ).reset_index()
@@ -191,9 +202,9 @@ def new_songs(df, time_col="endtime", index_cols=["artistname", "trackname"]):
 
 
 def count_new(
-        df,
-        date_col="date",
-        win=7,
+    df,
+    date_col="date",
+    win=7,
 ):
     ## df should be new df
     df["first"] = df["first"].fillna(0)
@@ -201,12 +212,12 @@ def count_new(
         df, index=[date_col], values="minutes", aggfunc=sum
     ).reset_index()
     new_df = pd.pivot_table(
-        df[df["first"]==True], index=[date_col], values="minutes", aggfunc=sum
+        df[df["first"] == True], index=[date_col], values="minutes", aggfunc=sum
     ).reset_index()
     count_first_df = pd.pivot_table(df, index=date_col, values="first", aggfunc=sum)
-    new_df.rename(columns={'minutes': 'minutes_first'}, inplace=True)
-    count_new_df = pd.merge(total_df, new_df, on=date_col, how='outer')
-    count_new_df = pd.merge(count_new_df, count_first_df, on=date_col, how='outer')
+    new_df.rename(columns={"minutes": "minutes_first"}, inplace=True)
+    count_new_df = pd.merge(total_df, new_df, on=date_col, how="outer")
+    count_new_df = pd.merge(count_new_df, count_first_df, on=date_col, how="outer")
 
     count_new_df = fill_date(count_new_df, date_col=date_col)
     count_new_df["minutes"] = count_new_df["minutes"].fillna(0)
@@ -237,22 +248,28 @@ def plot_new(count_new_df, date_col="date", firsts_col="first", win=7):
     return fig
 
 
-def get_new_info(df):
-    new_df = p.new_songs(df)
+def write_new_info(df):
+    new_df = format_new_songs(
+        df, time_col="endtime", index_cols=["artistname", "trackname"]
+    )
     count_news = count_new(df)
-    max_new = count_news.loc[np.argmax(count_news['rolling_first'])]
+    max_new = count_news.loc[np.argmax(count_news["rolling_first"])]
 
-    d1 = max_new['date']
+    d1 = max_new["date"]
     d2 = d1 - timedelta(days=4)
-    new_songs = new_df[(new_df['date'] <= d2) & (new_df['date'] >= d2)]
-    new_songs = new_songs[new_songs['first'] == True]
+    new_songs = new_df[(new_df["date"] <= d2) & (new_df["date"] >= d2)]
+    new_songs = new_songs[new_songs["first"] == True]
     sample_df = new_songs.sample(5)
-    songs = [f"{song} by {artist} " for song, artist in zip(sample_df['trackName'], sample_df['artistName'])]
+    songs = [
+        f"{song} by {artist} "
+        for song, artist in zip(sample_df["trackName"], sample_df["artistName"])
+    ]
     text = f"""
     You listened to the most new songs around {max_new['date'].date()}, such as {songs[0]}, {songs[1]}. \n
     """
 
     return text
+
 
 def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=True):
     fig = go.Figure()
@@ -301,7 +318,7 @@ def format_artist_day(
     return df_artist_day
 
 
-def plot_top_artists(df, artist_col='artistname', n=5):
+def plot_top_artists(df, artist_col="artistname", n=5):
     artist_df = format_artist_day(df)
     unique_artists = pd.unique(artist_df[artist_col])
     a_dfs = []
@@ -328,9 +345,7 @@ def format_daily(df, date_col="endtime"):
     df[date_col] = pd.to_datetime(df[date_col])
     df["wday"] = pd.to_datetime(df["date"]).dt.weekday
     df["weekend"] = df["wday"].isin([5, 6])
-    df["time_of_day"] = pd.to_datetime(
-        "2000-01-01 " + df[date_col].dt.time.astype(str)
-    )
+    df["time_of_day"] = pd.to_datetime("2000-01-01 " + df[date_col].dt.time.astype(str))
     df["time_period"] = df["time_of_day"].dt.round("15min").dt.time
     weekend_count = (
         df[["date", "weekend"]]
@@ -454,6 +469,7 @@ def format_group_granular(
 
     return m_pivotted
 
+
 def load_streaming(username):
     return get_data(userdata_query(username))
 
@@ -475,49 +491,60 @@ def year_plot(df):
     plt.close()
     return figure
 
-def format_genres(df, genre_col, minutes_col='minutes', n=20):
-    genres_df = pd.pivot_table(data=df, index=genre_col, values=minutes_col, aggfunc=sum).reset_index()
-    genres_df[minutes_col] = genres_df[minutes_col].round(1)
-    genres_df.rename(columns={minutes_col: 'minutes_total'}, inplace=True)
-    genres_df.sort_values('minutes_total', ascending=False, inplace=True)
-    # keep only top n and remove blanks
-    genres_df = genres_df[genres_df[genre_col] != ''][:n]
 
-    genre_artist_df = pd.pivot_table(data=df, index=[genre_col, 'artistname'], values=minutes_col,
-                                     aggfunc=sum).reset_index()
-    genres_max = pd.pivot_table(genre_artist_df, index=[genre_col], values=minutes_col, aggfunc=max).reset_index()
+def format_genres(df, genre_col, minutes_col="minutes", n=20):
+    genres_df = pd.pivot_table(
+        data=df, index=genre_col, values=minutes_col, aggfunc=sum
+    ).reset_index()
+    genres_df[minutes_col] = genres_df[minutes_col].round(1)
+    genres_df.rename(columns={minutes_col: "minutes_total"}, inplace=True)
+    genres_df.sort_values("minutes_total", ascending=False, inplace=True)
+    # keep only top n and remove blanks
+    genres_df = genres_df[genres_df[genre_col] != ""][:n]
+
+    genre_artist_df = pd.pivot_table(
+        data=df, index=[genre_col, "artistname"], values=minutes_col, aggfunc=sum
+    ).reset_index()
+    genres_max = pd.pivot_table(
+        genre_artist_df, index=[genre_col], values=minutes_col, aggfunc=max
+    ).reset_index()
     genres_max = pd.merge(genres_max, genre_artist_df, on=[genre_col, minutes_col])
     genres_max[minutes_col] = genres_max[minutes_col].round(1)
     genre_go = pd.merge(genres_df, genres_max, on=genre_col)
     return genre_go
 
 
-def plot_genres(df, genre_col, minutes_col='minutes', n=20):
+def plot_genres(df, genre_col, minutes_col="minutes", n=20):
     logger.info(df.head(5))
     genre_df = format_genres(df, genre_col=genre_col, minutes_col=minutes_col, n=n)
     fig = go.Figure()
     fig.add_trace(
         go.Bar(
-            x=genre_df['minutes_total'],
+            x=genre_df["minutes_total"],
             y=genre_df[genre_col],
             hovertemplate="genre: %{y} <br> total minutes: %{x}",
-            orientation='h',
-            name='Minutes - Total',
+            orientation="h",
+            name="Minutes - Total",
         )
     )
     fig.add_trace(
         go.Bar(
             x=genre_df[minutes_col],
             y=genre_df[genre_col],
-            customdata=np.stack((genre_df['artistname'], genre_df[minutes_col]), axis=-1),
+            customdata=np.stack(
+                (genre_df["artistname"], genre_df[minutes_col]), axis=-1
+            ),
             hovertemplate="top artist: %{customdata[0]} <br>number of minutes: %{customdata[1]} <extra></extra>",
-            orientation='h',
-            name='Minutes - Top Artist'
+            orientation="h",
+            name="Minutes - Top Artist",
         )
     )
-    fig.update_layout(title="Most Listened to Genres", barmode='overlay',
-                      xaxis=dict(title="Minutes"),
-                      yaxis=dict(title='Genre'),)
+    fig.update_layout(
+        title="Most Listened to Genres",
+        barmode="overlay",
+        xaxis=dict(title="Minutes"),
+        yaxis=dict(title="Genre"),
+    )
 
     return fig
 
@@ -587,6 +614,39 @@ def plot_weekly(df, date_col="date"):
     return figure
 
 
+def format_skips(df, ratio_limit=0.4, n=5):
+    df["skipped"] = df["played_ratio"] < ratio_limit
+    skipped_songs_df = pd.pivot_table(
+        df.loc[df["skipped"] == True],
+        index=["trackname", "artistname"],
+        values="uri",
+        aggfunc=len,
+    ).sort_values("uri", ascending=False)
+    skipped_songs_df.rename(columns={"uri": "skips"}, inplace=True)
+    total = pd.DataFrame(df.groupby(["trackName", "artistName"]).size())
+    skipped_merged = total.join(skipped_songs_df).reset_index()
+    skipped_merged.rename(columns={0: "n"}, inplace=True)
+    skipped_merged["skips"] = skipped_merged["skips"].fillna(0)
+    skipped_merged["ratio"] = skipped_merged["skips"] / skipped_merged["n"]
+    skipped_merged.sort_values("ratio", ascending=False, inplace=True)
+    skipped_select = skipped_merged[skipped_merged["n"] >= n]
+    return skipped_select.head(5)
+
+
+def write_skips_summary(df, track_col="trackname", artist_col="artistname"):
+    skips_df = format_skips(df)
+    skippedTracks: object = (
+        skips_df[track_col].values[:2] + " by " + skips_df[artist_col].values[:2]
+    )
+    played = skips_df["n"].values[:2].astype(int)
+    skipped = skips_df["skips"].values[:2].astype(int)
+    text = f"""
+    Your most skipped tracks are {skippedTracks[0]} and {skippedTracks[1]} which you 
+    skipped {skipped[0]} out of {played[0]} plays and {skipped[1]} times out of {played[1]} respectively.
+    """
+    return text
+
+
 def main(username):
     df = get_data(tracks_query(username))
     logger.info(f"Spotify data read with {len(df)} rows \n : {df.head()}")
@@ -595,7 +655,9 @@ def main(username):
     if not (os.path.exists(path) and os.path.isdir(path)):
         os.mkdir(path)
     df_sums = sum_days(df, podcast=True)
-    new_df = new_songs(df, time_col="endtime", index_cols=["artistname", "trackname"])
+    new_df = format_new_songs(
+        df, time_col="endtime", index_cols=["artistname", "trackname"]
+    )
     count_news = count_new(new_df)
 
     fig = make_subplots(3, 1)
@@ -609,16 +671,21 @@ def main(username):
             fig.append_trace(figure["data"][trace], row=i + 1, col=1)
     fig.write_html(f"goodreads/static/Graphs/{username}/overall_{username}.html")
 
-
     fig_year = year_plot(df)
-    fig_year.savefig(f"goodreads/static/Graphs/{username}/spotify_year_plot_{username}.jpeg")
+    fig_year.savefig(
+        f"goodreads/static/Graphs/{username}/spotify_year_plot_{username}.jpeg"
+    )
     fig_weekly = plot_weekly(df)
-    fig_weekly.savefig(f"goodreads/static/Graphs/{username}/spotify_weekday_plot_{username}.jpeg")
+    fig_weekly.savefig(
+        f"goodreads/static/Graphs/{username}/spotify_weekday_plot_{username}.jpeg"
+    )
 
     fig_popularity = plot_popularity(df, bins=50)
-    fig_popularity.savefig(f"goodreads/static/Graphs/{username}/spotify_popularity_plot_{username}.jpeg")
+    fig_popularity.savefig(
+        f"goodreads/static/Graphs/{username}/spotify_popularity_plot_{username}.jpeg"
+    )
 
-    fig_genre = plot_genres(df, genre_col='genre_chosen')
-    fig_genre.write_html(f"goodreads/static/Graphs/{username}/spotify_genre_plot_{username}.html")
-
-
+    fig_genre = plot_genres(df, genre_col="genre_chosen")
+    fig_genre.write_html(
+        f"goodreads/static/Graphs/{username}/spotify_genre_plot_{username}.html"
+    )

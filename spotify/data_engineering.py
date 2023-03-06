@@ -22,7 +22,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-
 def convert_to_SpotifyStreaming(row, username):
     """
     Take a row from a Spotify export and write it to database
