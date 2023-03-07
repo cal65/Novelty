@@ -38,6 +38,9 @@
           });
         })
     }
+
+
+    $('#infotext').load("{% static info_text %}");
 </script>
 <button name="runscript" onclick="reanalyze()" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 pb-2 px-4 rounded">
     Re-Analyze
@@ -54,23 +57,29 @@
     <div style="display: flex; justify-content: center; height: 650px;">
         <iframe style="width: 60%;" src="{% static overall_url %}" class="text-center" alt="popularity"></iframe>
     </div>
+        <div class="center-text">
+        <p>  <iframe src="{% static info_text %}" class= "center-image center-text">  </iframe></p> 
+    </div>
+
+        <br>
+        <br>
+<p id="infotext"></p>
 <br> <br>
 </div>
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">POPULARITY IMAGE</div>
-    <div style="display: flex; justify-content: center;">
-        <img style="width: 60%;" src="{% static popularity_url %}" class="text-center" alt="popularity">
+    <div class ="center-image">
+        <img src="{% static popularity_url %}" alt="popularity">
     </div>
 <br> <br>
     <div class="center-text">
     This shows how much music you listen to per day of the week.
         </div>
     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">WEEKDAY USAGE IMAGE</div>
-    <div style="display: flex; justify-content: center; ">
-        <img style="width: 60%;" src="{% static weekly_url %}"  class="text-center" alt="weekly">
+    <div class ="center-image">
+        <img src="{% static weekly_url %}"  alt="weekly">
     </div>
-    <p>
-        <br>
-        <br>
+    <br> <br>
+
             <div class="center-text">
     This shows the songs
         </div>

@@ -252,17 +252,17 @@ def write_new_info(df):
     new_df = format_new_songs(
         df, time_col="endtime", index_cols=["artistname", "trackname"]
     )
-    count_news = count_new(df)
+    count_news = count_new(new_df)
     max_new = count_news.loc[np.argmax(count_news["rolling_first"])]
 
     d1 = max_new["date"]
     d2 = d1 - timedelta(days=4)
-    new_songs = new_df[(new_df["date"] <= d2) & (new_df["date"] >= d2)]
-    new_songs = new_songs[new_songs["first"] == True]
+    new_songs = new_df.loc[(new_df["date"] <= d2) & (new_df["date"] >= d2)]
+    new_songs = new_songs.loc[new_songs["first"] == True]
     sample_df = new_songs.sample(5)
     songs = [
         f"{song} by {artist} "
-        for song, artist in zip(sample_df["trackName"], sample_df["artistName"])
+        for song, artist in zip(sample_df["trackname"], sample_df["artistname"])
     ]
     text = f"""
     You listened to the most new songs around {max_new['date'].date()}, such as {songs[0]}, {songs[1]}. \n
@@ -395,7 +395,7 @@ def plot_weekly(df, date_col="date"):
     return figure
 
 
-def format_one_hit_wonder(music_df, artist_col="artistName", song_col="trackName"):
+def format_one_hit_wonder(music_df, artist_col="artistname", song_col="trackname"):
     artist_summary = pd.pivot_table(
         music_df,
         index=[artist_col],
@@ -409,7 +409,7 @@ def format_one_hit_wonder(music_df, artist_col="artistName", song_col="trackName
 
 
 def plot_one_hit_wonders(
-    music_df, granularity="month", artist_col="artistName", song_col="trackName", n=4
+    music_df, granularity="month", artist_col="artistname", song_col="trackname", n=4
 ):
     one_hit_wonders_df = format_one_hit_wonder(music_df, artist_col=artist_col)
     one_hit_artists = one_hit_wonders_df[artist_col][:n]
@@ -623,7 +623,7 @@ def format_skips(df, ratio_limit=0.4, n=5):
         aggfunc=len,
     ).sort_values("uri", ascending=False)
     skipped_songs_df.rename(columns={"uri": "skips"}, inplace=True)
-    total = pd.DataFrame(df.groupby(["trackName", "artistName"]).size())
+    total = pd.DataFrame(df.groupby(["trackname", "artistname"]).size())
     skipped_merged = total.join(skipped_songs_df).reset_index()
     skipped_merged.rename(columns={0: "n"}, inplace=True)
     skipped_merged["skips"] = skipped_merged["skips"].fillna(0)
@@ -642,9 +642,18 @@ def write_skips_summary(df, track_col="trackname", artist_col="artistname"):
     skipped = skips_df["skips"].values[:2].astype(int)
     text = f"""
     Your most skipped tracks are {skippedTracks[0]} and {skippedTracks[1]} which you 
-    skipped {skipped[0]} out of {played[0]} plays and {skipped[1]} times out of {played[1]} respectively.
+    skipped {skipped[0]} out of {played[0]}  and {skipped[1]} times out of {played[1]} respectively.
     """
     return text
+
+
+def write_text(filename, texts):
+    if isinstance(texts, list):
+        text = "\n".join(texts)
+    else:
+        text = texts
+    with open(filename, "w") as f:
+        f.write(text)
 
 
 def main(username):
@@ -675,6 +684,7 @@ def main(username):
     fig_year.savefig(
         f"goodreads/static/Graphs/{username}/spotify_year_plot_{username}.jpeg"
     )
+
     fig_weekly = plot_weekly(df)
     fig_weekly.savefig(
         f"goodreads/static/Graphs/{username}/spotify_weekday_plot_{username}.jpeg"
@@ -688,4 +698,9 @@ def main(username):
     fig_genre = plot_genres(df, genre_col="genre_chosen")
     fig_genre.write_html(
         f"goodreads/static/Graphs/{username}/spotify_genre_plot_{username}.html"
+    )
+
+    write_text(
+        filename=f"goodreads/static/Graphs/{username}/spotify_summary_{username}.txt",
+        texts=[write_new_info(df), write_skips_summary(df)],
     )

@@ -141,27 +141,6 @@ def plots_view(request):
     )
 
 
-@login_required(redirect_field_name="next", login_url="user-login")
-def yearly_pages_read_view(request):
-    username = request.user
-    yearly_pages_read_url = "{}/Yearly_pages_read_{}.jpeg".format(username, username)
-    return render(
-        request,
-        "goodreads/yearly_pages_read.html",
-        {"yearly_pages_read_url": yearly_pages_read_url},
-    )
-
-
-@login_required(redirect_field_name="next", login_url="user-login")
-def monthly_pages_read_view(request):
-    username = request.user
-    monthly_pages_read_url = "{}/monthly_pages_read_{}.html".format(username, username)
-    return render(
-        request,
-        "goodreads/monthly_pages_read.html",
-        {"monthly_pages_read_url": monthly_pages_read_url},
-    )
-
 
 def runscript(request):
     logger.info(f"Running script with request method {request.method}")
@@ -191,6 +170,7 @@ def spot_plots_view(request):
     weekly_url = "Graphs/{}/spotify_weekday_plot_{}.jpeg".format(username, username)
     release_year_url = "Graphs/{}/spotify_year_plot_{}.jpeg".format(username, username)
     genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
+    info_text = "Graphs/{}/spotify_summary_{}.txt".format(username, username)
 
     if "run_script_function" in request.POST:
         runscriptSpotify(request)
@@ -203,6 +183,7 @@ def spot_plots_view(request):
             "weekly_url": weekly_url,
             "release_year_url": release_year_url,
             "genre_url": genre_url,
+            "info_text": info_text,
         },
     )
 
