@@ -387,7 +387,7 @@ def plot_weekly(df, date_col="date"):
     df_wday["day_of_week"] = df_wday["wday"].map(d)
     ylim_99 = df_wday["minutes"].quantile(0.99)  # an extreme outlier can ruin the plot
     plot = sns.boxplot(data=df_wday, x="day_of_week", y="minutes", order=d.values())
-    plot.set(ylim=(-1, ylim_99))
+    plot.set(ylim=(-1, ylim_99), xlabel='Day of Week')
     for label in plot.get_xticklabels():
         label.set_visible(True)
     figure = plot.get_figure()
@@ -399,11 +399,11 @@ def format_one_hit_wonder(music_df, artist_col="artistname", song_col="trackname
     artist_summary = pd.pivot_table(
         music_df,
         index=[artist_col],
-        values=[song_col, "msPlayed"],
-        aggfunc={song_col: lambda x: len(pd.unique(x)), "msPlayed": sum},
+        values=[song_col, "msplayed"],
+        aggfunc={song_col: lambda x: len(pd.unique(x)), "msplayed": sum},
     ).reset_index()
     artist_summary.rename(columns={song_col: "unique_tracks"}, inplace=True)
-    artist_summary.sort_values("msPlayed", ascending=False, inplace=True)
+    artist_summary.sort_values("msplayed", ascending=False, inplace=True)
     one_hit_wonders = artist_summary[artist_summary["unique_tracks"] == 1]
     return one_hit_wonders
 
@@ -474,22 +474,62 @@ def load_streaming(username):
     return get_data(userdata_query(username))
 
 
-def year_plot(df):
-    release_year_df = pd.DataFrame(df["release_year"].value_counts()).reset_index()
-    release_year_df.columns = ["release_year", "count"]
-    release_year_df["release_year"] = release_year_df["release_year"].astype(int)
+def get_max_agg(df, feature_col, minutes_col, index_col):
+    """
+    Get the dataframe where there is the max aggregated by column, and the value of which max for an index_col
+    """
+    col_df = pd.pivot_table(
+        data=df, index=[feature_col, index_col], values=minutes_col, aggfunc=sum
+    ).reset_index()
+    col_max = pd.pivot_table(
+        col_df, index=[feature_col], values=minutes_col, aggfunc=max
+    ).reset_index()
+    col_max = pd.merge(col_max, col_df, on=[feature_col, minutes_col])
+    return col_max
 
-    sns.set(rc={"figure.figsize": (11.7, 8.27)})
-    plot = sns.barplot(data=release_year_df, x="release_year", y="count")
-    for ind, label in enumerate(plot.get_xticklabels()):
-        if ind % 10 == 0:  # every 10th label is kept
-            label.set_visible(True)
-        else:
-            label.set_visible(False)
-    plot.set(title="Release Year Distribution")
-    figure = plot.get_figure()
-    plt.close()
-    return figure
+
+def format_years(df, feature_col='release_year', minutes_col='minutes', index_col='artistname'):
+    years_df = pd.pivot_table(
+        data=df, index=feature_col, values=minutes_col, aggfunc=sum
+    ).reset_index()
+    years_df[minutes_col] = years_df[minutes_col].round(1)
+    years_df.rename(columns={minutes_col: "minutes_total"}, inplace=True)
+    years_max = get_max_agg(df, feature_col=feature_col, minutes_col=minutes_col, index_col=index_col)
+    years_go = pd.merge(years_df, years_max, on=feature_col)
+
+    return years_go
+
+
+def plot_years(df, feature_col='release_year', minutes_col='minutes', index_col='artistname'):
+    years_df = format_years(df, feature_col=feature_col, minutes_col=minutes_col)
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(
+            x=years_df[feature_col],
+            y=years_df["minutes_total"],
+            hovertemplate="Year: %{y} <br> total minutes: %{x}",
+            name="Minutes - Total",
+            hoverinfo='skip',
+        )
+    )
+    fig.add_trace(
+        go.Bar(
+            x=years_df[feature_col],
+            y=years_df[minutes_col],
+            customdata=years_df[index_col],
+            hovertemplate="top artist: %{customdata}",
+            name="Minutes - Top Artist",
+        )
+    )
+    fig.update_layout(
+        title="Release Year Distribution",
+        barmode="overlay",
+        xaxis=dict(title="Minutes"),
+        yaxis=dict(title="Release Year"),
+        title_x=0.5,
+    )
+
+    return fig
 
 
 def format_genres(df, genre_col, minutes_col="minutes", n=20):
@@ -515,7 +555,6 @@ def format_genres(df, genre_col, minutes_col="minutes", n=20):
 
 
 def plot_genres(df, genre_col, minutes_col="minutes", n=20):
-    logger.info(df.head(5))
     genre_df = format_genres(df, genre_col=genre_col, minutes_col=minutes_col, n=n)
     fig = go.Figure()
     fig.add_trace(
@@ -544,6 +583,7 @@ def plot_genres(df, genre_col, minutes_col="minutes", n=20):
         barmode="overlay",
         xaxis=dict(title="Minutes"),
         yaxis=dict(title="Genre"),
+        title_x=0.5,
     )
 
     return fig
@@ -680,9 +720,9 @@ def main(username):
             fig.append_trace(figure["data"][trace], row=i + 1, col=1)
     fig.write_html(f"goodreads/static/Graphs/{username}/overall_{username}.html")
 
-    fig_year = year_plot(df)
-    fig_year.savefig(
-        f"goodreads/static/Graphs/{username}/spotify_year_plot_{username}.jpeg"
+    fig_year = plot_years(df, feature_col='release_year',  minutes_col='minutes', index_col='artistname')
+    fig_year.write_html(
+        f"goodreads/static/Graphs/{username}/spotify_year_plot_{username}.html"
     )
 
     fig_weekly = plot_weekly(df)

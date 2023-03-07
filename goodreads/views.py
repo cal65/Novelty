@@ -168,7 +168,7 @@ def spot_plots_view(request):
         username, username
     )
     weekly_url = "Graphs/{}/spotify_weekday_plot_{}.jpeg".format(username, username)
-    release_year_url = "Graphs/{}/spotify_year_plot_{}.jpeg".format(username, username)
+    release_year_url = "Graphs/{}/spotify_year_plot_{}.html".format(username, username)
     genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
     info_text = "Graphs/{}/spotify_summary_{}.txt".format(username, username)
 

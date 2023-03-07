@@ -58,7 +58,7 @@
         <iframe style="width: 60%;" src="{% static overall_url %}" class="text-center" alt="popularity"></iframe>
     </div>
         <div class="center-text">
-        <p>  <iframe src="{% static info_text %}" class= "center-image center-text">  </iframe></p> 
+        <p>  <iframe src="{% static info_text %}" class= "center-image center-text" style="size: 10">  </iframe></p> 
     </div>
 
         <br>
@@ -68,7 +68,7 @@
 </div>
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">POPULARITY IMAGE</div>
     <div class ="center-image">
-        <img src="{% static popularity_url %}" alt="popularity">
+        <img class ="center-image"src="{% static popularity_url %}" alt="popularity">
     </div>
 <br> <br>
     <div class="center-text">
@@ -76,7 +76,7 @@
         </div>
     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">WEEKDAY USAGE IMAGE</div>
     <div class ="center-image">
-        <img src="{% static weekly_url %}"  alt="weekly">
+        <img class ="center-image" src="{% static weekly_url %}"  alt="weekly">
     </div>
     <br> <br>
 
@@ -84,8 +84,8 @@
     This shows the songs
         </div>
     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">RELEASE YEAR DISTRIBUTION</div>
-    <div style="display: flex; justify-content: center; ">
-        <img style="width: 60%;" src="{% static release_year_url %}"  class="text-center" alt="release year" />
+    <div style="display: flex; justify-content: center; height: 650px;">
+        <iframe style="width: 60%;" src="{% static release_year_url %}"  class="text-center" alt="release year" /></iframe>
     </div>
         </div>
     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">GENRES  DISTRIBUTION</div>
