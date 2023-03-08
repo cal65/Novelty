@@ -261,12 +261,11 @@ def write_new_info(df):
     new_songs = new_songs.loc[new_songs["first"] == True]
     sample_df = new_songs.sample(5)
     songs = [
-        f"{song} by {artist} "
+        f"{song} by {artist}"
         for song, artist in zip(sample_df["trackname"], sample_df["artistname"])
     ]
-    text = f"""
-    You listened to the most new songs around {max_new['date'].date()}, such as {songs[0]}, {songs[1]}. \n
-    """
+    text = f"You listened to the most new songs around {max_new['date'].date()},"
+    f"such as {songs[0]}, {songs[1]} and {songs[3]}."
 
     return text
 
@@ -362,7 +361,7 @@ def format_daily(df, date_col="endtime"):
     return df_period
 
 
-def plot_daily(df, date_col="endTime"):
+def plot_daily(df, date_col="endtime"):
     df_period = format_daily(df, date_col=date_col)
     plot = sns.barplot(
         data=df_period, x="time_period", y="minutes_scaled", hue="weekend"
@@ -662,7 +661,7 @@ def plot_weekly(df, date_col="date"):
     df_wday["day_of_week"] = df_wday["wday"].map(d)
     ylim_99 = df_wday["minutes"].quantile(0.99)  # an extreme outlier can ruin the plot
     plot = sns.boxplot(data=df_wday, x="day_of_week", y="minutes", order=d.values())
-    plot.set(ylim=(-1, ylim_99), xlab='day of week')
+    plot.set(ylim=(-1, ylim_99), xlabel='Day of Week')
     for label in plot.get_xticklabels():
         label.set_visible(True)
     figure = plot.get_figure()
@@ -696,10 +695,8 @@ def write_skips_summary(df, track_col="trackname", artist_col="artistname"):
     )
     played = skips_df["n"].values[:2].astype(int)
     skipped = skips_df["skips"].values[:2].astype(int)
-    text = f"""
-    Your most skipped tracks are {skippedTracks[0]} and {skippedTracks[1]} which you 
-    skipped {skipped[0]} out of {played[0]}  and {skipped[1]} times out of {played[1]} respectively.
-    """
+    text = f"Your most skipped tracks are {skippedTracks[0]} and {skippedTracks[1]} which you"
+    f"skipped {skipped[0]} out of {played[0]}  and {skipped[1]} times out of {played[1]} respectively."
     return text
 
 

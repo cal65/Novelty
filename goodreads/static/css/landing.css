@@ -82,6 +82,12 @@
     height: 90%;
 }
 
+.plotly {
+    display: flex; 
+    justify-content: center; 
+    height: 650px;
+}
+
 .object_map {
   width: 100%;
   height: 120em;
