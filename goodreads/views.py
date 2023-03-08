@@ -322,6 +322,22 @@ def populateSpotifyStreaming(df, user):
     return spotifyStreamingObjs
 
 
+@login_required(redirect_field_name="next", login_url="user-login")
+def upload_view_netflix(request):
+    user = request.user
+    logger.info(f"The request looks like: {request}, {type(request)}")
+    # return
+    template = "spotify/json_upload_spotify.html"
+    if request.method == "POST" and "runscriptSpotify" in request.POST:
+        logger.info(
+            f"Got running with spotify request {request.method} and post {request.POST}"
+        )
+        runscriptSpotify(request)
+        # when script finishes, move user to plots view
+        return HttpResponseRedirect("/spotify-plots/")
+    return render(request, template)
+
+
 def write_metrics(user, time, found, not_found, file_path="metrics.csv"):
     time_now = datetime.now()
     fields = [user, time, time_now, found, not_found]
