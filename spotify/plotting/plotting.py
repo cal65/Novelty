@@ -386,7 +386,7 @@ def plot_weekly(df, date_col="date"):
     df_wday["day_of_week"] = df_wday["wday"].map(d)
     ylim_99 = df_wday["minutes"].quantile(0.99)  # an extreme outlier can ruin the plot
     plot = sns.boxplot(data=df_wday, x="day_of_week", y="minutes", order=d.values())
-    plot.set(ylim=(-1, ylim_99), xlabel='Day of Week')
+    plot.set(ylim=(-1, ylim_99), xlabel="Day of Week")
     for label in plot.get_xticklabels():
         label.set_visible(True)
     figure = plot.get_figure()
@@ -487,19 +487,25 @@ def get_max_agg(df, feature_col, minutes_col, index_col):
     return col_max
 
 
-def format_years(df, feature_col='release_year', minutes_col='minutes', index_col='artistname'):
+def format_years(
+    df, feature_col="release_year", minutes_col="minutes", index_col="artistname"
+):
     years_df = pd.pivot_table(
         data=df, index=feature_col, values=minutes_col, aggfunc=sum
     ).reset_index()
     years_df[minutes_col] = years_df[minutes_col].round(1)
     years_df.rename(columns={minutes_col: "minutes_total"}, inplace=True)
-    years_max = get_max_agg(df, feature_col=feature_col, minutes_col=minutes_col, index_col=index_col)
+    years_max = get_max_agg(
+        df, feature_col=feature_col, minutes_col=minutes_col, index_col=index_col
+    )
     years_go = pd.merge(years_df, years_max, on=feature_col)
 
     return years_go
 
 
-def plot_years(df, feature_col='release_year', minutes_col='minutes', index_col='artistname'):
+def plot_years(
+    df, feature_col="release_year", minutes_col="minutes", index_col="artistname"
+):
     years_df = format_years(df, feature_col=feature_col, minutes_col=minutes_col)
     fig = go.Figure()
     fig.add_trace(
@@ -508,7 +514,7 @@ def plot_years(df, feature_col='release_year', minutes_col='minutes', index_col=
             y=years_df["minutes_total"],
             hovertemplate="Year: %{y} <br> total minutes: %{x}",
             name="Minutes - Total",
-            hoverinfo='skip',
+            hoverinfo="skip",
         )
     )
     fig.add_trace(
@@ -588,28 +594,34 @@ def plot_genres(df, genre_col, minutes_col="minutes", n=20):
     return fig
 
 
-def plot_popularity(df, minutes_col='minutes', track_col='trackname', artist_col='artistname'):
+def plot_popularity(
+    df, minutes_col="minutes", track_col="trackname", artist_col="artistname"
+):
     df = df.copy()
-    df['song'] = df[track_col] + ' - ' + df[artist_col]
-    df_agg = get_max_agg(df, feature_col='popularity', minutes_col=minutes_col, index_col='song')
-    pop_agg_dict = df_agg.set_index('popularity')['song'].to_dict()
-    pop = pd.pivot_table(df, index='popularity', values=minutes_col, aggfunc=sum).reset_index()
-    pop['song'] = pop['popularity'].map(pop_agg_dict)
+    df["song"] = df[track_col] + " - " + df[artist_col]
+    df_agg = get_max_agg(
+        df, feature_col="popularity", minutes_col=minutes_col, index_col="song"
+    )
+    pop_agg_dict = df_agg.set_index("popularity")["song"].to_dict()
+    pop = pd.pivot_table(
+        df, index="popularity", values=minutes_col, aggfunc=sum
+    ).reset_index()
+    pop["song"] = pop["popularity"].map(pop_agg_dict)
     fig = go.Figure()
     fig.add_trace(
         go.Bar(
-            x=pop['popularity'],
-            y=round(pop['minutes']),
-            customdata=pop['song'],
+            x=pop["popularity"],
+            y=round(pop["minutes"]),
+            customdata=pop["song"],
             hovertemplate="Popularity: %{x} <br> Total Minutes: %{y} <br> Top Track: %{customdata}",
-            name='Minutes - Total',
+            name="Minutes - Total",
         )
     )
     fig.update_layout(
-        title='Popularity',
+        title="Popularity",
         title_x=0.5,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)'
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
     )
     return fig
 
@@ -661,7 +673,7 @@ def plot_weekly(df, date_col="date"):
     df_wday["day_of_week"] = df_wday["wday"].map(d)
     ylim_99 = df_wday["minutes"].quantile(0.99)  # an extreme outlier can ruin the plot
     plot = sns.boxplot(data=df_wday, x="day_of_week", y="minutes", order=d.values())
-    plot.set(ylim=(-1, ylim_99), xlabel='Day of Week')
+    plot.set(ylim=(-1, ylim_99), xlabel="Day of Week")
     for label in plot.get_xticklabels():
         label.set_visible(True)
     figure = plot.get_figure()
@@ -733,7 +745,9 @@ def main(username):
             fig.append_trace(figure["data"][trace], row=i + 1, col=1)
     fig.write_html(f"goodreads/static/Graphs/{username}/overall_{username}.html")
 
-    fig_year = plot_years(df, feature_col='release_year',  minutes_col='minutes', index_col='artistname')
+    fig_year = plot_years(
+        df, feature_col="release_year", minutes_col="minutes", index_col="artistname"
+    )
     fig_year.write_html(
         f"goodreads/static/Graphs/{username}/spotify_year_plot_{username}.html"
     )
