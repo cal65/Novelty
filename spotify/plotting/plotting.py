@@ -31,6 +31,10 @@ matplotlib.pyplot.switch_backend("Agg")
 
 ms_per_minute = 60 * 1000
 
+standard_layout = dict(title_x=0.5,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+)
 
 def get_data(query, database="goodreads"):
     conn = psycopg2.connect(
@@ -134,6 +138,7 @@ def plot_song_day(df, artist_col, song_col, date_col):
         ),  # ensure that the plot is between 100 and 3000
         showlegend=True,
     )
+    fig.update_layout(standard_layout)
     return fig
 
 
@@ -245,6 +250,7 @@ def plot_new(count_new_df, date_col="date", firsts_col="first", win=7):
             title="New Songs",
         ),
     )
+    fig.update_layout(standard_layout)
     return fig
 
 
@@ -265,7 +271,7 @@ def write_new_info(df):
         for song, artist in zip(sample_df["trackname"], sample_df["artistname"])
     ]
     text = f"You listened to the most new songs around {max_new['date'].date()},"
-    f"such as {songs[0]}, {songs[1]} and {songs[3]}."
+    text += f"such as {songs[0]}, {songs[1]} and {songs[2]}."
 
     return text
 
@@ -336,6 +342,7 @@ def plot_top_artists(df, artist_col="artistname", n=5):
         fig.add_trace(
             go.Scatter(x=a_df["date"], y=a_df["minutes"], name=a, mode="lines+markers")
         )
+    fig.update_layout(standard_layout)
     return fig
 
 
@@ -512,7 +519,7 @@ def plot_years(
         go.Bar(
             x=years_df[feature_col],
             y=years_df["minutes_total"],
-            hovertemplate="Year: %{y} <br> total minutes: %{x}",
+            hovertemplate="Year: %{x} <br> total minutes: %{y}",
             name="Minutes - Total",
             hoverinfo="skip",
         )
@@ -529,10 +536,10 @@ def plot_years(
     fig.update_layout(
         title="Release Year Distribution",
         barmode="overlay",
-        xaxis=dict(title="Minutes"),
-        yaxis=dict(title="Release Year"),
-        title_x=0.5,
+        xaxis=dict(title="Release Year"),
+        yaxis=dict(title="Minutes"),
     )
+    fig.update_layout(standard_layout)
 
     return fig
 
@@ -585,11 +592,11 @@ def plot_genres(df, genre_col, minutes_col="minutes", n=20):
     )
     fig.update_layout(
         title="Most Listened to Genres",
-        title_x=0.5,
         barmode="overlay",
         xaxis=dict(title="Minutes"),
         yaxis=dict(title="Genre"),
     )
+    fig.update_layout(standard_layout)
 
     return fig
 
@@ -707,8 +714,8 @@ def write_skips_summary(df, track_col="trackname", artist_col="artistname"):
     )
     played = skips_df["n"].values[:2].astype(int)
     skipped = skips_df["skips"].values[:2].astype(int)
-    text = f"Your most skipped tracks are {skippedTracks[0]} and {skippedTracks[1]} which you"
-    f"skipped {skipped[0]} out of {played[0]}  and {skipped[1]} times out of {played[1]} respectively."
+    text = f"Your most skipped tracks are {skippedTracks[0]} and {skippedTracks[1]} which you "
+    text += f"skipped {skipped[0]} out of {played[0]}  and {skipped[1]} times out of {played[1]} respectively."
     return text
 
 
