@@ -68,7 +68,7 @@
 </div>
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">POPULARITY IMAGE</div>
     <div class ="plotly">
-        <iframe style="width: 60%;"  class ="center-image"src="{% static popularity_url %}" alt="popularity"></iframe>
+        <iframe class ="iframe" src="{% static popularity_url %}" alt="popularity"></iframe>
     </div>
 <br> <br>
     <div class="center-text">
@@ -85,12 +85,12 @@
         </div>
     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">RELEASE YEAR DISTRIBUTION</div>
     <div class="plotly">
-        <iframe style="width: 60%;" src="{% static release_year_url %}"  class="text-center" alt="release year" /></iframe>
+        <iframe src="{% static release_year_url %}"  class="iframe" alt="release year" /></iframe>
     </div>
         </div>
     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">GENRES  DISTRIBUTION</div>
-    <div style="display: flex; justify-content: center; height: 650px;">
-        <iframe style="width: 60%;" src="{% static genre_url %}"  class="text-center" alt="genres" /> </iframe>
+    <div class ="plotly">
+        <iframe src="{% static genre_url %}"  class="iframe" alt="genres" /> </iframe>
     </div>
 
     <p>

@@ -88,6 +88,12 @@
     height: 650px;
 }
 
+.iframe {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .object_map {
   width: 100%;
   height: 120em;
