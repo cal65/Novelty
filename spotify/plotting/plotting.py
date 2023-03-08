@@ -580,23 +580,39 @@ def plot_genres(df, genre_col, minutes_col="minutes", n=20):
     )
     fig.update_layout(
         title="Most Listened to Genres",
+        title_x=0.5,
         barmode="overlay",
         xaxis=dict(title="Minutes"),
         yaxis=dict(title="Genre"),
-        title_x=0.5,
     )
 
     return fig
 
 
-def plot_popularity(df, bins=50):
-    plot = sns.histplot(
-        data=df[df["podcast"] == False], x="popularity", weights="minutes", bins=bins
+def plot_popularity(df, minutes_col='minutes', track_col='trackname', artist_col='artistname'):
+    df = df.copy()
+    df['song'] = df[track_col] + ' - ' + df[artist_col]
+    df_agg = get_max_agg(df, feature_col='popularity', minutes_col=minutes_col, index_col='song')
+    pop_agg_dict = df_agg.set_index('popularity')['song'].to_dict()
+    pop = pd.pivot_table(df, index='popularity', values=minutes_col, aggfunc=sum).reset_index()
+    pop['song'] = pop['popularity'].map(pop_agg_dict)
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(
+            x=pop['popularity'],
+            y=round(pop['minutes']),
+            customdata=pop['song'],
+            hovertemplate="Popularity: %{x} <br> Total Minutes: %{y} <br> Top Track: %{customdata}",
+            name='Minutes - Total',
+        )
     )
-    plot.set(title="Song Popularity")
-    figure = plot.get_figure()
-    plt.close()
-    return figure
+    fig.update_layout(
+        title='Popularity',
+        title_x=0.5,
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)'
+    )
+    return fig
 
 
 def format_daily(df, date_col="endtime"):
@@ -646,7 +662,7 @@ def plot_weekly(df, date_col="date"):
     df_wday["day_of_week"] = df_wday["wday"].map(d)
     ylim_99 = df_wday["minutes"].quantile(0.99)  # an extreme outlier can ruin the plot
     plot = sns.boxplot(data=df_wday, x="day_of_week", y="minutes", order=d.values())
-    plot.set(ylim=(-1, ylim_99))
+    plot.set(ylim=(-1, ylim_99), xlab='day of week')
     for label in plot.get_xticklabels():
         label.set_visible(True)
     figure = plot.get_figure()
@@ -730,9 +746,9 @@ def main(username):
         f"goodreads/static/Graphs/{username}/spotify_weekday_plot_{username}.jpeg"
     )
 
-    fig_popularity = plot_popularity(df, bins=50)
-    fig_popularity.savefig(
-        f"goodreads/static/Graphs/{username}/spotify_popularity_plot_{username}.jpeg"
+    fig_popularity = plot_popularity(df)
+    fig_popularity.write_html(
+        f"goodreads/static/Graphs/{username}/spotify_popularity_plot_{username}.html"
     )
 
     fig_genre = plot_genres(df, genre_col="genre_chosen")

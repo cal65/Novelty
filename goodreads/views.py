@@ -164,7 +164,7 @@ def spot_plots_view(request):
     username = request.user
 
     overall_url = "Graphs/{}/overall_{}.html".format(username, username)
-    popularity_url = "Graphs/{}/spotify_popularity_plot_{}.jpeg".format(
+    popularity_url = "Graphs/{}/spotify_popularity_plot_{}.html".format(
         username, username
     )
     weekly_url = "Graphs/{}/spotify_weekday_plot_{}.jpeg".format(username, username)
@@ -327,7 +327,7 @@ def upload_view_netflix(request):
     user = request.user
     logger.info(f"The request looks like: {request}, {type(request)}")
     # return
-    template = "spotify/json_upload_spotify.html"
+    template = "netflix/csv_upload_netflix.html"
     if request.method == "POST" and "runscriptSpotify" in request.POST:
         logger.info(
             f"Got running with spotify request {request.method} and post {request.POST}"
@@ -335,6 +335,31 @@ def upload_view_netflix(request):
         runscriptSpotify(request)
         # when script finishes, move user to plots view
         return HttpResponseRedirect("/spotify-plots/")
+    return render(request, template)
+
+
+def upload_netflix(request):
+    logger.info(f"upload spotify")
+    user = request.user
+    template = "netflix/csv_upload_netflix.html"
+    csv_file = request.FILES["file"]
+    # save csv file in database
+    logger.info(f"Netflix upload started for {user}")
+    df = pd.read_csv(csv_file)
+    # load up the existing data in database for this user
+    loaded_df = splot.load_streaming(user)
+    df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(
+        keep=False
+    )  # nifty line to keep just new data
+    new_lines = str(len(df_new))
+    logger.info(
+        f"starting spotify table addition for {new_lines} rows out of original {str(len(df))}"
+    )
+    populateSpotifyStreaming(df_new, user)
+    df_new.to_csv(
+        f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv", index=False
+    )
+
     return render(request, template)
 
 
