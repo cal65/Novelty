@@ -721,7 +721,7 @@ def write_skips_summary(df, track_col="trackname", artist_col="artistname"):
 
 def write_text(filename, texts):
     if isinstance(texts, list):
-        text = "\n".join(texts)
+        text = "\n\n".join(texts)
     else:
         text = texts
     with open(filename, "w") as f:

@@ -321,6 +321,9 @@ def populateSpotifyStreaming(df, user):
     )
     return spotifyStreamingObjs
 
+def populatSpotifyTracks(df):
+    return
+
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def upload_view_netflix(request):
