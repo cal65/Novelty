@@ -85,6 +85,26 @@ def tracks_query(username):
     """
     return query
 
+def tracks_all_query():
+    query = f""" 
+        select 
+        artistname, 
+        trackname, 
+        uri,
+        name, 
+        artist, 
+        duration,
+        popularity,
+        release_date,
+        genres,
+        genre_chosen,
+        album,
+        explicit,
+        podcast
+        from goodreads_spotifytracks tracks
+        """
+    return query
+
 
 def preprocess(df):
     df["endtime"] = pd.to_datetime(df["endtime"], utc=True)

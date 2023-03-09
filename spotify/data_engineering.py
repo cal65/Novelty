@@ -9,6 +9,7 @@ from spotipy.oauth2 import SpotifyOAuth
 sys.path.append("../goodreads")
 
 from goodreads.models import SpotifyStreaming, SpotifyTracks
+from spotify.plotting import plotting as splot
 
 logging.basicConfig(
     filename="logs.txt",
@@ -27,6 +28,8 @@ os.environ["SPOTIPY_REDIRECT_URI"] = "http://localhost:1410/"
 scope = ["user-library-read", "user-read-recently-played"]
 
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
+
+ms_per_minute = 60 * 1000
 
 
 class Timeout:
@@ -62,16 +65,47 @@ def convert_to_SpotifyStreaming(row, username):
     djangoSpotifyStreaming.save()
     return djangoSpotifyStreaming
 
+def convert_to_SpotifyTrack(track_series):
+    djangoSpotifyTrack = SpotifyTracks()
+    djangoSpotifyTrack.uri = track_series['uri']
+    djangoSpotifyTrack.name = track_series['name']
+    djangoSpotifyTrack.artist = track_series['artist']
+    djangoSpotifyTrack.duration = track_series['duration']
+    djangoSpotifyTrack.popularity = track_series['popularity']
+    djangoSpotifyTrack.release_date = track_series['release_date']
+    djangoSpotifyTrack.genres = track_series['genres']
+    djangoSpotifyTrack.album = track_series['album']
+    djangoSpotifyTrack.explicit = track_series['explicit']
+    djangoSpotifyTrack.trackname = track_series['trackname']
+    djangoSpotifyTrack.artistname = track_series['artistname']
+    djangoSpotifyTrack.podcast = track_series['podcast']
+    djangoSpotifyTrack.genre_chosen= track_series['genre_chosen']
+    djangoSpotifyTrack.save()
+    return djangoSpotifyTrack
+
 def lowercase_cols(df):
     df = df.copy()
     df.columns = [col.lower() for col in df.columns]
     return df
 
-def identify_new():
-    return
+
+def identify_new(df, track_col="trackname", artist_col="artistname"):
+    df = lowercase_cols(df)
+    track_df = splot.get_data(splot.tracks_all_query())
+    tracks_merged = merge_tracks(
+        df,
+        track_df,
+        d_artist=artist_col,
+        d_song=track_col,
+        t_artist=artist_col,
+        t_song=track_col,
+    )
+    df_unmerged = tracks_merged.loc[pd.isnull(tracks_merged["uri"])]
+    return df_unmerged
+
 
 def get_historical_track_info_from_id(
-    track_id: str, trackName: str, artistName: str, searchType: str = "track"
+    track_id: str, trackname: str, artistname: str, searchType: str = "track"
 ):
     """
     output: series with uri, name, artist, duration (min), popularity, release date, genres, album
@@ -79,21 +113,20 @@ def get_historical_track_info_from_id(
     empty_series = pd.Series(
         {
             "uri": None,
-            "name": trackName,
-            "artist": artistName,
-            "duration": None,
-            "popularity": None,
+            "name": trackname,
+            "artist": artistname,
+            "duration": 0,
+            "popularity": 0,
             "release_date": "",
             "explicit": False,
-            "is_local": None,
             "genres": [],
-            "trackName": trackName,
-            "artistName": artistName,
+            "trackname": trackname,
+            "artistname": artistname,
             "podcast": False,
         }
     )
     if track_id is None:
-        empty_series["uri"] = str(hash(trackName + artistName))
+        empty_series["uri"] = str(hash(trackname + artistname))
         return empty_series
     else:
         try:
@@ -113,8 +146,8 @@ def get_historical_track_info_from_id(
                             ],
                             "album": track_info_dict["album"]["name"],
                             "explicit": track_info_dict["explicit"],
-                            "trackName": trackName,
-                            "artistName": artistName,
+                            "trackName": trackname,
+                            "artistName": artistname,
                             "podcast": False,
                         }
                     )
@@ -131,8 +164,8 @@ def get_historical_track_info_from_id(
                             "genres": None,
                             "album": None,
                             "explicit": track_info_dict["explicit"],
-                            "trackName": trackName,
-                            "artistName": artistName,
+                            "trackName": trackname,
+                            "artistName": artistname,
                             "podcast": True,
                         }
                     )
@@ -143,28 +176,28 @@ def get_historical_track_info_from_id(
     return track_info_series
 
 
-def search_by_names(trackName: str, artistName: str, searchType: str = "track") -> str:
+def search_by_names(trackname: str, artistname: str, searchType: str = "track") -> str:
     """
     input: trackName, artistName
     output: id
     """
 
-    if (not isinstance(trackName, str)) | (not isinstance(artistName, str)):
+    if (not isinstance(trackname, str)) | (not isinstance(artistname, str)):
         raise TypeError
 
     try:
         with Timeout(6):
             search_items = sp.search(
-                trackName + " " + artistName, type=searchType, limit=3
+                trackname + " " + artistname, type=searchType, limit=3
             )[f"{searchType}s"]["items"]
             # searchType could be track or show, and the resulting dictionary will have "tracks" or "shows"
     except:
-        logger.info(f"Time out error for {trackName} and {artistName}")
+        logger.info(f"Time out error for {trackname} and {artistname}")
         return None
 
     if len(search_items) < 1:
         logger.info(
-            "No match found for " + trackName + ", " + artistName + " and " + searchType
+            "No match found for " + trackname + ", " + artistname + " and " + searchType
         )
         return None
 
@@ -190,17 +223,17 @@ def get_audio(uris):
 def merge_tracks(
     data,
     track_df,
-    d_artist="artistName",
+    d_artist="artistname",
     d_song="trackname",
-    t_artist="artistName",
+    t_artist="artistname",
     t_song="trackname",
 ):
     """
     One of the first steps in the pipeline. Merge data import with existing searched tracks on artist and song names
     """
-    data = data[[d_artist, d_song, "msPlayed"]]  # no need to keep the other columns
+    data = data[[d_artist, d_song, "msplayed"]]  # no need to keep the other columns
     data = pd.pivot_table(
-        data, index=[d_artist, d_song], values="msPlayed", aggfunc=sum
+        data, index=[d_artist, d_song], values="msplayed", aggfunc=sum
     ).reset_index()
     tracks_merged = pd.merge(
         data,
@@ -211,4 +244,3 @@ def merge_tracks(
     )
 
     return tracks_merged
-
