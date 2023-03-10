@@ -176,3 +176,42 @@ def get_genres(netflix_id):
     genres = ", ".join(genres)
     genre_df = pd.DataFrame({"netflix_id": [netflix_id], "genre": [genres]})
     return genre_df
+
+
+def get_details(netflix_id):
+    url = rapid_api_url + "title/details"
+
+    querystring = {"netflix_id": netflix_id}
+    headers = {
+        "X-RapidAPI-Key": os.environ["RAPID_API_NETFLIX"],
+        "X-RapidAPI-Host": "unogs-unogs-v1.p.rapidapi.com",
+    }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+
+    results = response.json()
+    if results is None:
+        print(f"No genre response found for {netflix_id}")
+        return
+    # details_df = pd.DataFrame({"netflix_id": [netflix_id], "genre": [genres]})
+    return results
+
+def get_deleted(title):
+    url = rapid_api_url + "search/deleted"
+    querystring = {"title": title}
+    headers = {
+        "X-RapidAPI-Key": os.environ["RAPID_API_NETFLIX"],
+        "X-RapidAPI-Host": "unogs-unogs-v1.p.rapidapi.com",
+    }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    results_all = response.json()['results']
+    if results_all is None:
+        print(f"No response found for {title}")
+        return
+    results = results_all[0]
+    if 'netflix_id' in results.keys():
+        return results['netflix_id']
+    else:
+        return
+

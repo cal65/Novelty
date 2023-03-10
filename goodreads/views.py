@@ -168,6 +168,7 @@ def spot_plots_view(request):
         username, username
     )
     weekly_url = "Graphs/{}/spotify_weekday_plot_{}.jpeg".format(username, username)
+    daily_url = "Graphs/{}/spotify_daily_plot_{}.html".format(username, username)
     release_year_url = "Graphs/{}/spotify_year_plot_{}.html".format(username, username)
     genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
     info_text = "Graphs/{}/spotify_summary_{}.txt".format(username, username)
@@ -181,6 +182,7 @@ def spot_plots_view(request):
             "overall_url": overall_url,
             "popularity_url": popularity_url,
             "weekly_url": weekly_url,
+            "daily_url": daily_url,
             "release_year_url": release_year_url,
             "genre_url": genre_url,
             "info_text": info_text,

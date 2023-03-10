@@ -1,3 +1,4 @@
+import datetime
 import os
 import pandas as pd
 import numpy as np
@@ -655,6 +656,7 @@ def plot_popularity(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
     )
+    fig.update_layout(standard_layout)
     return fig
 
 
@@ -663,36 +665,64 @@ def format_daily(df, date_col="endtime"):
     df[date_col] = pd.to_datetime(df[date_col])
     df["wday"] = pd.to_datetime(df["date"]).dt.weekday
     df["weekend"] = df["wday"].isin([5, 6])
-    df["time_of_day"] = pd.to_datetime("2000-01-01 " + df[date_col].dt.time.astype(str))
+    df["time_of_day"] = pd.to_datetime(
+        "2000-01-01 " + df[date_col].dt.time.astype(str)
+    )
     df["time_period"] = df["time_of_day"].dt.round("15min").dt.time
     weekend_count = (
         df[["date", "weekend"]]
-        .drop_duplicates()
-        .groupby("weekend")
-        .count()
-        .reset_index()
+            .drop_duplicates()
+            .groupby("weekend")
+            .count()
+            .reset_index()
     )
     df_period = pd.pivot_table(
         df, index=["time_period", "weekend"], values="minutes", aggfunc=sum
     ).reset_index()
+
+    df_period["time_of_day"] = pd.to_datetime(df_period['time_period'], format='%H:%M:%S')
+    full_day = np.arange(datetime.datetime(1900, 1, 1), datetime.datetime(1900, 1, 2), timedelta(minutes=15)).astype(
+        datetime.datetime)
+    full_day_df = pd.DataFrame(
+        {'time_of_day': np.tile(full_day, 2), 'weekend': np.repeat([True, False], len(full_day))})
+    df_period = pd.merge(full_day_df, df_period, on=['time_of_day', 'weekend'], how='left')
     df_period = pd.merge(df_period, weekend_count, on="weekend")
+    df_period['minutes'] = df_period['minutes'].fillna(0)
     df_period["minutes_scaled"] = df_period["minutes"] / df_period["date"]
+    df_period["time_period"] = df_period['time_of_day'].dt.time
+    df_period['time_minute'] = df_period['time_of_day'].dt.hour * 60 + df_period['time_of_day'].dt.minute
     return df_period
 
 
 def plot_daily(df, date_col="endtime"):
-    df_period = format_daily(df, date_col=date_col)
-    plot = sns.barplot(
-        data=df_period, x="time_period", y="minutes_scaled", hue="weekend"
+    daily_df = format_daily(df, date_col=date_col)
+    fig = go.Figure()
+    weekend_df = daily_df.loc[daily_df['weekend'] == True]
+    weekday_df = daily_df.loc[daily_df['weekend'] == False]
+    fig.add_trace(
+        go.Scatter(
+            x=weekend_df['time_minute'],
+            y=weekend_df['minutes_scaled'],
+            customdata=weekend_df['time_period'],
+            hovertemplate="Time: <b>%{customdata}</b>",
+            name='Weekend',
+            line=dict(color='firebrick', width=2)
+        )
     )
-    for ind, label in enumerate(plot.get_xticklabels()):
-        if ind % 10 == 0:  # every 10th label is kept
-            label.set_visible(True)
-        else:
-            label.set_visible(False)
-    figure = plot.get_figure()
-    plt.close()
-    return figure
+    fig.add_trace(
+        go.Scatter(
+            x=weekday_df['time_minute'],
+            y=weekday_df['minutes_scaled'],
+            hovertemplate="Time: %{x}",
+            name='Weekday',
+            line=dict(color='blue', width=2)
+        )
+    )
+    fig.update_layout(
+        xaxis=dict(ticktext=pd.unique(daily_df['time_period']))
+    )
+    fig.update_layout(standard_layout)
+    return fig
 
 
 def plot_weekly(df, date_col="date"):
@@ -787,6 +817,10 @@ def main(username):
     fig_weekly = plot_weekly(df)
     fig_weekly.savefig(
         f"goodreads/static/Graphs/{username}/spotify_weekday_plot_{username}.jpeg"
+    )
+    fig_daily = plot_daily(df)
+    fig_daily.write_html(
+        f"goodreads/static/Graphs/{username}/spotify_daily_plot_{username}.html"
     )
 
     fig_popularity = plot_popularity(df)
