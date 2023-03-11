@@ -244,3 +244,38 @@ def merge_tracks(
     )
 
     return tracks_merged
+
+def update_tracks(df, track_path):
+    track_df = pd.read_pickle(track_path)  # to do - csv or pickle
+    tracks_merged = merge_tracks(df, track_df)
+    unmerged_uri = tracks_merged[pd.isnull(tracks_merged["uri"])]
+    logger.info(f"Search uri & track data for {len(unmerged_uri)} tracks")
+    track_data = []
+    for i, row in unmerged_uri.iterrows():
+        if row["msPlayed"] > ms_per_minute * 10:
+            uri = search_by_names(
+                row["trackName"], row["artistName"], searchType="show"
+            )
+            track_data.append(
+                get_historical_track_info_from_id(
+                    uri, row["trackName"], row["artistName"], searchType="show"
+                )
+            )
+        else:
+            uri = search_by_names(
+                row["trackName"], row["artistName"], searchType="track"
+            )
+            track_data.append(
+                get_historical_track_info_from_id(
+                    uri, row["trackName"], row["artistName"], searchType="track"
+                )
+            )
+    track_data_df_unmerged = pd.DataFrame(track_data)
+    # add the old and the new back together
+    track_data_df = pd.concat([track_df, track_data_df_unmerged]).reset_index(drop=True)
+
+    # there may be multiple songs matched to the same uri, and they should be dropped
+    track_data_df.drop_duplicates(subset="uri", inplace=True)
+    track_data_df.to_pickle(track_path)
+    logger.info("Update complete")
+    return track_data_df

@@ -2,8 +2,6 @@ import datetime
 import os
 import pandas as pd
 import numpy as np
-from pandas.api.types import is_numeric_dtype
-from pandas.api.types import CategoricalDtype
 import psycopg2
 import matplotlib
 import plotly.graph_objects as go
@@ -15,6 +13,7 @@ from matplotlib import dates
 import seaborn as sns
 import plotly.graph_objs as go
 from datetime import timedelta
+from sklearn import linear_model as lm
 
 import logging
 
@@ -665,62 +664,71 @@ def format_daily(df, date_col="endtime"):
     df[date_col] = pd.to_datetime(df[date_col])
     df["wday"] = pd.to_datetime(df["date"]).dt.weekday
     df["weekend"] = df["wday"].isin([5, 6])
-    df["time_of_day"] = pd.to_datetime(
-        "2000-01-01 " + df[date_col].dt.time.astype(str)
-    )
+    df["time_of_day"] = pd.to_datetime("2000-01-01 " + df[date_col].dt.time.astype(str))
     df["time_period"] = df["time_of_day"].dt.round("15min").dt.time
     weekend_count = (
         df[["date", "weekend"]]
-            .drop_duplicates()
-            .groupby("weekend")
-            .count()
-            .reset_index()
+        .drop_duplicates()
+        .groupby("weekend")
+        .count()
+        .reset_index()
     )
     df_period = pd.pivot_table(
         df, index=["time_period", "weekend"], values="minutes", aggfunc=sum
     ).reset_index()
 
-    df_period["time_of_day"] = pd.to_datetime(df_period['time_period'], format='%H:%M:%S')
-    full_day = np.arange(datetime.datetime(1900, 1, 1), datetime.datetime(1900, 1, 2), timedelta(minutes=15)).astype(
-        datetime.datetime)
+    df_period["time_of_day"] = pd.to_datetime(
+        df_period["time_period"], format="%H:%M:%S"
+    )
+    full_day = np.arange(
+        datetime.datetime(1900, 1, 1),
+        datetime.datetime(1900, 1, 2),
+        timedelta(minutes=15),
+    ).astype(datetime.datetime)
     full_day_df = pd.DataFrame(
-        {'time_of_day': np.tile(full_day, 2), 'weekend': np.repeat([True, False], len(full_day))})
-    df_period = pd.merge(full_day_df, df_period, on=['time_of_day', 'weekend'], how='left')
+        {
+            "time_of_day": np.tile(full_day, 2),
+            "weekend": np.repeat([True, False], len(full_day)),
+        }
+    )
+    df_period = pd.merge(
+        full_day_df, df_period, on=["time_of_day", "weekend"], how="left"
+    )
     df_period = pd.merge(df_period, weekend_count, on="weekend")
-    df_period['minutes'] = df_period['minutes'].fillna(0)
+    df_period["minutes"] = df_period["minutes"].fillna(0)
     df_period["minutes_scaled"] = df_period["minutes"] / df_period["date"]
-    df_period["time_period"] = df_period['time_of_day'].dt.time
-    df_period['time_minute'] = df_period['time_of_day'].dt.hour * 60 + df_period['time_of_day'].dt.minute
+    df_period["time_period"] = df_period["time_of_day"].dt.time
+    df_period["time_minute"] = (
+        df_period["time_of_day"].dt.hour * 60 + df_period["time_of_day"].dt.minute
+    )
     return df_period
 
 
 def plot_daily(df, date_col="endtime"):
     daily_df = format_daily(df, date_col=date_col)
     fig = go.Figure()
-    weekend_df = daily_df.loc[daily_df['weekend'] == True]
-    weekday_df = daily_df.loc[daily_df['weekend'] == False]
+    weekend_df = daily_df.loc[daily_df["weekend"] == True]
+    weekday_df = daily_df.loc[daily_df["weekend"] == False]
     fig.add_trace(
         go.Scatter(
-            x=weekend_df['time_minute'],
-            y=weekend_df['minutes_scaled'],
-            customdata=weekend_df['time_period'],
+            x=weekend_df["time_minute"],
+            y=weekend_df["minutes_scaled"],
+            customdata=weekend_df["time_period"],
             hovertemplate="Time: <b>%{customdata}</b>",
-            name='Weekend',
-            line=dict(color='firebrick', width=2)
+            name="Weekend",
+            line=dict(color="firebrick", width=2),
         )
     )
     fig.add_trace(
         go.Scatter(
-            x=weekday_df['time_minute'],
-            y=weekday_df['minutes_scaled'],
+            x=weekday_df["time_minute"],
+            y=weekday_df["minutes_scaled"],
             hovertemplate="Time: %{x}",
-            name='Weekday',
-            line=dict(color='blue', width=2)
+            name="Weekday",
+            line=dict(color="blue", width=2),
         )
     )
-    fig.update_layout(
-        xaxis=dict(ticktext=pd.unique(daily_df['time_period']))
-    )
+    fig.update_layout(xaxis=dict(ticktext=pd.unique(daily_df["time_period"])))
     fig.update_layout(standard_layout)
     return fig
 
@@ -771,6 +779,42 @@ def write_skips_summary(df, track_col="trackname", artist_col="artistname"):
     skipped = skips_df["skips"].values[:2].astype(int)
     text = f"Your most skipped tracks are {skippedTracks[0]} and {skippedTracks[1]} which you "
     text += f"skipped {skipped[0]} out of {played[0]}  and {skipped[1]} times out of {played[1]} respectively."
+    return text
+
+
+def format_last_listened(df, index_cols=["artistname", "trackname", "uri"]):
+    last_listen_df = pd.pivot_table(
+        df, index=index_cols, values="endtime", aggfunc=[len, max]
+    ).reset_index()
+    last_listen_df.columns = index_cols + ["n", "last_listened"]
+    last_listen_df["days_since"] = (
+        last_listen_df["last_listened"].max() - last_listen_df["last_listened"]
+    ).dt.days
+    return last_listen_df
+
+
+def write_last_listened(df):
+    last_listen_df = format_last_listened(
+        df, index_cols=["artistname", "trackname", "uri"]
+    )
+    # get rid of single listens for regression purposes
+    last_listen_df = last_listen_df.loc[last_listen_df["n"] > 1]
+    last_listen_df.reset_index(drop=True, inplace=True)
+    x = last_listen_df["days_since"].values.reshape(-1, 1)
+    # take log
+    last_listen_df["y"] = np.log(last_listen_df["n"])
+    # fit regression of days_since ~ log(n)
+    lm1 = lm.LinearRegression().fit(x, last_listen_df["y"])
+    last_listen_df["predictions"] = lm1.predict(x)
+    last_listen_df["residuals"] = last_listen_df["y"] - lm1.predict(x)
+    # which song is the biggest outlier?
+    song_i = np.argmax(last_listen_df["y"] - lm1.predict(x))
+    forgotten_song = last_listen_df.iloc[song_i]
+
+    text = f"You listened to {forgotten_song['trackname']} by {forgotten_song['artistname']} {forgotten_song['n']} times in this period."
+    text += (
+        f"  However you haven't listened to it in {forgotten_song['days_since']} days"
+    )
     return text
 
 
@@ -835,5 +879,5 @@ def main(username):
 
     write_text(
         filename=f"goodreads/static/Graphs/{username}/spotify_summary_{username}.txt",
-        texts=[write_new_info(df), write_skips_summary(df)],
+        texts=[write_new_info(df), write_skips_summary(df), write_last_listened(df)],
     )
