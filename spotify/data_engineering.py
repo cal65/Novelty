@@ -270,5 +270,6 @@ def update_tracks(df, track_col = 'trackname', artist_col = 'artistname'):
                 uri, row[track_col], row[artist_col], searchType="track"
             )
             convert_to_SpotifyTrack(track_info_series)
+            logger.info("Spotify uploads completed")
 
     return
