@@ -89,9 +89,8 @@ def lowercase_cols(df):
     return df
 
 
-def identify_new(df, track_col="trackname", artist_col="artistname"):
+def identify_new(df, track_df, track_col="trackname", artist_col="artistname"):
     df = lowercase_cols(df)
-    track_df = splot.get_data(splot.tracks_all_query())
     tracks_merged = merge_tracks(
         df,
         track_df,
@@ -120,9 +119,11 @@ def get_historical_track_info_from_id(
             "release_date": "",
             "explicit": False,
             "genres": [],
+            "album": "",
             "trackname": trackname,
             "artistname": artistname,
             "podcast": False,
+            'genre_chosen': '',
         }
     )
     if track_id is None:
@@ -146,9 +147,10 @@ def get_historical_track_info_from_id(
                             ],
                             "album": track_info_dict["album"]["name"],
                             "explicit": track_info_dict["explicit"],
-                            "trackName": trackname,
-                            "artistName": artistname,
+                            "trackname": trackname,
+                            "artistname": artistname,
                             "podcast": False,
+                            'genre_chosen': '',
                         }
                     )
                 elif searchType == "show":
@@ -164,9 +166,10 @@ def get_historical_track_info_from_id(
                             "genres": None,
                             "album": None,
                             "explicit": track_info_dict["explicit"],
-                            "trackName": trackname,
-                            "artistName": artistname,
+                            "trackname": trackname,
+                            "artistname": artistname,
                             "podcast": True,
+                            'genre_chosen': '',
                         }
                     )
         except Exception as e:
@@ -245,37 +248,27 @@ def merge_tracks(
 
     return tracks_merged
 
-def update_tracks(df, track_path):
-    track_df = pd.read_pickle(track_path)  # to do - csv or pickle
-    tracks_merged = merge_tracks(df, track_df)
-    unmerged_uri = tracks_merged[pd.isnull(tracks_merged["uri"])]
-    logger.info(f"Search uri & track data for {len(unmerged_uri)} tracks")
-    track_data = []
-    for i, row in unmerged_uri.iterrows():
-        if row["msPlayed"] > ms_per_minute * 10:
+def update_tracks(df, track_col = 'trackname', artist_col = 'artistname'):
+    track_df = splot.get_data(splot.tracks_all_query())
+    df_unmerged = identify_new(df, track_df)
+    logger.info(f"Search uri & track data for {len(df_unmerged)} tracks out of original {len(df)} tracks")
+    for i, row in df_unmerged.iterrows():
+        # crude test for podcast show vs track
+        if row["msplayed"] > ms_per_minute * 10:
             uri = search_by_names(
-                row["trackName"], row["artistName"], searchType="show"
+                row[track_col], row[artist_col], searchType="show"
             )
-            track_data.append(
-                get_historical_track_info_from_id(
-                    uri, row["trackName"], row["artistName"], searchType="show"
+            track_info_series = get_historical_track_info_from_id(
+                    uri, row[track_col], row[artist_col], searchType="show"
                 )
-            )
+            convert_to_SpotifyTrack(track_info_series)
         else:
             uri = search_by_names(
-                row["trackName"], row["artistName"], searchType="track"
+                row[track_col], row[artist_col], searchType="track"
             )
-            track_data.append(
-                get_historical_track_info_from_id(
-                    uri, row["trackName"], row["artistName"], searchType="track"
-                )
+            track_info_series = get_historical_track_info_from_id(
+                uri, row[track_col], row[artist_col], searchType="track"
             )
-    track_data_df_unmerged = pd.DataFrame(track_data)
-    # add the old and the new back together
-    track_data_df = pd.concat([track_df, track_data_df_unmerged]).reset_index(drop=True)
+            convert_to_SpotifyTrack(track_info_series)
 
-    # there may be multiple songs matched to the same uri, and they should be dropped
-    track_data_df.drop_duplicates(subset="uri", inplace=True)
-    track_data_df.to_pickle(track_path)
-    logger.info("Update complete")
-    return track_data_df
+    return

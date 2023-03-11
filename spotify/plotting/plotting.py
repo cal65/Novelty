@@ -15,6 +15,7 @@ import plotly.graph_objs as go
 from datetime import timedelta
 from sklearn import linear_model as lm
 
+import spotify.data_engineering as de
 import logging
 
 logging.basicConfig(
@@ -394,18 +395,37 @@ def format_daily(df, date_col="endtime"):
 
 
 def plot_daily(df, date_col="endtime"):
-    df_period = format_daily(df, date_col=date_col)
-    plot = sns.barplot(
-        data=df_period, x="time_period", y="minutes_scaled", hue="weekend"
+    df = format_daily(df, date_col=date_col)
+    fig = go.Figure()
+    weekend_df = df.loc[df['weekend'] == True]
+    weekday_df = df.loc[df['weekend'] == False]
+    fig.add_trace(
+        go.Scatter(
+            x=weekend_df['time_minute'],
+            y=weekend_df['minutes_scaled'],
+            customdata=weekend_df['time_period'],
+            hovertemplate="Time: <b>%{customdata}</b>",
+            name='Weekend',
+            line=dict(color='firebrick', width=2)
+        )
     )
-    for ind, label in enumerate(plot.get_xticklabels()):
-        if ind % 10 == 0:  # every 10th label is kept
-            label.set_visible(True)
-        else:
-            label.set_visible(False)
-    figure = plot.get_figure()
-    plt.close()
-    return figure
+    fig.add_trace(
+        go.Scatter(
+            x=weekday_df['time_minute'],
+            y=weekday_df['minutes_scaled'],
+            customdata=weekday_df['time_period'],
+            hovertemplate="Time: <b>%{customdata}</b>",
+            name='Weekday',
+            line=dict(color='blue', width=2)
+        )
+    )
+    fig.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        xaxis=dict(ticktext=pd.unique(df['time_period']))
+    )
+    fig.set_layout(standard_layout)
+    return fig
 
 
 def plot_weekly(df, date_col="date"):
@@ -831,6 +851,7 @@ def main(username):
     df = get_data(tracks_query(username))
     logger.info(f"Spotify data read with {len(df)} rows \n : {df.head()}")
     df = preprocess(df)
+
     path = f"goodreads/static/Graphs/{username}"
     if not (os.path.exists(path) and os.path.isdir(path)):
         os.mkdir(path)

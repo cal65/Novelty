@@ -9,7 +9,7 @@ from django.contrib import messages
 
 sys.path.append("..")
 sys.path.append("../spotify/")
-from spotify import data_engineering
+from spotify import data_engineering as de
 from spotify.plotting import plotting as splot
 
 from .plotting import plotting as gplot
@@ -311,6 +311,7 @@ def upload_spotify(request):
     df_new.to_csv(
         f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv", index=False
     )
+    populateSpotifyTracks(df)
 
     return render(request, template)
 
@@ -318,12 +319,13 @@ def upload_spotify(request):
 def populateSpotifyStreaming(df, user):
     logger.info(f"spotify df {df.head()}")
     spotifyStreamingObjs = df.apply(
-        lambda x: data_engineering.convert_to_SpotifyStreaming(x, username=str(user)),
+        lambda x: de.convert_to_SpotifyStreaming(x, username=str(user)),
         axis=1,
     )
     return spotifyStreamingObjs
 
-def populatSpotifyTracks(df):
+def populateSpotifyTracks(df):
+    de.update_tracks(df)
     return
 
 
