@@ -54,13 +54,13 @@ class Timeout:
 
 def convert_to_SpotifyStreaming(row, username):
     """
-    Take a row from a Spotify export and write it to database
+    Take a row from a Spotify export after its columns have been made lowercase and write it to database
     """
     djangoSpotifyStreaming = SpotifyStreaming()
-    djangoSpotifyStreaming.endtime = row["endTime"]
-    djangoSpotifyStreaming.artistname = row["artistName"]
-    djangoSpotifyStreaming.trackname = row["trackName"]
-    djangoSpotifyStreaming.msplayed = row["msPlayed"]
+    djangoSpotifyStreaming.endtime = row["endtime"]
+    djangoSpotifyStreaming.artistname = row["artistname"]
+    djangoSpotifyStreaming.trackname = row["trackname"]
+    djangoSpotifyStreaming.msplayed = row["msplayed"]
     djangoSpotifyStreaming.username = username
     djangoSpotifyStreaming.save()
     return djangoSpotifyStreaming
@@ -99,6 +99,7 @@ def identify_new(df, track_df, track_col="trackname", artist_col="artistname"):
         t_artist=artist_col,
         t_song=track_col,
     )
+    logger.info(f"tracks merged looks like {tracks_merged.head()}")
     df_unmerged = tracks_merged.loc[pd.isnull(tracks_merged["uri"])]
     return df_unmerged
 
@@ -194,8 +195,8 @@ def search_by_names(trackname: str, artistname: str, searchType: str = "track") 
                 trackname + " " + artistname, type=searchType, limit=3
             )[f"{searchType}s"]["items"]
             # searchType could be track or show, and the resulting dictionary will have "tracks" or "shows"
-    except:
-        logger.info(f"Time out error for {trackname} and {artistname}")
+    except Exception as e:
+        logger.info(f"Error {e} for {trackname} and {artistname}")
         return None
 
     if len(search_items) < 1:
@@ -235,9 +236,7 @@ def merge_tracks(
     One of the first steps in the pipeline. Merge data import with existing searched tracks on artist and song names
     """
     data = data[[d_artist, d_song, "msplayed"]]  # no need to keep the other columns
-    data = pd.pivot_table(
-        data, index=[d_artist, d_song], values="msplayed", aggfunc=sum
-    ).reset_index()
+    data.drop_duplicates(subset=[d_artist, d_song], inplace=True)
     tracks_merged = pd.merge(
         data,
         track_df,
@@ -270,6 +269,7 @@ def update_tracks(df, track_col = 'trackname', artist_col = 'artistname'):
                 uri, row[track_col], row[artist_col], searchType="track"
             )
             convert_to_SpotifyTrack(track_info_series)
-            logger.info("Spotify uploads completed")
+
+    logger.info("Spotify uploads completed")
 
     return

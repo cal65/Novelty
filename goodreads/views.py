@@ -235,7 +235,7 @@ def upload(request):
     logger.info(f"The request looks like: {request}, {type(request)}")
     csv_file = request.FILES["file"]
     # save csv file in database
-    logger.info(f"upload started for {user}")
+    logger.info(f"Goodreads upload started for {user}")
     df = pd.read_csv(csv_file)
     df.to_csv(f"goodreads/static/Graphs/{user}/export_{user}.csv")
     df = process_export_upload(df)
@@ -296,10 +296,14 @@ def upload_spotify(request):
     template = "spotify/json_upload_spotify.html"
     json_file = request.FILES["file"]
     # save csv file in database
-    logger.info(f"upload started for {user}")
+    logger.info(f"Spotify upload started for {user}")
     df = pd.read_json(json_file)
     # load up the existing data in database for this user
     loaded_df = splot.load_streaming(user)
+    loaded_df['endtime'] = pd.to_datetime(loaded_df['endtime'], utc=True)
+    df = de.lowercase_cols(df)
+    df['endtime'] = pd.to_datetime(df['endtime'], utc=True)
+    logger.info(f"df: {df['endtime'].values[:5]}, \nloaded_df: {loaded_df['endtime'].values[:5]}")
     df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(
         keep=False
     )  # nifty line to keep just new data
@@ -310,6 +314,9 @@ def upload_spotify(request):
     populateSpotifyStreaming(df_new, user)
     df_new.to_csv(
         f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv", index=False
+    )
+    logger.info(
+        f"starting spotify tracks api calls for {user}"
     )
     populateSpotifyTracks(df)
 

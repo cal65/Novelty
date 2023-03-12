@@ -133,28 +133,38 @@ def preprocess(df):
 
 def format_song_day(df, artist_col, song_col, date_col):
     df_song_day = pd.DataFrame(
-        df.groupby([artist_col, song_col, date_col]).size()
-    ).reset_index()
-    df_song_day.rename(columns={0: "n"}, inplace=True)
-    top_artists = df[artist_col].value_counts().index[:10]
-    df_song_day_select = df_song_day[df_song_day[artist_col].isin(top_artists)]
+        df.groupby([artist_col, song_col, date_col], as_index=False).size()
+    )
+    df_song_day.rename(columns={'size': "n"}, inplace=True)
+    top_songs_df = pd.DataFrame(df.groupby([artist_col, song_col], as_index=False).size())
+    top_songs_df.sort_values('size', ascending=False, inplace=True)
+    top_songs_df = top_songs_df.head(10)
+
+    df_song_day_select = df_song_day[(df_song_day[artist_col].isin(top_songs_df[artist_col])) &
+                                     (df_song_day[song_col].isin(top_songs_df[song_col]))]
     return df_song_day_select
 
 
 def plot_song_day(df, artist_col, song_col, date_col):
-    num_songs = len(pd.unique(df[song_col]))
+    df_song = format_song_day(df=df, artist_col=artist_col, song_col=song_col, date_col=date_col)
+    num_songs = len(pd.unique(df_song[song_col]))
+    artists = df_song[artist_col].unique()
 
     fig = go.Figure()
-    fig.add_trace(
-        go.Scatter(
-            x=df[date_col],
-            y=df[song_col] + ", " + df[artist_col],
-            text=df["n"],
-            mode="markers",
-            marker={"size": df["n"] * num_songs / 5, "color": "DarkRed"},
-            hovertemplate="name: %{y} <br>number: %{text} <br> date: %{x} <extra></extra>",
+    for artist in artists:
+        df_art = df_song.loc[df[artist_col] == artist]
+        fig.add_trace(
+            go.Scatter(
+                x=df_art[date_col],
+                y=df_art[song_col],
+                customdata=df_art[artist_col],
+                text=df_art["n"],
+                mode="markers",
+                marker={"size": np.sqrt(df_art["n"]) * 4},
+                name=artist,
+                hovertemplate="name: %{y} - %{customdata} <br>plays: %{text} <br> date: %{x} <extra></extra>",
+            )
         )
-    )
 
     fig.update_layout(
         title="Song Plays",
@@ -238,7 +248,7 @@ def count_new(
     win=7,
 ):
     ## df should be new df
-    df["first"] = df["first"].fillna(0)
+    df["first"] = df["first"].fillna(False)
     total_df = pd.pivot_table(
         df, index=[date_col], values="minutes", aggfunc=sum
     ).reset_index()
@@ -289,7 +299,7 @@ def write_new_info(df):
 
     d1 = max_new["date"]
     d2 = d1 - timedelta(days=4)
-    new_songs = new_df.loc[(new_df["date"] <= d2) & (new_df["date"] >= d2)]
+    new_songs = new_df.loc[(new_df["date"] <= d1) & (new_df["date"] >= d2)]
     new_songs = new_songs.loc[new_songs["first"] == True]
     sample_df = new_songs.sample(5)
     songs = [
@@ -896,6 +906,11 @@ def main(username):
     fig_genre = plot_genres(df, genre_col="genre_chosen")
     fig_genre.write_html(
         f"goodreads/static/Graphs/{username}/spotify_genre_plot_{username}.html"
+    )
+
+    fig_songs = plot_song_day(df, artist_col='artistname', song_col='trackname', date_col='date')
+    fig_songs.write_html(
+        f"goodreads/static/Graphs/{username}/spotify_top_songs_{username}.html"
     )
 
     write_text(
