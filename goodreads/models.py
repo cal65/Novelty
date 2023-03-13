@@ -93,7 +93,6 @@ class NetflixTitles(models.Model):
 
 class NetflixUsers(models.Model):
     title = models.CharField()
-    name = models.CharField()
     date = models.DateField()
     username = models.CharField()
 

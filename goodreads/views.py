@@ -365,6 +365,7 @@ def upload_netflix(request):
     # save csv file in database
     logger.info(f"Netflix upload started for {user}")
     df = pd.read_csv(csv_file)
+    df.to_csv(f"goodreads/static/Graphs/{user}/netflix_history_{user}.csv")
     # load up the existing data in database for this user
     loaded_df = splot.load_streaming(user)
     df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(
@@ -372,7 +373,7 @@ def upload_netflix(request):
     )  # nifty line to keep just new data
     new_lines = str(len(df_new))
     logger.info(
-        f"starting spotify table addition for {new_lines} rows out of original {str(len(df))}"
+        f"starting Netflix table addition for {new_lines} rows out of original {str(len(df))}"
     )
     populateSpotifyStreaming(df_new, user)
     df_new.to_csv(

@@ -14,6 +14,28 @@ import networkx as nx
 import itertools
 
 
+def get_data(query, database="goodreads"):
+    conn = psycopg2.connect(
+        host="localhost", database=database, user="cal65", password=post_pass
+    )
+    try:
+        df = pd.read_sql(query, con=conn)
+        logger.info(f"Returning data from query with nrows {len(df)}")
+        return df
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        return
+
+
+def userdata_query(username):
+    query = f"""
+    select 
+    title, date, username
+    from goodreads_netflixuser
+    where username = '{username}'
+    """
+    return query
+
 def preprocess(file_path, date_col="Date", title_col="Title"):
     df = pd.read_csv(file_path)
     df[date_col] = pd.to_datetime(df[date_col])
