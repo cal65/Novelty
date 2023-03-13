@@ -172,7 +172,7 @@ def spot_plots_view(request):
     release_year_url = "Graphs/{}/spotify_year_plot_{}.html".format(username, username)
     genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
     info_text = "Graphs/{}/spotify_summary_{}.txt".format(username, username)
-    top_songs_url = "Graphs/{}/top_songs_{}.html".format(username, username)
+    top_songs_url = "Graphs/{}/spotify_top_songs_{}.html".format(username, username)
 
     if "run_script_function" in request.POST:
         runscriptSpotify(request)
