@@ -84,3 +84,19 @@ class SpotifyTracks(models.Model):
     artistname = models.CharField(max_length=250, null=True)
     podcast = models.BooleanField(default=False, blank=True)
     genre_chosen = models.CharField(max_length=250, null=True)
+
+
+class NetflixTitles(models.Model):
+    netflixid = models.CharField()
+    title = models.CharField()
+    director = models.CharField()
+
+class NetflixUsers(models.Model):
+    title = models.CharField()
+    name = models.CharField()
+    date = models.DateField()
+    username = models.CharField()
+
+class NetflixGenres(models.Model):
+    netflixid = models.CharField()
+    genres = models.CharField()

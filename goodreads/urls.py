@@ -24,4 +24,5 @@ urlpatterns = [
     path("faq/", faq, name="faq"),
     url(r"^favicon\.ico$", RedirectView.as_view(url="/static/admin/img/favicon.ico")),
     path("spotify-plots/", spot_plots_view, name="spotify-plots"),
+    path("upload-csv-netflix/", upload_netflix, name="upload-netflix")
 ]

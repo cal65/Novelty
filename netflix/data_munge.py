@@ -215,3 +215,32 @@ def get_deleted(title):
     else:
         return
 
+def format_network(df):
+    cast_dict = unique_cast(df, name='title')
+    intersections = return_intersections(cast_dict)
+    cast_df = create_cast_array(intersections)
+    cast_df_m = pd.melt(cast_df, id_vars=['show1'])
+    cast_df_m = cast_df_m[cast_df_m['variable'] == 'cast']
+    G = nx.from_pandas_edgelist(cast_df_m,
+                                source='show1', target='value', edge_attr='variable')
+    return G
+
+def plot_network(G, cast_df):
+    pos = nx.kamada_kawai_layout(G, scale=.2)
+    # colors
+    color_mapper = {n: int(n in pd.unique(cast_df['show1'])) for n in G.nodes()}
+    cm2 = {1: 'red', 0: 'blue'}
+    # position of text
+    pos_moved = pos.copy()
+    for k, v in pos_moved.items():
+        pos_moved[k] = pos_moved[k] + [0, .005]
+    f, ax = plt.subplots(figsize=(30, 30))
+    plt.style.use('ggplot')
+
+    nodes = nx.draw_networkx_nodes(G, pos, node_color=[cm2[c] for c in color_mapper.values()],
+                                   alpha=0.8)
+    nodes.set_edgecolor('k')
+    nx.draw_networkx_labels(G, pos_moved, font_size=15, alpha=0.8)
+
+    nx.draw_networkx_edges(G, pos, width=1.0, alpha=0.2)
+    return f

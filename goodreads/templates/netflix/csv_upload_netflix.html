@@ -20,7 +20,7 @@ function getCookie(name) {
   }
   function upload(){
   const csrftoken = getCookie('csrftoken');
-  var form = document.getElementById('json-form')
+  var form = document.getElementById('csv-form')
   console.log(arguments)
   console.log(form)
      $.post({
@@ -62,7 +62,7 @@ function getCookie(name) {
 <div class="pt-2" style="display: flex; justify-content: center;">
    <form method="POST">
       {% csrf_token %}
-      <button type="submit" name="runscriptSpotify" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
+      <button type="submit" name="runscriptNetflix" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
       Analyze
       </button>
    </form>

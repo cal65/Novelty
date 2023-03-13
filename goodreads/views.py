@@ -172,6 +172,7 @@ def spot_plots_view(request):
     release_year_url = "Graphs/{}/spotify_year_plot_{}.html".format(username, username)
     genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
     info_text = "Graphs/{}/spotify_summary_{}.txt".format(username, username)
+    top_songs_url = "Graphs/{}/top_songs_{}.html".format(username, username)
 
     if "run_script_function" in request.POST:
         runscriptSpotify(request)
@@ -186,6 +187,7 @@ def spot_plots_view(request):
             "release_year_url": release_year_url,
             "genre_url": genre_url,
             "info_text": info_text,
+            "top_songs_url": top_songs_url,
         },
     )
 
@@ -300,13 +302,16 @@ def upload_spotify(request):
     df = pd.read_json(json_file)
     # load up the existing data in database for this user
     loaded_df = splot.load_streaming(user)
-    loaded_df['endtime'] = pd.to_datetime(loaded_df['endtime'], utc=True)
-    df = de.lowercase_cols(df)
-    df['endtime'] = pd.to_datetime(df['endtime'], utc=True)
-    logger.info(f"df: {df['endtime'].values[:5]}, \nloaded_df: {loaded_df['endtime'].values[:5]}")
-    df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(
-        keep=False
-    )  # nifty line to keep just new data
+    if len(loaded_df) > 0:
+        loaded_df['endtime'] = pd.to_datetime(loaded_df['endtime'], utc=True)
+        df = de.lowercase_cols(df)
+        df['endtime'] = pd.to_datetime(df['endtime'], utc=True)
+        logger.info(f"df: {df['endtime'].values[:5]}, \nloaded_df: {loaded_df['endtime'].values[:5]}")
+        df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(
+            keep=False
+        )  # nifty line to keep just new data
+    else:
+        df_new = df
     new_lines = str(len(df_new))
     logger.info(
         f"starting spotify table addition for {new_lines} rows out of original {str(len(df))}"
@@ -342,7 +347,7 @@ def upload_view_netflix(request):
     logger.info(f"The request looks like: {request}, {type(request)}")
     # return
     template = "netflix/csv_upload_netflix.html"
-    if request.method == "POST" and "runscriptSpotify" in request.POST:
+    if request.method == "POST" and "runscriptNetflix" in request.POST:
         logger.info(
             f"Got running with spotify request {request.method} and post {request.POST}"
         )
@@ -353,7 +358,7 @@ def upload_view_netflix(request):
 
 
 def upload_netflix(request):
-    logger.info(f"upload spotify")
+    logger.info(f"upload Netflix")
     user = request.user
     template = "netflix/csv_upload_netflix.html"
     csv_file = request.FILES["file"]

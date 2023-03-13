@@ -838,8 +838,15 @@ def write_last_listened(df):
     last_listen_df["predictions"] = lm1.predict(x)
     last_listen_df["residuals"] = last_listen_df["y"] - lm1.predict(x)
     # which song is the biggest outlier?
-    song_i = np.argmax(last_listen_df["y"] - lm1.predict(x))
-    forgotten_song = last_listen_df.iloc[song_i]
+    # let's say it hasn't been listened to in at least 7 days
+    last_sub_df = last_listen_df.loc[last_listen_df['days_since'] >= 7]
+    if len(last_sub_df) > 0:
+        song_i = np.argmax(last_sub_df['residuals'])
+        forgotten_song = last_sub_df.iloc[song_i]
+    else:
+        # if there are no songs over a week, unlikely scenario
+        song_i = np.argmax(last_listen_df['residuals'])
+        forgotten_song = last_listen_df.iloc[song_i]
 
     text = f"You listened to {forgotten_song['trackname']} by {forgotten_song['artistname']} {forgotten_song['n']} times in this period."
     text += (
