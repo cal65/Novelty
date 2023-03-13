@@ -139,7 +139,7 @@ def format_song_day(df, artist_col, song_col, date_col):
     top_songs_df = pd.DataFrame(df.groupby([artist_col, song_col], as_index=False).size())
     top_songs_df.sort_values('size', ascending=False, inplace=True)
     top_songs_df = top_songs_df.head(10)
-
+    logger.info(f"top songs: {top_songs_df}")
     df_song_day_select = df_song_day[(df_song_day[artist_col].isin(top_songs_df[artist_col])) &
                                      (df_song_day[song_col].isin(top_songs_df[song_col]))]
     return df_song_day_select
@@ -152,7 +152,7 @@ def plot_song_day(df, artist_col, song_col, date_col):
 
     fig = go.Figure()
     for artist in artists:
-        df_art = df_song.loc[df[artist_col] == artist]
+        df_art = df_song.loc[df_song[artist_col] == artist]
         fig.add_trace(
             go.Scatter(
                 x=df_art[date_col],
