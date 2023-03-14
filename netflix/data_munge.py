@@ -13,6 +13,8 @@ from datetime import datetime
 import networkx as nx
 import itertools
 
+from goodreads.models import NetflixUsers
+
 
 def get_data(query, database="goodreads"):
     conn = psycopg2.connect(
@@ -266,3 +268,18 @@ def plot_network(G, cast_df):
 
     nx.draw_networkx_edges(G, pos, width=1.0, alpha=0.2)
     return f
+
+def ingest_netflix(df, user):
+    """
+    See what was in the database for the user. Delete what was there.
+    Replace with this new one
+    """
+    NetflixUsers.objects.filter(username=user).delete()
+
+    for row in df.iterrows():
+        netflix_Entry = NetflixUsers()
+        netflix_Entry.title = row["title"]
+        netflix_Entry.date = row["date"]
+        netflix_Entry.username = user
+        netflix_Entry.save()
+    return
