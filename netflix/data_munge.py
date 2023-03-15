@@ -12,8 +12,22 @@ import psycopg2
 from datetime import datetime
 import networkx as nx
 import itertools
+import matplotlib.pyplot as plt
 
 from goodreads.models import NetflixUsers
+
+logging.basicConfig(
+    filename="logs.txt",
+    filemode="a",
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    level=logging.INFO,
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
+
+
+rapid_api_url = "https://unogs-unogs-v1.p.rapidapi.com/"
+post_pass = os.getenv("cal65_pass")
 
 
 def get_data(query, database="goodreads"):
@@ -137,8 +151,6 @@ def return_unmerged(df, ref_df, df_name_col="Name", ref_name_col="title"):
     return list(set(df[df_name_col]).difference(set(ref_df[ref_name_col])))
 
 
-rapid_api_url = "https://unogs-unogs-v1.p.rapidapi.com/"
-
 
 def query_title(title: str, type=None):
     url = rapid_api_url + "search/titles"
@@ -182,7 +194,7 @@ def get_actors(netflix_id):
 
 
 def get_genres(netflix_id):
-    url = "https://unogs-unogs-v1.p.rapidapi.com/title/genres"
+    url = rapid_api_url + "title/genres"
 
     querystring = {"netflix_id": netflix_id}
     headers = {

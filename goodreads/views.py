@@ -12,6 +12,9 @@ sys.path.append("../spotify/")
 from spotify import data_engineering as de
 from spotify.plotting import plotting as splot
 
+from netflix import data_munge as nd
+from netflix.plotting import plotting as nplot
+
 from .plotting import plotting as gplot
 
 from django.contrib.auth.decorators import login_required
@@ -345,11 +348,10 @@ def populateSpotifyTracks(df):
 def upload_view_netflix(request):
     user = request.user
     logger.info(f"The request looks like: {request}, {type(request)}")
-    # return
     template = "netflix/csv_upload_netflix.html"
     if request.method == "POST" and "runscriptNetflix" in request.POST:
         logger.info(
-            f"Got running with spotify request {request.method} and post {request.POST}"
+            f"Got running with Netflix request {request.method} and post {request.POST}"
         )
         runscriptSpotify(request)
         # when script finishes, move user to plots view
@@ -367,20 +369,40 @@ def upload_netflix(request):
     df = pd.read_csv(csv_file)
     df.to_csv(f"goodreads/static/Graphs/{user}/netflix_history_{user}.csv")
     # load up the existing data in database for this user
-    loaded_df = splot.load_streaming(user)
-    df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(
-        keep=False
-    )  # nifty line to keep just new data
-    new_lines = str(len(df_new))
     logger.info(
-        f"starting Netflix table addition for {new_lines} rows out of original {str(len(df))}"
+        f"starting Netflix table addition for {len(df)} rows out of original "
     )
-    populateSpotifyStreaming(df_new, user)
-    df_new.to_csv(
-        f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv", index=False
-    )
+    nd.ingest_netflix(df, user)
 
     return render(request, template)
+
+@login_required(redirect_field_name="next", login_url="user-login")
+def netflix_plots_view(request):
+    username = request.user
+
+    overall_url = "Graphs/{}/overall_{}.html".format(username, username)
+    popularity_url = "Graphs/{}/netflix_popularity_plot_{}.html".format(
+        username, username
+    )
+    weekly_url = "Graphs/{}/netflix_weekday_plot_{}.jpeg".format(username, username)
+    release_year_url = "Graphs/{}/netflix_year_plot_{}.html".format(username, username)
+    genre_url = "Graphs/{}/netflix_genre_plot_{}.html".format(username, username)
+    info_text = "Graphs/{}/netflix_summary_{}.txt".format(username, username)
+
+    if "run_script_function" in request.POST:
+        runscriptSpotify(request)
+    return render(
+        request,
+        "spotify/plots.html",
+        {
+            "overall_url": overall_url,
+            "popularity_url": popularity_url,
+            "weekly_url": weekly_url,
+            "release_year_url": release_year_url,
+            "genre_url": genre_url,
+            "info_text": info_text,
+        },
+    )
 
 
 def write_metrics(user, time, found, not_found, file_path="metrics.csv"):

@@ -1,0 +1,117 @@
+{% extends "goodreads/basefile_streaming.html" %}
+{% load static %}
+
+{% block content %}
+<script>
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    function reanalyze(){
+        const csrftoken = getCookie('csrftoken');
+        $.post({ 
+            url: "/run-script-netflix/",
+            data: {runscript:true}, 
+            headers: { "X-CSRFToken": csrftoken } })
+        .done(response => {
+          console.log("done!", response);
+
+          // Set a cache buster parameter on every image URL on the page, to force the browser to reload the image.
+          // The server will ignore the 't' parameter and just serve up the image normally. (The images should have been
+          // regenerated as a side effect of the /run-script/ POST request.)
+          const cacheBuster = String(Date.now());
+          $('img').attr('src', (_, oldSrc) => {
+            const url = new URL(oldSrc);
+            url.searchParams.set('t', cacheBuster);
+            return url.toString();
+          });
+        })
+    }
+
+
+    $('#infotext').load("{% static info_text %}");
+</script>
+<button name="runscript" onclick="reanalyze()" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 pb-2 px-4 rounded">
+    Re-Analyze
+</button>
+<div class="center-text">
+    <br>
+	<p>
+        <font size="+10"><b> Welcome to your plots! </b></font>
+        <br><br>
+    This opening graph shows some summary statistics about your Spotify history.
+</p>
+</div>
+    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">OVERALL IMAGE</div>
+    <div style="display: flex; justify-content: center; height: 650px;">
+        <iframe style="width: 60%;" src="{% static overall_url %}" class="text-center" alt="popularity"></iframe>
+    </div>
+        <div class="center-text">
+        <p>  <iframe src="{% static info_text %}" class= "center-image center-text" style="size: 10">  </iframe></p> 
+    </div>
+
+        <br>
+        <br>
+<p id="infotext"></p>
+<br> <br>
+</div>
+    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">POPULARITY IMAGE</div>
+    <div class ="plotly">
+        <iframe class ="iframe" src="{% static popularity_url %}" alt="popularity"></iframe>
+    </div>
+    <br>
+    <br>
+    <div class="center-text">
+    This shows how much music you listen to per day of the week.
+        </div>
+    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">WEEKDAY USAGE IMAGE</div>
+    <div class ="center-image">
+        <img class ="center-image" src="{% static weekly_url %}"  alt="weekly">
+    </div>
+    <br>
+    <br>
+        <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">DAILY USAGE IMAGE</div>
+    <div class ="plotly">
+        <iframe class ="iframe" src="{% static daily_url %}" alt="daily"></iframe>
+    </div>
+    <br> 
+    <br>
+
+            <div class="center-text">
+    This shows your daily listening patterns, averaged out amongst weekdays and weekends. Most users have different weekend and weekday profiles. Note - plot currently assumes all tracks were listened to in Pacific Standard Time. 
+        </div>
+    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">RELEASE YEAR DISTRIBUTION</div>
+    <div class="plotly">
+        <iframe src="{% static release_year_url %}"  class="iframe" alt="release year" /></iframe>
+    </div>
+        </div>
+    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">GENRES  DISTRIBUTION</div>
+    <div class ="plotly">
+        <iframe src="{% static genre_url %}"  class="iframe" alt="genres" /> </iframe>
+    </div>
+    <br>
+    <br>
+     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">TOP SONGS</div>
+    <div class ="plotly">
+        <iframe src="{% static top_songs_url %}"  class="iframe" alt="top-songs" /> </iframe>
+    </div>
+
+    <p>
+        <br>
+        <br>
+
+</p>
+    <br>
+    <br> <br>
+{% endblock content %}

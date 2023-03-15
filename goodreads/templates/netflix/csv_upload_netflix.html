@@ -1,4 +1,4 @@
-{% extends "goodreads/basefile_streaming.html" %}
+{% extends "netflix/basefile_streaming.html" %}
 
 {% block content %}
 
@@ -24,7 +24,7 @@ function getCookie(name) {
   console.log(arguments)
   console.log(form)
      $.post({
-      url: "{% url 'json-upload-spotify' %}",
+      url: "{% url 'csv-upload-spotify' %}",
       data:  new FormData(form),
       cache: false,
       contentType: false,
@@ -50,9 +50,9 @@ function getCookie(name) {
     {% endif %}
 <div class="pt-8" style="display: flex; justify-content: center;">
    <div class="border-2 border-black p-2 w-1/3">
-      <form action="" id="json-form" method="POST" enctype="multipart/form-data" onsubmit= "event.preventDefault(); return upload();">
+      <form action="" id="csv-form" method="POST" enctype="multipart/form-data" onsubmit= "event.preventDefault(); return upload();">
          {% csrf_token %}
-         <input type="file" id="file1" name="file" accept=".json">
+         <input type="file" id="file1" name="file" accept=".csv">
          <div class="pt-4"><button type="submit" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
                       Streaming Upload
          </button></div>
@@ -69,7 +69,7 @@ function getCookie(name) {
 </div>
 
 <div class = "center">
-   Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Upload</span>. This may take some time for your browser to process, based on the amount of books in your upload. Then click <span class="text-blue-800">Analyze</span> when you can. Afterwards, navigate to your <span class="text-blue-800"><a href="{% url 'spotify-plots' %}">Plots</a></span> page.
+   Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Upload</span>. This may take some time for your browser to process, based on the size of your upload. Then click <span class="text-blue-800">Analyze</span> when you can. Afterwards, navigate to your <span class="text-blue-800"><a href="{% url 'spotify-plots' %}">Plots</a></span> page.
 </div>
 <br><br>
 
