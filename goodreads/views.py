@@ -59,7 +59,7 @@ def books_home(request):
 
 
 def music_home(request):
-    return render(request, "goodreads/music_home.html")
+    return render(request, "spotify/music_home.html")
 
 
 def about_this(request):
@@ -355,7 +355,7 @@ def upload_view_netflix(request):
         )
         runscriptSpotify(request)
         # when script finishes, move user to plots view
-        return HttpResponseRedirect("/spotify-plots/")
+        return HttpResponseRedirect("/netflix-plots/")
     return render(request, template)
 
 

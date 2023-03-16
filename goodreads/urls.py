@@ -5,7 +5,7 @@ from .views import *
 
 urlpatterns = [
     path("", index, name="index-view"),
-    path("upload-csv/", upload_view_goodreads, name="csv-upload"),
+    path("upload-csv/", upload_view_goodreads, name="upload-view-goodreads"),
     path("upload-spotify-home", upload_view_spotify, name="upload-spotify"),
     path("upload-json-spotify/", upload_spotify, name="json-upload-spotify"),
     path("upload/", upload, name="upload"),
@@ -24,6 +24,6 @@ urlpatterns = [
     path("faq/", faq, name="faq"),
     url(r"^favicon\.ico$", RedirectView.as_view(url="/static/admin/img/favicon.ico")),
     path("spotify-plots/", spot_plots_view, name="spotify-plots"),
-    path("upload-csv-netflix/", upload_view_netflix, name="upload-csv-netflix"),
-    path("upload-csv-netflix/", upload_netflix, name="upload-netflix")
+    path("upload-view-netflix/", upload_view_netflix, name="upload-view-netflix"),
+    path("upload-netflix/", upload_netflix, name="upload-netflix")
 ]

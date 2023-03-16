@@ -24,7 +24,7 @@ function getCookie(name) {
   console.log(arguments)
   console.log(form)
      $.post({
-      url: "{% url 'csv-upload-spotify' %}",
+      url: "{% url 'upload-netflix' %}",
       data:  new FormData(form),
       cache: false,
       contentType: false,
