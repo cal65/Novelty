@@ -288,7 +288,7 @@ def ingest_netflix(df, user):
     """
     NetflixUsers.objects.filter(username=user).delete()
 
-    for row in df.iterrows():
+    for i, row in df.iterrows():
         netflix_Entry = NetflixUsers()
         netflix_Entry.title = row["title"]
         netflix_Entry.date = row["date"]

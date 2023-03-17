@@ -368,6 +368,8 @@ def upload_netflix(request):
     logger.info(f"Netflix upload started for {user}")
     df = pd.read_csv(csv_file)
     df.to_csv(f"goodreads/static/Graphs/{user}/netflix_history_{user}.csv")
+    df.columns = [c.lower() for c in df.columns]
+    df['date'] = pd.to_datetime(df['date'])
     # load up the existing data in database for this user
     logger.info(
         f"starting Netflix table addition for {len(df)} rows out of original "
