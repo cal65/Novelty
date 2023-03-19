@@ -295,3 +295,33 @@ def ingest_netflix(df, user):
         netflix_Entry.username = user
         netflix_Entry.save()
     return
+
+
+def split_title(title):
+    splits = title.split(':')
+    splits = [s.strip() for s in splits]
+    season_bool = [(t.startswith(('Season', 'Book', 'Chapter', 'Volume'))) | ('Series' in t) for t in splits]
+    if any(season_bool):
+        season_index = season_bool.index(True)
+        season = splits[season_index]
+        if season_index > 1:
+            name = ': '.join(splits[:season_index])
+        else:
+            name = splits[0]
+        if (len(splits) - season_index) > 1:
+            episode = ': '.join(splits[season_index + 1:])
+        else:
+            episode = splits[-1]
+    elif len(splits) == 2:
+        name = splits[0]
+        season = ""
+        episode = splits[1]
+    elif len(splits) == 1:
+        name = title
+        season = ''
+        episode = ''
+    else:
+        name = ': '.join(splits[:-1])
+        season = ""
+        episode = splits[-1]
+    return pd.Series({'name': name, 'season': season, 'episode': episode})
