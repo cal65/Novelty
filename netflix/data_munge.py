@@ -189,8 +189,8 @@ def get_actors(netflix_id):
         print(f"No response found for {netflix_id}")
         return
     actors = [r["full_name"] for r in results]
-    actors_df = pd.DataFrame({"netflix_id": [netflix_id], "actors": [actors]})
-    return actors_df
+    actors_results = pd.Series({"netflix_id": netflix_id, "actors": actors})
+    return actors_results
 
 
 def get_genres(netflix_id):
@@ -210,8 +210,8 @@ def get_genres(netflix_id):
         return
     genres = [r["genre"] for r in results]
     genres = ", ".join(genres)
-    genre_df = pd.DataFrame({"netflix_id": [netflix_id], "genre": [genres]})
-    return genre_df
+    genre_results = pd.Series({"netflix_id": netflix_id, "genre": genres})
+    return genre_results
 
 
 def get_details(netflix_id):
@@ -386,20 +386,49 @@ def pipeline_steps(df):
     return df_concat
 
 
-def lookup_and_insert(row):
-    title = row['title']
-    series_result = query_title(title)
-    if series_result is None:
+def save_titles(series_results):
+    nt = NetflixTitles()
+    nt.title = series_results['title']
+    nt.netflix_id = series_results['netflix_id']
+    nt.title_type = series_results['title_type']
+    nt.release_year = series_results['year']
+    nt.save()
+    return nt
+
+def save_actors(actors_results):
+    na = NetflixActors()
+    na.netflix_id = actors_results['netflix_id']
+    na.cast = actors_results['actors']
+    na.save()
+    return na
+
+def save_genres(genre_results):
+    ng = NetflixGenres
+    ng.netflix_id = genre_results['netflix_id']
+    ng.genres = genre_results['genres']
+    ng.save()
+    return ng
+
+def lookup_and_insert(title):
+    series_results = query_title(title)
+    if series_results is None:
         deleted_id = get_deleted(title)
-        series_result = get_details(deleted_id)
+        series_results = get_details(deleted_id)
     # add line if string difference is too far elif series_result['title']
 
-    if series_result is None:
+    if series_results is None:
         logger.info(f"No active or deleted Netflix info found for {title}")
-    nt = NetflixTitles()
-    nt.title = title
-    nt.netflix_id = series_result['netflix_id']
-    nt.show_type = series_result['title_type']
-    nt.release_year = series_result['year']
+        return
 
-    return pd.DataFrame(series_result)
+    netflix_id = series_results['netflix_id']
+    save_titles(series_results)
+    #
+    actors_results = get_actors(netflix_id)
+    if actors_results is not None:
+        save_actors(actors_results)
+    #
+    genre_results = get_genres(netflix_id)
+    if genre_results is not None:
+        save_genres(genre_results)
+
+    return
