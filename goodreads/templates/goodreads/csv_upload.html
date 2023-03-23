@@ -22,7 +22,6 @@ function upload(){
   const csrftoken = getCookie('csrftoken');
   var form = document.getElementById('csv-form')
   console.log(arguments)
-  console.log(form)
      $.post({
       url: "{% url 'upload' %}",
       data:  new FormData(form),
@@ -31,14 +30,29 @@ function upload(){
       processData: false,
       headers: { "X-CSRFToken": csrftoken },
       success: function(data) {
-            console.log(data)
+            console.log("Success")
           },
       error: function(data ){
             console.log("Something went wrong");
           }
       })
-      return false;
+        toggle("progress");
+        return false;
     }
+
+
+function toggle(id){
+    var element = document.getElementById(id);
+    var hidden = element.getAttribute("hidden");
+    console.log(hidden)
+
+    if (hidden) {
+       element.removeAttribute("hidden");
+    } else {
+       element.setAttribute("hidden", "hidden");
+    }
+}
+  
 </script>
 <div style="text-align: center;" class="font-bold pt-4 text-3xl">GOODREADS ANALYSIS</div>
     {% if messages %}
@@ -51,11 +65,17 @@ function upload(){
 <div class="pt-8" style="display: flex; justify-content: center;">
    <div class="border-2 border-black p-2 w-1/3">
       <form action="" id="csv-form" method="POST" enctype="multipart/form-data" onsubmit= "event.preventDefault(); return upload();">
-         {% csrf_token %}
-         <input type="file" id="file1" name="file" accept=".csv">
-         <div class="pt-4"><button type="submit" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
+        {% csrf_token %}
+        <input type="file" id="file1" name="file" accept=".csv">
+        <div class="pt-4">
+            <button type="submit" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
                       Upload
-         </button></div>
+            </button>
+        </div>
+        <div id = "progress" hidden="hidden" style="height: 50px; line-height: 50px; display: flex; align-items: left;" >
+                <p style="float: left;">Beginning upload..</p> 
+                <img src="/static/admin/img/time-hourglass.gif" style="height: 50px; float: left;">
+            </div> 
       </form>
    </div>
 </div>
@@ -72,23 +92,6 @@ function upload(){
    Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Upload</span>. This may take some time for your browser to process, based on the amount of books in your upload. Then click <span class="text-blue-800">Analyze</span> when you can. Afterwards, navigate to your <a href="{% url 'plots' %}">Plots</a> page, which should show graphs like in the gallery below.
 </div>
 <br><br>
-<div class = "center font-bold pt-4">
-    Example Gallery:
-</div>
-<div style="display: flex; justify-content: center;">
-    <img style="width: 80%;" src="/static/admin/img/summary_plot.jpeg" alt="Cal Summary Plot" > <br></img>
-</div>
-<div style="display: flex; justify-content: center;">
-    <br>
-    <img style="width: 80%;" src="/static/admin/img/finish_plot.jpeg" alt="Cal Finish Plot"></img>
-    </div>
-<br>
-<p>
-    <br>
-    <br>
-    <br>
-</p>
-<br>
-<br>
+
 
 {% endblock content %}

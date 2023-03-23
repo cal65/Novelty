@@ -4,13 +4,16 @@
     width: 50%;
     padding: 30px;
 }
+
 .item {
     font-size: 30px;
     text-align: center;
 }
+
 .one-two {
     border-bottom: 1px solid black;
 }
+
 .one-three {
     border-right: 1px solid black;
     padding: 4px 4px;
@@ -18,11 +21,19 @@
     display: flex;
     justify-content: center;
 }
+
 .center {
     display: block;
     margin-left: auto;
     margin-right: auto;
     width: 50%;
+}
+
+.border-box {
+    border-width: 2px;
+    border-color: rgb(0 0 0);
+    width: 33.33%;
+    padding-top: 2px;
 }
 
 .center-text {
@@ -63,10 +74,12 @@
     text-align: center;
     font-family: 'Roboto', sans-serif;
 }
+
 .logo {
   width: 10em;
   height: 3em;
 }
+
 .footer {
   position: fixed;
   left: 0;
