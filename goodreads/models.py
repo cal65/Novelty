@@ -87,10 +87,11 @@ class SpotifyTracks(models.Model):
 
 
 class NetflixTitles(models.Model):
-    netflixid = models.CharField(max_length=250, primary_key=True)
+    netflix_id = models.CharField(max_length=250, primary_key=True)
     title = models.CharField(max_length=250, null=True)
     director = models.CharField(max_length=250, null=True)
     release_year = models.IntegerField(null=True)
+    show_type = models.CharField(max_length=250, null=True)
 
 class NetflixUsers(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -99,10 +100,10 @@ class NetflixUsers(models.Model):
     username = models.CharField(max_length=250, null=True)
 
 class NetflixGenres(models.Model):
-    netflixid = models.CharField(max_length=250, primary_key=True)
+    netflix_id = models.CharField(max_length=250, primary_key=True)
     genres = models.CharField(max_length=250, null=True)
 
 class NetflixActors(models.Model):
-    netflixid = models.CharField(max_length=250, primary_key=True)
+    netflix_id = models.CharField(max_length=250, primary_key=True)
     cast = models.CharField(max_length=2000, null=True)
 

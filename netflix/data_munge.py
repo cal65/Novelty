@@ -14,7 +14,7 @@ import networkx as nx
 import itertools
 import matplotlib.pyplot as plt
 
-from goodreads.models import NetflixUsers
+from goodreads.models import NetflixUsers, NetflixTitles, NetflixGenres, NetflixActors
 
 logging.basicConfig(
     filename="logs.txt",
@@ -152,7 +152,7 @@ def return_unmerged(df, ref_df, df_name_col="Name", ref_name_col="title"):
 
 
 
-def query_title(title: str, type=None):
+def query_title(title: str):
     url = rapid_api_url + "search/titles"
 
     querystring = {"order_by": "date", "title": title}
@@ -300,8 +300,20 @@ def ingest_netflix(df, user):
 def split_title(title):
     splits = title.split(':')
     splits = [s.strip() for s in splits]
-    season_bool = [(t.startswith(('Season', 'Book', 'Chapter', 'Volume'))) | ('Series' in t) for t in splits]
-    if any(season_bool):
+    seas_words = ('Season', 'Book', 'Chapter', 'Volume', 'Part', 'Collection')
+    season_bool = [(t.startswith(seas_words)) | ('Series' in t) for t in splits]
+    episode_bool = [t.startswith('Episode') for t in splits]
+
+    # exception 1: Stranger Things:
+    if splits[0] == 'Stranger Things':
+        name = splits[0]
+        if len(splits) > 1:
+            season = ': '.join(splits[1])
+            episode = ': '.join(splits[-2:])
+        else:
+            season = ''
+            episode = ''
+    elif any(season_bool):
         season_index = season_bool.index(True)
         season = splits[season_index]
         if season_index > 1:
@@ -312,6 +324,16 @@ def split_title(title):
             episode = ': '.join(splits[season_index + 1:])
         else:
             episode = splits[-1]
+    elif any(episode_bool):
+        episode_index = episode_bool.index(True)
+        # this will apply the colon join only if episode index is not last  index
+        episode = ': '.join(splits[episode_index:])
+        if len(splits) > 2:
+            name = splits[0]
+            season = splits[1]
+        else:
+            name = splits[0]
+            season = ""
     elif len(splits) == 2:
         name = splits[0]
         season = ""
@@ -320,8 +342,45 @@ def split_title(title):
         name = title
         season = ''
         episode = ''
+    elif len(splits) == 3:
+        name = splits[0]
+        season = splits[1]
+        episode = splits[2]
     else:
         name = ': '.join(splits[:-1])
         season = ""
         episode = splits[-1]
     return pd.Series({'name': name, 'season': season, 'episode': episode})
+
+
+def net_merge(df, titles_df, left, right, ids, how='inner'):
+    df = df.copy()
+    if ids is not None:
+        df = df.loc[~df['id'].isin(ids)]
+    df = pd.merge(df, titles_df, left_on= left, right_on=right, suffixes=('', '_remove'))
+    df.drop([c for c in df.columns if 'remove' in c],
+                   axis=1, inplace=True)
+    return df
+
+
+
+def pipeline_steps(df):
+    """
+    Full pipeline given df from netflix export csv
+    """
+    df['id'] = np.arange(0, len(df))
+    # split the raw Netflix show title into Name, Season and Episode. Add new columns
+    split_titles_df = pd.DataFrame([split_title(t) for t in df['title']])
+    df = pd.concat([df, split_titles_df], axis=1)
+    titles_df = pd.DataFrame(list(NetflixTitles.objects.all().values()))
+    # match title with full title. This gets movies and comedy specials
+    step1 = net_merge(df, titles_df, left='title', right='title', ids=None)
+    # match cleared out name with title. This matches TV shows
+    step2 = net_merge(df, titles_df, left='name', right='title', ids=step1['id'])
+    ## match the rest
+    step1_2_ids = pd.unique(step1['id'].append(step2['id']))
+    titles_df['name'] = titles_df['title'].apply(lambda x: x.split(':')[0])
+    step3 = net_merge(df, titles_df, left='name', right='name', ids=step1_2_ids, how='left')
+    df_concat = pd.concat([step1, step2, step3], axis=0).sort_values('id')
+    return df_concat
+

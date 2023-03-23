@@ -375,8 +375,15 @@ def upload_netflix(request):
         f"starting Netflix table addition for {len(df)} rows out of original "
     )
     nd.ingest_netflix(df, user)
+    logger.info(f"Netflix ingestion complete")
+    df = nd.pipeline_steps(df=df)
+    logger.info(df.head())
+    df_unmerged = df.loc[pd.isnull(df['netflixid'])]
+    n_miss = len(df_unmerged)
+    logger.info(f"Number of unmerged shows {n_miss}")
 
     return render(request, template)
+
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def netflix_plots_view(request):
