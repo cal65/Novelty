@@ -357,7 +357,7 @@ def net_merge(df, titles_df, left, right, ids, how='inner'):
     df = df.copy()
     if ids is not None:
         df = df.loc[~df['id'].isin(ids)]
-    df = pd.merge(df, titles_df, left_on= left, right_on=right, suffixes=('', '_remove'))
+    df = pd.merge(df, titles_df, left_on= left, right_on=right, suffixes=('', '_remove'), how=how)
     df.drop([c for c in df.columns if 'remove' in c],
                    axis=1, inplace=True)
     return df
@@ -367,12 +367,13 @@ def net_merge(df, titles_df, left, right, ids, how='inner'):
 def pipeline_steps(df):
     """
     Full pipeline given df from netflix export csv
+    Step 1: Merge based on the raw title in Netflix export with database titles
     """
     df['id'] = np.arange(0, len(df))
     # split the raw Netflix show title into Name, Season and Episode. Add new columns
     split_titles_df = pd.DataFrame([split_title(t) for t in df['title']])
     df = pd.concat([df, split_titles_df], axis=1)
-    titles_df = pd.DataFrame(list(NetflixTitles.objects.all().values()))
+    titles_df = pd.DataFrame.from_records(NetflixTitles.objects.all().values())
     # match title with full title. This gets movies and comedy specials
     step1 = net_merge(df, titles_df, left='title', right='title', ids=None)
     # match cleared out name with title. This matches TV shows
@@ -384,3 +385,21 @@ def pipeline_steps(df):
     df_concat = pd.concat([step1, step2, step3], axis=0).sort_values('id')
     return df_concat
 
+
+def lookup_and_insert(row):
+    title = row['title']
+    series_result = query_title(title)
+    if series_result is None:
+        deleted_id = get_deleted(title)
+        series_result = get_details(deleted_id)
+    # add line if string difference is too far elif series_result['title']
+
+    if series_result is None:
+        logger.info(f"No active or deleted Netflix info found for {title}")
+    nt = NetflixTitles()
+    nt.title = title
+    nt.netflix_id = series_result['netflix_id']
+    nt.show_type = series_result['title_type']
+    nt.release_year = series_result['year']
+
+    return pd.DataFrame(series_result)

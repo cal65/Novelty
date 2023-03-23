@@ -58,6 +58,7 @@ def start():
     actors.to_sql("goodreads_netflixactors", engine, if_exists="replace", index=False)
 
     netflix_titles = pd.read_csv("artifacts/netflix_titles.csv")
+    netflix_titles
     netflix_titles.to_sql('goodreads_netflixtitles', engine, if_exists="replace", index=False)
 
     connection.close()

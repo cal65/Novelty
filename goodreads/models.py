@@ -91,7 +91,7 @@ class NetflixTitles(models.Model):
     title = models.CharField(max_length=250, null=True)
     director = models.CharField(max_length=250, null=True)
     release_year = models.IntegerField(null=True)
-    show_type = models.CharField(max_length=250, null=True)
+    title_type = models.CharField(max_length=250, null=True)
 
 class NetflixUsers(models.Model):
     id = models.BigAutoField(primary_key=True)
