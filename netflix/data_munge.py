@@ -169,6 +169,7 @@ def query_title(title: str):
         return
     results = results_all[0]  # take first search
     series_results = pd.Series(results)
+    series_results['title'] = series_results['title'].replace('&#39;', '')
     return series_results
 
 
@@ -209,6 +210,7 @@ def get_genres(netflix_id):
         return
     genres = [r["genre"] for r in results]
     genres = ", ".join(genres)
+    genres = genres.replace('&#39;', '')
     genre_results = pd.Series({"netflix_id": netflix_id, "genres": genres})
     return genre_results
 
@@ -228,7 +230,8 @@ def get_details(netflix_id):
     if results is None:
         print(f"No genre response found for {netflix_id}")
         return
-    return results
+    results['title'] = results['title'].replace('&#39;', '')
+    return pd.Series(results)
 
 
 def get_deleted(title):
@@ -311,8 +314,8 @@ def split_title(title):
     # exception 1: Stranger Things:
     if splits[0] == "Stranger Things":
         name = splits[0]
-        if len(splits) > 1:
-            season = ": ".join(splits[1])
+        if len(splits) > 2:
+            season = splits[-3]
             episode = ": ".join(splits[-2:])
         else:
             season = ""
