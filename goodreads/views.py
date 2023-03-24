@@ -161,6 +161,14 @@ def runscriptSpotify(request):
 
     return spot_plots_view(request)
 
+def runscriptNetflix(request):
+    username = request.user
+    logger.info(f"Running Netflix script with request method {request.method}")
+    if request.method == "POST" and "runscriptNetflix" in request.POST:
+        nplot.main(username)
+
+    return netflix_plots_view(request)
+
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def spot_plots_view(request):
@@ -353,7 +361,7 @@ def upload_view_netflix(request):
         logger.info(
             f"Got running with Netflix request {request.method} and post {request.POST}"
         )
-        runscriptSpotify(request)
+        runscriptNetflix(request)
         # when script finishes, move user to plots view
         return HttpResponseRedirect("/netflix-plots/")
     return render(request, template)
@@ -391,7 +399,7 @@ def upload_netflix(request):
 def netflix_plots_view(request):
     username = request.user
 
-    overall_url = "Graphs/{}/overall_{}.html".format(username, username)
+    tiemline_url = "Graphs/{}/netflix_timeline_{}.html".format(username, username)
     popularity_url = "Graphs/{}/netflix_popularity_plot_{}.html".format(
         username, username
     )
@@ -401,12 +409,12 @@ def netflix_plots_view(request):
     info_text = "Graphs/{}/netflix_summary_{}.txt".format(username, username)
 
     if "run_script_function" in request.POST:
-        runscriptSpotify(request)
+        runscriptNetflix(request)
     return render(
         request,
-        "spotify/plots.html",
+        "netflix/plots.html",
         {
-            "overall_url": overall_url,
+            "tiemline_url": tiemline_url,
             "popularity_url": popularity_url,
             "weekly_url": weekly_url,
             "release_year_url": release_year_url,

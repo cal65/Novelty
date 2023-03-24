@@ -14,29 +14,39 @@ import plotly.graph_objs as go
 from datetime import timedelta
 import plotly.express as px
 
-from goodreads.models import NetflixGenres
+from goodreads.models import NetflixGenres, NetflixUsers
+from spotify.plotting.plotting import standard_layout
+import netflix.data_munge as nd
 
+logging.basicConfig(
+    filename="logs.txt",
+    filemode="a",
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    level=logging.INFO,
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
 
 def plot_genres(df):
     # df should be already formatted, genres cleaned up
     # only tv shows or movies
     df_count = pd.DataFrame(
-        df.groupby(["Name", "genre", "type"], as_index=False).size()
+        df.groupby(["name", "genre_chosen", "title_type"], as_index=False).size()
     )
     df_genre_count = pd.DataFrame(
-        df.groupby("genre", as_index=False).size()
+        df.groupby("genre_chosen", as_index=False).size()
     ).sort_values("size")
     fig = go.Figure()
-    df_shows = df_count.loc[df_count["type"] != "Movie"]
-    for g in df_genre_count["genre"]:
-        df_sub = df_shows.loc[df_shows["genre"] == g]
+    df_shows = df_count.loc[df_count["title_type"] == "series"]
+    for g in df_genre_count["genre_chosen"]:
+        df_sub = df_shows.loc[df_shows["genre_chosen"] == g]
 
         fig.add_trace(
             go.Bar(
                 x=df_sub["size"],
-                y=df_sub["genre"],
-                customdata=df_sub["Name"],
-                text=df_sub["Name"],
+                y=df_sub["genre_chosen"],
+                customdata=df_sub["name"],
+                text=df_sub["name"],
                 hovertemplate="Genre: %{y} <br> Title: %{customdata} <br> Count: %{x}",
                 name=g,
                 orientation="h",
@@ -44,6 +54,8 @@ def plot_genres(df):
             )
         )
     fig.update_layout(barmode="stack", title="Netflix TV Genres")
+    fig.update_layout(standard_layout)
+    return fig
 
 
 genres_hierarchy = ['Sci-Fi & Fantasy', 'Stand-up Comedy', 'Mexican', 'Korean', 'British', 'Musicals',
@@ -118,6 +130,7 @@ def plot_timeline(df, username):
         ),
         height=len(series_df['name'].unique()) * 12,
         title=f"Netflix Timeline Plot - {username}")
+    fig.update_layout(standard_layout)
     return fig
 
 
@@ -127,14 +140,19 @@ def save_fig(fig, file_path):
         os.makedirs(directory)
     fig.write_html(file=file_path)
 
-def main(df, username):
+def main(username):
     """
     df has been through pipeline steps already
     """
+    df = pd.DataFrame.from_records(NetflixUsers.objects.filter(username=username).values())
+    df = nd.pipeline_steps(df)
     nids = df['netflix_id'][pd.notnull(df['netflix_id'])].unique().astype(int)
     genres_df = pd.DataFrame.from_records(NetflixGenres.objects.filter(
         netflix_id__in=nids).values())
     genres_df['genres'] = genres_df['genres'].fillna('')
+    #logger.info("Simplifying genres")
     genres_df['genre_chosen'] = genres_df['genres'].apply(simplify_genres)
     df_merged = pd.merge(df, genres_df, on='netflix_id', how='left')
     fig_plotline = plot_timeline(df_merged, username)
+    save_fig(fig_plotline, f"goodreads/static/Graphs/{username}/netflix_timeline_{username}.html")
+

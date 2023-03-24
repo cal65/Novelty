@@ -55,7 +55,7 @@
 </div>
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">OVERALL IMAGE</div>
     <div style="display: flex; justify-content: center; height: 650px;">
-        <iframe style="width: 60%;" src="{% static overall_url %}" class="text-center" alt="popularity"></iframe>
+        <iframe style="width: 60%;" src="{% static tiemline_url %}" class="text-center" alt="popularity"></iframe>
     </div>
         <div class="center-text">
         <p>  <iframe src="{% static info_text %}" class= "center-image center-text" style="size: 10">  </iframe></p> 
@@ -74,27 +74,6 @@
     <br>
     <div class="center-text">
     This shows how much music you listen to per day of the week.
-        </div>
-    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">WEEKDAY USAGE IMAGE</div>
-    <div class ="center-image">
-        <img class ="center-image" src="{% static weekly_url %}"  alt="weekly">
-    </div>
-    <br>
-    <br>
-        <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">DAILY USAGE IMAGE</div>
-    <div class ="plotly">
-        <iframe class ="iframe" src="{% static daily_url %}" alt="daily"></iframe>
-    </div>
-    <br> 
-    <br>
-
-            <div class="center-text">
-    This shows your daily listening patterns, averaged out amongst weekdays and weekends. Most users have different weekend and weekday profiles. Note - plot currently assumes all tracks were listened to in Pacific Standard Time. 
-        </div>
-    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">RELEASE YEAR DISTRIBUTION</div>
-    <div class="plotly">
-        <iframe src="{% static release_year_url %}"  class="iframe" alt="release year" /></iframe>
-    </div>
         </div>
     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">GENRES  DISTRIBUTION</div>
     <div class ="plotly">

@@ -25,5 +25,6 @@ urlpatterns = [
     url(r"^favicon\.ico$", RedirectView.as_view(url="/static/admin/img/favicon.ico")),
     path("spotify-plots/", spot_plots_view, name="spotify-plots"),
     path("upload-view-netflix/", upload_view_netflix, name="upload-view-netflix"),
-    path("upload-netflix/", upload_netflix, name="upload-netflix")
+    path("upload-netflix/", upload_netflix, name="upload-netflix"),
+    path("netflix-plots/", netflix_plots_view, name="netflix-plots"),
 ]
