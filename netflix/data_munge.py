@@ -403,9 +403,9 @@ def save_actors(actors_results):
     return na
 
 def save_genres(genre_results):
-    ng = NetflixGenres
+    ng = NetflixGenres()
     ng.netflix_id = genre_results['netflix_id']
-    ng.genres = genre_results['genres']
+    ng.genre = genre_results['genre']
     ng.save()
     return ng
 
