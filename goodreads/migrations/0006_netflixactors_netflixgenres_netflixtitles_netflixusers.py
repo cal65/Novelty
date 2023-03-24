@@ -4,42 +4,50 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('goodreads', '0005_auto_20230228_2036'),
+        ("goodreads", "0005_auto_20230228_2036"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='NetflixActors',
+            name="NetflixActors",
             fields=[
-                ('netflixid', models.CharField(max_length=250, primary_key=True, serialize=False)),
-                ('cast', models.CharField(max_length=2000, null=True)),
+                (
+                    "netflixid",
+                    models.CharField(max_length=250, primary_key=True, serialize=False),
+                ),
+                ("cast", models.CharField(max_length=2000, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='NetflixGenres',
+            name="NetflixGenres",
             fields=[
-                ('netflixid', models.CharField(max_length=250, primary_key=True, serialize=False)),
-                ('genres', models.CharField(max_length=250, null=True)),
+                (
+                    "netflixid",
+                    models.CharField(max_length=250, primary_key=True, serialize=False),
+                ),
+                ("genres", models.CharField(max_length=250, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='NetflixTitles',
+            name="NetflixTitles",
             fields=[
-                ('netflixid', models.CharField(max_length=250, primary_key=True, serialize=False)),
-                ('title', models.CharField(max_length=250, null=True)),
-                ('director', models.CharField(max_length=250, null=True)),
-                ('release_year', models.IntegerField(null=True)),
+                (
+                    "netflixid",
+                    models.CharField(max_length=250, primary_key=True, serialize=False),
+                ),
+                ("title", models.CharField(max_length=250, null=True)),
+                ("director", models.CharField(max_length=250, null=True)),
+                ("release_year", models.IntegerField(null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='NetflixUsers',
+            name="NetflixUsers",
             fields=[
-                ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('title', models.CharField(max_length=250, null=True)),
-                ('date', models.DateField(blank=True, null=True)),
-                ('username', models.CharField(max_length=250, null=True)),
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+                ("title", models.CharField(max_length=250, null=True)),
+                ("date", models.DateField(blank=True, null=True)),
+                ("username", models.CharField(max_length=250, null=True)),
             ],
         ),
     ]

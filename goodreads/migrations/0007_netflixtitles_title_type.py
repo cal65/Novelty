@@ -4,32 +4,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    replaces = [('goodreads', '0007_auto_20230323_1636'), ('goodreads', '0008_rename_show_type_netflixtitles_title_type')]
+    replaces = [
+        ("goodreads", "0007_auto_20230323_1636"),
+        ("goodreads", "0008_rename_show_type_netflixtitles_title_type"),
+    ]
 
     dependencies = [
-        ('goodreads', '0006_netflixactors_netflixgenres_netflixtitles_netflixusers'),
+        ("goodreads", "0006_netflixactors_netflixgenres_netflixtitles_netflixusers"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='netflixactors',
-            old_name='netflixid',
-            new_name='netflix_id',
+            model_name="netflixactors",
+            old_name="netflixid",
+            new_name="netflix_id",
         ),
         migrations.RenameField(
-            model_name='netflixgenres',
-            old_name='netflixid',
-            new_name='netflix_id',
+            model_name="netflixgenres",
+            old_name="netflixid",
+            new_name="netflix_id",
         ),
         migrations.RenameField(
-            model_name='netflixtitles',
-            old_name='netflixid',
-            new_name='netflix_id',
+            model_name="netflixtitles",
+            old_name="netflixid",
+            new_name="netflix_id",
         ),
         migrations.AddField(
-            model_name='netflixtitles',
-            name='title_type',
+            model_name="netflixtitles",
+            name="title_type",
             field=models.CharField(max_length=250, null=True),
         ),
     ]

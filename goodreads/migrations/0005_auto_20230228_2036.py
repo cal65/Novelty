@@ -4,50 +4,49 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('goodreads', '0004_spotifytracks_genre_chosen'),
+        ("goodreads", "0004_spotifytracks_genre_chosen"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='spotifystreaming',
-            old_name='artistName',
-            new_name='artistname',
+            model_name="spotifystreaming",
+            old_name="artistName",
+            new_name="artistname",
         ),
         migrations.RenameField(
-            model_name='spotifystreaming',
-            old_name='endTime',
-            new_name='endtime',
+            model_name="spotifystreaming",
+            old_name="endTime",
+            new_name="endtime",
         ),
         migrations.RenameField(
-            model_name='spotifystreaming',
-            old_name='msPlayed',
-            new_name='msplayed',
+            model_name="spotifystreaming",
+            old_name="msPlayed",
+            new_name="msplayed",
         ),
         migrations.RenameField(
-            model_name='spotifystreaming',
-            old_name='trackName',
-            new_name='trackname',
+            model_name="spotifystreaming",
+            old_name="trackName",
+            new_name="trackname",
         ),
         migrations.RenameField(
-            model_name='spotifytracks',
-            old_name='artistName',
-            new_name='artistname',
+            model_name="spotifytracks",
+            old_name="artistName",
+            new_name="artistname",
         ),
         migrations.RenameField(
-            model_name='spotifytracks',
-            old_name='trackName',
-            new_name='trackname',
+            model_name="spotifytracks",
+            old_name="trackName",
+            new_name="trackname",
         ),
         migrations.AlterField(
-            model_name='spotifytracks',
-            name='explicit',
+            model_name="spotifytracks",
+            name="explicit",
             field=models.BooleanField(blank=True, default=False),
         ),
         migrations.AlterField(
-            model_name='spotifytracks',
-            name='podcast',
+            model_name="spotifytracks",
+            name="podcast",
             field=models.BooleanField(blank=True, default=False),
         ),
     ]

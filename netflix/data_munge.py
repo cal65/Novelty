@@ -25,7 +25,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
 rapid_api_url = "https://unogs-unogs-v1.p.rapidapi.com/"
 post_pass = os.getenv("cal65_pass")
 
@@ -51,6 +50,7 @@ def userdata_query(username):
     where username = '{username}'
     """
     return query
+
 
 def preprocess(file_path, date_col="Date", title_col="Title"):
     df = pd.read_csv(file_path)
@@ -151,7 +151,6 @@ def return_unmerged(df, ref_df, df_name_col="Name", ref_name_col="title"):
     return list(set(df[df_name_col]).difference(set(ref_df[ref_name_col])))
 
 
-
 def query_title(title: str):
     url = rapid_api_url + "search/titles"
 
@@ -168,7 +167,7 @@ def query_title(title: str):
     if results_all is None:
         print(f"No response found for {title}")
         return
-    results = results_all[0] # take first search
+    results = results_all[0]  # take first search
     series_results = pd.Series(results)
     return series_results
 
@@ -210,7 +209,7 @@ def get_genres(netflix_id):
         return
     genres = [r["genre"] for r in results]
     genres = ", ".join(genres)
-    genre_results = pd.Series({"netflix_id": netflix_id, "genre": genres})
+    genre_results = pd.Series({"netflix_id": netflix_id, "genres": genres})
     return genre_results
 
 
@@ -229,8 +228,8 @@ def get_details(netflix_id):
     if results is None:
         print(f"No genre response found for {netflix_id}")
         return
-    # details_df = pd.DataFrame({"netflix_id": [netflix_id], "genre": [genres]})
     return results
+
 
 def get_deleted(title):
     url = rapid_api_url + "search/deleted"
@@ -241,45 +240,50 @@ def get_deleted(title):
     }
 
     response = requests.request("GET", url, headers=headers, params=querystring)
-    results_all = response.json()['results']
+    results_all = response.json()["results"]
     if results_all is None:
         print(f"No response found for {title}")
         return
     results = results_all[0]
-    if 'netflix_id' in results.keys():
-        return results['netflix_id']
+    if "netflix_id" in results.keys():
+        return results["netflix_id"]
     else:
         return
 
+
 def format_network(df):
-    cast_dict = unique_cast(df, name='title')
+    cast_dict = unique_cast(df, name="title")
     intersections = return_intersections(cast_dict)
     cast_df = create_cast_array(intersections)
-    cast_df_m = pd.melt(cast_df, id_vars=['show1'])
-    cast_df_m = cast_df_m[cast_df_m['variable'] == 'cast']
-    G = nx.from_pandas_edgelist(cast_df_m,
-                                source='show1', target='value', edge_attr='variable')
+    cast_df_m = pd.melt(cast_df, id_vars=["show1"])
+    cast_df_m = cast_df_m[cast_df_m["variable"] == "cast"]
+    G = nx.from_pandas_edgelist(
+        cast_df_m, source="show1", target="value", edge_attr="variable"
+    )
     return G
 
+
 def plot_network(G, cast_df):
-    pos = nx.kamada_kawai_layout(G, scale=.2)
+    pos = nx.kamada_kawai_layout(G, scale=0.2)
     # colors
-    color_mapper = {n: int(n in pd.unique(cast_df['show1'])) for n in G.nodes()}
-    cm2 = {1: 'red', 0: 'blue'}
+    color_mapper = {n: int(n in pd.unique(cast_df["show1"])) for n in G.nodes()}
+    cm2 = {1: "red", 0: "blue"}
     # position of text
     pos_moved = pos.copy()
     for k, v in pos_moved.items():
-        pos_moved[k] = pos_moved[k] + [0, .005]
+        pos_moved[k] = pos_moved[k] + [0, 0.005]
     f, ax = plt.subplots(figsize=(30, 30))
-    plt.style.use('ggplot')
+    plt.style.use("ggplot")
 
-    nodes = nx.draw_networkx_nodes(G, pos, node_color=[cm2[c] for c in color_mapper.values()],
-                                   alpha=0.8)
-    nodes.set_edgecolor('k')
+    nodes = nx.draw_networkx_nodes(
+        G, pos, node_color=[cm2[c] for c in color_mapper.values()], alpha=0.8
+    )
+    nodes.set_edgecolor("k")
     nx.draw_networkx_labels(G, pos_moved, font_size=15, alpha=0.8)
 
     nx.draw_networkx_edges(G, pos, width=1.0, alpha=0.2)
     return f
+
 
 def ingest_netflix(df, user):
     """
@@ -298,36 +302,36 @@ def ingest_netflix(df, user):
 
 
 def split_title(title):
-    splits = title.split(':')
+    splits = title.split(":")
     splits = [s.strip() for s in splits]
-    seas_words = ('Season', 'Book', 'Chapter', 'Volume', 'Part', 'Collection')
-    season_bool = [(t.startswith(seas_words)) | ('Series' in t) for t in splits]
-    episode_bool = [t.startswith('Episode') for t in splits]
+    seas_words = ("Season", "Book", "Chapter", "Volume", "Part", "Collection")
+    season_bool = [(t.startswith(seas_words)) | ("Series" in t) for t in splits]
+    episode_bool = [t.startswith("Episode") for t in splits]
 
     # exception 1: Stranger Things:
-    if splits[0] == 'Stranger Things':
+    if splits[0] == "Stranger Things":
         name = splits[0]
         if len(splits) > 1:
-            season = ': '.join(splits[1])
-            episode = ': '.join(splits[-2:])
+            season = ": ".join(splits[1])
+            episode = ": ".join(splits[-2:])
         else:
-            season = ''
-            episode = ''
+            season = ""
+            episode = ""
     elif any(season_bool):
         season_index = season_bool.index(True)
         season = splits[season_index]
         if season_index > 1:
-            name = ': '.join(splits[:season_index])
+            name = ": ".join(splits[:season_index])
         else:
             name = splits[0]
         if (len(splits) - season_index) > 1:
-            episode = ': '.join(splits[season_index + 1:])
+            episode = ": ".join(splits[season_index + 1 :])
         else:
             episode = splits[-1]
     elif any(episode_bool):
         episode_index = episode_bool.index(True)
         # this will apply the colon join only if episode index is not last  index
-        episode = ': '.join(splits[episode_index:])
+        episode = ": ".join(splits[episode_index:])
         if len(splits) > 2:
             name = splits[0]
             season = splits[1]
@@ -340,28 +344,28 @@ def split_title(title):
         episode = splits[1]
     elif len(splits) == 1:
         name = title
-        season = ''
-        episode = ''
+        season = ""
+        episode = ""
     elif len(splits) == 3:
         name = splits[0]
         season = splits[1]
         episode = splits[2]
     else:
-        name = ': '.join(splits[:-1])
+        name = ": ".join(splits[:-1])
         season = ""
         episode = splits[-1]
-    return pd.Series({'name': name, 'season': season, 'episode': episode})
+    return pd.Series({"name": name, "season": season, "episode": episode})
 
 
-def net_merge(df, titles_df, left, right, ids, how='inner'):
+def net_merge(df, titles_df, left, right, ids, how="inner"):
     df = df.copy()
     if ids is not None:
-        df = df.loc[~df['id'].isin(ids)]
-    df = pd.merge(df, titles_df, left_on= left, right_on=right, suffixes=('', '_remove'), how=how)
-    df.drop([c for c in df.columns if 'remove' in c],
-                   axis=1, inplace=True)
+        df = df.loc[~df["id"].isin(ids)]
+    df = pd.merge(
+        df, titles_df, left_on=left, right_on=right, suffixes=("", "_remove"), how=how
+    )
+    df.drop([c for c in df.columns if "remove" in c], axis=1, inplace=True)
     return df
-
 
 
 def pipeline_steps(df):
@@ -369,45 +373,50 @@ def pipeline_steps(df):
     Full pipeline given df from netflix export csv
     Step 1: Merge based on the raw title in Netflix export with database titles
     """
-    df['id'] = np.arange(0, len(df))
+    df["id"] = np.arange(0, len(df))
     # split the raw Netflix show title into Name, Season and Episode. Add new columns
-    split_titles_df = pd.DataFrame([split_title(t) for t in df['title']])
+    split_titles_df = pd.DataFrame([split_title(t) for t in df["title"]])
     df = pd.concat([df, split_titles_df], axis=1)
     titles_df = pd.DataFrame.from_records(NetflixTitles.objects.all().values())
     # match title with full title. This gets movies and comedy specials
-    step1 = net_merge(df, titles_df, left='title', right='title', ids=None)
+    step1 = net_merge(df, titles_df, left="title", right="title", ids=None)
     # match cleared out name with title. This matches TV shows
-    step2 = net_merge(df, titles_df, left='name', right='title', ids=step1['id'])
+    step2 = net_merge(df, titles_df, left="name", right="title", ids=step1["id"])
     ## match the rest
-    step1_2_ids = pd.unique(step1['id'].append(step2['id']))
-    titles_df['name'] = titles_df['title'].apply(lambda x: x.split(':')[0])
-    step3 = net_merge(df, titles_df, left='name', right='name', ids=step1_2_ids, how='left')
-    df_concat = pd.concat([step1, step2, step3], axis=0).sort_values('id')
+    step1_2_ids = pd.unique(step1["id"].append(step2["id"]))
+    titles_df["name"] = titles_df["title"].apply(lambda x: x.split(":")[0])
+    step3 = net_merge(
+        df, titles_df, left="name", right="name", ids=step1_2_ids, how="left"
+    )
+    df_concat = pd.concat([step1, step2, step3], axis=0).sort_values("id")
     return df_concat
 
 
 def save_titles(series_results):
     nt = NetflixTitles()
-    nt.title = series_results['title']
-    nt.netflix_id = series_results['netflix_id']
-    nt.title_type = series_results['title_type']
-    nt.release_year = series_results['year']
+    nt.title = series_results["title"]
+    nt.netflix_id = series_results["netflix_id"]
+    nt.title_type = series_results["title_type"]
+    nt.release_year = series_results["year"]
     nt.save()
     return nt
 
+
 def save_actors(actors_results):
     na = NetflixActors()
-    na.netflix_id = actors_results['netflix_id']
-    na.cast = actors_results['actors']
+    na.netflix_id = actors_results["netflix_id"]
+    na.cast = actors_results["actors"]
     na.save()
     return na
 
+
 def save_genres(genre_results):
     ng = NetflixGenres()
-    ng.netflix_id = genre_results['netflix_id']
-    ng.genre = genre_results['genre']
+    ng.netflix_id = genre_results["netflix_id"]
+    ng.genres = genre_results["genres"]
     ng.save()
     return ng
+
 
 def lookup_and_insert(title):
     series_results = query_title(title)
@@ -420,7 +429,7 @@ def lookup_and_insert(title):
         logger.info(f"No active or deleted Netflix info found for {title}")
         return
 
-    netflix_id = series_results['netflix_id']
+    netflix_id = series_results["netflix_id"]
     save_titles(series_results)
     #
     actors_results = get_actors(netflix_id)

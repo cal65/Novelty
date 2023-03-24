@@ -16,47 +16,48 @@ logger.setLevel(logging.INFO)
 
 
 cookies = {
-    'ccsid': '981-7720517-4539359',
-    'p': 'dkCKV365TjqNenOKY4VtqQ6sIm7CTPX-c9d94GhAzRXKWDHD',
-    'likely_has_account': 'true',
-    '__utma': '250562704.423302064.1603340854.1621127507.1621198172.295',
-    'allow_behavioral_targeting': 'true',
-    'session-id': '141-6452885-9687058',
-    'logged_out_browsing_page_count': '2',
-    'srb_1': '0',
-    'ubid-main': '131-4250835-4161367',
-    'lc-main': 'en_US',
-    'csm-hit': 'tb:28PZZBK444T48GAAWQ0H+b-4K51QZ90N1KMGMJX1EGE|1667883949756&t:1667883949756&adb:adblk_no',
-    'session-id-time': '2298605691l',
-    '__gads': 'ID=df0a6707150d114d:T=1670897981:S=ALNI_MZfGBQsHE3Vk7tICMIg8zJxLI8e8Q',
-    'srb_8': '0_ar',
-    'u': 'wAw3MOakONnieoULVHt00uOWrYRoyYDZsk99mGcNYG0A06pv',
-    'locale': 'en',
-    'csm-sid': '597-1753354-2882842',
-    '_session_id2': 'f7a5a1a7a6f2a35bdc0b8a0252624e2e',
-    '__gpi': 'UID=000004048f7baabd:T=1648685718:RT=1677827658:S=ALNI_MYxDQ7dAo3KLoXnssoo0UOLpKL7ow',
+    "ccsid": "981-7720517-4539359",
+    "p": "dkCKV365TjqNenOKY4VtqQ6sIm7CTPX-c9d94GhAzRXKWDHD",
+    "likely_has_account": "true",
+    "__utma": "250562704.423302064.1603340854.1621127507.1621198172.295",
+    "allow_behavioral_targeting": "true",
+    "session-id": "141-6452885-9687058",
+    "logged_out_browsing_page_count": "2",
+    "srb_1": "0",
+    "ubid-main": "131-4250835-4161367",
+    "lc-main": "en_US",
+    "csm-hit": "tb:28PZZBK444T48GAAWQ0H+b-4K51QZ90N1KMGMJX1EGE|1667883949756&t:1667883949756&adb:adblk_no",
+    "session-id-time": "2298605691l",
+    "__gads": "ID=df0a6707150d114d:T=1670897981:S=ALNI_MZfGBQsHE3Vk7tICMIg8zJxLI8e8Q",
+    "srb_8": "0_ar",
+    "u": "wAw3MOakONnieoULVHt00uOWrYRoyYDZsk99mGcNYG0A06pv",
+    "locale": "en",
+    "csm-sid": "597-1753354-2882842",
+    "_session_id2": "f7a5a1a7a6f2a35bdc0b8a0252624e2e",
+    "__gpi": "UID=000004048f7baabd:T=1648685718:RT=1677827658:S=ALNI_MYxDQ7dAo3KLoXnssoo0UOLpKL7ow",
 }
 
 headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-    'Accept-Language': 'en-US,en;q=0.9',
-    'Cache-Control': 'max-age=0',
-    'Connection': 'keep-alive',
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Cache-Control": "max-age=0",
+    "Connection": "keep-alive",
     # 'Cookie': 'ccsid=981-7720517-4539359; p=dkCKV365TjqNenOKY4VtqQ6sIm7CTPX-c9d94GhAzRXKWDHD; likely_has_account=true; __utma=250562704.423302064.1603340854.1621127507.1621198172.295; allow_behavioral_targeting=true; session-id=141-6452885-9687058; logged_out_browsing_page_count=2; srb_1=0; ubid-main=131-4250835-4161367; lc-main=en_US; csm-hit=tb:28PZZBK444T48GAAWQ0H+b-4K51QZ90N1KMGMJX1EGE|1667883949756&t:1667883949756&adb:adblk_no; session-id-time=2298605691l; __gads=ID=df0a6707150d114d:T=1670897981:S=ALNI_MZfGBQsHE3Vk7tICMIg8zJxLI8e8Q; srb_8=0_ar; u=wAw3MOakONnieoULVHt00uOWrYRoyYDZsk99mGcNYG0A06pv; locale=en; csm-sid=597-1753354-2882842; _session_id2=f7a5a1a7a6f2a35bdc0b8a0252624e2e; __gpi=UID=000004048f7baabd:T=1648685718:RT=1677827658:S=ALNI_MYxDQ7dAo3KLoXnssoo0UOLpKL7ow',
-    'DNT': '1',
-    'If-None-Match': 'W/"accfd32b1ffcc24b9de5eaf56d15ccc4"',
-    'Sec-Fetch-Dest': 'document',
-    'Sec-Fetch-Mode': 'navigate',
-    'Sec-Fetch-Site': 'none',
-    'Sec-Fetch-User': '?1',
-    'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
-    'sec-ch-ua': '"Chromium";v="110", "Not A(Brand";v="24", "Google Chrome";v="110"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': '"macOS"',
+    "DNT": "1",
+    "If-None-Match": 'W/"accfd32b1ffcc24b9de5eaf56d15ccc4"',
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Upgrade-Insecure-Requests": "1",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+    "sec-ch-ua": '"Chromium";v="110", "Not A(Brand";v="24", "Google Chrome";v="110"',
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": '"macOS"',
 }
 
-#response = requests.get('https://www.goodreads.com/book/stats/50175419', cookies=cookies, headers=headers)
+# response = requests.get('https://www.goodreads.com/book/stats/50175419', cookies=cookies, headers=headers)
+
 
 def get_soup(url):
     try:
@@ -66,6 +67,7 @@ def get_soup(url):
         return None
     soup = BeautifulSoup(page.content, "html.parser")
     return soup
+
 
 def get_stats(url, wait=0):
     """
@@ -96,9 +98,9 @@ def get_stats(url, wait=0):
         logger.info("Connection refused - too many requests")
         return null_return
 
-    details = soup.find("div", {'class': 'FeaturedDetails'})
-    genre_divs = soup.find("div", {'data-testid': 'genresList'})
-    shelves = [g.text for g in genre_divs.findAll('a')]
+    details = soup.find("div", {"class": "FeaturedDetails"})
+    genre_divs = soup.find("div", {"data-testid": "genresList"})
+    shelves = [g.text for g in genre_divs.findAll("a")]
 
     try:
         title = soup.find("h1").text.replace("\n", "")
@@ -111,7 +113,7 @@ def get_stats(url, wait=0):
         author = None
 
     try:
-        publish_info = details.find('p', {"data-testid": 'publicationInfo'}).text
+        publish_info = details.find("p", {"data-testid": "publicationInfo"}).text
         publish_info = publish_info.replace("\n", "")
         publish_info = publish_info.replace("First published", "").strip()
     except:
@@ -122,7 +124,7 @@ def get_stats(url, wait=0):
     except:
         language = None
     try:
-        rating = soup.find('div', {'class': 'RatingStatistics__rating'}).text
+        rating = soup.find("div", {"class": "RatingStatistics__rating"}).text
     except:
         rating = None
     try:
@@ -144,8 +146,8 @@ def get_stats(url, wait=0):
     except:
         original_title = None
     try:
-        numberOfPages_raw = details.find('p', {'data-testid': 'pagesFormat'}).text
-        numberOfPages = int(re.findall(r'\d+', numberOfPages_raw)[0])
+        numberOfPages_raw = details.find("p", {"data-testid": "pagesFormat"}).text
+        numberOfPages = int(re.findall(r"\d+", numberOfPages_raw)[0])
     except:
         numberOfPages = None
     time.sleep(wait)
@@ -179,7 +181,7 @@ def get_read_stats(url):
         logger.info("Connection refused for stats page - too many requests")
         return null_return
 
-    stats_raw = soup.findAll('div', {'class': 'infoBoxRowItem'})
+    stats_raw = soup.findAll("div", {"class": "infoBoxRowItem"})
     stats = [s.text.strip() for s in stats_raw]
     added_by_raw = stats[-1]
     to_reads_raw = stats[-2]
@@ -187,8 +189,8 @@ def get_read_stats(url):
     to_reads = re.findall("\d+", to_reads_raw)
 
     return {
-        'added_by': added_by,
-        'to_reads': to_reads,
+        "added_by": added_by,
+        "to_reads": to_reads,
     }
 
 
@@ -206,9 +208,11 @@ def read_goodreads_export(file_path):
 
 def apply_added_by(urls, wait=4):
     stats_basic = [get_stats(url, wait=wait) for url in urls]
-    url_stats = [url.replace('show', 'stats') for url in urls]
+    url_stats = [url.replace("show", "stats") for url in urls]
     stats_read = [get_read_stats(url) for url in url_stats]
-    goodreads_data = pd.concat([pd.DataFrame(stats_basic), pd.DataFrame(stats_read)], axis=1)
+    goodreads_data = pd.concat(
+        [pd.DataFrame(stats_basic), pd.DataFrame(stats_read)], axis=1
+    )
 
     goodreads_data["date_published"] = (
         goodreads_data["Publish_info"]
