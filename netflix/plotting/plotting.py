@@ -13,6 +13,7 @@ import seaborn as sns
 import plotly.graph_objs as go
 from datetime import timedelta
 import plotly.express as px
+import logging
 
 from goodreads.models import NetflixGenres, NetflixUsers
 from spotify.plotting.plotting import standard_layout
@@ -27,7 +28,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-def plot_genres(df):
+
+def plot_genres(df, username):
     # df should be already formatted, genres cleaned up
     # only tv shows or movies
     df_count = pd.DataFrame(
@@ -53,7 +55,7 @@ def plot_genres(df):
                 insidetextanchor="middle",
             )
         )
-    fig.update_layout(barmode="stack", title="Netflix TV Genres")
+    fig.update_layout(barmode="stack", title=f"Netflix TV Genres - {username}")
     fig.update_layout(standard_layout)
     return fig
 
@@ -89,7 +91,7 @@ def simplify_genres(genres):
     for w in stop_words:
         genres_list = [g.replace(w, '').strip() for g in genres_list]
 
-    [genre_mapper[g] if g in genre_mapper.keys() else g for g in genres_list]
+    genres_list = [genre_mapper[g] if g in genre_mapper.keys() else g for g in genres_list]
     for g in genres_list:
         if g in genres_hierarchy:
             return g
@@ -140,6 +142,7 @@ def save_fig(fig, file_path):
         os.makedirs(directory)
     fig.write_html(file=file_path)
 
+
 def main(username):
     """
     df has been through pipeline steps already
@@ -150,9 +153,10 @@ def main(username):
     genres_df = pd.DataFrame.from_records(NetflixGenres.objects.filter(
         netflix_id__in=nids).values())
     genres_df['genres'] = genres_df['genres'].fillna('')
-    #logger.info("Simplifying genres")
+    logger.info("Simplifying genres")
     genres_df['genre_chosen'] = genres_df['genres'].apply(simplify_genres)
     df_merged = pd.merge(df, genres_df, on='netflix_id', how='left')
     fig_plotline = plot_timeline(df_merged, username)
     save_fig(fig_plotline, f"goodreads/static/Graphs/{username}/netflix_timeline_{username}.html")
-
+    fig_genres = plot_genres(df_merged, username)
+    save_fig(fig_genres, f"goodreads/static/Graphs/{username}/netflix_genres_{username}.html")

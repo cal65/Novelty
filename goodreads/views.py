@@ -311,11 +311,12 @@ def upload_spotify(request):
     # save csv file in database
     logger.info(f"Spotify upload started for {user}")
     df = pd.read_json(json_file)
+    # change columns from endTime to endtime etc.
+    df = de.lowercase_cols(df)
     # load up the existing data in database for this user
     loaded_df = splot.load_streaming(user)
     if len(loaded_df) > 0:
         loaded_df['endtime'] = pd.to_datetime(loaded_df['endtime'], utc=True)
-        df = de.lowercase_cols(df)
         df['endtime'] = pd.to_datetime(df['endtime'], utc=True)
         logger.info(f"df: {df['endtime'].values[:5]}, \nloaded_df: {loaded_df['endtime'].values[:5]}")
         df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(

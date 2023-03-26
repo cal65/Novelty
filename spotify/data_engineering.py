@@ -4,7 +4,7 @@ import pandas as pd
 import logging
 import signal
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyClientCredentials
 
 sys.path.append("../goodreads")
 
@@ -24,32 +24,31 @@ SPOTIPY_CLIENT_ID = os.environ["SPOTIFY_CLIENT_ID"]
 SPOTIPY_CLIENT_SECRET = os.environ["SPOTIFY_CLIENT_SECRET"]
 os.environ["SPOTIPY_CLIENT_ID"] = os.environ["SPOTIFY_CLIENT_ID"]
 os.environ["SPOTIPY_CLIENT_SECRET"] = os.environ["SPOTIFY_CLIENT_SECRET"]
-os.environ["SPOTIPY_REDIRECT_URI"] = "http://localhost:1410/"
-scope = ["user-library-read", "user-read-recently-played"]
 
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
+sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID,
+                                                           client_secret=SPOTIPY_CLIENT_SECRET))
 
 ms_per_minute = 60 * 1000
 
 
-class Timeout:
-    """Timeout class using ALARM signal."""
-
-    class Timeout(Exception):
-        pass
-
-    def __init__(self, sec):
-        self.sec = sec
-
-    def __enter__(self):
-        signal.signal(signal.SIGALRM, self.raise_timeout)
-        signal.alarm(self.sec)
-
-    def __exit__(self, *args):
-        signal.alarm(0)  # disable alarm
-
-    def raise_timeout(self, *args):
-        raise Timeout.Timeout()
+# class Timeout:
+#     """Timeout class using ALARM signal."""
+#
+#     class Timeout(Exception):
+#         pass
+#
+#     def __init__(self, sec):
+#         self.sec = sec
+#
+#     def __enter__(self):
+#         signal.signal(signal.SIGALRM, self.raise_timeout)
+#         signal.alarm(self.sec)
+#
+#     def __exit__(self, *args):
+#         signal.alarm(0)  # disable alarm
+#
+#     def raise_timeout(self, *args):
+#         raise Timeout.Timeout()
 
 
 def convert_to_SpotifyStreaming(row, username):
@@ -132,7 +131,7 @@ def get_historical_track_info_from_id(
         return empty_series
     else:
         try:
-            with Timeout(6):
+            if True: #with Timeout(6):
                 if searchType == "track":
                     track_info_dict = sp.track(track_id)
                     track_info_series = pd.Series(
@@ -190,11 +189,11 @@ def search_by_names(trackname: str, artistname: str, searchType: str = "track") 
         raise TypeError
 
     try:
-        with Timeout(6):
-            search_items = sp.search(
-                trackname + " " + artistname, type=searchType, limit=3
-            )[f"{searchType}s"]["items"]
-            # searchType could be track or show, and the resulting dictionary will have "tracks" or "shows"
+        # with Timeout(6):
+        search_items = sp.search(
+            trackname + " " + artistname, type=searchType, limit=3
+        )[f"{searchType}s"]["items"]
+        # searchType could be track or show, and the resulting dictionary will have "tracks" or "shows"
     except Exception as e:
         logger.info(f"Error {e} for {trackname} and {artistname}")
         return None
@@ -216,7 +215,7 @@ def get_audio(uris):
     for uid in uris:
         if uid is not None:
             try:
-                with Timeout(3):
+                if True: #with Timeout(3):
                     feat = sp.audio_features(uid)[0]
             except:
                 print(f"Time out error for {uid}")
@@ -248,6 +247,7 @@ def merge_tracks(
     return tracks_merged
 
 def update_tracks(df, track_col = 'trackname', artist_col = 'artistname'):
+    df = df.drop_duplicates(subset=[track_col, artist_col])
     track_df = splot.get_data(splot.tracks_all_query())
     df_unmerged = identify_new(df, track_df)
     logger.info(f"Search uri & track data for {len(df_unmerged)} tracks out of original {len(df)} tracks")
