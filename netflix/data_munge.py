@@ -90,6 +90,9 @@ def unique_non_null(s):
 
 
 def unique_cast(df, name="name"):
+    """
+
+    """
     cast_df = pd.pivot_table(
         df, index=[name], values=["cast"], aggfunc=lambda x: unique_non_null(x)
     )
@@ -402,6 +405,7 @@ def save_titles(series_results):
     nt.title_type = series_results["title_type"]
     nt.release_year = series_results["year"]
     nt.save()
+    logger.info(f"New title saved for {nt.title}")
     return nt
 
 

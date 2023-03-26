@@ -55,36 +55,37 @@
 </div>
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">OVERALL IMAGE</div>
     <div style="display: flex; justify-content: center; height: 650px;">
-        <iframe style="width: 60%;" src="{% static tiemline_url %}" class="text-center" alt="popularity"></iframe>
+        <iframe style="width: 60%;" src="{% static timeline_url %}" class="text-center" alt="timeline"></iframe>
     </div>
-        <div class="center-text">
-        <p>  <iframe src="{% static info_text %}" class= "center-image center-text" style="size: 10">  </iframe></p> 
-    </div>
+
 
         <br>
         <br>
 <p id="infotext"></p>
 <br> <br>
 </div>
-    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">POPULARITY IMAGE</div>
+    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">GENRES DISTRIBUTION - TV SHOWS</div>
     <div class ="plotly">
-        <iframe class ="iframe" src="{% static popularity_url %}" alt="popularity"></iframe>
+        <iframe class ="iframe" src="{% static genre_series_url %}" alt="genre"></iframe>
     </div>
-    <br>
+    This shows the different types of shows you've watched grouped by a genre type.
+<br>
     <br>
     <div class="center-text">
-    This shows how much music you listen to per day of the week.
+
         </div>
-    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">GENRES  DISTRIBUTION</div>
+    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">GENRES DISTRIBUTION - MOVIES</div>
     <div class ="plotly">
-        <iframe src="{% static genre_url %}"  class="iframe" alt="genres" /> </iframe>
+        <iframe src="{% static genre_movie_url %}"  class="iframe" alt="genres" /> </iframe>
     </div>
+    This shows the different types of movies you've watched grouped by a genre type.
     <br>
     <br>
      <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">TOP SONGS</div>
     <div class ="plotly">
-        <iframe src="{% static top_songs_url %}"  class="iframe" alt="top-songs" /> </iframe>
+        <iframe src="{% static network_url %}"  class="iframe" alt="top-songs" /> </iframe>
     </div>
+    And this plot has a lot going on. Hover over to see actors/actresses who have appeared in multiple productions you've seen.
 
     <p>
         <br>

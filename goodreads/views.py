@@ -400,14 +400,12 @@ def upload_netflix(request):
 def netflix_plots_view(request):
     username = request.user
 
-    tiemline_url = "Graphs/{}/netflix_timeline_{}.html".format(username, username)
-    popularity_url = "Graphs/{}/netflix_popularity_plot_{}.html".format(
-        username, username
-    )
+    timeline_url = "Graphs/{}/netflix_timeline_{}.html".format(username, username)
     weekly_url = "Graphs/{}/netflix_weekday_plot_{}.jpeg".format(username, username)
     release_year_url = "Graphs/{}/netflix_year_plot_{}.html".format(username, username)
-    genre_url = "Graphs/{}/netflix_genre_plot_{}.html".format(username, username)
-    info_text = "Graphs/{}/netflix_summary_{}.txt".format(username, username)
+    genre_series_url = "Graphs/{}/netflix_genres_{}_series.html".format(username, username)
+    genre_movie_url = "Graphs/{}/netflix_genres_{}_movie.html".format(username, username)
+    network_url = "Graphs/{}/netflix_network_{}.html".format(username, username)
 
     if "run_script_function" in request.POST:
         runscriptNetflix(request)
@@ -415,12 +413,10 @@ def netflix_plots_view(request):
         request,
         "netflix/plots.html",
         {
-            "tiemline_url": tiemline_url,
-            "popularity_url": popularity_url,
-            "weekly_url": weekly_url,
-            "release_year_url": release_year_url,
-            "genre_url": genre_url,
-            "info_text": info_text,
+            "timeline_url": timeline_url,
+            "genre_series_url": genre_series_url,
+            "genre_movie_url": genre_movie_url,
+            "network_url": network_url,
         },
     )
 

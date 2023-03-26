@@ -12,6 +12,7 @@ from matplotlib import dates
 import seaborn as sns
 import plotly.graph_objs as go
 from datetime import timedelta
+import networkx as nx
 import plotly.express as px
 import logging
 
@@ -29,7 +30,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def plot_genres(df, username):
+def plot_genres(df, username, title_type):
     # df should be already formatted, genres cleaned up
     # only tv shows or movies
     df_count = pd.DataFrame(
@@ -39,7 +40,7 @@ def plot_genres(df, username):
         df.groupby("genre_chosen", as_index=False).size()
     ).sort_values("size")
     fig = go.Figure()
-    df_shows = df_count.loc[df_count["title_type"] == "series"]
+    df_shows = df_count.loc[df_count["title_type"] == title_type]
     for g in df_genre_count["genre_chosen"]:
         df_sub = df_shows.loc[df_shows["genre_chosen"] == g]
 
@@ -55,7 +56,7 @@ def plot_genres(df, username):
                 insidetextanchor="middle",
             )
         )
-    fig.update_layout(barmode="stack", title=f"Netflix TV Genres - {username}")
+    fig.update_layout(barmode="stack", title=f"Netflix Genres - {username} - {title_type.capitalize()}")
     fig.update_layout(standard_layout)
     return fig
 
@@ -136,6 +137,80 @@ def plot_timeline(df, username):
     return fig
 
 
+def plot_network(df, cast, username):
+    G = nd.format_network(df)
+    pos = nx.kamada_kawai_layout(G, scale=.2)
+    edge_x = []
+    edge_y = []
+    for edge in G.edges():
+        x0, y0 = pos[edge[0]]
+        x1, y1 = pos[edge[1]]
+        edge_x.append(x0)
+        edge_x.append(x1)
+        edge_x.append(None)
+        edge_y.append(y0)
+        edge_y.append(y1)
+        edge_y.append(None)
+
+    edge_trace = go.Scatter(
+        x=edge_x, y=edge_y,
+        line=dict(width=0.5, color='#888'),
+        hoverinfo='none',
+        mode='lines')
+
+    node_x = []
+    node_y = []
+    for node in G.nodes():
+        x, y = pos[node]
+        node_x.append(x)
+        node_y.append(y)
+
+    node_trace = go.Scatter(
+        x=node_x, y=node_y,
+        mode='markers',
+        hoverinfo='text',
+        marker=dict(
+            showscale=True,
+            colorscale='YlGnBu',
+            reversescale=True,
+            color=[],
+            size=10,
+            colorbar=dict(
+                thickness=15,
+                title='Node Connections',
+                xanchor='left',
+                titleside='right'
+            ),
+            line_width=2))
+    color_mapper = {n: int(n in pd.unique(df['title'].unique())) for n in G.nodes()}
+    node_values = [int(n in pd.unique(df['title'].unique())) for n in G.nodes()]
+    node_names = list(G.nodes)
+    node_adjacencies = []
+    node_text = []
+    for node, adjacencies in enumerate(G.adjacency()):
+        node_adjacencies.append(len(adjacencies[1]))
+        node_text.append(f'{node_names[node]}<br> # of connections: {str(len(adjacencies[1]))}')
+
+    node_trace.marker.color = node_values
+    node_trace.text = node_text
+    fig = go.Figure(data=[edge_trace, node_trace],
+                    layout=go.Layout(
+                        title='<br>Network graph made with Python',
+                        titlefont_size=16,
+                        showlegend=False,
+                        hovermode='closest',
+                        margin=dict(b=20, l=5, r=5, t=40),
+                        annotations=[dict(
+                            text="Kevin Bacon visualization",
+                            showarrow=False,
+                            xref="paper", yref="paper",
+                            x=0.005, y=-0.002)],
+                        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
+                    )
+    return fig
+
+
 def save_fig(fig, file_path):
     directory = os.path.dirname(file_path)
     if not os.path.exists(directory):
@@ -158,5 +233,12 @@ def main(username):
     df_merged = pd.merge(df, genres_df, on='netflix_id', how='left')
     fig_plotline = plot_timeline(df_merged, username)
     save_fig(fig_plotline, f"goodreads/static/Graphs/{username}/netflix_timeline_{username}.html")
-    fig_genres = plot_genres(df_merged, username)
-    save_fig(fig_genres, f"goodreads/static/Graphs/{username}/netflix_genres_{username}.html")
+    fig_genres_s = plot_genres(df_merged, username, 'series')
+    save_fig(fig_genres_s, f"goodreads/static/Graphs/{username}/netflix_genres_{username}_series.html")
+    fig_genres_m = plot_genres(df_merged, username, 'series')
+    save_fig(fig_genres_m, f"goodreads/static/Graphs/{username}/netflix_genres_{username}_movie.html")
+    actors_df = pd.DataFrame.from_records(NetflixActors.objects.filter(
+        netflix_id__in=nids).values())
+    df_merged = pd.merge(df_merged, actors_df, on='netflix_id', how='left')
+    fig_network = plot_network(df_merged, username)
+    save_fig(fig_network, f"goodreads/static/Graphs/{username}/netflix_network_{username}.html")
