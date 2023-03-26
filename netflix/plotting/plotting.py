@@ -16,7 +16,7 @@ import networkx as nx
 import plotly.express as px
 import logging
 
-from goodreads.models import NetflixGenres, NetflixUsers
+from goodreads.models import NetflixGenres, NetflixUsers, NetflixActors
 from spotify.plotting.plotting import standard_layout
 import netflix.data_munge as nd
 
@@ -137,7 +137,7 @@ def plot_timeline(df, username):
     return fig
 
 
-def plot_network(df, cast, username):
+def plot_network(df, username):
     G = nd.format_network(df)
     pos = nx.kamada_kawai_layout(G, scale=.2)
     edge_x = []
@@ -195,7 +195,7 @@ def plot_network(df, cast, username):
     node_trace.text = node_text
     fig = go.Figure(data=[edge_trace, node_trace],
                     layout=go.Layout(
-                        title='<br>Network graph made with Python',
+                        title=f'Netflix Actors Network Graph - {username}',
                         titlefont_size=16,
                         showlegend=False,
                         hovermode='closest',
@@ -208,6 +208,7 @@ def plot_network(df, cast, username):
                         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
                     )
+    fig.update_layout(standard_layout)
     return fig
 
 
@@ -235,10 +236,10 @@ def main(username):
     save_fig(fig_plotline, f"goodreads/static/Graphs/{username}/netflix_timeline_{username}.html")
     fig_genres_s = plot_genres(df_merged, username, 'series')
     save_fig(fig_genres_s, f"goodreads/static/Graphs/{username}/netflix_genres_{username}_series.html")
-    fig_genres_m = plot_genres(df_merged, username, 'series')
+    fig_genres_m = plot_genres(df_merged, username, 'movie')
     save_fig(fig_genres_m, f"goodreads/static/Graphs/{username}/netflix_genres_{username}_movie.html")
     actors_df = pd.DataFrame.from_records(NetflixActors.objects.filter(
         netflix_id__in=nids).values())
-    df_merged = pd.merge(df_merged, actors_df, on='netflix_id', how='left')
-    fig_network = plot_network(df_merged, username)
+    df_network = pd.merge(df_merged, actors_df, on='netflix_id', how='left').drop_duplicates(subset='name')
+    fig_network = plot_network(df_network, username)
     save_fig(fig_network, f"goodreads/static/Graphs/{username}/netflix_network_{username}.html")
