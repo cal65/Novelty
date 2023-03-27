@@ -189,7 +189,7 @@ def get_actors(netflix_id):
 
     results = response.json()["results"]
     if results is None:
-        print(f"No response found for {netflix_id}")
+        logger.info(f"No response found for {netflix_id}")
         return
     actors = [r["full_name"] for r in results]
     actors_results = pd.Series({"netflix_id": netflix_id, "actors": actors})
@@ -207,10 +207,11 @@ def get_genres(netflix_id):
 
     response = requests.request("GET", url, headers=headers, params=querystring)
 
-    results = response.json()["results"]
-    if results is None:
-        print(f"No genre response found for {netflix_id}")
+    if not response.ok:
+        logger.info(f"No genre response found for {netflix_id}")
         return
+
+    results = response.json()["results"]
     genres = [r["genre"] for r in results]
     genres = ", ".join(genres)
     genres = genres.replace('&#39;', '')
