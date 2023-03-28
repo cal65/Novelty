@@ -4,5 +4,6 @@ env
 novelty-multiple.pem
 *.csv
 *.txt
+*.ipynb_checkpoints
 noveltyenv/
 .DS_Store
