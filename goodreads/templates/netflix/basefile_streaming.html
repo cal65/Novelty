@@ -11,6 +11,9 @@
 	{% block upload %}
             <a class="nav-link" href="{% url 'upload-view-netflix' %}">Upload Data</a>
     {% endblock upload %}
+    {% block about %}
+          <a class="nav-link" href="{% url 'about-this-netflix' %}">About This</a>
+    {% endblock about %}
     {% block plots %}
             <a class="nav-link" href="{% url 'spotify-plots' %}">Plots</a>
     {% endblock plots %}

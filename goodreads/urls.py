@@ -16,6 +16,7 @@ urlpatterns = [
     path("popularity-spectrum/", popularity_spectrum_view, name="popularity-spectrum"),
     path("summary-plot/", summary_plot_view, name="summary-plot"),
     path("about-this/", about_this, name="about-this"),
+    path("about-this-netflix/", about_this_netflix, name="about-this-netflix"),
     path("books-home/", books_home, name="books-home"),
     path("music-home/", music_home, name="music-home"),
     path("plots/", plots_view, name="plots"),
@@ -27,4 +28,5 @@ urlpatterns = [
     path("upload-view-netflix/", upload_view_netflix, name="upload-view-netflix"),
     path("upload-netflix/", upload_netflix, name="upload-netflix"),
     path("netflix-plots/", netflix_plots_view, name="netflix-plots"),
+    path("gallery-books/", gallery_books, name="gallery-books"),
 ]

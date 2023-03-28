@@ -66,8 +66,19 @@ def about_this(request):
     return render(request, "goodreads/about_this.html")
 
 
+def about_this_spotify(request):
+    return render(request, "spotify/about_this.html")
+
+
+def about_this_netflix(request):
+    return render(request, "netflix/about_this.html")
+
+
 def faq(request):
     return render(request, "goodreads/faq.html")
+
+def gallery_books(request):
+    return render(request, "goodreads/gallery.html")
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
