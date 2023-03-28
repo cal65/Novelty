@@ -50,7 +50,7 @@
 	<p>
         <font size="+10"><b> Welcome to your plots! </b></font>
         <br><br>
-    This opening graph shows some summary statistics about your Spotify history.
+    This opening graph shows some summary statistics about your Netflix history.
 </p>
 </div>
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">OVERALL IMAGE</div>
@@ -68,25 +68,27 @@
     <div class ="plotly">
         <iframe class ="iframe" src="{% static genre_series_url %}" alt="genre"></iframe>
     </div>
-    This shows the different types of shows you've watched grouped by a genre type.
 <br>
     <br>
     <div class="center-text">
-
+        This shows the different types of shows you've watched grouped by a genre type.
         </div>
     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">GENRES DISTRIBUTION - MOVIES</div>
     <div class ="plotly">
         <iframe src="{% static genre_movie_url %}"  class="iframe" alt="genres" /> </iframe>
     </div>
+<div class="center-text">
     This shows the different types of movies you've watched grouped by a genre type.
+</div>
     <br>
     <br>
-     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">TOP SONGS</div>
+     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">ACTOR NETWORK PLOT</div>
     <div class ="plotly">
         <iframe src="{% static network_url %}"  class="iframe" alt="top-songs" /> </iframe>
     </div>
+<div class="center-text">
     And this plot has a lot going on. Hover over to see actors/actresses who have appeared in multiple productions you've seen.
-
+</div>
     <p>
         <br>
         <br>

@@ -18,6 +18,7 @@ function getCookie(name) {
   }
     return cookieValue;
   }
+  
   function upload(){
   const csrftoken = getCookie('csrftoken');
   var form = document.getElementById('csv-form')
@@ -39,6 +40,18 @@ function getCookie(name) {
       })
       return false;
     }
+
+    function toggle(id){
+    var element = document.getElementById(id);
+    var hidden = element.getAttribute("hidden");
+    console.log(hidden)
+
+    if (hidden) {
+       element.removeAttribute("hidden");
+    } else {
+       element.setAttribute("hidden", "hidden");
+    }
+}
 </script>
 <div style="text-align: center;" class="font-bold pt-4 text-3xl">NETFLIX ANALYSIS</div>
     {% if messages %}
@@ -69,7 +82,7 @@ function getCookie(name) {
 </div>
 
 <div class = "center">
-   Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Upload</span>. This may take some time for your browser to process, based on the size of your upload. Then click <span class="text-blue-800">Analyze</span> when you can. Afterwards, navigate to your <span class="text-blue-800"><a href="{% url 'spotify-plots' %}">Plots</a></span> page.
+   Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Upload</span>. This may take some time for your browser to process, based on the size of your upload. Then click <span class="text-blue-800">Analyze</span> when you can. Afterwards, navigate to your <span class="text-blue-800"><a href="{% url 'netflix-plots' %}">Plots</a></span> page.
 </div>
 <br><br>
 

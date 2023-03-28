@@ -243,3 +243,4 @@ def main(username):
     df_network = pd.merge(df_merged, actors_df, on='netflix_id', how='left').drop_duplicates(subset='name')
     fig_network = plot_network(df_network, username)
     save_fig(fig_network, f"goodreads/static/Graphs/{username}/netflix_network_{username}.html")
+    df_network.to_csv(f"goodreads/static/Graphs/{username}/netflix_process_{username}.csv", index=False)
