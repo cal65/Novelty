@@ -116,7 +116,8 @@ def simplify_genres(genres):
         "Supernatural Thrillers": "Thrillers",
         "Drama": "Dramas",
         "Sitcoms": "Comedies",
-        "Stand-Up Comedy & Talk ": "Stand-up Comedy",
+        "Stand-Up Comedy & Talk ": "Stand-Up Comedy",
+        "Stand-up Comedy": "Stand-Up Comedy",
         "Family Sci-Fi & Fantasy": "Sci-Fi & Fantasy",
         "Spoofs & Satires": "Comedies",
         "Kids  for ages 11 to 12": "Kids",
@@ -174,6 +175,30 @@ def plot_timeline(df, username):
         height=len(series_df["name"].unique()) * 12,
         title=f"Netflix Timeline Plot - {username}",
     )
+    fig.update_layout(standard_layout)
+    return fig
+
+def plot_hist(df, username):
+    from scipy.stats import mode
+
+    df['month'] = df['date'].dt.month
+    df['year'] = df['date'].dt.year
+    df_hist = pd.pivot_table(df, index=['month', 'year', 'title_type'],
+                             values=['name'], aggfunc=[len, lambda x: mode(x)[0]]).reset_index()
+    df_hist.columns = ['month', 'year', 'title_type', 'n', 'Top Show']
+    df_hist['segment'] = df_hist['year'].astype(str) + '-' + df_hist['month'].astype(str)
+    fig = go.Figure()
+    for t in df_hist['title_type'].unique():
+        df_plot = df_hist.loc[df_hist['title_type'] == t]
+        fig.add_trace(
+            go.Bar(
+                x=df_plot['segment'],
+                y=df_plot['n'],
+                customdata=df_plot['Top Show'],
+                hovertemplate="<b>Time: %{x}<br> <b>Top Show: %{customdata}",
+                name=t)
+        )
+    fig.update_layout(barmode='overlay', title=f'Netflix History - {username}')
     fig.update_layout(standard_layout)
     return fig
 
@@ -304,6 +329,11 @@ def main(username):
     save_fig(
         fig_genres_m,
         f"goodreads/static/Graphs/{username}/netflix_genres_{username}_movie.html",
+    )
+    fig_hist = plot_hist(df_merged, username)
+    save_fig(
+        fig_hist,
+        f"goodreads/static/Graphs/{username}/netflix_histogram_{username}.html",
     )
     actors_df = pd.DataFrame.from_records(
         NetflixActors.objects.filter(netflix_id__in=nids).values()

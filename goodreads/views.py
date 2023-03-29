@@ -412,7 +412,7 @@ def netflix_plots_view(request):
     username = request.user
 
     timeline_url = "Graphs/{}/netflix_timeline_{}.html".format(username, username)
-    weekly_url = "Graphs/{}/netflix_weekday_plot_{}.jpeg".format(username, username)
+    histogram_url = "Graphs/{}/netflix_histogram_{}.html".format(username, username)
     release_year_url = "Graphs/{}/netflix_year_plot_{}.html".format(username, username)
     genre_series_url = "Graphs/{}/netflix_genres_{}_series.html".format(username, username)
     genre_movie_url = "Graphs/{}/netflix_genres_{}_movie.html".format(username, username)
@@ -427,6 +427,7 @@ def netflix_plots_view(request):
             "timeline_url": timeline_url,
             "genre_series_url": genre_series_url,
             "genre_movie_url": genre_movie_url,
+            "histogram_url": histogram_url,
             "network_url": network_url,
         },
     )
