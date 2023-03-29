@@ -149,6 +149,7 @@ def plot_timeline(df, username):
             "username": len,
         },
     ).reset_index()
+    colors = px.colors.qualitative.Dark24
     for i, genre in enumerate(series_df["genre_chosen"].unique()):
         g_df = series_df.loc[series_df["genre_chosen"] == genre]
         for j, nid in enumerate(g_df["netflix_id"].unique()):
@@ -158,12 +159,12 @@ def plot_timeline(df, username):
                     x=s_df["date"],
                     y=s_df["name"],
                     mode="lines+markers",
-                    marker=dict(color=i, size=s_df["username"] * 5),
-                    line=dict(dash="dash"),
-                    customdata=s_df["season"],
+                    marker=dict(color=colors[i % 24], size=s_df["username"] * 5),
+                    line=dict(dash="dash", color='rgba(0, 0, 0, 0.3)'),
+                    customdata=np.stack((s_df['season'], s_df['username']), axis=-1),
                     name=genre,
                     text=s_df["episode"],
-                    hovertemplate="date: %{x} <br>name: %{y} - <br>%{customdata} <br>%{text}",
+                    hovertemplate="<b>Date:</b> %{x} <br><b>Name:</b> %{y} <br>%{customdata[0]} %{text} <br><b>Count:</b> %{customdata[1]}",
                     legendgroup=genre,
                     showlegend=j == 0,
                 )
