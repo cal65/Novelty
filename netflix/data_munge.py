@@ -90,9 +90,7 @@ def unique_non_null(s):
 
 
 def unique_cast(df, name="name"):
-    """
-
-    """
+    """ """
     cast_df = pd.pivot_table(
         df, index=[name], values=["cast"], aggfunc=lambda x: unique_non_null(x)
     )
@@ -172,7 +170,7 @@ def query_title(title: str):
         return
     results = results_all[0]  # take first search
     series_results = pd.Series(results)
-    series_results['title'] = series_results['title'].replace('&#39;', '')
+    series_results["title"] = series_results["title"].replace("&#39;", "")
     return series_results
 
 
@@ -214,7 +212,7 @@ def get_genres(netflix_id):
     results = response.json()["results"]
     genres = [r["genre"] for r in results]
     genres = ", ".join(genres)
-    genres = genres.replace('&#39;', '')
+    genres = genres.replace("&#39;", "")
     genre_results = pd.Series({"netflix_id": netflix_id, "genres": genres})
     return genre_results
 
@@ -234,7 +232,7 @@ def get_details(netflix_id):
     if results is None:
         print(f"No genre response found for {netflix_id}")
         return
-    results['title'] = results['title'].replace('&#39;', '')
+    results["title"] = results["title"].replace("&#39;", "")
     return pd.Series(results)
 
 

@@ -53,7 +53,7 @@
     This opening graph shows some summary statistics about your Netflix history.
 </p>
 </div>
-    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">OVERALL IMAGE</div>
+    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">OVERALL TIMELINE</div>
     <div style="display: flex; justify-content: center; height: 650px;">
         <iframe style="width: 60%;" src="{% static timeline_url %}" class="text-center" alt="timeline"></iframe>
     </div>
@@ -64,7 +64,7 @@
 <p id="infotext"></p>
 <br> <br>
 </div>
-    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">GENRES DISTRIBUTION - TV SHOWS</div>
+    <div style="text-align: center;" class="image-title">GENRES DISTRIBUTION - TV SHOWS</div>
     <div class ="plotly">
         <iframe class ="iframe" src="{% static genre_series_url %}" alt="genre"></iframe>
     </div>
@@ -73,7 +73,7 @@
     <div class="center-text">
         This shows the different types of shows you've watched grouped by a genre type.
         </div>
-    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">GENRES DISTRIBUTION - MOVIES</div>
+    <div style="text-align: center; " class="image-title">GENRES DISTRIBUTION - MOVIES</div>
     <div class ="plotly">
         <iframe src="{% static genre_movie_url %}"  class="iframe" alt="genres" /> </iframe>
     </div>
@@ -82,7 +82,7 @@
 </div>
     <br>
     <br>
-     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">ACTOR NETWORK PLOT</div>
+     <div style="text-align: center; " class="image-title">ACTOR NETWORK PLOT</div>
     <div class ="plotly">
         <iframe src="{% static network_url %}"  class="iframe" alt="top-songs" /> </iframe>
     </div>

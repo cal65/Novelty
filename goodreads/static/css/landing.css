@@ -99,6 +99,13 @@
     height: 90%;
 }
 
+.image-title{
+    font-weight: bold;
+    padding-top: 4rem;
+    font-size: 1.5rem;  
+    line-height: 2rem;
+}
+
 .plotly {
     display: flex; 
     justify-content: center; 

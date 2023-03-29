@@ -117,7 +117,7 @@ def plot_timeline(df, username):
                            mode='lines+markers',
                            marker=dict(color=i,
                                        size=s_df['username'] * 5),
-                           # line=dict(color=i),
+                           line=dict(dash='dash'),
                            customdata=s_df['season'],
                            name=genre,
                            text=s_df['episode'],
