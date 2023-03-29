@@ -58,6 +58,7 @@ def plot_genres(df, username, title_type):
         )
     fig.update_layout(
         barmode="stack",
+        xaxis_title="Number of Shows",
         title=f"Netflix Genres - {username} - {title_type.capitalize()}",
     )
     fig.update_layout(standard_layout)
@@ -205,7 +206,7 @@ def plot_hist(df, username):
 
 def plot_network(df, username):
     G = nd.format_network(df)
-    pos = nx.kamada_kawai_layout(G, scale=0.2)
+    pos = nx.kamada_kawai_layout(G, scale=0.3)
     edge_x = []
     edge_y = []
     for edge in G.edges():
@@ -224,54 +225,48 @@ def plot_network(df, username):
         line=dict(width=0.5, color="#888"),
         hoverinfo="none",
         mode="lines",
+        showlegend=False,
     )
 
     node_x = []
     node_y = []
+    show_bool = []
     for node in G.nodes():
         x, y = pos[node]
         node_x.append(x)
         node_y.append(y)
+        show_bool.append(node in df["title"].unique())
 
-    node_trace = go.Scatter(
-        x=node_x,
-        y=node_y,
-        mode="markers",
-        hoverinfo="text",
-        marker=dict(
-            showscale=True,
-            colorscale="YlGnBu",
-            reversescale=True,
-            color=[],
-            size=10,
-            colorbar=dict(
-                thickness=15,
-                title="Node Connections",
-                xanchor="left",
-                titleside="right",
-            ),
-            line_width=2,
-        ),
-    )
-    color_mapper = {n: int(n in pd.unique(df["title"].unique())) for n in G.nodes()}
-    node_values = [int(n in pd.unique(df["title"].unique())) for n in G.nodes()]
     node_names = list(G.nodes)
     node_adjacencies = []
     node_text = []
     for node, adjacencies in enumerate(G.adjacency()):
         node_adjacencies.append(len(adjacencies[1]))
         node_text.append(
-            f"{node_names[node]}<br> # of connections: {str(len(adjacencies[1]))}"
+            f"<b>{node_names[node]}</b><br> # of connections: {str(len(adjacencies[1]))}"
         )
 
-    node_trace.marker.color = node_values
-    node_trace.text = node_text
-    fig = go.Figure(
-        data=[edge_trace, node_trace],
-        layout=go.Layout(
+    fig = go.Figure()
+    fig.add_trace(edge_trace)
+    for sb in [True, False]:
+        fig.add_trace(
+            go.Scatter(
+                x=[n for n, b in zip(node_x, show_bool) if b is sb],
+                y=[n for n, b in zip(node_y, show_bool) if b is sb],
+                mode="markers",
+                text=[t for t, b in zip(node_text, show_bool) if b is sb],
+                name="Actor" if sb else "Show",
+                hoverinfo="text",
+                marker=dict(
+                    size=10,
+                    line_width=2,
+                ),
+            )
+        )
+
+    fig.update_layout(
             title=f"Netflix Actors Network Graph - {username}",
             titlefont_size=16,
-            showlegend=False,
             hovermode="closest",
             margin=dict(b=20, l=5, r=5, t=40),
             annotations=[
@@ -286,7 +281,6 @@ def plot_network(df, username):
             ],
             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        ),
     )
     fig.update_layout(standard_layout)
     return fig
