@@ -15,10 +15,9 @@ from mizani.formatters import percent_format
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
 from plotly.subplots import make_subplots
-
-
 from pandas.api.types import CategoricalDtype
 
+from spotify.plotting.plotting import  standard_layout
 import logging
 
 logging.basicConfig(
@@ -603,11 +602,10 @@ def create_read_plot_heatmap(
 
     fig.update_layout(
         title="Popularity Spectrum",
-        # width=1200,
-        # height=900,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
     )
+    fig.update_layout(standard_layout)
 
     filename = f"goodreads/static/Graphs/{username}/read_heatmap_{username}.html"
     fig.write_html(file=filename)
