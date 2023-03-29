@@ -38,6 +38,18 @@
           });
         })
     }
+    $(document).ready(function() {
+    $.ajax({
+        url: '/spot-text/',
+        type: 'GET',
+        success: function(data) {
+            $('#info').html(data.info_text);
+        },
+        error: function(xhr, errmsg, err) {
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+});
 
 
     $('#infotext').load("{% static info_text %}");
@@ -57,13 +69,9 @@
     <div style="display: flex; justify-content: center; height: 650px;">
         <iframe style="width: 60%;" src="{% static overall_url %}" class="text-center" alt="popularity"></iframe>
     </div>
-        <div class="center-text">
-        <p>  <iframe src="{% static info_text %}" class= "center-image center-text" style="size: 10">  </iframe></p> 
+        <div class="answer" id ="info">
     </div>
 
-        <br>
-        <br>
-<p id="infotext"></p>
 <br> <br>
 </div>
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">POPULARITY IMAGE</div>

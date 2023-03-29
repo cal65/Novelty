@@ -4,7 +4,8 @@ import sys
 from datetime import datetime
 import pandas as pd
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 sys.path.append("..")
@@ -17,7 +18,7 @@ from netflix.plotting import plotting as nplot
 
 from .plotting import plotting as gplot
 
-from django.contrib.auth.decorators import login_required
+
 from .scripts.append_to_export import (
     convert_to_ExportData,
     convert_to_Authors,
@@ -180,6 +181,13 @@ def runscriptNetflix(request):
 
     return netflix_plots_view(request)
 
+def spot_text(request):
+    username = request.user
+    info_text_url = "goodreads/static/Graphs/{}/spotify_summary_{}.txt".format(username, username)
+    with open(info_text_url) as f:
+        lines = f.readlines()
+    info_text = "".join(lines)
+    return JsonResponse({'info_text': info_text})
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def spot_plots_view(request):
@@ -193,7 +201,6 @@ def spot_plots_view(request):
     daily_url = "Graphs/{}/spotify_daily_plot_{}.html".format(username, username)
     release_year_url = "Graphs/{}/spotify_year_plot_{}.html".format(username, username)
     genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
-    info_text = "Graphs/{}/spotify_summary_{}.txt".format(username, username)
     top_songs_url = "Graphs/{}/spotify_top_songs_{}.html".format(username, username)
 
     if "run_script_function" in request.POST:
@@ -208,7 +215,6 @@ def spot_plots_view(request):
             "daily_url": daily_url,
             "release_year_url": release_year_url,
             "genre_url": genre_url,
-            "info_text": info_text,
             "top_songs_url": top_songs_url,
         },
     )
