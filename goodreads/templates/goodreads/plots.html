@@ -89,17 +89,17 @@
         Below is an interactive map of the countries represented by the authors you have read.
     </div>
         <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">NATIONALITY MAP IMAGE</div>
-    <div class="center-text" style="display: flex; justify-content: center; width: 60%; height: 650px;">
-        <iframe style="height: 100%; width: 100%; display: block;" src="{% static nationality_map_url %}" class="text-center" alt="nationality-map" />
+    <div class="plotly">
+        <iframe src="{% static nationality_map_url %}" class="text-center" alt="nationality-map" />
     </iframe>
     </div>
     <br><br><br>
-    <div class="center-text">
+    <div class="plotly">
         Below is an interactive plot of the books you've read and what month you read them.
     </div>
         <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">MONTHLY READING HISTORY</div>
     <div style="display: flex; justify-content: center;">
-        <iframe style="width: 80%; height: 650px;" src="{% static monthly_pages_read_url %}" class="text-center" alt="nationality-map" />
+        <iframe src="{% static monthly_pages_read_url %}" class="text-center" alt="nationality-map" />
     </iframe>
     </div>
     <br>
