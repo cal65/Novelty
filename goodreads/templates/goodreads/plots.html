@@ -90,18 +90,18 @@
     </div>
         <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">NATIONALITY MAP IMAGE</div>
     <div class="plotly">
-        <iframe src="{% static nationality_map_url %}" class="text-center" alt="nationality-map" />
+        <iframe src="{% static nationality_map_url %}"  class="iframe" alt="nationality-map" />
     </iframe>
     </div>
     <br><br><br>
-    <div class="plotly">
+    <div class="center-text">
         Below is an interactive plot of the books you've read and what month you read them.
     </div>
         <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">MONTHLY READING HISTORY</div>
-    <div style="display: flex; justify-content: center;">
-        <iframe src="{% static monthly_pages_read_url %}" class="text-center" alt="nationality-map" />
+    <div class="plotly">
+        <iframe src="{% static monthly_pages_read_url %}" class="iframe"  alt="nationality-map" />
     </iframe>
     </div>
-    <br>
+    <br> <br>
     <br> <br>
 {% endblock content %}

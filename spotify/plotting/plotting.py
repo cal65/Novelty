@@ -306,8 +306,8 @@ def write_new_info(df):
         f"{song} by {artist}"
         for song, artist in zip(sample_df["trackname"], sample_df["artistname"])
     ]
-    text = f"You listened to the most new songs around {max_new['date'].date()},"
-    text += f"such as {songs[0]}, {songs[1]} and {songs[2]}."
+    text = f"You listened to the most new songs around {max_new['date'].date()}, "
+    text += f"such as <b>{songs[0]}</b>, <b>{songs[1]}</b> and <b>{songs[2]}</b>."
 
     return text
 
@@ -807,7 +807,7 @@ def write_skips_summary(df, track_col="trackname", artist_col="artistname"):
     )
     played = skips_df["n"].values[:2].astype(int)
     skipped = skips_df["skips"].values[:2].astype(int)
-    text = f"Your most skipped tracks are {skippedTracks[0]} and {skippedTracks[1]} which you "
+    text = f"Your most skipped tracks are <b>{skippedTracks[0]}</b> and <b>{skippedTracks[1]}</b> which you "
     text += f"skipped {skipped[0]} out of {played[0]}  and {skipped[1]} times out of {played[1]} respectively."
     return text
 
@@ -848,7 +848,7 @@ def write_last_listened(df):
         song_i = np.argmax(last_listen_df['residuals'])
         forgotten_song = last_listen_df.iloc[song_i]
 
-    text = f"You listened to {forgotten_song['trackname']} by {forgotten_song['artistname']} {forgotten_song['n']} times in this period."
+    text = f"You listened to <b>{forgotten_song['trackname']}</b> by {forgotten_song['artistname']} {forgotten_song['n']} times in this period."
     text += (
         f"  However you haven't listened to it in {forgotten_song['days_since']} days"
     )
