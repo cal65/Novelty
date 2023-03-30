@@ -78,8 +78,17 @@ def about_this_netflix(request):
 def faq(request):
     return render(request, "goodreads/faq.html")
 
+
 def gallery_books(request):
     return render(request, "goodreads/gallery.html")
+
+
+def gallery_music(request):
+    return render(request, "spotify/gallery.html")
+
+
+def gallery_streaming(request):
+    return render(request, "netflix/gallery.html")
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
@@ -156,7 +165,6 @@ def plots_view(request):
     )
 
 
-
 def runscript(request):
     logger.info(f"Running script with request method {request.method}")
     if request.method == "POST" and "runscript" in request.POST:
@@ -173,6 +181,7 @@ def runscriptSpotify(request):
 
     return spot_plots_view(request)
 
+
 def runscriptNetflix(request):
     username = request.user
     logger.info(f"Running Netflix script with request method {request.method}")
@@ -181,13 +190,17 @@ def runscriptNetflix(request):
 
     return netflix_plots_view(request)
 
+
 def spot_text(request):
     username = request.user
-    info_text_url = "goodreads/static/Graphs/{}/spotify_summary_{}.txt".format(username, username)
+    info_text_url = "goodreads/static/Graphs/{}/spotify_summary_{}.txt".format(
+        username, username
+    )
     with open(info_text_url) as f:
         lines = f.readlines()
     info_text = "".join(lines)
-    return JsonResponse({'info_text': info_text})
+    return JsonResponse({"info_text": info_text})
+
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def spot_plots_view(request):
@@ -333,9 +346,11 @@ def upload_spotify(request):
     # load up the existing data in database for this user
     loaded_df = splot.load_streaming(user)
     if len(loaded_df) > 0:
-        loaded_df['endtime'] = pd.to_datetime(loaded_df['endtime'], utc=True)
-        df['endtime'] = pd.to_datetime(df['endtime'], utc=True)
-        logger.info(f"df: {df['endtime'].values[:5]}, \nloaded_df: {loaded_df['endtime'].values[:5]}")
+        loaded_df["endtime"] = pd.to_datetime(loaded_df["endtime"], utc=True)
+        df["endtime"] = pd.to_datetime(df["endtime"], utc=True)
+        logger.info(
+            f"df: {df['endtime'].values[:5]}, \nloaded_df: {loaded_df['endtime'].values[:5]}"
+        )
         df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(
             keep=False
         )  # nifty line to keep just new data
@@ -349,9 +364,7 @@ def upload_spotify(request):
     df_new.to_csv(
         f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv", index=False
     )
-    logger.info(
-        f"starting spotify tracks api calls for {user}"
-    )
+    logger.info(f"starting spotify tracks api calls for {user}")
     populateSpotifyTracks(df)
 
     return render(request, template)
@@ -364,6 +377,7 @@ def populateSpotifyStreaming(df, user):
         axis=1,
     )
     return spotifyStreamingObjs
+
 
 def populateSpotifyTracks(df):
     de.update_tracks(df)
@@ -395,19 +409,17 @@ def upload_netflix(request):
     df = pd.read_csv(csv_file)
     df.to_csv(f"goodreads/static/Graphs/{user}/netflix_history_{user}.csv")
     df.columns = [c.lower() for c in df.columns]
-    df['date'] = pd.to_datetime(df['date'])
+    df["date"] = pd.to_datetime(df["date"])
     # load up the existing data in database for this user
-    logger.info(
-        f"starting Netflix table addition for {len(df)} rows out of original "
-    )
+    logger.info(f"starting Netflix table addition for {len(df)} rows out of original ")
     nd.ingest_netflix(df, user)
     logger.info(f"Netflix ingestion complete")
     df = nd.pipeline_steps(df=df)
     logger.info(df.head())
-    df_unmerged = df.loc[pd.isnull(df['netflix_id'])]
+    df_unmerged = df.loc[pd.isnull(df["netflix_id"])]
     n_miss = len(df_unmerged)
     logger.info(f"Number of unmerged shows {n_miss}")
-    for name in df_unmerged['name']:
+    for name in df_unmerged["name"]:
         nd.lookup_and_insert(name)
 
     return render(request, template)
@@ -420,8 +432,12 @@ def netflix_plots_view(request):
     timeline_url = "Graphs/{}/netflix_timeline_{}.html".format(username, username)
     histogram_url = "Graphs/{}/netflix_histogram_{}.html".format(username, username)
     release_year_url = "Graphs/{}/netflix_year_plot_{}.html".format(username, username)
-    genre_series_url = "Graphs/{}/netflix_genres_{}_series.html".format(username, username)
-    genre_movie_url = "Graphs/{}/netflix_genres_{}_movie.html".format(username, username)
+    genre_series_url = "Graphs/{}/netflix_genres_{}_series.html".format(
+        username, username
+    )
+    genre_movie_url = "Graphs/{}/netflix_genres_{}_movie.html".format(
+        username, username
+    )
     network_url = "Graphs/{}/netflix_network_{}.html".format(username, username)
 
     if "run_script_function" in request.POST:

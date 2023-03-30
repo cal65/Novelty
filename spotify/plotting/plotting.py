@@ -135,18 +135,24 @@ def format_song_day(df, artist_col, song_col, date_col):
     df_song_day = pd.DataFrame(
         df.groupby([artist_col, song_col, date_col], as_index=False).size()
     )
-    df_song_day.rename(columns={'size': "n"}, inplace=True)
-    top_songs_df = pd.DataFrame(df.groupby([artist_col, song_col], as_index=False).size())
-    top_songs_df.sort_values('size', ascending=False, inplace=True)
+    df_song_day.rename(columns={"size": "n"}, inplace=True)
+    top_songs_df = pd.DataFrame(
+        df.groupby([artist_col, song_col], as_index=False).size()
+    )
+    top_songs_df.sort_values("size", ascending=False, inplace=True)
     top_songs_df = top_songs_df.head(10)
     logger.info(f"top songs: {top_songs_df}")
-    df_song_day_select = df_song_day[(df_song_day[artist_col].isin(top_songs_df[artist_col])) &
-                                     (df_song_day[song_col].isin(top_songs_df[song_col]))]
+    df_song_day_select = df_song_day[
+        (df_song_day[artist_col].isin(top_songs_df[artist_col]))
+        & (df_song_day[song_col].isin(top_songs_df[song_col]))
+    ]
     return df_song_day_select
 
 
 def plot_song_day(df, artist_col, song_col, date_col):
-    df_song = format_song_day(df=df, artist_col=artist_col, song_col=song_col, date_col=date_col)
+    df_song = format_song_day(
+        df=df, artist_col=artist_col, song_col=song_col, date_col=date_col
+    )
     num_songs = len(pd.unique(df_song[song_col]))
     artists = df_song[artist_col].unique()
 
@@ -408,35 +414,31 @@ def format_daily(df, date_col="endtime"):
 def plot_daily(df, date_col="endtime"):
     df = format_daily(df, date_col=date_col)
     fig = go.Figure()
-    weekend_df = df.loc[df['weekend'] == True]
-    weekday_df = df.loc[df['weekend'] == False]
+    weekend_df = df.loc[df["weekend"] == True]
+    weekday_df = df.loc[df["weekend"] == False]
     fig.add_trace(
         go.Scatter(
-            x=weekend_df['time_minute'],
-            y=weekend_df['minutes_scaled'],
-            customdata=weekend_df['time_period'],
+            x=weekend_df["time_minute"],
+            y=weekend_df["minutes_scaled"],
+            customdata=weekend_df["time_period"],
             hovertemplate="Time: <b>%{customdata}</b>",
-            name='Weekend',
-            line=dict(color='firebrick', width=2)
+            name="Weekend",
+            line=dict(color="firebrick", width=2),
         )
     )
     fig.add_trace(
         go.Scatter(
-            x=weekday_df['time_minute'],
-            y=weekday_df['minutes_scaled'],
-            customdata=weekday_df['time_period'],
+            x=weekday_df["time_minute"],
+            y=weekday_df["minutes_scaled"],
+            customdata=weekday_df["time_period"],
             hovertemplate="Time: <b>%{customdata}</b>",
-            name='Weekday',
-            line=dict(color='blue', width=2)
+            name="Weekday",
+            line=dict(color="blue", width=2),
         )
-    )
-    fig.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        xaxis=dict(ticktext=pd.unique(df['time_period']),
-                   title="Time")
     )
     fig.update_layout(standard_layout)
+    fig.update_layout(xaxis=dict(ticktext=pd.unique(df["time_period"]), title="Time"))
+
     return fig
 
 
@@ -684,6 +686,7 @@ def plot_popularity(
     fig.update_layout(
         title="Popularity",
         title_x=0.5,
+        xaxis_title="Popularity (Spotify calculation)",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
     )
@@ -761,7 +764,9 @@ def plot_daily(df, date_col="endtime"):
             line=dict(color="blue", width=2),
         )
     )
-    fig.update_layout(xaxis=dict(ticktext=pd.unique(daily_df["time_period"])))
+    fig.update_layout(
+        xaxis=dict(ticktext=pd.unique(daily_df["time_period"]), title="Time")
+    )
     fig.update_layout(standard_layout)
     return fig
 
@@ -842,13 +847,13 @@ def write_last_listened(df):
     last_listen_df["residuals"] = last_listen_df["y"] - lm1.predict(x)
     # which song is the biggest outlier?
     # let's say it hasn't been listened to in at least 7 days
-    last_sub_df = last_listen_df.loc[last_listen_df['days_since'] >= 7]
+    last_sub_df = last_listen_df.loc[last_listen_df["days_since"] >= 7]
     if len(last_sub_df) > 0:
-        song_i = np.argmax(last_sub_df['residuals'])
+        song_i = np.argmax(last_sub_df["residuals"])
         forgotten_song = last_sub_df.iloc[song_i]
     else:
         # if there are no songs over a week, unlikely scenario
-        song_i = np.argmax(last_listen_df['residuals'])
+        song_i = np.argmax(last_listen_df["residuals"])
         forgotten_song = last_listen_df.iloc[song_i]
 
     text = f"You listened to <b>{forgotten_song['trackname']}</b> by {forgotten_song['artistname']} {forgotten_song['n']} times in this period."
@@ -890,6 +895,7 @@ def main(username):
     for i, figure in enumerate(overall):
         for trace in range(len(figure["data"])):
             fig.append_trace(figure["data"][trace], row=i + 1, col=1)
+    fig.update_layout(standard_layout)
     fig.write_html(f"goodreads/static/Graphs/{username}/overall_{username}.html")
 
     fig_year = plot_years(
@@ -918,7 +924,9 @@ def main(username):
         f"goodreads/static/Graphs/{username}/spotify_genre_plot_{username}.html"
     )
 
-    fig_songs = plot_song_day(df, artist_col='artistname', song_col='trackname', date_col='date')
+    fig_songs = plot_song_day(
+        df, artist_col="artistname", song_col="trackname", date_col="date"
+    )
     fig_songs.write_html(
         f"goodreads/static/Graphs/{username}/spotify_top_songs_{username}.html"
     )

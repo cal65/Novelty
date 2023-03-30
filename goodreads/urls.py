@@ -29,5 +29,6 @@ urlpatterns = [
     path("upload-netflix/", upload_netflix, name="upload-netflix"),
     path("netflix-plots/", netflix_plots_view, name="netflix-plots"),
     path("gallery-books/", gallery_books, name="gallery-books"),
+    path("gallery-music/", gallery_music, name="gallery-music"),
     path("spot-text/", spot_text, name="spot-text"),
 ]
