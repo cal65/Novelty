@@ -11,6 +11,12 @@
 	{% block upload %}
             <a class="nav-link" href="{% url 'upload-spotify' %}">Upload Data</a>
     {% endblock upload %}
+    {% block about %}
+          <a class="nav-link" href="{% url 'about-this-spotify' %}">About This</a>
+    {% endblock about %}
     {% block plots %}
             <a class="nav-link" href="{% url 'spotify-plots' %}">Plots</a>
     {% endblock plots %}
+    {% block gallery %}
+            <a class="nav-link" href="{% url 'gallery-music' %}">Gallery</a>
+    {% endblock gallery %}
