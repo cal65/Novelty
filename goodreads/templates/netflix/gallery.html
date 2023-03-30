@@ -1,0 +1,55 @@
+{% extends "goodreads/gallery.html" %}
+
+{% block title %}
+    <title>Streaming Analysis</title>
+{% endblock title %}
+
+<!-- customize navbar -->
+{% block domain-home %}
+        <a class="nav-link" href="{% url 'streaming-home' %}">Music</a>
+{% endblock domain-home %}
+{% block upload %}
+        <a class="nav-link" href="{% url 'upload-view-netflix' %}">Upload Data</a>
+{% endblock upload %}
+{% block about %}
+        <a class="nav-link" href="{% url 'about-this-netflix' %}">About This</a>
+{% endblock about %}
+{% block plots %}
+        <a class="nav-link" href="{% url 'netflix-plots' %}">Plots</a>
+{% endblock plots %}
+{% block gallery %}
+        <a class="nav-link" href="{% url 'gallery-streaming' %}">Gallery</a>
+{% endblock gallery %}
+
+{% block gal-title %}
+<div style="text-align: center;" class="font-bold pt-4 text-3xl">STREAMING GALLERY</div>
+{% endblock gal-title %}
+
+{% block gal-info %}
+    These are the sorts of plots you should expect to see if you run your Netflix export through the site:
+{% endblock gal-info %}
+
+{% block plotly1 %}
+    <iframe class='iframe' src="/static/admin/img/netflix/netflix_timeline_cal65.html" alt="Cal Timeline Plot" > <br></iframe>
+    {% endblock plotly1 %}
+<br>
+<br>
+{% block plotly2 %}
+    <iframe class='iframe' src="/static/admin/img/netflix/netflix_genres_cal65_series.html" alt="Cal Genre Plot" > <br></iframe>
+{% endblock plotly2 %}
+<br>
+<br>
+
+<div class="plotly">
+    {% block plotly3 %}
+    <iframe class='iframe' src="/static/admin/img/netflix/netflix_network_cal65.html" alt="Netflix Network Plot" > <br></iframe>
+{% endblock plotly3 %}
+</div>
+<br>
+    <br>
+    <br>
+    <br>
+
+<br>
+<br>
+

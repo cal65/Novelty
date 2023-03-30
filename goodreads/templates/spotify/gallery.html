@@ -1,0 +1,55 @@
+{% extends "goodreads/gallery.html" %}
+
+{% block title %}
+    <title>Music Analysis</title>
+{% endblock title %}
+
+<!-- customize navbar -->
+{% block domain-home %}
+        <a class="nav-link" href="{% url 'music-home' %}">Music</a>
+{% endblock domain-home %}
+{% block upload %}
+        <a class="nav-link" href="{% url 'upload-spotify' %}">Upload Data</a>
+{% endblock upload %}
+{% block about %}
+        <a class="nav-link" href="{% url 'about-this-spotify' %}">About This</a>
+{% endblock about %}
+{% block plots %}
+        <a class="nav-link" href="{% url 'spotify-plots' %}">Plots</a>
+{% endblock plots %}
+{% block gallery %}
+        <a class="nav-link" href="{% url 'gallery-music' %}">Gallery</a>
+{% endblock gallery %}
+
+{% block gal-title %}
+<div style="text-align: center;" class="font-bold pt-4 text-3xl">MUSIC GALLERY</div>
+{% endblock gal-title %}
+
+{% block gal-info %}
+    These are the sorts of plots you should expect to see if you run your Spotify export through the site:
+{% endblock gal-info %}
+
+{% block plotly1 %}
+    <iframe class='iframe' src="/static/admin/img/spotify/spotify_genre_plot_cal65.html" alt="Cal Genre Plot" > <br></iframe>
+    {% endblock plotly1 %}
+<br>
+<br>
+{% block plotly2 %}
+    <iframe class='iframe' src="/static/admin/img/spotify/spotify_year_plot_cal65.html" alt="Spotify Year Plot" > <br></iframe>
+{% endblock plotly2 %}
+<br>
+<br>
+
+<div class="plotly">
+    {% block plotly3 %}
+    <iframe class='iframe' src="/static/admin/img/spotify/spotify_top_songs_cal65.html" alt="Spotify Year Plot" > <br></iframe>
+    {% endblock plotly3 %}
+</div>
+<br>
+    <br>
+    <br>
+    <br>
+
+<br>
+<br>
+
