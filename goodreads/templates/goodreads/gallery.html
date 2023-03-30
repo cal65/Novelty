@@ -5,18 +5,26 @@
 <div style="text-align: center;" class="font-bold pt-4 text-3xl">BOOKS GALLERY</div>
 {% endblock gal-title %}
 
-<div class = "center font-bold pt-4">
+
+<div class = "center-text">
+    {% block gal-info %}
     These are the sorts of plots you should expect to see if you run your Goodreads export through the site:
+    {% endblock gal-info %}
 </div>
-<div style="display: flex; justify-content: center;">
-    <img style="width: 80%;" src="/static/admin/img/summary_plot.jpeg" alt="Cal Summary Plot" > <br></img>
+
+<div class="plotly">
+    {% block plotly1 %}
+    <iframe class='iframe' src="/static/admin/img/read_heatmap_cal65.html" alt="Cal Summary Plot" > <br></img>
+    {% endblock plotly1 %}
 </div>
 <br>
 <br>
-<div style="display: flex; justify-content: center;">
-    <br>
-    <img style="width: 80%;" src="/static/admin/img/finish_plot.jpeg" alt="Cal Finish Plot"></img>
-    </div>
+<div class="plotly">
+    {% block plotly2 %}
+    <iframe class='iframe' src="/static/admin/img/author_map_cal65.html" alt="Cal Summary Plot" > <br></img>
+    {% endblock plotly2 %}
+</div>
+
 <br>
 <p>
     <br>

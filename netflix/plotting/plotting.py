@@ -152,6 +152,9 @@ def plot_timeline(df, username):
         },
     ).reset_index()
     colors = px.colors.qualitative.Dark24
+    # wrap names to deal with titles that are too long and ruin the plot
+    series_df["name"] = series_df["name"].apply(lambda x: x[:30])
+
     for i, genre in enumerate(series_df["genre_chosen"].unique()):
         g_df = series_df.loc[series_df["genre_chosen"] == genre]
         for j, nid in enumerate(g_df["netflix_id"].unique()):
@@ -173,6 +176,7 @@ def plot_timeline(df, username):
             )
     fig.update_layout(
         yaxis=dict(tickfont=dict(size=9), title="Show Name", tickmode="linear"),
+        xaxis=dict(title='Date'),
         height=len(series_df["name"].unique()) * 12,
         title=f"Netflix Timeline Plot - {username}",
     )
@@ -199,7 +203,8 @@ def plot_hist(df, username):
                 hovertemplate="<b>Time: %{x}<br> <b>Top Show: %{customdata}",
                 name=t)
         )
-    fig.update_layout(barmode='overlay', title=f'Netflix History - {username}')
+    fig.update_layout(barmode='overlay', title=f'Netflix History - {username}',
+                      xaxis=dict(title='Date'))
     fig.update_layout(standard_layout)
     return fig
 
@@ -255,7 +260,7 @@ def plot_network(df, username):
                 y=[n for n, b in zip(node_y, show_bool) if b is sb],
                 mode="markers",
                 text=[t for t, b in zip(node_text, show_bool) if b is sb],
-                name="Actor" if sb else "Show",
+                name="Show" if sb else "Actors",
                 hoverinfo="text",
                 marker=dict(
                     size=10,

@@ -343,6 +343,7 @@ def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=
             title="Minutes",
         ),
     )
+    fig.update_layout(standard_layout)
     return fig
 
 
@@ -432,9 +433,10 @@ def plot_daily(df, date_col="endtime"):
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        xaxis=dict(ticktext=pd.unique(df['time_period']))
+        xaxis=dict(ticktext=pd.unique(df['time_period']),
+                   title="Time")
     )
-    fig.set_layout(standard_layout)
+    fig.update_layout(standard_layout)
     return fig
 
 
@@ -753,7 +755,8 @@ def plot_daily(df, date_col="endtime"):
         go.Scatter(
             x=weekday_df["time_minute"],
             y=weekday_df["minutes_scaled"],
-            hovertemplate="Time: %{x}",
+            customdata=weekday_df["time_period"],
+            hovertemplate="Time: <b>%{customdata}</b>",
             name="Weekday",
             line=dict(color="blue", width=2),
         )
