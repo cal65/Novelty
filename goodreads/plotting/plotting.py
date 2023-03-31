@@ -127,11 +127,11 @@ def read_plot_munge(
     df.sort_values(by="read", inplace=True)
     df[title_col] = df[title_col].astype("category")
     # ['0 - 1,000', '1,000 - 10,000', '10,000 - 100,000', '100,000 - 1,000,000'] using fancy local-aware f:, hack
-    labels = generate_labels([f"{b:,}" for b in breaks])
+    break_labels = generate_labels([f"{b:,}" for b in breaks])
     # adding obscure and bestsellers commentary
-    labels[0] = f"{labels[0]} \n Obscure"
-    labels[-1] = f"{labels[-1]} \n Bestsellers"
-    df["strats"] = pd.cut(df[read_col], bins=breaks, labels=labels, include_lowest=True)
+    break_labels[0] = f"{break_labels[0]} \n Obscure"
+    break_labels[-1] = f"{break_labels[-1]} \n Bestsellers"
+    df["strats"] = pd.cut(df[read_col], bins=breaks, labels=break_labels, include_lowest=True)
     # logging
     strats_count = df["strats"].value_counts()
     logger.info(f"debugging read plot munge: {strats_count}")
