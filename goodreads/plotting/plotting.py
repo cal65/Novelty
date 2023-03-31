@@ -116,9 +116,9 @@ def read_plot_munge(
     df = df[pd.notnull(df[read_col])]
     if len(df) == 0:
         return df
-    max_read = int(df[read_col].max())
     if start_year is not None:
         df = df[df[date_col].dt.year >= start_year]
+    max_read = int(df[read_col].max())
     max_digits = len(str(max_read))
     digit_range = list(range(min_break, max_digits + 1))
     breaks = [0] + [10**d for d in digit_range]
@@ -135,11 +135,6 @@ def read_plot_munge(
     # logging
     strats_count = df["strats"].value_counts()
     logger.info(f"debugging read plot munge: {strats_count}")
-    text_sizes = pd.pivot_table(
-        df, index="strats", aggfunc={"title_length": lambda x: 120 / max(x)}
-    )
-    text_sizes.rename(columns={"title_length": "text_size"}, inplace=True)
-    df = pd.merge(df, text_sizes, on="strats", how="left")
     return df
 
 

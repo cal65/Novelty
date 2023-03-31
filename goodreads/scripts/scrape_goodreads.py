@@ -183,8 +183,12 @@ def get_read_stats(url):
 
     stats_raw = soup.findAll("div", {"class": "infoBoxRowItem"})
     stats = [s.text.strip() for s in stats_raw]
-    added_by_raw = stats[-1]
-    to_reads_raw = stats[-2]
+    try:
+        added_by_raw = stats[-1]
+        to_reads_raw = stats[-2]
+    except Exception as e:
+        logger.info(f"Error {e} for {url}")
+        return null_return
     added_by = re.findall("\d+", added_by_raw)
     to_reads = re.findall("\d+", to_reads_raw)
 
