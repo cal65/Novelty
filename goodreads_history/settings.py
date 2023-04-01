@@ -87,9 +87,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "goodreads_history.wsgi.application"
 
-# remove in production
-AUTH_PASSWORD_VALIDATORS = []
-
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
