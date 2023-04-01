@@ -16,25 +16,10 @@ logger.setLevel(logging.INFO)
 
 
 cookies = {
-    "ccsid": "981-7720517-4539359",
-    "p": "dkCKV365TjqNenOKY4VtqQ6sIm7CTPX-c9d94GhAzRXKWDHD",
-    "likely_has_account": "true",
-    "__utma": "250562704.423302064.1603340854.1621127507.1621198172.295",
-    "allow_behavioral_targeting": "true",
-    "session-id": "141-6452885-9687058",
-    "logged_out_browsing_page_count": "2",
-    "srb_1": "0",
-    "ubid-main": "131-4250835-4161367",
-    "lc-main": "en_US",
-    "csm-hit": "tb:28PZZBK444T48GAAWQ0H+b-4K51QZ90N1KMGMJX1EGE|1667883949756&t:1667883949756&adb:adblk_no",
-    "session-id-time": "2298605691l",
-    "__gads": "ID=df0a6707150d114d:T=1670897981:S=ALNI_MZfGBQsHE3Vk7tICMIg8zJxLI8e8Q",
-    "srb_8": "0_ar",
-    "u": "wAw3MOakONnieoULVHt00uOWrYRoyYDZsk99mGcNYG0A06pv",
-    "locale": "en",
-    "csm-sid": "597-1753354-2882842",
-    "_session_id2": "f7a5a1a7a6f2a35bdc0b8a0252624e2e",
-    "__gpi": "UID=000004048f7baabd:T=1648685718:RT=1677827658:S=ALNI_MYxDQ7dAo3KLoXnssoo0UOLpKL7ow",
+
+    "u": "kRwGi6R5Hb2uGLuh_E_NpfSMHmCVU_pjLh-87uRXc-H4cmC6",
+    "__qca": "P0-58208308-1679029998916; csm-sid=646-6587796-7097540",
+    "__gpi": "UID=000004048f7baabd:T=1648685718:RT=1680296901:S=ALNI_MYxDQ7dAo3KLoXnssoo0UOLpKL7ow",
 }
 
 headers = {
@@ -42,7 +27,6 @@ headers = {
     "Accept-Language": "en-US,en;q=0.9",
     "Cache-Control": "max-age=0",
     "Connection": "keep-alive",
-    # 'Cookie': 'ccsid=981-7720517-4539359; p=dkCKV365TjqNenOKY4VtqQ6sIm7CTPX-c9d94GhAzRXKWDHD; likely_has_account=true; __utma=250562704.423302064.1603340854.1621127507.1621198172.295; allow_behavioral_targeting=true; session-id=141-6452885-9687058; logged_out_browsing_page_count=2; srb_1=0; ubid-main=131-4250835-4161367; lc-main=en_US; csm-hit=tb:28PZZBK444T48GAAWQ0H+b-4K51QZ90N1KMGMJX1EGE|1667883949756&t:1667883949756&adb:adblk_no; session-id-time=2298605691l; __gads=ID=df0a6707150d114d:T=1670897981:S=ALNI_MZfGBQsHE3Vk7tICMIg8zJxLI8e8Q; srb_8=0_ar; u=wAw3MOakONnieoULVHt00uOWrYRoyYDZsk99mGcNYG0A06pv; locale=en; csm-sid=597-1753354-2882842; _session_id2=f7a5a1a7a6f2a35bdc0b8a0252624e2e; __gpi=UID=000004048f7baabd:T=1648685718:RT=1677827658:S=ALNI_MYxDQ7dAo3KLoXnssoo0UOLpKL7ow',
     "DNT": "1",
     "If-None-Match": 'W/"accfd32b1ffcc24b9de5eaf56d15ccc4"',
     "Sec-Fetch-Dest": "document",
