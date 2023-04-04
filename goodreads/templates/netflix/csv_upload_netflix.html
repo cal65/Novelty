@@ -24,6 +24,7 @@ function getCookie(name) {
   var form = document.getElementById('csv-form')
   console.log(arguments)
   console.log(form)
+   $("#progress").toggle()
      $.post({
       url: "{% url 'upload-netflix' %}",
       data:  new FormData(form),
@@ -33,26 +34,18 @@ function getCookie(name) {
       headers: { "X-CSRFToken": csrftoken },
       success: function(data) {
             console.log(data)
+            $("#progress").toggle()
           },
       error: function(data ){
             console.log("Something went wrong");
+             $("#progress").toggle()
           }
       })
-     toggle("progress");
       return false;
     }
 
-    function toggle(id){
-    var element = document.getElementById(id);
-    var hidden = element.getAttribute("hidden");
-    console.log(hidden)
 
-    if (hidden) {
-       element.removeAttribute("hidden");
-    } else {
-       element.setAttribute("hidden", "hidden");
-    }
-}
+
 </script>
 <div style="text-align: center;" class="font-bold pt-4 text-3xl">NETFLIX ANALYSIS</div>
     {% if messages %}
@@ -71,18 +64,18 @@ function getCookie(name) {
                       Streaming Upload
          </button></div>
       </form>
+       <div id = "progress" style="height: 50px; line-height: 50px; display: none; align-items: left;" >
+        <p style="float: left;">Beginning upload..</p>
+        <img src="/static/admin/img/time-hourglass.gif" style="height: 50px; float: left;">
+    </div>
    </div>
 </div>
 <div class="pt-2" style="display: flex; justify-content: center;">
    <form method="POST">
     {% csrf_token %}
-    <button type="submit" name="runscriptNetflix" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
+    <button type="submit" name="runscriptNetflix" class="bg-blue-800 disabled:bg-gray-800 hover:enabled:bg-blue-900 text-white font-bold py-2 px-4 rounded" {{ hasData|yesno:",disabled" }}>
       Analyze
     </button>
-    <div id = "progress" hidden="hidden" style="height: 50px; line-height: 50px; display: flex; align-items: left;" >
-        <p style="float: left;">Beginning upload..</p> 
-        <img src="/static/admin/img/time-hourglass.gif" style="height: 50px; float: left;">
-    </div> 
    </form>
 </div>
 

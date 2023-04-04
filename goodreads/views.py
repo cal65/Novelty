@@ -419,7 +419,7 @@ def upload_netflix(request):
     for name in df_unmerged["name"]:
         nd.lookup_and_insert(name)
 
-    return {'hasData': True}
+    return render({'hasData': True})
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
