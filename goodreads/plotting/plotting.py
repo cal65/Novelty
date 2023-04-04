@@ -281,10 +281,8 @@ def gender_bar_plot(df, gender_col="gender", narrative_col="narrative"):
 
 
 def publication_histogram(df, date_col="original_publication_year", start_year=1800):
-    date_col = "original_publication_year"
-    start_year = 1800
     df_recent = df[df[date_col] > start_year]
-    n_bins = max(len(df_recent) / 10, 10)
+    n_bins = int(max(len(df_recent) / 10, 10))
     return go.Histogram(
         x=df_recent[date_col],
         nbinsx=n_bins,
