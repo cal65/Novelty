@@ -3,10 +3,13 @@ import warnings
 import argparse
 import geopandas as gpd
 
+from netflix.plotting.plotting import save_fig
+
 warnings.simplefilter(action="ignore", category=FutureWarning)
 import pandas as pd
 import numpy as np
-from pandas.api.types import is_numeric_dtype
+from pandas.api.types import is_numeric_dtype, CategoricalDtype
+
 import psycopg2
 import matplotlib
 from plotnine import *
@@ -15,9 +18,8 @@ from mizani.formatters import percent_format
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
 from plotly.subplots import make_subplots
-from pandas.api.types import CategoricalDtype
 
-from spotify.plotting.plotting import  standard_layout
+from spotify.plotting.plotting import standard_layout
 import logging
 
 logging.basicConfig(
@@ -131,7 +133,9 @@ def read_plot_munge(
     # adding obscure and bestsellers commentary
     break_labels[0] = f"{break_labels[0]} \n Obscure"
     break_labels[-1] = f"{break_labels[-1]} \n Bestsellers"
-    df["strats"] = pd.cut(df[read_col], bins=breaks, labels=break_labels, include_lowest=True)
+    df["strats"] = pd.cut(
+        df[read_col], bins=breaks, labels=break_labels, include_lowest=True
+    )
     # logging
     strats_count = df["strats"].value_counts()
     logger.info(f"debugging read plot munge: {strats_count}")
@@ -256,41 +260,38 @@ def finish_plot(
     )
 
 
-def gender_bar_plot(df, username, gender_col="gender", narrative_col="narrative"):
+def gender_bar_plot(df, gender_col="gender", narrative_col="narrative"):
     # ignore nones
-    plot_df = df[(pd.notnull(df[gender_col])) & (pd.notnull(df[narrative_col]))]
-    p = (
-        ggplot(plot_df)
-        + geom_bar(aes(x=narrative_col, fill=gender_col), position=position_dodge())
-        + xlab("")
-        + scale_fill_manual(
-            name="Gender",
-            values={"male": "darkblue", "female": "darkred", "unknown": "green"},
-            drop=False,
-        )
-        + coord_flip()
-        + theme_classic()
-        + theme(
-            legend_position="bottom",
-            plot_title=element_text(hjust=1),
-            axis_text=element_text(size=12),
-        )
-        + ggtitle(f"Summary Plots for {username}")
+    df_gender = pd.DataFrame(
+        df.groupby([gender_col, narrative_col], as_index=False).size()
     )
-    return p
+    traces = []
+    for g in df_gender[gender_col].unique():
+        df_g = df_gender.loc[df_gender[gender_col] == g]
+        traces.append(
+            go.Bar(
+                x=df_g["size"],
+                y=df_g[narrative_col],
+                orientation="h",
+                hovertemplate="<b>Type:</b> %{y}<br><b>Count:</b> %{x}",
+                name=g,
+            )
+        )
+    return traces
 
 
 def publication_histogram(df, date_col="original_publication_year", start_year=1800):
+    date_col = "original_publication_year"
+    start_year = 1800
     df_recent = df[df[date_col] > start_year]
     n_bins = max(len(df_recent) / 10, 10)
-    p = (
-        ggplot(df_recent)
-        + geom_histogram(aes(x=date_col), fill="black", bins=n_bins)
-        + theme_classic()
-        + xlab("Year of Publication")
-        + ylab("Count")
+    return go.Histogram(
+        x=df_recent[date_col],
+        nbinsx=n_bins,
+        customdata=df_recent["title_simple"],
+        hovertemplate="%{customdata}",
+        showlegend=False,
     )
-    return p
 
 
 def plot_longest_books(
@@ -302,18 +303,13 @@ def plot_longest_books(
 ):
     highest = df[pd.notnull(df[pages_col])].sort_values(pages_col).tail(n)
     highest[title_col] = factorize(highest[title_col])
-    highest[my_rating_col] = factorize(highest[my_rating_col])
-    p = (
-        ggplot(highest, aes(x=title_col))
-        + geom_col(aes(y=pages_col, fill=my_rating_col))
-        + geom_text(aes(y=pages_col, label=pages_col), ha="right")
-        + xlab("")
-        + ylab("Number of Pages")
-        + scale_fill_brewer(palette="Blues", name="Your Rating", type="seq")
-        + theme_classic()
-        + coord_flip()
+    return go.Bar(
+        x=highest[pages_col],
+        y=highest[title_col],
+        orientation="h",
+        hovertemplate="<b>Title:</b> %{y}<br><b>Number of Pages:</b> %{x}",
+        showlegend=False,
     )
-    return p
 
 
 def genre_bar_plot(df, n_shelves=4, min_count=3):
@@ -343,19 +339,21 @@ def genre_bar_plot(df, n_shelves=4, min_count=3):
     shelf_table_df.sort_values("Count", ascending=False, inplace=True)
     shelf_table_df["Shelf"] = factorize(shelf_table_df["Shelf"])
 
+    # manual adjustment for smaller datasets
+    if len(df) < 75:
+        min_count = 1
+
     plot_df = shelf_table_df[shelf_table_df["Count"] > min_count]
     plot_df = plot_df.head(30)
 
     if len(plot_df) > 3:
-        p = (
-            ggplot(plot_df)
-            + geom_col(aes(x="Shelf", y="Count"), color="black", fill="darkred")
-            + coord_flip()
-            + theme_classic()
-            + ylab("Number of Books")
-            + theme(axis_text_y=element_text(size=250 / len(plot_df)))
+        return go.Bar(
+            x=plot_df["Count"],
+            y=plot_df["Shelf"],
+            orientation="h",
+            hovertemplate="<b>Shelf:</b> %{y}<br><b>Count:</b> %{x}",
+            showlegend=False,
         )
-        return p
     else:
         logger.info(f"length of eligible data is too small, only {len(plot_df)} rows")
         return None
@@ -377,32 +375,37 @@ def summary_plot(
     """
     Call 4 distinct plot generators. Load them up into a 2x2 grid. Save and return figure.
     """
-    p1 = gender_bar_plot(
-        df, username, gender_col=gender_col, narrative_col=narrative_col
-    )
-    logger.info("gender bar plot")
-    p2 = publication_histogram(df, date_col=date_col, start_year=start_year)
-    logger.info("publication histogram")
-    p3 = plot_longest_books(
-        df, n=15, pages_col=pages_col, title_col=title_col, my_rating_col=my_rating_col
-    )
-    logger.info("longest books")
-    p4 = genre_bar_plot(df, n_shelves=n_shelves, min_count=min_count)
-    logger.info("genre bar plot")
-    p1 = pw.load_ggplot(p1, figsize=(4, 3))
-    p2 = pw.load_ggplot(p2, figsize=(4, 3))
-    p3 = pw.load_ggplot(p3, figsize=(4, 3))
-    p4 = pw.load_ggplot(p4, figsize=(4, 3))
-
-    p1234 = (p1 | p2) / (p3 | p4)
-    p1234.savefig(
-        f"goodreads/static/Graphs/{username}/summary_plot_{username}.jpeg",
-        dpi=300,
-        width=12,
-        height=8,
+    fig = make_subplots(
+        rows=2,
+        cols=2,
+        subplot_titles=(
+            "Gender Summary",
+            "Publication Dates",
+            "Longest Books",
+            "Genres",
+        ),
     )
 
-    return p1234
+    gender_traces = gender_bar_plot(df, gender_col="gender")
+    for trace in gender_traces:
+        fig.add_trace(trace, row=1, col=1)
+
+    fig.add_trace(
+        publication_histogram(df, date_col=date_col, start_year=start_year),
+        row=1,
+        col=2,
+    )
+
+    fig.add_trace(
+        plot_longest_books(df),
+        row=2,
+        col=1,
+    )
+
+    fig.add_trace(genre_bar_plot(df, n_shelves=4, min_count=2), row=2, col=2)
+    fig.update_layout(standard_layout)
+
+    return fig
 
 
 def load_map():
@@ -704,7 +707,11 @@ def main(username):
         df["exclusive_shelf"] == "read"
     ]  # ignore the books that haven't been read
     try:
-        summary_plot(read_df, username)
+        fig_summary = summary_plot(read_df, username)
+        save_fig(
+            fig_summary,
+            f"goodreads/static/Graphs/{username}/goodreads_summary_{username}.html",
+        )
     except Exception as exception:
         logger.info(" summary plot failed: " + str(exception))
     create_read_plot_heatmap(df=read_df, username=username)

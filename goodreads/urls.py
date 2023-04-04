@@ -14,7 +14,6 @@ urlpatterns = [
     path("finish-plot/", finish_plot_view, name="finish-plot"),
     path("nationality-map/", nationality_map_view, name="nationality-map"),
     path("popularity-spectrum/", popularity_spectrum_view, name="popularity-spectrum"),
-    path("summary-plot/", summary_plot_view, name="summary-plot"),
     path("about-this/", about_this, name="about-this"),
     path("about-this-spotify/", about_this_spotify, name="about-this-spotify"),
     path("about-this-netflix/", about_this_netflix, name="about-this-netflix"),

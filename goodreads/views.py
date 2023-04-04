@@ -8,6 +8,8 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
+from .models import NetflixUsers
+
 sys.path.append("..")
 sys.path.append("../spotify/")
 from spotify import data_engineering as de
@@ -128,13 +130,6 @@ def popularity_spectrum_view(request):
     )
 
 
-@login_required(redirect_field_name="next", login_url="user-login")
-def summary_plot_view(request):
-    username = request.user
-    summary_plot_url = "Graphs/{}/summary_plot_{}.jpeg".format(username, username)
-    return render(
-        request, "goodreads/summary_plot.html", {"summary_plot_url": summary_plot_url}
-    )
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
@@ -145,7 +140,7 @@ def plots_view(request):
     popularity_spectrum_url = "Graphs/{}/read_heatmap_{}.html".format(
         username, username
     )
-    summary_plot_url = "Graphs/{}/summary_plot_{}.jpeg".format(username, username)
+    summary_plot_url = "Graphs/{}/goodreads_summary_{}.html".format(username, username)
     monthly_pages_read_url = "Graphs/{}/monthly_pages_read_{}.html".format(
         username, username
     )
@@ -387,6 +382,9 @@ def populateSpotifyTracks(df):
 @login_required(redirect_field_name="next", login_url="user-login")
 def upload_view_netflix(request):
     user = request.user
+    # check whether user has data
+    q = NetflixUsers.objects.filter(username=user).values()
+    hasData = len(q) > 0
     logger.info(f"The request looks like: {request}, {type(request)}")
     template = "netflix/csv_upload_netflix.html"
     if request.method == "POST" and "runscriptNetflix" in request.POST:
@@ -396,13 +394,12 @@ def upload_view_netflix(request):
         runscriptNetflix(request)
         # when script finishes, move user to plots view
         return HttpResponseRedirect("/netflix-plots/")
-    return render(request, template)
+    return render(request, template, {'hasData': hasData})
 
 
 def upload_netflix(request):
     logger.info(f"upload Netflix")
     user = request.user
-    template = "netflix/csv_upload_netflix.html"
     csv_file = request.FILES["file"]
     # save csv file in database
     logger.info(f"Netflix upload started for {user}")
@@ -422,7 +419,7 @@ def upload_netflix(request):
     for name in df_unmerged["name"]:
         nd.lookup_and_insert(name)
 
-    return render(request, template)
+    return {'hasData': True}
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
