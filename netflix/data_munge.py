@@ -380,6 +380,7 @@ def pipeline_steps(df):
     """
     df = df.copy()
     df = df[df["title"] != '']
+    df = df[pd.notnull(df["title"])]
     df["id"] = np.arange(0, len(df))
     df['date'] = pd.to_datetime(df['date'])
     # split the raw Netflix show title into Name, Season and Episode. Add new columns

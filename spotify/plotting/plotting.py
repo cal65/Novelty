@@ -18,6 +18,8 @@ from sklearn import linear_model as lm
 import spotify.data_engineering as de
 import logging
 
+from goodreads.models import SpotifyStreaming, SpotifyTracks
+
 logging.basicConfig(
     filename="logs.txt",
     filemode="a",
@@ -518,6 +520,7 @@ def format_group_granular(
         df["segment"] = df[time_col].dt.month
     else:
         raise Exception("granularity must be one of day, week, month or year")
+    # all granularities also need the year
     df["year"] = df[time_col].dt.year
 
     m_pivotted = pd.pivot_table(
@@ -872,8 +875,19 @@ def write_text(filename, texts):
         f.write(text)
 
 
+def objects_to_df(objects):
+    df = pd.DataFrame.from_records(objects.values())
+    return df
+
+
 def main(username):
-    df = get_data(tracks_query(username))
+    user_df = objects_to_df(SpotifyStreaming.objects.filter(username=username))
+    tracks_df = objects_to_df(
+        SpotifyTracks.objects.filter(
+            artistname__in=user_df["artistname"], trackname__in=user_df["trackname"]
+        )
+    )
+    df = pd.merge(user_df, tracks_df, on=['artistname', 'trackname'], how='left')
     logger.info(f"Spotify data read with {len(df)} rows \n : {df.head()}")
     df = preprocess(df)
 
@@ -894,7 +908,7 @@ def main(username):
     ]
     for i, figure in enumerate(overall):
         for trace in range(len(figure["data"])):
-            fig.append_trace(figure["data"][trace], row=i + 1, col=1)
+            fig.add_trace(figure["data"][trace], row=i + 1, col=1)
     fig.update_layout(standard_layout)
     fig.write_html(f"goodreads/static/Graphs/{username}/overall_{username}.html")
 
