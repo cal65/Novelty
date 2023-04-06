@@ -198,14 +198,17 @@ def search_by_names(trackname: str, artistname: str, searchType: str = "track") 
         logger.info(f"Error {e} for {trackname} and {artistname}")
         return None
 
-    if len(search_items) < 1:
+    if len(search_items) < 1 or search_items is None:
         logger.info(
             "No match found for " + trackname + ", " + artistname + " and " + searchType
         )
         return None
-
-    # call get_historical_track_info which takes a search dictionary and returns the results
-    uri = search_items[0]["id"]
+    try:
+        # call get_historical_track_info which takes a search dictionary and returns the results
+        uri = search_items[0]["id"]
+    except Exception as e:
+        logger.info(f"Error {e} for {trackname} and {artistname}")
+        return None
 
     return uri
 

@@ -5,14 +5,14 @@ import numpy as np
 import psycopg2
 import matplotlib
 import plotly.graph_objects as go
-import plotly.figure_factory as ff
+import plotly.express as px
 from plotly.subplots import make_subplots
 import calendar
+from datetime import date, timedelta
 import matplotlib.pyplot as plt
 from matplotlib import dates
 import seaborn as sns
 import plotly.graph_objs as go
-from datetime import timedelta
 from sklearn import linear_model as lm
 
 import spotify.data_engineering as de
@@ -321,6 +321,9 @@ def write_new_info(df):
 
 
 def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=True):
+    """
+    Timeline plot with a bar chart for a date column, plus a rolling average line of window win
+    """
     fig = go.Figure()
     if podcast:
         for p in [True, False]:
@@ -364,6 +367,33 @@ def format_artist_day(
         df, index=[artist_col, date_col], values=minutes_col, aggfunc=sum
     ).reset_index()
     df_artist_day.columns = [artist_col, date_col, minutes_col]
+    df_artist_day[date_col] = pd.to_datetime(df_artist_day[date_col])
+
+    return df_artist_day
+
+
+def format_artist_list_day(
+    df,
+    artist_list,
+    artist_col="artistname",
+    date_col="date",
+    minutes_col="minutes",
+):
+    """
+    Different unction from `format_artist_day`
+    This one takes a list of artists to keep, which should come from get_top_artists_range
+    It calculates minutes played for all those artists, and lumps everything else into "Other"
+    """
+    df = df.copy()
+    if artist_list is not None:
+        df[artist_col] = [
+            name if name in artist_list else "Other" for name in df[artist_col]
+        ]
+    df_artist_day = pd.pivot_table(
+        df, index=[artist_col, date_col], values=minutes_col, aggfunc=sum
+    ).reset_index()
+    df_artist_day.columns = [artist_col, date_col, minutes_col]
+    df_artist_day[date_col] = pd.to_datetime(df_artist_day[date_col])
 
     return df_artist_day
 
@@ -387,6 +417,139 @@ def plot_top_artists(df, artist_col="artistname", n=5):
         fig.add_trace(
             go.Scatter(x=a_df["date"], y=a_df["minutes"], name=a, mode="lines+markers")
         )
+    fig.update_layout(standard_layout)
+    return fig
+
+
+def get_top_artist_date(
+    df,
+    date_start,
+    date_end,
+    date_col="date",
+    artist_col="artistname",
+    minutes_col="duration",
+):
+    df[date_col] = pd.to_datetime(df[date_col])
+    sub_df = df[(df[date_col] >= date_start) & (df[date_col] <= date_end)]
+    sub_df_pivot = pd.pivot_table(
+        sub_df, index=[artist_col], values=minutes_col, aggfunc=sum
+    ).reset_index()
+    if len(sub_df_pivot) < 1:
+        # there may be no music listened in this period
+        return sub_df_pivot
+    sub_df_pivot.sort_values(by=minutes_col, ascending=False, inplace=True)
+    sub_df_pivot = sub_df_pivot.head(1)
+    sub_df_pivot["date_start"] = date_start
+    sub_df_pivot["date_end"] = date_end
+    sub_df_pivot["date_start"] = sub_df_pivot["date_start"].dt.date
+    sub_df_pivot["date_end"] = sub_df_pivot["date_end"].dt.date
+    return sub_df_pivot
+
+
+def get_top_artists_range(df, periods, artist_col='artistname'):
+    df = df.copy()
+    df = df.loc[df[artist_col] != 'Other']
+    date_range = pd.date_range(
+        start=df["date"].min(), end=df["date"].max(), periods=periods
+    )
+    moments = []
+    for i in range(0, len(date_range) - 1):
+        moments.append(
+            get_top_artist_date(
+                df, date_start=date_range[i], date_end=date_range[i + 1]
+            )
+        )
+    moments_df = pd.concat(moments)
+    moments_df.reset_index(drop=True, inplace=True)
+
+    def mid_date(d1, d2):
+        return pd.to_datetime(pd.Series([d1, d2])).mean()
+
+    moments_df["date_mid"] = moments_df.apply(
+        lambda x: mid_date(x["date_start"], x["date_end"]), axis=1
+    )
+    return moments_df
+
+
+def sunday_of_calenderweek(year, week):
+    first = date(year, 1, 1)
+    base = 0 if first.isocalendar()[1] == 0 else 7
+    return first + timedelta(days=base - first.isocalendar()[2] + 7 * (week - 1))
+
+
+def flatten_adjacent(df, date_col="date_start"):
+    """
+    Recursive function complementing get_top_artists_range
+    Reduces the dataframe if multiple adjacent periods are dominated by the same artist
+    """
+    if len(df) <= 1:
+        return df
+    else:
+        start_date = df[date_col].values[0]
+        if df["artistname"].values[0] == df["artistname"].values[1]:
+            df = df[1:]
+            df[date_col].values[0] = start_date
+            return flatten_adjacent(df)
+        else:
+            return pd.concat([df.head(1), flatten_adjacent(df[1:])])
+
+
+def plot_top_artists_over_time(df, periods=10):
+    artists_range_df = get_top_artists_range(df, periods=periods)
+    artists_range_df = flatten_adjacent(artists_range_df)
+    artist_list = artists_range_df["artistname"].unique()
+
+    artist_df = format_artist_list_day(df, artist_list=artist_list)
+    artist_df_week = format_group_granular(
+        artist_df, granularity="week", index_cols=["artistname"], time_col="date"
+    )
+
+    fig = go.Figure()
+    art_palette = {}
+
+    for i, a in enumerate(artist_df_week["artistname"].unique()):
+        art_palette[a] = px.colors.qualitative.Dark24[i]
+        a_df = artist_df_week.loc[artist_df_week["artistname"] == a]
+        fig.add_trace(
+            go.Bar(
+                x=a_df["date"],
+                y=a_df["minutes"].round(1),
+                customdata=a_df["artistname"],
+                width=60*60*24*7*1000,
+                name=a,
+                hovertemplate="%{customdata}<br><b>Total Minutes:</b>%{y}",
+                marker=dict(color=i),
+            )
+        )
+    fig.update_layout(
+        title="Top Artists over Time", barmode="stack"
+    )
+    full_fig = fig.full_figure_for_development()
+    yrange = full_fig.layout.yaxis.range
+    logger.info(f"artists over time: {artists_range_df}")
+    for i, row in artists_range_df.iterrows():
+        ## y_annot has some above line and some below line
+        y_annot = yrange[1] * (1 + 0.10 * (-1) ** i)
+        fig.add_trace(
+            go.Scatter(
+                x=[row["date_start"], row["date_end"]],
+                y=[yrange[1], yrange[1]],
+                mode="lines",
+                text=row["artistname"],
+                customdata=[row["artistname"]],
+                hovertemplate="<b>Date:</b> %{x}<br>%{customdata}",
+                marker=dict(color=art_palette[row["artistname"]]),
+                showlegend=False,
+            )
+        )
+        fig.add_annotation(
+            x=row["date_mid"],
+            y=y_annot,
+            text=row["artistname"],
+            showarrow=False,
+            font=dict(color=art_palette[row["artistname"]]),
+        )
+
     fig.update_layout(standard_layout)
     return fig
 
@@ -476,7 +639,7 @@ def format_one_hit_wonder(music_df, artist_col="artistname", song_col="trackname
 
 
 def plot_one_hit_wonders(
-    music_df, granularity="month", artist_col="artistname", song_col="trackname", n=4
+    music_df, granularity="month", artist_col="artistname", song_col="trackname", time_col='endtime', n=4
 ):
     one_hit_wonders_df = format_one_hit_wonder(music_df, artist_col=artist_col)
     one_hit_artists = one_hit_wonders_df[artist_col][:n]
@@ -485,7 +648,7 @@ def plot_one_hit_wonders(
         m, granularity=granularity, index_cols=[artist_col, song_col]
     )
     m_pivotted["hit"] = m_pivotted[song_col] + " - " + m_pivotted[artist_col]
-
+    m_pivotted["date"] = m_pivotted[time_col].dt.date
     dates = m_pivotted["date"].unique()
     dates.sort()
     m_pivotted["date_cat"] = pd.Categorical(
@@ -513,9 +676,13 @@ def format_datetime(date):
 def format_group_granular(
     df, granularity, index_cols, time_col="endtime", minutes_col="minutes"
 ):
+    """
+    Group granular time data into a larger time segment, ie from days to weeks
+    Returns df with column names [index_cols, 'segment', 'year', minutes_col, time_col]
+    """
     df = df.copy()
     if granularity == "week":
-        df["segment"] = df[time_col].dt.week
+        df["segment"] = df[time_col].dt.isocalendar().week
     elif granularity == "month":
         df["segment"] = df[time_col].dt.month
     else:
@@ -527,13 +694,8 @@ def format_group_granular(
         df, index=index_cols + ["segment", "year"], values=minutes_col, aggfunc=sum
     ).reset_index()
 
-    if granularity == "month":
-        m_pivotted["date"] = pd.to_datetime(
-            m_pivotted["year"].astype(str)
-            + "-"
-            + m_pivotted["segment"].astype(str)
-            + "-15"
-        )
+    segment_df = pd.pivot_table(df, index=['segment', 'year'], values=time_col, aggfunc=min).reset_index()
+    m_pivotted = pd.merge(m_pivotted, segment_df, on=['segment', 'year'])
 
     return m_pivotted
 
@@ -887,7 +1049,7 @@ def main(username):
             artistname__in=user_df["artistname"], trackname__in=user_df["trackname"]
         )
     )
-    df = pd.merge(user_df, tracks_df, on=['artistname', 'trackname'], how='left')
+    df = pd.merge(user_df, tracks_df, on=["artistname", "trackname"], how="left")
     logger.info(f"Spotify data read with {len(df)} rows \n : {df.head()}")
     df = preprocess(df)
 
@@ -904,7 +1066,7 @@ def main(username):
     overall = [
         plot_overall(df_sums, podcast=True),
         plot_new(count_news),
-        plot_top_artists(df),
+        plot_top_artists_over_time(df),
     ]
     for i, figure in enumerate(overall):
         for trace in range(len(figure["data"])):
