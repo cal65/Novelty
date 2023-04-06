@@ -399,21 +399,28 @@ def format_genre_table(df, genres_avg, n=10):
 
 
 def plot_genre_difference(genre_difference):
-    logger.info(f"plotting genres comparison plot for df of {len(genre_difference)} rows")
-    fig = make_subplots(2, 1)
+    logger.info(
+        f"plotting genres comparison plot for df of {len(genre_difference)} rows"
+    )
     cols = plotly.colors.DEFAULT_PLOTLY_COLORS
+    fig = make_subplots(1, 2, subplot_titles=["Above Average", "Below Average"])
+
     genre_above = genre_difference.loc[genre_difference["Result"] == "Above Average"]
     fig.add_trace(
         go.Bar(
             x=genre_above["Ratio_User"],
             y=genre_above["Shelf"],
-            customdata=genre_above["Ratio_User"].apply(
-                lambda x: format(x / 100, ".2%")
+            customdata=np.stack(
+                (
+                    genre_above["Ratio_User"].apply(lambda x: format(x / 100, ".2%")),
+                    genre_above["titles"],
+                ),
+                axis=-1,
             ),
             orientation="h",
             name="Your Genres",
             marker=dict(color=cols[0]),
-            hovertemplate="Ratio: %{customdata}",
+            hovertemplate="<b>{%y}</b><br><b>Ratio:</b> %{customdata[0]} <br><b>Titles:</b> %{customdata[1]}",
         ),
         row=1,
         col=1,
@@ -428,7 +435,7 @@ def plot_genre_difference(genre_difference):
             orientation="h",
             name="Average Reader's Genres",
             marker=dict(color=cols[1]),
-            hovertemplate="Ratio: %{customdata}",
+            hovertemplate="<b>{%y}</b><br><b>Ratio:</b> %{customdata}",
         ),
         row=1,
         col=1,
@@ -439,17 +446,23 @@ def plot_genre_difference(genre_difference):
         go.Bar(
             x=genre_below["Ratio_User"],
             y=genre_below["Shelf"],
-            customdata=genre_below["Ratio_User"].apply(
-                lambda x: format(x / 100, ".2%")
+            customdata=np.stack(
+                (
+                    genre_below["Ratio_User"].apply(lambda x: format(x / 100, ".2%")),
+                    genre_below["titles"],
+                ),
+                axis=-1,
             ),
             orientation="h",
             name="Your Genres",
             marker=dict(color=cols[0]),
-            hovertemplate="Ratio: %{customdata}",
+            hovertemplate="<b>{%y}</b><br><b>Ratio:</b> %{customdata[0]} <br><b>Titles:</b> %{customdata[1]}",
+            showlegend=False,
         ),
-        row=2,
-        col=1,
+        row=1,
+        col=2,
     )
+
     fig.add_trace(
         go.Bar(
             x=genre_below["Ratio_Total"],
@@ -460,10 +473,11 @@ def plot_genre_difference(genre_difference):
             orientation="h",
             name="Average Reader's Genres",
             marker=dict(color=cols[1]),
-            hovertemplate="Ratio: %{customdata}",
+            hovertemplate="<b>{%y}</b><br><b>Ratio:</b> %{customdata}",
+            showlegend=False,
         ),
-        row=2,
-        col=1,
+        row=1,
+        col=2,
     )
 
     fig.update_layout(title="Genre Comparison")
@@ -651,7 +665,7 @@ def bokeh_world_plot(world_df, username):
     )
 
     p.add_layout(color_bar, "below")
-
+    p.min_border=0
     save(p)
 
 
@@ -832,10 +846,13 @@ def main(username):
         logger.info(" summary plot failed: " + str(exception))
     create_read_plot_heatmap(df=read_df, username=username)
     finish_plot(df, username)
-    genres_avg = pd.read_csv('artifacts/genres_avg.csv')
+    genres_avg = pd.read_csv("artifacts/genres_avg.csv")
     genre_difference = format_genre_table(df, genres_avg=genres_avg, n=10)
     fig_genres = plot_genre_difference(genre_difference)
-    save_fig(fig_genres, f"goodreads/static/Graphs/{username}/goodreads_genre_diff_{username}.html")
+    save_fig(
+        fig_genres,
+        f"goodreads/static/Graphs/{username}/goodreads_genre_diff_{username}.html",
+    )
     # world map plotting
     world_df = load_map()
     nationality_count = return_nationality_count(read_df)
