@@ -22,7 +22,7 @@
         const csrftoken = getCookie('csrftoken');
         $.post({ 
             url: "/run-script-spotify/",
-            data: {runscript:true}, 
+            data: {runscriptSpotify:true}, 
             headers: { "X-CSRFToken": csrftoken } })
         .done(response => {
           console.log("done!", response);

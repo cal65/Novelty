@@ -22,7 +22,7 @@
         const csrftoken = getCookie('csrftoken');
         $.post({ 
             url: "/run-script-netflix/",
-            data: {runscript:true}, 
+            data: {runscriptNetflix:true}, 
             headers: { "X-CSRFToken": csrftoken } })
         .done(response => {
           console.log("done!", response);

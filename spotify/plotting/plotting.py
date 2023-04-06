@@ -1050,7 +1050,7 @@ def main(username):
         )
     )
     df = pd.merge(user_df, tracks_df, on=["artistname", "trackname"], how="left")
-    logger.info(f"Spotify data read with {len(df)} rows \n : {df.head()}")
+    logger.info(f"Spotify data read for {username} with {len(df)} rows \n : {df.head()}")
     df = preprocess(df)
 
     path = f"goodreads/static/Graphs/{username}"
@@ -1071,6 +1071,8 @@ def main(username):
     for i, figure in enumerate(overall):
         for trace in range(len(figure["data"])):
             fig.add_trace(figure["data"][trace], row=i + 1, col=1)
+        for annotation in figure.select_annotations():
+            fig.add_annotation(annotation, row=i + 1, col=1)
     fig.update_layout(standard_layout)
     fig.write_html(f"goodreads/static/Graphs/{username}/overall_{username}.html")
 
