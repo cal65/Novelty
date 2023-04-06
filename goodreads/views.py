@@ -142,6 +142,7 @@ def plots_view(request):
     monthly_pages_read_url = "Graphs/{}/monthly_pages_read_{}.html".format(
         username, username
     )
+    genre_diff_url = f"Graphs/{username}/goodreads_genre_diff_{username}.html"
 
     if "run_script_function" in request.POST:
         run_script_function(request)
@@ -154,6 +155,7 @@ def plots_view(request):
             "nationality_map_url": nationality_map_url,
             "summary_plot_url": summary_plot_url,
             "monthly_pages_read_url": monthly_pages_read_url,
+            "genre_diff_url": genre_diff_url,
         },
     )
 

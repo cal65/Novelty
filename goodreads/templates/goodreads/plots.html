@@ -66,11 +66,20 @@
     <div style="display: flex; justify-content: center; ">
         <img style="width: 80%;" src="{% static finish_plot_url %}"  class="text-center" alt="finish-plot" />
     </div>
-    <p>
+
+        <br>
+        <br>
+    <div class="center-text">
+    This shows the genres that you read, compared to an average. It is split into genres in which you read more than average and those that you read below average. <br> The ratios will not add up to 100% because books can have multiple genres. 
+        </div>
+    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">GENRE COMPARISON IMAGE</div>
+    <div class="plotly">
+        <iframe class="iframe" src="{% static genre_diff_url %}"  alt="genre-comparison-plot" />
+    </div>
+
         <br>
         <br>
 
-</p> </div>
 
         <div class="center-text">
         This shows the number of Goodreads users who have read this book, i.e. its popularity. It is divided into logarithmic tiers. <br>

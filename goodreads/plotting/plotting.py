@@ -399,6 +399,7 @@ def format_genre_table(df, genres_avg, n=10):
 
 
 def plot_genre_difference(genre_difference):
+    logger.info(f"plotting genres comparison plot for df of {len(genre_difference)} rows")
     fig = make_subplots(2, 1)
     cols = plotly.colors.DEFAULT_PLOTLY_COLORS
     genre_above = genre_difference.loc[genre_difference["Result"] == "Above Average"]
@@ -831,6 +832,10 @@ def main(username):
         logger.info(" summary plot failed: " + str(exception))
     create_read_plot_heatmap(df=read_df, username=username)
     finish_plot(df, username)
+    genres_avg = pd.read_csv('artifacts/genres_avg.csv')
+    genre_difference = format_genre_table(df, genres_avg=genres_avg, n=10)
+    fig_genres = plot_genre_difference(genre_difference)
+    save_fig(fig_genres, f"goodreads/static/Graphs/{username}/goodreads_genre_diff_{username}.html")
     # world map plotting
     world_df = load_map()
     nationality_count = return_nationality_count(read_df)

@@ -18,7 +18,7 @@ logger.setLevel(logging.INFO)
 cookies = {
 
     "u": "kRwGi6R5Hb2uGLuh_E_NpfSMHmCVU_pjLh-87uRXc-H4cmC6",
-    "__qca": "P0-58208308-1679029998916; csm-sid=646-6587796-7097540",
+    "__qca": "P0-58208308-1679029998916",
     "__gpi": "UID=000004048f7baabd:T=1648685718:RT=1680296901:S=ALNI_MYxDQ7dAo3KLoXnssoo0UOLpKL7ow",
 }
 
