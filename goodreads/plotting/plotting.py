@@ -2,6 +2,7 @@ import os
 import warnings
 import argparse
 import geopandas as gpd
+import plotly as plotly
 
 from netflix.plotting.plotting import save_fig
 
@@ -310,22 +311,21 @@ def plot_longest_books(
     )
 
 
+def create_melted_genre_df(df, title_col="title_simple"):
+    shelf_columns = [s for s in df.columns if s.startswith("shelf")]
+    genre_df = df[[title_col] + shelf_columns]
+    genre_df_m = pd.melt(genre_df, id_vars="title_simple", value_name="Shelf")
+    genre_df_m = genre_df_m[~genre_df_m["Shelf"].isin(["Fiction", "Nonfiction", ""])]
+    genre_df_m = genre_df_m[pd.notnull(genre_df_m["Shelf"])]
+    return genre_df_m
+
+
 def genre_bar_plot(df, n_shelves=4, min_count=3):
     """
     Because genres are stored in multiple columns starting with 'shelf', to plot them we need to melt the shelves
     Currently 7 shelves are stored, but including them all can lead to a busy graph
     Default is to only show top 4
     """
-
-    def create_melted_genre_df(df):
-        shelf_columns = [s for s in df.columns if s.startswith("shelf")]
-        genre_df = df[shelf_columns]
-        genre_df_m = pd.melt(genre_df, value_name="Shelf")
-        genre_df_m = genre_df_m[
-            ~genre_df_m["Shelf"].isin(["Fiction", "Nonfiction", ""])
-        ]
-        genre_df_m = genre_df_m[pd.notnull(genre_df_m["Shelf"])]
-        return genre_df_m
 
     genre_df_m = create_melted_genre_df(df)
     genre_df_m["shelf_number"] = (
@@ -357,6 +357,119 @@ def genre_bar_plot(df, n_shelves=4, min_count=3):
         return None
 
 
+def format_genre_table(df, genres_avg, n=10):
+    melted_genre_df = create_melted_genre_df(df)
+    genre_count = pd.pivot_table(
+        melted_genre_df,
+        index="Shelf",
+        values="title_simple",
+        aggfunc=[len, lambda x: "<br>".join(x[:3])],
+    ).reset_index()
+    genre_count.columns = ["Shelf", "n", "titles"]
+    genre_count["Ratio_User"] = genre_count["n"] / genre_count["n"].sum()
+    # normalize this so that the average value is 1
+    genre_count["Ratio_User"] = (
+        genre_count["Ratio_User"] / genre_count["Ratio_User"].mean()
+    )
+    #
+    genre_table_merged = pd.merge(genres_avg, genre_count, on="Shelf", how="outer")
+    genre_table_merged["Ratio_User"] = genre_table_merged["Ratio_User"].fillna(0)
+    genre_table_merged["Ratio_Total"] = genre_table_merged["Ratio_Total"].fillna(0)
+    genre_table_merged["Diff"] = genre_table_merged["Ratio_User"].apply(
+        np.sqrt
+    ) - genre_table_merged["Ratio_Total"].apply(np.sqrt)
+    genre_table_merged.sort_values("Diff", inplace=True)
+    # remove special genres
+    genre_table_merged = genre_table_merged.loc[
+        genre_table_merged["Shelf"] != "Audiobook"
+    ]
+    genre_difference = pd.concat(
+        [genre_table_merged.head(n), genre_table_merged.tail(n)]
+    )
+    genre_difference["Result"] = ["Below Average"] * n + ["Above Average"] * n
+    # remove Above Averages when the difference is negative. Rare occasion when user does not have many shelves
+    genre_difference = genre_difference.loc[
+        ~(
+            (genre_difference["Result"] == "Above Average")
+            & (genre_difference["Diff"] < 0)
+        )
+    ]
+
+    return genre_difference
+
+
+def plot_genre_difference(genre_difference):
+    fig = make_subplots(2, 1)
+    cols = plotly.colors.DEFAULT_PLOTLY_COLORS
+    genre_above = genre_difference.loc[genre_difference["Result"] == "Above Average"]
+    fig.add_trace(
+        go.Bar(
+            x=genre_above["Ratio_User"],
+            y=genre_above["Shelf"],
+            customdata=genre_above["Ratio_User"].apply(
+                lambda x: format(x / 100, ".2%")
+            ),
+            orientation="h",
+            name="Your Genres",
+            marker=dict(color=cols[0]),
+            hovertemplate="Ratio: %{customdata}",
+        ),
+        row=1,
+        col=1,
+    )
+    fig.add_trace(
+        go.Bar(
+            x=genre_above["Ratio_Total"],
+            y=genre_above["Shelf"],
+            customdata=genre_above["Ratio_Total"].apply(
+                lambda x: format(x / 100, ".2%")
+            ),
+            orientation="h",
+            name="Average Reader's Genres",
+            marker=dict(color=cols[1]),
+            hovertemplate="Ratio: %{customdata}",
+        ),
+        row=1,
+        col=1,
+    )
+    genre_below = genre_difference.loc[genre_difference["Result"] == "Below Average"]
+
+    fig.add_trace(
+        go.Bar(
+            x=genre_below["Ratio_User"],
+            y=genre_below["Shelf"],
+            customdata=genre_below["Ratio_User"].apply(
+                lambda x: format(x / 100, ".2%")
+            ),
+            orientation="h",
+            name="Your Genres",
+            marker=dict(color=cols[0]),
+            hovertemplate="Ratio: %{customdata}",
+        ),
+        row=2,
+        col=1,
+    )
+    fig.add_trace(
+        go.Bar(
+            x=genre_below["Ratio_Total"],
+            y=genre_below["Shelf"],
+            customdata=genre_below["Ratio_Total"].apply(
+                lambda x: format(x / 100, ".2%")
+            ),
+            orientation="h",
+            name="Average Reader's Genres",
+            marker=dict(color=cols[1]),
+            hovertemplate="Ratio: %{customdata}",
+        ),
+        row=2,
+        col=1,
+    )
+
+    fig.update_layout(title="Genre Comparison")
+    fig.update_layout(standard_layout)
+    return fig
+
+
 def summary_plot(
     df,
     username,
@@ -384,7 +497,9 @@ def summary_plot(
         ),
     )
 
-    gender_traces = gender_bar_plot(df, gender_col="gender")
+    gender_traces = gender_bar_plot(
+        df, gender_col=gender_col, narrative_col=narrative_col
+    )
     for trace in gender_traces:
         fig.add_trace(trace, row=1, col=1)
 
@@ -395,12 +510,14 @@ def summary_plot(
     )
 
     fig.add_trace(
-        plot_longest_books(df),
+        plot_longest_books(df, pages_col=pages_col, title_col=title_col),
         row=2,
         col=1,
     )
 
-    fig.add_trace(genre_bar_plot(df, n_shelves=4, min_count=2), row=2, col=2)
+    fig.add_trace(
+        genre_bar_plot(df, n_shelves=n_shelves, min_count=min_count), row=2, col=2
+    )
     fig.update_layout(standard_layout)
 
     return fig

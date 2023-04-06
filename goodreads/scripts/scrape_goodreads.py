@@ -83,8 +83,12 @@ def get_stats(url, wait=0):
         return null_return
 
     details = soup.find("div", {"class": "FeaturedDetails"})
-    genre_divs = soup.find("div", {"data-testid": "genresList"})
-    shelves = [g.text for g in genre_divs.findAll("a")]
+    try:
+        genre_divs = soup.find("div", {"data-testid": "genresList"})
+        shelves = [g.text for g in genre_divs.findAll("a")]
+    except Exception as e:
+        logger.info(f"Exception {e} encountered for scraping genres")
+        shelves = None
 
     try:
         title = soup.find("h1").text.replace("\n", "")
