@@ -2,7 +2,18 @@ from django.core.management.base import BaseCommand
 
 from goodreads.models import NetflixGenres, NetflixUsers, NetflixActors, Books, Authors
 from netflix import data_munge as nd
+from goodreads.scripts.append_to_export import append_scraping
 import pandas as pd
+import logging
+
+logging.basicConfig(
+    filename="logs.txt",
+    filemode="a",
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    level=logging.INFO,
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
 
@@ -35,3 +46,6 @@ class Command(BaseCommand):
             print(f"Found {i} new genres and {j} new acting casts")
             df = pd.DataFrame.from_records(NetflixActors.objects.all().values())
             df.head().to_csv('debug.csv')
+        if options["domain"] == "Goodreads":
+            books_null = Books.objects.filter(added_by__isnull=True)
+            authors_null = Authors.objects.filter(nationality_chosen__isnull=True)
