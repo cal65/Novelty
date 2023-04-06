@@ -1062,7 +1062,7 @@ def main(username):
     )
     count_news = count_new(new_df)
 
-    fig = make_subplots(3, 1)
+    fig = make_subplots(3, 1, subplot_titles=['Volume Timeline', 'New Songs', 'Top Artists Over Time'])
     overall = [
         plot_overall(df_sums, podcast=True),
         plot_new(count_news),
