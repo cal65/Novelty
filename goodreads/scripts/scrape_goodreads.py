@@ -179,6 +179,8 @@ def get_read_stats(url):
         return null_return
     added_by = re.findall("\d+", added_by_raw)
     to_reads = re.findall("\d+", to_reads_raw)
+    added_by = int(''.join(added_by))
+    to_reads = int(''.join(to_reads))
 
     return {
         "added_by": added_by,
