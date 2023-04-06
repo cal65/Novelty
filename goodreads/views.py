@@ -417,9 +417,9 @@ def upload_netflix(request):
     df = nd.pipeline_steps(df=df)
     logger.info(df.head())
     df_unmerged = df.loc[pd.isnull(df["netflix_id"])]
-    n_miss = len(df_unmerged)
+    n_miss = len(df_unmerged['name'].unique())
     logger.info(f"Number of unmerged shows {n_miss}")
-    for name in df_unmerged["name"]:
+    for name in df_unmerged["name"].unique():
         nd.lookup_and_insert(name)
 
     return render(request, template, {"hasData": True})
