@@ -182,9 +182,8 @@ def append_scraping(book_id, wait):
     book_fields = get_field_names(Books)
     url = scrape_goodreads.create_url(str(book_id))
     scraped_dict = scrape_goodreads.get_stats(url, wait=wait)
-    url_stats = url.replace('show', 'stats')
+    url_stats = url.replace("show", "stats")
     stats_dict = scrape_goodreads.get_read_stats(url_stats)
-    print(stats_dict)
     scraped_dict.update(stats_dict)
     for k, v in scraped_dict.items():
         if k in book_fields:

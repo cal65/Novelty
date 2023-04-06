@@ -665,7 +665,7 @@ def bokeh_world_plot(world_df, username):
     )
 
     p.add_layout(color_bar, "below")
-    p.min_border=0
+    p.min_border = 0
     save(p)
 
 
@@ -756,8 +756,8 @@ def month_plot(
         fig = go.Figure()
         fig.add_trace(
             go.Bar(
-                x=[5],
-                y=[0],
+                x=[0, 0],
+                y=[0, 1],
                 text="Not Enough Data with Date Read Inputted to Plot",
                 width=5,
             )
@@ -797,18 +797,21 @@ def month_plot(
             col=1,
         )
         fig.add_annotation(
-            x=12,
-            y=max(df_month_totals[page_col]),
+            x=13,
+            y=df_month_totals[page_col].mean(),
             text=str(int(year)),
-            xref=f"x{i+1}",
-            yref=f"y{i+1}",
+            xref=f"x{i + 1}",
+            yref=f"y{i + 1}",
+            font=dict(color="white", size=20 - n_years * 0.75),
+            bgcolor="grey",
+            bordercolor="grey",
+            borderwidth=1,
             showarrow=False,
         )
     fig.update_layout(
         showlegend=False,
         title_text=f"Month Breakdown - {username}",
         title_x=0.5,
-        height=n_years * 125,
         uniformtext_minsize=6,
         uniformtext_mode="hide",
         plot_bgcolor="rgba(0,0,0,0)",
@@ -847,7 +850,7 @@ def main(username):
     create_read_plot_heatmap(df=read_df, username=username)
     finish_plot(df, username)
     genres_avg = pd.read_csv("artifacts/genres_avg.csv")
-    genre_difference = format_genre_table(df, genres_avg=genres_avg, n=10)
+    genre_difference = format_genre_table(read_df, genres_avg=genres_avg, n=10)
     fig_genres = plot_genre_difference(genre_difference)
     save_fig(
         fig_genres,
