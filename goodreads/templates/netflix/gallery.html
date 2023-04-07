@@ -40,11 +40,16 @@
 <br>
 <br>
 
-<div class="plotly">
+
     {% block plotly3 %}
+    <iframe class='iframe' src="/static/admin/img/netflix/netflix_histogram_cal65.html" alt="Netflix Volume Plot" > <br></iframe>
+    {% endblock plotly3 %}
+
+
+    {% block plotly4 %}
     <iframe class='iframe' src="/static/admin/img/netflix/netflix_network_cal65.html" alt="Netflix Network Plot" > <br></iframe>
-{% endblock plotly3 %}
-</div>
+    {% endblock plotly4 %}
+
 <br>
     <br>
     <br>

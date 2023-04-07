@@ -14,14 +14,14 @@
 
 <div class="plotly">
     {% block plotly1 %}
-    <iframe class='iframe' src="/static/admin/img/read_heatmap_cal65.html" alt="Cal Summary Plot" > <br></iframe>
+    <iframe class='iframe' src="/static/admin/img/goodreads/goodreads_summary_cal65.html" alt="Cal Summary Plot" > <br></iframe>
     {% endblock plotly1 %}
 </div>
 <br>
 <br>
 <div class="plotly">
     {% block plotly2 %}
-    <iframe class='iframe' src="/static/admin/img/author_map_cal65.html" alt="Cal Author Map" > <br></iframe>
+    <iframe class='iframe' src="/static/admin/img/goodreads/author_map_cal65.html" alt="Cal Author Map" > <br></iframe>
     {% endblock plotly2 %}
 </div>
 
@@ -30,7 +30,12 @@
 <br>
 <div class="plotly">
     {% block plotly3 %}
+    <iframe class='iframe' src="/static/admin/img/read_heatmap_cal65.html" alt="Cal Reading Dist Plot" > <br></iframe>
     {% endblock plotly3 %}
+</div>
+<div class="plotly">
+    {% block plotly4 %}
+    {% endblock plotly4 %}
 </div>
 <br>
 <br>
