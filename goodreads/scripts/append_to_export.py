@@ -104,6 +104,7 @@ def lookup_gender(name):
     # gender
     first_name = get_first_name(name)
     gender = guess_gender(first_name)
+    logger.info(f"Guessed gender for {name}, got {gender}")
     # outcomes from this package can be male, female, andy, or unknown
     if gender not in ["male", "female"]:
         gender = wikipedia.search_person_for_gender(name)

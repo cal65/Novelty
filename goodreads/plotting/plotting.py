@@ -398,7 +398,7 @@ def format_genre_table(df, genres_avg, n=10):
     return genre_difference
 
 
-def plot_genre_difference(genre_difference):
+def plot_genre_difference(genre_difference, username):
     logger.info(
         f"plotting genres comparison plot for df of {len(genre_difference)} rows"
     )
@@ -480,7 +480,7 @@ def plot_genre_difference(genre_difference):
         col=2,
     )
 
-    fig.update_layout(title="Genre Comparison")
+    fig.update_layout(title=f"Genre Comparison for {username}")
     fig.update_layout(standard_layout)
     return fig
 
@@ -802,7 +802,7 @@ def month_plot(
             text=str(int(year)),
             xref=f"x{i + 1}",
             yref=f"y{i + 1}",
-            font=dict(color="white", size=20 - n_years * 0.75),
+            font=dict(color="white", size= min(5, 20 - n_years * 0.75)),
             bgcolor="grey",
             bordercolor="grey",
             borderwidth=1,
@@ -851,7 +851,7 @@ def main(username):
     finish_plot(df, username)
     genres_avg = pd.read_csv("artifacts/genres_avg.csv")
     genre_difference = format_genre_table(read_df, genres_avg=genres_avg, n=10)
-    fig_genres = plot_genre_difference(genre_difference)
+    fig_genres = plot_genre_difference(genre_difference, username)
     save_fig(
         fig_genres,
         f"goodreads/static/Graphs/{username}/goodreads_genre_diff_{username}.html",
@@ -870,7 +870,7 @@ def main(username):
         page_col="number_of_pages",
         title_col="title",
         author_gender_col="gender",
-        lims=[2012, 2022],
+        lims=[2013, 2024],
     )
 
 
