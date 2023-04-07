@@ -290,6 +290,7 @@ def publication_histogram(df, date_col="original_publication_year", start_year=1
         customdata=df_recent["title_simple"],
         hovertemplate="%{customdata}",
         showlegend=False,
+        name='',
     )
 
 
@@ -533,6 +534,7 @@ def summary_plot(
     fig.add_trace(
         genre_bar_plot(df, n_shelves=n_shelves, min_count=min_count), row=2, col=2
     )
+    fig.update_layout(title=f"Summary - {username}")
     fig.update_layout(standard_layout)
 
     return fig
@@ -677,6 +679,7 @@ def create_read_plot_heatmap(
     min_break=3,
     date_col="date_read",
     start_year=None,
+    lim=30,
 ):
     df = read_plot_munge(
         df,
@@ -701,7 +704,7 @@ def create_read_plot_heatmap(
     )
     heatmaps = []
     for i in range(len(strats)):
-        r_strat = df[df["strats"] == strats[i]]
+        r_strat = df[df["strats"] == strats[i]].tail(lim)
         heatmaps.append(
             ff.create_annotated_heatmap(
                 x=[strats[i]],
@@ -729,7 +732,7 @@ def create_read_plot_heatmap(
             fig.layout[f"yaxis{i + 1}"] = dict(visible=False, categoryorder="array")
 
     fig.update_layout(
-        title="Popularity Spectrum",
+        title=f"Popularity Spectrum - {username}",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
     )
