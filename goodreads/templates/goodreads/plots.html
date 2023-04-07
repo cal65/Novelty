@@ -74,7 +74,7 @@
         </div>
     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">GENRE COMPARISON IMAGE</div>
     <div class="plotly">
-        <iframe class="iframe" src="{% static genre_diff_url %}"  alt="genre-comparison-plot" />
+        <iframe class="iframe" src="{% static genre_diff_url %}"  alt="genre-comparison-plot"> </iframe>
     </div>
 
         <br>
@@ -98,8 +98,8 @@
         Below is an interactive map of the countries represented by the authors you have read.
     </div>
         <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">NATIONALITY MAP IMAGE</div>
-    <div class="plotly" style="align-items: center;">
-        <iframe src="{% static nationality_map_url %}" class="iframe" style="height: 650px;" alt="nationality-map" >
+    <div class="plotly" style="align-items: center; height: 950px">
+        <iframe src="{% static nationality_map_url %}" class="iframe" style="height: 950px;" alt="nationality-map" >
     </iframe>
     </div>
     <br><br><br>
@@ -107,7 +107,7 @@
         Below is an interactive plot of the books you've read and what month you read them.
     </div>
         <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">MONTHLY READING HISTORY</div>
-    <div class="plotly">
+    <div class="plotly" style="height: 1000px;">
         <iframe src="{% static monthly_pages_read_url %}" class="iframe"  alt="monthly-history" >
     </iframe>
     </div>
