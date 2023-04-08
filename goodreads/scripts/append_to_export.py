@@ -1,6 +1,7 @@
 import os
 import sys
 
+import numpy as np
 import pandas as pd
 import re
 import logging
@@ -11,11 +12,12 @@ from datetime import datetime
 
 sys.path.append("..")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
-from ..models import ExportData, Authors, Books
+from ..models import ExportData, Authors, Books, RefNationality
 from . import scrape_goodreads
 import gender_guesser.detector as gender_detector
 from .. import google_answer
 from . import wikipedia
+from spotify.plotting.plotting import objects_to_df
 
 logging.basicConfig(
     filename="logs.txt",
@@ -89,12 +91,13 @@ def convert_to_Authors(row):
         if len(nationalities) > 0:
             djangoObj.nationality1 = nationalities[0]
         elif (
-            len(nationalities) > 1
+                len(nationalities) > 1
         ):  # too lazy to figure out if there's a more elegant way to do this
             djangoObj.nationality2 = nationalities[1]
         else:
             djangoObj.nationality1 = ""
 
+        djangoObj.nationality_chosen = djangoObj.nationality1  # TODO: Fix
         logger.info(f"Saving new author {djangoObj.author_name}")
         djangoObj.save()
         return djangoObj
@@ -145,6 +148,35 @@ def nationality_counts(df):
     return count_dict
 
 
+def choose_nationality():
+    authors = Authors.objects.all()
+    count_dict = nationality_counts(df)
+    regions = objects_to_df(RefNationality.objects.all())
+
+    def _choose_a(author):
+        if pd.isnull(author.nationality2):
+            # shortcut, if nationality 2 is NA, they are all NA
+            author.nationality_chosen = author.nationality1
+            author.save()
+            return
+        else:
+            nationalities = [author.nationality1, author.nationality2]
+            counts = [
+                count_dict.get(n) if n in regions["nationality"].values else np.nan
+                for n in nationalities
+            ]
+            if (len(counts) > 0) and (not all(pd.isnull(counts))):
+                author.nationality_chosen = nationalities[np.nanargmin(counts)]
+                author.save()
+                return
+            else:
+                return None
+
+    for a in authors:
+        _choose_a(a)
+    return
+
+
 def query_authors():
     conn = psycopg2.connect(
         host="localhost", database="goodreads", user="cal65", password=post_pass
@@ -168,8 +200,8 @@ def clean_df(goodreads_data):
         goodreads_data[c] = pd.to_datetime(goodreads_data[c], errors="coerce")
         goodreads_data[c] = (
             goodreads_data[[c]]
-            .astype(object)
-            .where(goodreads_data[[c]].notnull(), None)
+                .astype(object)
+                .where(goodreads_data[[c]].notnull(), None)
         )
     return goodreads_data
 

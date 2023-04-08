@@ -153,7 +153,7 @@ def plot_timeline(df, username):
     ).reset_index()
     colors = px.colors.qualitative.Dark24
     # wrap names to deal with titles that are too long and ruin the plot
-    series_df["name"] = series_df["name"].apply(lambda x: x[:30])
+    series_df["name_short"] = series_df["name"].apply(lambda x: x[:40])
 
     for i, genre in enumerate(series_df["genre_chosen"].unique()):
         g_df = series_df.loc[series_df["genre_chosen"] == genre]
@@ -162,14 +162,14 @@ def plot_timeline(df, username):
             fig.add_trace(
                 go.Scatter(
                     x=s_df["date"],
-                    y=s_df["name"],
+                    y=s_df["name_short"],
                     mode="lines+markers",
                     marker=dict(color=colors[i % 24], size=s_df["username"] * 5),
                     line=dict(dash="dash", color='rgba(0, 0, 0, 0.3)'),
-                    customdata=np.stack((s_df['season'], s_df['username']), axis=-1),
+                    customdata=np.stack((s_df['season'], s_df['username'], s_df['name']), axis=-1),
                     name=genre,
                     text=s_df["episode"],
-                    hovertemplate="<b>Date:</b> %{x} <br><b>Name:</b> %{y} <br>%{customdata[0]} %{text} <br><b>Count:</b> %{customdata[1]}",
+                    hovertemplate="<b>Date:</b> %{x} <br><b>Name:</b> %{customdata[2]} <br>%{customdata[0]}<br><b>Count:</b> %{customdata[1]}",
                     legendgroup=genre,
                     showlegend=j == 0,
                 )
@@ -204,7 +204,8 @@ def plot_hist(df, username):
                 name=t)
         )
     fig.update_layout(barmode='overlay', title=f'Netflix History - {username}',
-                      xaxis=dict(title='Date'))
+                      xaxis=dict(title='Date'),
+                      yaxis=dict(title='Count'))
     fig.update_layout(standard_layout)
     return fig
 

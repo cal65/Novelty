@@ -790,6 +790,7 @@ def month_plot(
                 y=df_year[page_col],
                 marker_color=df_year["color"],
                 hovertext=df_year["text"],
+                hovertemplate="%{hovertext}",
                 text=df_year["author"],
                 textposition="inside",
                 textangle=0,
