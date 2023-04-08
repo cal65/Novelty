@@ -165,8 +165,10 @@ def plot_timeline(df, username):
                     y=s_df["name_short"],
                     mode="lines+markers",
                     marker=dict(color=colors[i % 24], size=s_df["username"] * 5),
-                    line=dict(dash="dash", color='rgba(0, 0, 0, 0.3)'),
-                    customdata=np.stack((s_df['season'], s_df['username'], s_df['name']), axis=-1),
+                    line=dict(dash="dash", color="rgba(0, 0, 0, 0.3)"),
+                    customdata=np.stack(
+                        (s_df["season"], s_df["username"], s_df["name"]), axis=-1
+                    ),
                     name=genre,
                     text=s_df["episode"],
                     hovertemplate="<b>Date:</b> %{x} <br><b>Name:</b> %{customdata[2]} <br>%{customdata[0]}<br><b>Count:</b> %{customdata[1]}",
@@ -176,36 +178,47 @@ def plot_timeline(df, username):
             )
     fig.update_layout(
         yaxis=dict(tickfont=dict(size=9), title="Show Name", tickmode="linear"),
-        xaxis=dict(title='Date'),
+        xaxis=dict(title="Date"),
         height=len(series_df["name"].unique()) * 12,
         title=f"Netflix Timeline Plot - {username}",
     )
     fig.update_layout(standard_layout)
     return fig
 
+
 def plot_hist(df, username):
     from scipy.stats import mode
 
-    df['month'] = df['date'].dt.month
-    df['year'] = df['date'].dt.year
-    df_hist = pd.pivot_table(df, index=['month', 'year', 'title_type'],
-                             values=['name'], aggfunc=[len, lambda x: mode(x)[0]]).reset_index()
-    df_hist.columns = ['month', 'year', 'title_type', 'n', 'Top Show']
-    df_hist['segment'] = df_hist['year'].astype(str) + '-' + df_hist['month'].astype(str)
+    df["month"] = df["date"].dt.month
+    df["year"] = df["date"].dt.year
+    df_hist = pd.pivot_table(
+        df,
+        index=["month", "year", "title_type"],
+        values=["name"],
+        aggfunc=[len, lambda x: mode(x)[0]],
+    ).reset_index()
+    df_hist.columns = ["month", "year", "title_type", "n", "Top Show"]
+    df_hist["segment"] = (
+        df_hist["year"].astype(str) + "-" + df_hist["month"].astype(str)
+    )
     fig = go.Figure()
-    for t in df_hist['title_type'].unique():
-        df_plot = df_hist.loc[df_hist['title_type'] == t]
+    for t in df_hist["title_type"].unique():
+        df_plot = df_hist.loc[df_hist["title_type"] == t]
         fig.add_trace(
             go.Bar(
-                x=df_plot['segment'],
-                y=df_plot['n'],
-                customdata=df_plot['Top Show'],
+                x=df_plot["segment"],
+                y=df_plot["n"],
+                customdata=df_plot["Top Show"],
                 hovertemplate="<b>Time: %{x}<br> <b>Top Show: %{customdata}",
-                name=t)
+                name=t,
+            )
         )
-    fig.update_layout(barmode='overlay', title=f'Netflix History - {username}',
-                      xaxis=dict(title='Date'),
-                      yaxis=dict(title='Count'))
+    fig.update_layout(
+        barmode="overlay",
+        title=f"Netflix History - {username}",
+        xaxis=dict(title="Date"),
+        yaxis=dict(title="Count"),
+    )
     fig.update_layout(standard_layout)
     return fig
 
@@ -271,22 +284,22 @@ def plot_network(df, username):
         )
 
     fig.update_layout(
-            title=f"Netflix Actors Network Graph - {username}",
-            titlefont_size=16,
-            hovermode="closest",
-            margin=dict(b=20, l=5, r=5, t=40),
-            annotations=[
-                dict(
-                    text="Kevin Bacon visualization",
-                    showarrow=False,
-                    xref="paper",
-                    yref="paper",
-                    x=0.005,
-                    y=-0.002,
-                )
-            ],
-            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+        title=f"Netflix Actors Network Graph - {username}",
+        titlefont_size=16,
+        hovermode="closest",
+        margin=dict(b=20, l=5, r=5, t=40),
+        annotations=[
+            dict(
+                text="Kevin Bacon visualization",
+                showarrow=False,
+                xref="paper",
+                yref="paper",
+                x=0.005,
+                y=-0.002,
+            )
+        ],
+        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
     )
     fig.update_layout(standard_layout)
     return fig

@@ -91,7 +91,7 @@ def convert_to_Authors(row):
         if len(nationalities) > 0:
             djangoObj.nationality1 = nationalities[0]
         elif (
-                len(nationalities) > 1
+            len(nationalities) > 1
         ):  # too lazy to figure out if there's a more elegant way to do this
             djangoObj.nationality2 = nationalities[1]
         else:
@@ -200,8 +200,8 @@ def clean_df(goodreads_data):
         goodreads_data[c] = pd.to_datetime(goodreads_data[c], errors="coerce")
         goodreads_data[c] = (
             goodreads_data[[c]]
-                .astype(object)
-                .where(goodreads_data[[c]].notnull(), None)
+            .astype(object)
+            .where(goodreads_data[[c]].notnull(), None)
         )
     return goodreads_data
 

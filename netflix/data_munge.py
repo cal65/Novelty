@@ -379,10 +379,10 @@ def pipeline_steps(df):
     Step 1: Merge based on the raw title in Netflix export with database titles
     """
     df = df.copy()
-    df = df[df["title"] != '']
+    df = df[df["title"] != ""]
     df = df[pd.notnull(df["title"])]
     df["id"] = np.arange(0, len(df))
-    df['date'] = pd.to_datetime(df['date'])
+    df["date"] = pd.to_datetime(df["date"])
     # split the raw Netflix show title into Name, Season and Episode. Add new columns
     split_titles_df = pd.DataFrame([split_title(t) for t in df["title"]])
     df = pd.concat([df, split_titles_df], axis=1)

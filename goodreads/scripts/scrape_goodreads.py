@@ -16,7 +16,6 @@ logger.setLevel(logging.INFO)
 
 
 cookies = {
-
     "u": "kRwGi6R5Hb2uGLuh_E_NpfSMHmCVU_pjLh-87uRXc-H4cmC6",
     "__qca": "P0-58208308-1679029998916",
     "__gpi": "UID=000004048f7baabd:T=1648685718:RT=1680296901:S=ALNI_MYxDQ7dAo3KLoXnssoo0UOLpKL7ow",
@@ -179,8 +178,8 @@ def get_read_stats(url):
         return null_return
     added_by = re.findall("\d+", added_by_raw)
     to_reads = re.findall("\d+", to_reads_raw)
-    added_by = int(''.join(added_by))
-    to_reads = int(''.join(to_reads))
+    added_by = int("".join(added_by))
+    to_reads = int("".join(to_reads))
 
     return {
         "added_by": added_by,
