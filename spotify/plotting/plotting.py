@@ -517,7 +517,7 @@ def plot_top_artists_over_time(df, periods=10):
                 customdata=a_df["artistname"],
                 width=60*60*24*7*1000,
                 name=a,
-                hovertemplate="%{customdata}<br><b>Total Minutes:</b>%{y}",
+                hovertemplate="%{customdata}<br><b>Total Minutes:</b>%{y}<extra></extra> ",
                 marker=dict(color=i),
             )
         )
@@ -537,7 +537,7 @@ def plot_top_artists_over_time(df, periods=10):
                 mode="lines",
                 text=row["artistname"],
                 customdata=[row["artistname"]],
-                hovertemplate="<b>Date:</b> %{x}<br>%{customdata}",
+                hovertemplate="<b>Date:</b> %{x}<br>%{customdata}<extra></extra> ",
                 marker=dict(color=art_palette[row["artistname"]]),
                 showlegend=False,
             )

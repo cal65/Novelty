@@ -274,7 +274,7 @@ def gender_bar_plot(df, gender_col="gender", narrative_col="narrative"):
                 x=df_g["size"],
                 y=df_g[narrative_col],
                 orientation="h",
-                hovertemplate="<b>Type:</b> %{y}<br><b>Count:</b> %{x}",
+                hovertemplate="<b>Type:</b> %{y}<br><b>Count:</b> %{x}<extra></extra> ",
                 name=g,
             )
         )
@@ -288,7 +288,7 @@ def publication_histogram(df, date_col="original_publication_year", start_year=1
         x=df_recent[date_col],
         nbinsx=n_bins,
         customdata=df_recent["title_simple"],
-        hovertemplate="%{customdata}",
+        hovertemplate="%{customdata}<extra></extra> ",
         showlegend=False,
         name='',
     )
@@ -790,7 +790,7 @@ def month_plot(
                 y=df_year[page_col],
                 marker_color=df_year["color"],
                 hovertext=df_year["text"],
-                hovertemplate="%{hovertext}",
+                hovertemplate="%{hovertext}<extra></extra> ",
                 text=df_year["author"],
                 textposition="inside",
                 textangle=0,
