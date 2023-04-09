@@ -50,7 +50,7 @@ def plot_genres(df, username, title_type):
                 y=df_sub["genre_chosen"],
                 customdata=df_sub["name"],
                 text=df_sub["name"],
-                hovertemplate="Genre: %{y} <br> Title: %{customdata} <br> Count: %{x}",
+                hovertemplate="Genre: %{y} <br> Title: %{customdata} <br> Count: %{x}<extra></extra>",
                 name=g,
                 orientation="h",
                 insidetextanchor="middle",
@@ -171,7 +171,7 @@ def plot_timeline(df, username):
                     ),
                     name=genre,
                     text=s_df["episode"],
-                    hovertemplate="<b>Date:</b> %{x} <br><b>Name:</b> %{customdata[2]} <br>%{customdata[0]}<br><b>Count:</b> %{customdata[1]}",
+                    hovertemplate="<b>Date:</b> %{x} <br><b>Name:</b> %{customdata[2]} <br>%{customdata[0]}<br><b>Count:</b> %{customdata[1]} <extra></extra>",
                     legendgroup=genre,
                     showlegend=j == 0,
                 )
@@ -209,7 +209,7 @@ def plot_hist(df, username):
                 x=df_plot["segment"],
                 y=df_plot["n"],
                 customdata=df_plot["Top Show"],
-                hovertemplate="<b>Time: %{x}<br> <b>Top Show: %{customdata}",
+                hovertemplate="<b>Time: %{x}<br> <b>Top Show: %{customdata}<extra></extra>",
                 name=t,
             )
         )

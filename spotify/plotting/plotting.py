@@ -586,7 +586,7 @@ def plot_daily(df, date_col="endtime"):
             x=weekend_df["time_minute"],
             y=weekend_df["minutes_scaled"],
             customdata=weekend_df["time_period"],
-            hovertemplate="Time: <b>%{customdata}</b>",
+            hovertemplate="Time: <b>%{customdata}</b><extra></extra>",
             name="Weekend",
             line=dict(color="firebrick", width=2),
         )
@@ -596,7 +596,7 @@ def plot_daily(df, date_col="endtime"):
             x=weekday_df["time_minute"],
             y=weekday_df["minutes_scaled"],
             customdata=weekday_df["time_period"],
-            hovertemplate="Time: <b>%{customdata}</b>",
+            hovertemplate="Time: <b>%{customdata}</b><extra></extra>",
             name="Weekday",
             line=dict(color="blue", width=2),
         )
@@ -743,7 +743,7 @@ def plot_years(
         go.Bar(
             x=years_df[feature_col],
             y=years_df["minutes_total"],
-            hovertemplate="Year: %{x} <br> total minutes: %{y}",
+            hovertemplate="Year: %{x} <br> total minutes: %{y}<extra></extra>",
             name="Minutes - Total",
             hoverinfo="skip",
         )
@@ -753,7 +753,7 @@ def plot_years(
             x=years_df[feature_col],
             y=years_df[minutes_col],
             customdata=years_df[index_col],
-            hovertemplate="top artist: %{customdata}",
+            hovertemplate="top artist: %{customdata}<extra></extra>",
             name="Minutes - Top Artist",
         )
     )
