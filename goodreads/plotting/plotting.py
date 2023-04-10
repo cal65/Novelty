@@ -283,12 +283,12 @@ def gender_bar_plot(df, gender_col="gender", narrative_col="narrative"):
 
 def publication_histogram(df, date_col="original_publication_year", start_year=1800):
     df_recent = df[df[date_col] > start_year]
-    n_bins = int(max(len(df_recent) / 10, 10))
+    n_bins = int(max(len(df_recent) / 5, 15))
     return go.Histogram(
         x=df_recent[date_col],
         nbinsx=n_bins,
         customdata=df_recent["title_simple"],
-        hovertemplate="%{customdata}<extra></extra> ",
+        hovertemplate="%{customdata}<extra></extra>",
         showlegend=False,
         name='',
     )
@@ -307,7 +307,7 @@ def plot_longest_books(
         x=highest[pages_col],
         y=highest[title_col],
         orientation="h",
-        hovertemplate="<b>Title:</b> %{y}<br><b>Number of Pages:</b> %{x}",
+        hovertemplate="<b>Title:</b> %{y}<br><b>Number of Pages:</b> %{x}<extra></extra>",
         showlegend=False,
     )
 
@@ -754,7 +754,9 @@ def month_plot(
     years {pd.unique(df['year_read'])}"
     )
     df = df[pd.notnull(df["year_read"])]
-    if len(df) < 3:
+    n_years = len(pd.unique(df["year_read"]))
+
+    if n_years < 1:
         logger.info("Not enough date data to plot month plot")
         fig = go.Figure()
         fig.add_trace(
@@ -766,11 +768,12 @@ def month_plot(
             )
         )
         fig.write_html(file=filename)
+        return
 
     if lims is not None:
         df = df[(df["year_read"] >= lims[0]) & (df["year_read"] <= lims[1])]
 
-    n_years = len(pd.unique(df["year_read"]))
+
 
     df["color"] = df[author_gender_col].map(
         {"female": "lightsalmon", "male": "deepskyblue", "other": "green"}

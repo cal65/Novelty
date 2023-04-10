@@ -797,7 +797,7 @@ def plot_genres(df, genre_col, minutes_col="minutes", n=20):
         go.Bar(
             x=genre_df["minutes_total"],
             y=genre_df[genre_col],
-            hovertemplate="genre: %{y} <br> total minutes: %{x}",
+            hovertemplate="genre: %{y} <br> total minutes: %{x}<extra></extra>",
             orientation="h",
             name="Minutes - Total",
         )
@@ -844,7 +844,7 @@ def plot_popularity(
             x=pop["popularity"],
             y=round(pop["minutes"]),
             customdata=pop["song"],
-            hovertemplate="Popularity: %{x} <br> Total Minutes: %{y} <br> Top Track: %{customdata}",
+            hovertemplate="Popularity: %{x} <br> Total Minutes: %{y} <br> Top Track: %{customdata}<extra></extra>",
             name="Minutes - Total",
         )
     )
