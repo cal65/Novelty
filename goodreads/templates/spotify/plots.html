@@ -57,37 +57,36 @@
 <button name="runscript" onclick="reanalyze()" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 pb-2 px-4 rounded">
     Re-Analyze
 </button>
-<div class="center-text">
-    <br>
-	<p>
-        <font size="+10"><b> Welcome to your plots! </b></font>
-        <br><br>
-    This opening graph shows some summary statistics about your Spotify history.
-</p>
-</div>
-    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">OVERALL IMAGE</div>
-    <div style="display: flex; justify-content: center; height: 950px;">
+<br>
+<div style="display: flex; justify-content: center; height: 950px;">
         <iframe style="width: 60%;" src="{% static overall_url %}" class="text-center" alt="popularity"></iframe>
     </div>
         <div class="answer" id ="info">
     </div>
+<div class="caption-text">
+<br>
 
+    This graph shows some your Spotify streaming history, including how many minutes you listened to per day, as well as when you listened to more new songs (new to you), and who your top artist was during a given period.
+</div>
 <br> <br>
 </div>
-    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">POPULARITY IMAGE</div>
     <div class ="plotly">
         <iframe class ="iframe" src="{% static popularity_url %}" alt="popularity"></iframe>
     </div>
     <br>
-    <br>
-    <div class="center-text">
-    This shows how much music you listen to per day of the week.
-        </div>
-    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">WEEKDAY USAGE IMAGE</div>
-    <div class ="center-image">
-        <img class ="center-image" src="{% static weekly_url %}"  alt="weekly">
+    <div class ="caption-text">
+        Popularity is a value normalized to 0-100 calculated by Spotify. It measures the total streams of a song weighted by recency.
     </div>
     <br>
+
+    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">WEEKDAY USAGE IMAGE</div>
+    <div class ="plotly">
+        <iframe class ="iframe" src="{% static weekly_url %}"  alt="weekly"></iframe>
+    </div>
+    <br>
+    <div class="caption-text">
+    This shows how much music you listen to per day of the week.
+    </div>
     <br>
         <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">DAILY USAGE IMAGE</div>
     <div class ="plotly">
@@ -96,7 +95,7 @@
     <br> 
     <br>
 
-            <div class="center-text">
+            <div class="caption-text">
     This shows your daily listening patterns, averaged out amongst weekdays and weekends. Most users have different weekend and weekday profiles. Note - plot currently assumes all tracks were listened to in Pacific Standard Time. 
         </div>
     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">RELEASE YEAR DISTRIBUTION</div>

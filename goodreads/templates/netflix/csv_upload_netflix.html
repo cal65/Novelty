@@ -35,6 +35,7 @@ function getCookie(name) {
       success: function(data) {
             console.log(data)
             $("#progress").toggle()
+            var hasData = true
           },
       error: function(data ){
             console.log("Something went wrong");

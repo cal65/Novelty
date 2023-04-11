@@ -32,5 +32,6 @@ urlpatterns = [
     path("gallery-books/", gallery_books, name="gallery-books"),
     path("gallery-music/", gallery_music, name="gallery-music"),
     path("gallery-streaming/", gallery_streaming, name="gallery-streaming"),
+    path("gallery-geography/", gallery_geography, name="gallery-geography"),
     path("spot-text/", spot_text, name="spot-text"),
 ]

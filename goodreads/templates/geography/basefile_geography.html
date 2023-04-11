@@ -1,0 +1,19 @@
+{% extends "goodreads/basefile.html" %}
+
+    {% block title %}
+        <title>Travel Analysis</title>
+    {% endblock title %}
+
+	<!-- customize navbar -->
+	{% block domain-home %}
+            <a class="nav-link" href="{% url 'geography-home' %}">Geography</a>
+    {% endblock domain-home %}
+	{% block upload %}
+    {% endblock upload %}
+    {% block about %}
+    {% endblock about %}
+    {% block plots %}
+    {% endblock plots %}
+    {% block gallery %}
+            <a class="nav-link" href="{% url 'gallery-geography' %}">Gallery</a>
+    {% endblock gallery %}

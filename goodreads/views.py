@@ -93,6 +93,10 @@ def gallery_streaming(request):
     return render(request, "netflix/gallery.html")
 
 
+def gallery_geography(request):
+    return render(request, "geography/gallery.html")
+
+
 @login_required(redirect_field_name="next", login_url="user-login")
 def finish_plot_view(request):
     username = request.user
@@ -207,7 +211,7 @@ def spot_plots_view(request):
     popularity_url = "Graphs/{}/spotify_popularity_plot_{}.html".format(
         username, username
     )
-    weekly_url = "Graphs/{}/spotify_weekday_plot_{}.jpeg".format(username, username)
+    weekly_url = "Graphs/{}/spotify_weekday_plot_{}.html".format(username, username)
     daily_url = "Graphs/{}/spotify_daily_plot_{}.html".format(username, username)
     release_year_url = "Graphs/{}/spotify_year_plot_{}.html".format(username, username)
     genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
@@ -281,10 +285,10 @@ def upload(request):
     df = process_export_upload(df)
     logger.info(f"starting export table addition for {str(len(df))} rows")
     exportDataObjs = populateExportData(df, user)
-    logger.info(f"starting books table addition")
-    populateBooks(exportDataObjs, user, wait=3, metrics=True)
     logger.info(f"starting authors table addition")
     populateAuthors(df)
+    logger.info(f"starting books table addition")
+    populateBooks(exportDataObjs, user, wait=3, metrics=True)
     # return
     template = "goodreads/csv_upload.html"
     return render(request, template)
@@ -417,7 +421,7 @@ def upload_netflix(request):
     df = nd.pipeline_steps(df=df)
     logger.info(df.head())
     df_unmerged = df.loc[pd.isnull(df["netflix_id"])]
-    n_miss = len(df_unmerged['name'].unique())
+    n_miss = len(df_unmerged["name"].unique())
     logger.info(f"Number of unmerged shows {n_miss}")
     for name in df_unmerged["name"].unique():
         nd.lookup_and_insert(name)
@@ -465,7 +469,7 @@ def write_metrics(user, time, found, not_found, file_path="metrics.csv"):
 
 ### Geography
 def geography(request):
-    return render(request, "goodreads/geography.html")
+    return render(request, "geography/geography.html")
 
 
 def streaming(request):

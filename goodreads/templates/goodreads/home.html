@@ -5,52 +5,100 @@
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
         <link rel="stylesheet" href="{%  static  'css/landing.css'  %}" />
         <title>Goodreads Analysis</title>
     </head>
 
     <body>
+    {% block navbar %}
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="navbar-collapse" id="navbarText" style="flex-basis: auto;">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item active pr-2">
+                  <a class="nav-link" href="{% url 'index-view' %}">Home</a>
+                </li>
+                <li class="nav-item active pr-2">
+                  {% block d1 %}
+                  <a class="nav-link" href="{% url 'books-home' %}">Books</a>
+                  {% endblock d1 %}
+                </li>
+                <li class="nav-item active pr-2">
+                  {% block d2 %}
+                  <a class="nav-link" href="{% url 'music-home' %}">Music</a>
+                  {% endblock d2 %}
+                </li>
+                 <li class="nav-item active pr-2">
+                {% block d3 %}
+                  <a class="nav-link" href="{% url 'streaming-home' %}">Streaming</a>
+                  {% endblock d3 %}
+                </li>
+                <li class="nav-item active pr-2">
+                  {% block d4 %}
+                  <a class="nav-link" href="{% url 'geography-home' %}">Travel</a>
+                  {% endblock d4 %}
+                </li>
+              <span class="navbar-text">
+                <a href="{% url 'user-login' %}">Login</a>
+              </span>
+          </ul>
+              
+            </div>
+          </nav>
+    {% endblock navbar %}
 
-        <div>
-            <img class="center" src="../../static/admin/img/logo.png" alt="Novelty"> </img>
+    {% block logowide %}
+        <div style="background-color: lightgray;">
+            <img class="center" src="/static/admin/img/N_logo.svg"  alt="Novelty">
         </div>
+    {% endblock logowide %}
+    {% block content %}
         <br>
-        <div class="center center-text" id="intro-body">
-            Welcome to Novelty Insights <br>
-            What does your data mean to you? <br>
-            Click below to explore different domains.
+        <div class="container1">
+            <div class="row">
+                <div class="left-text" id="intro-body">
+                    Welcome to Novelty Insights <br>
+                    What does your data mean to you? <br>
+                    Click below to explore different domains.
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="left" style="height: 70px;">
+                    <a href="{% url 'books-home' %}" >
+                        <img src="/static/admin/img/goodreads/BOOKS_Logo.svg" style="height: 100%;" alt="Books">
+                    </a> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="left" style="height: 70px;">
+                    <a href="{% url 'music-home' %}">
+                    <img src="/static/admin/img/spotify/MUSIC_Logo.svg" style="height: 100%;" alt="Music"> 
+                    </a>
+                </div> 
+            </div>
+            <div class ="row">    
+                <div class="left" style="height: 70px;">
+                    <a href="{% url 'streaming-home' %}">
+                    <img src="/static/admin/img/netflix/STREAMING_Logo.svg" style="height: 100%;" alt="Streaming">
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="left" style="height: 70px;">
+                    <a href="{% url 'geography-home' %}">
+                    <img src="/static/admin/img/geography/TRAVEL_Logo.svg" style="height: 100%;" alt="Travel" > 
+                </a>
+                </div>
+            </div>
+
         </div>
+
         <br>
-        <div class="container">
-            <div class="item one-three pb-3"><a href="{% url 'books-home' %}">
-                <img src="/static/admin/img/bookshelf.jpg" alt="Shelf" style="height: 5em;"> </img>
-            <br>
-            Books
-            </a> </div>
-            <div class="item one-three pb-3"><a href="{% url 'music-home' %}">
-                <img src="/static/admin/img/music.jpg" alt="Music" style="height:5em;"> </img>
-            <br>
-            Music
-            </a></div> 
-            <div class="item one-three pb-3"><a href="{% url 'geography-home' %}">
-                <img src="/static/admin/img/backpacker.jpg" alt="Travel" style="height:5em;"> </img>
-                <br>
-                Travel
-            </a></div>
-            <div class="item one-three pb-3" style="padding: 4px 4px;"> <a href="{% url 'streaming-home' %}">
-                <img src="/static/admin/img/noun_video streaming_749860.png" alt="Streaming" style="height:5em;"> </img>
-                <br>
-            Streaming 
-        </a></div>
-        </div>
-        <br><br><br>
         <div class="center center-text">
-            <br>
             <a href="{% url 'faq' %}">
                 FAQ
             </a> <br> </div>
+            {% endblock content %}
     </body>
 </html>

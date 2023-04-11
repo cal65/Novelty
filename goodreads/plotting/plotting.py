@@ -290,7 +290,7 @@ def publication_histogram(df, date_col="original_publication_year", start_year=1
         customdata=df_recent["title_simple"],
         hovertemplate="%{customdata}<extra></extra>",
         showlegend=False,
-        name='',
+        name="",
     )
 
 
@@ -773,8 +773,6 @@ def month_plot(
     if lims is not None:
         df = df[(df["year_read"] >= lims[0]) & (df["year_read"] <= lims[1])]
 
-
-
     df["color"] = df[author_gender_col].map(
         {"female": "lightsalmon", "male": "deepskyblue", "other": "green"}
     )
@@ -787,13 +785,14 @@ def month_plot(
         df_month_totals = pd.pivot_table(
             df_year, index="month_read", values=page_col, aggfunc=sum
         )
+        # Each year, make bar for book and month
         fig.add_trace(
             go.Bar(
                 x=df_year["month_read"],
                 y=df_year[page_col],
                 marker_color=df_year["color"],
                 hovertext=df_year["text"],
-                hovertemplate="%{hovertext}<extra></extra> ",
+                hovertemplate="%{hovertext}<extra></extra>",
                 text=df_year["author"],
                 textposition="inside",
                 textangle=0,
@@ -803,13 +802,14 @@ def month_plot(
             row=i + 1,
             col=1,
         )
+        # Add the year to the side
         fig.add_annotation(
             x=13,
             y=df_month_totals[page_col].mean(),
             text=str(int(year)),
             xref=f"x{i + 1}",
             yref=f"y{i + 1}",
-            font=dict(color="white", size= min(5, 20 - n_years * 0.75)),
+            font=dict(color="white", size=min(5, 25 - n_years * 0.25)),
             bgcolor="grey",
             bordercolor="grey",
             borderwidth=1,

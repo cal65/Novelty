@@ -19,10 +19,12 @@
     <body>
       {% block navbar %}
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="collapse navbar-collapse" id="navbarText">
+            <div class="navbar-collapse" id="navbarText">
               <ul class="navbar-nav mr-auto">
                 <li class="nav-item active pr-2">
-                  <a class="nav-link" href="{% url 'index-view' %}">Home</a>
+                  <a class="nav-link" href="{% url 'index-view' %}">
+                    <img src="/static/admin/img/N_logo_ondark.svg" alt="Novelty" class="logo">
+                  </a>
                 </li>
                 <li class="nav-item active pr-2">
                   {% block domain-home %}
@@ -50,12 +52,10 @@
                   <a class="nav-link" href="{% url 'gallery-books' %}">Gallery</a>
                   {% endblock gallery %}
                 </li>
-                <li class="list-style-image">
-                  <img src="/static/admin/img/logo.png" alt="Novelty" class="logo"> </img>
-                </li>
+
               </ul>
               <span class="navbar-text">
-                <a href="{% url 'logout' %}">Logout</a>
+                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
               </span>
             </div>
           </nav>
@@ -67,7 +67,7 @@
 
         {% block footer %}
         <div class="footer bg-dark">
-          <p>Cal Lee 2021</p>
+          <p>Cal Lee 2023</p>
         </div>
         {% endblock footer %}
     </body>
