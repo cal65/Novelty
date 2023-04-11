@@ -614,14 +614,16 @@ def plot_weekly(df, date_col="date"):
     df_wday[date_col] = pd.to_datetime(df_wday[date_col])
     df_wday["wday"] = df_wday["date"].dt.weekday
     df_wday["day_of_week"] = df_wday["wday"].map(d)
-    ylim_99 = df_wday["minutes"].quantile(0.99)  # an extreme outlier can ruin the plot
-    plot = sns.boxplot(data=df_wday, x="day_of_week", y="minutes", order=d.values())
-    plot.set(ylim=(-1, ylim_99), xlabel="Day of Week")
-    for label in plot.get_xticklabels():
-        label.set_visible(True)
-    figure = plot.get_figure()
-    plt.close()
-    return figure
+    # weekly boxplot
+    fig = go.Figure()
+    for day in d.values():
+        df_day = df_wday.loc[df_wday['day_of_week'] == day]
+        fig.add_trace(go.Box(y=df_day['minutes'].round(1),
+                             name=day)
+                      )
+        fig.update_layout(standard_layout)
+        fig.update_layout(title="Weekday Usage")
+    return fig
 
 
 def format_one_hit_wonder(music_df, artist_col="artistname", song_col="trackname"):
@@ -1099,8 +1101,8 @@ def main(username):
     )
 
     fig_weekly = plot_weekly(df)
-    fig_weekly.savefig(
-        f"goodreads/static/Graphs/{username}/spotify_weekday_plot_{username}.jpeg"
+    fig_weekly.write_html(
+        f"goodreads/static/Graphs/{username}/spotify_weekday_plot_{username}.html"
     )
     fig_daily = plot_daily(df)
     fig_daily.write_html(
