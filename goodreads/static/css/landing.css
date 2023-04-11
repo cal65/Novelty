@@ -66,6 +66,8 @@
     display: block;
     padding: 0.5rem 0.5rem;
     color: #fff;
+    font-family: courier new;
+    line-height: 1.5em;
 }
 
 .navbar-text {
@@ -215,7 +217,7 @@
 }
 
 .logo {
-  width: 10em;
+  width: 9em;
 }
 
 .footer {
