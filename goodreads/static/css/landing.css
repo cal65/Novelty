@@ -1,8 +1,100 @@
-.container {
-    display: grid;
-    grid-template-columns: auto auto auto auto;
-    width: 50%;
-    padding: 30px;
+.container1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    max-width: 30%;
+    margin: 0 auto;
+}
+
+.row {
+    display: flex; /* Use flexbox to position the divs */
+    flex-direction: row; /* Set the direction of the flexbox to row */
+    justify-content: flex-start;
+    border-width: 0.5px;
+    border-color: black;
+    width: 100%;
+}
+
+.navbar {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+}
+
+.navbar-expand-lg {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-flow: row nowrap;
+    flex-flow: row nowrap;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    min-width: 992px;
+}
+
+.navbar-collapse {
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.nav-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: #fff;
+}
+
+.navbar-text {
+    display: inline-block;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    color: #fff;
+}
+
+.navbar-nav {
+    display: flex;
+    box-orient: vertical;
+    box-direction: normal;
+    flex-direction: row;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+
+.mr-auto, .mx-auto {
+    margin-right: auto!important;
+}
+
+.pr-2, .px-2 {
+    padding-right: 0.5rem!important;
+}
+
+.bg-dark {
+    background-color: #343a40!important;
+}
+
+@media (min-width: 992px)
+.navbar-expand-lg .navbar-nav {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
 }
 
 .item {
@@ -37,12 +129,20 @@
 }
 
 .center-text {
-  text-align: center;
-  font-weight: bold;
-  font-size: 18px;
-  max-width: 80%;
-  margin-left: auto;
-  margin-right: auto;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.left-text {
+    text-align: left;
+    font-weight: bold;
+    font-size: 18px;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .answer {
@@ -53,12 +153,31 @@
   margin-right: auto;
 }
 
+.sidenav {
+  height: 100%; /* 100% Full-height */
+  width: 0; /* 0 width - change this with JavaScript */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  left: 0;
+  background-color: #111; /* Black*/
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 60px; /* Place content 60px from the top */
+  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+
 .pt-4 {
     padding-top: 1rem; /* 16px */
 }
 
 .link {
   color: mediumblue;
+}
+
+.nav-title {
+    border: 2px solid #343a40;
+    text-align: center;
+    font-weight: bold;
 }
 
 .info {

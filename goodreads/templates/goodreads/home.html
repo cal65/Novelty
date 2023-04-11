@@ -5,47 +5,104 @@
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
         <link rel="stylesheet" href="{%  static  'css/landing.css'  %}" />
         <title>Goodreads Analysis</title>
     </head>
 
     <body>
-
+    {% block navbar %}
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="collapse navbar-collapse" id="navbarText">
+                  <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active pr-2">
+                      <a class="nav-link" href="{% url 'index-view' %}">Home</a>
+                    </li>
+                    <li class="nav-item active pr-2">
+                      {% block domain-home %}
+                      <a class="nav-link" href="{% url 'books-home' %}">Books</a>
+                      {% endblock domain-home %}
+                    </li>
+                    <li class="nav-item active pr-2">
+                      {% block upload %}
+                      <a class="nav-link" href="{% url 'upload-view-goodreads' %}">Upload Data</a>
+                      {% endblock upload %}
+                      
+                    </li>
+                     <li class="nav-item active pr-2">
+                    {% block about %}
+                      <a class="nav-link" href="{% url 'about-this' %}">About This</a>
+                      {% endblock about %}
+                    </li>
+                    <li class="nav-item active pr-2">
+                      {% block plots %}
+                      <a class="nav-link" href="{% url 'plots' %}">Plots</a>
+                      {% endblock plots %}
+                    </li>
+                    <li class="nav-item active pr-2">
+                      {% block gallery %}
+                      <a class="nav-link" href="{% url 'gallery-books' %}">Gallery</a>
+                      {% endblock gallery %}
+                    </li>
+                    <li class="list-style-image">
+                      <img src="/static/admin/img/logo.png" alt="Novelty" class="logo"> </img>
+                    </li>
+                  </ul>
+                  <span class="navbar-text">
+                    <a href="{% url 'logout' %}">Logout</a>
+                  </span>
+                </div>
+              </nav>
+          {% endblock navbar %}
         <div>
-            <img class="center" src="../../static/admin/img/logo.png" alt="Novelty"> </img>
+            <img class="center" src="../../static/admin/img/N_logo.svg" alt="Novelty">
         </div>
+
         <br>
-        <div class="center center-text" id="intro-body">
-            Welcome to Novelty Insights <br>
-            What does your data mean to you? <br>
-            Click below to explore different domains.
-        </div>
-        <br>
-        <div class="container">
-            <div class="item one-three pb-3"><a href="{% url 'books-home' %}">
-                <img src="/static/admin/img/bookshelf.jpg" alt="Shelf" style="height: 5em;"> </img>
-            <br>
-            Books
-            </a> </div>
-            <div class="item one-three pb-3"><a href="{% url 'music-home' %}">
-                <img src="/static/admin/img/music.jpg" alt="Music" style="height:5em;"> </img>
-            <br>
-            Music
-            </a></div> 
-            <div class="item one-three pb-3"><a href="{% url 'geography-home' %}">
-                <img src="/static/admin/img/backpacker.jpg" alt="Travel" style="height:5em;"> </img>
+        <div class="container1">
+            <div class="row">
+                <div class="left-text" id="intro-body">
+                    Welcome to Novelty Insights <br>
+                    What does your data mean to you? <br>
+                    Click below to explore different domains.
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="left-text">
+                    <a href="{% url 'books-home' %}">
+                        <img src="/static/admin/img/bookshelf.jpg" alt="Shelf" style="height: 5em;">
+                        <br>
+                        Books
+                    </a> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="left-text"><a href="{% url 'music-home' %}">
+                    <img src="/static/admin/img/music.jpg" alt="Music" style="height:5em;"> 
                 <br>
-                Travel
-            </a></div>
-            <div class="item one-three pb-3" style="padding: 4px 4px;"> <a href="{% url 'streaming-home' %}">
-                <img src="/static/admin/img/noun_video streaming_749860.png" alt="Streaming" style="height:5em;"> </img>
-                <br>
-            Streaming 
-        </a></div>
+                Music
+                    </a>
+                </div> 
+            </div>
+            <div class="row">
+                <div class="center"><a href="{% url 'geography-home' %}">
+                    <img src="/static/admin/img/backpacker.jpg" alt="Travel" style="height:5em;"> 
+                    <br>
+                    Travel
+                </a>
+                </div>
+            </div>
+            <div class ="row">    
+                <div class="center" style="padding: 4px 4px;"> <a href="{% url 'streaming-home' %}">
+                    <img src="/static/admin/img/noun_video streaming_749860.png" alt="Streaming" style="height:5em;">
+                    <br>
+                    Streaming 
+                    </a>
+                </div>
+            </div>
         </div>
+
         <br><br><br>
         <div class="center center-text">
             <br>
