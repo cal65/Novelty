@@ -4,25 +4,21 @@
 	{% block content %}
 	<br>
 	<div class = "center" >
-	<img class = "center" src="/static/admin/img/music.jpg" alt="Novelty" style="width:20%">
+	<img class = "center" src="/static/admin/img/spotify/MUSIC_Logo.svg" alt="Novelty">
 	</div>
-	<div class = "info">
-		Welcome to Novelty Insights - Music
-	</div>
+	<div class = "caption-text">
+		<b>Welcome to Novelty Insights - Music</b>
 	<br>
-	<div class = "center">
 		Come and understand better what you have listened to over the years. Who are your favorite aritsts? What genres have you listened to the most? The least of? When were you the most active with your music listening?
-	</div>
 	<br>
-	<div class = "info">
-		How does it work?
-	</div>
 	<br>
-	<div class = "center">
+		<b>How does it work?</b>
+	<br>
 	This analysis is for those with a Spotify account. You can request a data export from Spotify. On the desktop verion of <a href="https://www.spotify.com/us/account/privacy/" class= "link">https://www.spotify.com/us/account/privacy/</a>, you can go scroll to <b> Request Data </b> at the bottom of the page. The basic export will return your last year's worth of streaming, as well as your saved library and some payment information and details on what Spotify has inferred of you. You can check "Select Extended streaming history" for your entire lifetime streaming history. The basic export usually takes a few days to complete - the extended export may take up to 30 days.
 	<br> <br>
 	At the header of this site, there is an <a href="{% url 'upload-spotify' %}" class= "link">Upload Data </a> section of this site. Your export will consist of a folder called "My Data" with several .json files. Upload the file <b> Streaming_History0.json </b>. Then click Analyze. After a bit, depending on your library size, plots will be available under "Plots". If you export your streaming history multiple times, you can upload all of them and the unique track streams will be kept.
 	<br> <br>
+	</div>
 	<br> <br>
 	{% endblock content %}
 </body>
