@@ -67,7 +67,7 @@
             <iframe style="width: 60%;" src="{% static timeline_url %}" class="text-center" alt="timeline"></iframe>
         </div>
         <br>
-    <div class="left-text">
+    <div class="caption-text">
         This is a timeline plot of your Netflix history. Each dot represents a day, and the size of the dot represents the number of shows watched on that day. The plot is interactive. You can zoom in and out as well as click on the legend to deselect categories. Double click quickly on a legend value to only select those values.
         </div>
     </section>
@@ -80,7 +80,7 @@
     <div class ="plotly">
         <iframe src="{% static histogram_url %}"  class="iframe" alt="genres" /> </iframe>
     </div>
-<div class="left-text">
+<div class="caption-text">
     This shows the historical consumption of your Netflix account, based on the number of episodes and when they were last watched.
 </div>
 <br><br>
@@ -94,7 +94,7 @@
     </div>
 <br>
     <br>
-    <div class="center-text">
+    <div class="caption-text">
         This shows the different types of shows you've watched grouped by a genre type.
     </div>
 </section>
@@ -104,7 +104,7 @@
     <div class ="plotly">
         <iframe src="{% static genre_movie_url %}"  class="iframe" alt="genres" /> </iframe>
     </div>
-<div class="center-text">
+<div class="caption-text">
     This shows the different types of movies you've watched grouped by a genre type.
 </div>
 </section>
@@ -115,7 +115,7 @@
     <div class ="plotly">
         <iframe src="{% static network_url %}"  class="iframe" alt="top-songs" /> </iframe>
     </div>
-<div class="center-text">
+<div class="caption-text">
     And this plot has a lot going on. Hover over to see actors/actresses who have appeared in multiple productions you've seen.
 </div>
 </section>

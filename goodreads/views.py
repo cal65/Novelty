@@ -285,10 +285,10 @@ def upload(request):
     df = process_export_upload(df)
     logger.info(f"starting export table addition for {str(len(df))} rows")
     exportDataObjs = populateExportData(df, user)
-    logger.info(f"starting books table addition")
-    populateBooks(exportDataObjs, user, wait=3, metrics=True)
     logger.info(f"starting authors table addition")
     populateAuthors(df)
+    logger.info(f"starting books table addition")
+    populateBooks(exportDataObjs, user, wait=3, metrics=True)
     # return
     template = "goodreads/csv_upload.html"
     return render(request, template)
