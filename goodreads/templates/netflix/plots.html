@@ -61,16 +61,14 @@
 <section id ="Timeline">
 <div class="center-text">
     <br>
-	<p>
-    This graph shows some summary statistics about your Netflix history.
-</p>
 </div>
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">OVERALL TIMELINE</div>
         <div style="display: flex; justify-content: center; height: 650px;">
             <iframe style="width: 60%;" src="{% static timeline_url %}" class="text-center" alt="timeline"></iframe>
         </div>
-    <div class="center-text">
-        These plots are interactive. You can zoom in and out as well as click on the legend to deselect categories. Double click on a legend value to only select those values.
+        <br>
+    <div class="left-text">
+        This is a timeline plot of your Netflix history. Each dot represents a day, and the size of the dot represents the number of shows watched on that day. The plot is interactive. You can zoom in and out as well as click on the legend to deselect categories. Double click quickly on a legend value to only select those values.
         </div>
     </section>
 
@@ -82,7 +80,7 @@
     <div class ="plotly">
         <iframe src="{% static histogram_url %}"  class="iframe" alt="genres" /> </iframe>
     </div>
-<div class="center-text">
+<div class="left-text">
     This shows the historical consumption of your Netflix account, based on the number of episodes and when they were last watched.
 </div>
 <br><br>

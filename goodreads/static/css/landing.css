@@ -1,19 +1,27 @@
 .container1 {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    flex-wrap: wrap;
+    justify-content: left;
     align-items: flex-start;
     max-width: 30%;
     margin: 0 auto;
 }
 
+.container2 {
+  max-width: 30%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: repeat(5, .2fr);
+  grid-auto-rows: 1fr;
+}
+
 .row {
     display: flex; /* Use flexbox to position the divs */
     flex-direction: row; /* Set the direction of the flexbox to row */
-    justify-content: flex-start;
-    border-width: 0.5px;
-    border-color: black;
-    width: 100%;
+    min-width: 100%;
+    flex: 1;
+    align-items: stretch;
 }
 
 .navbar {
@@ -40,7 +48,7 @@
     -webkit-box-pack: start;
     -ms-flex-pack: start;
     justify-content: flex-start;
-    min-width: 992px;
+    min-width: 752px;
 }
 
 .navbar-collapse {
@@ -56,7 +64,7 @@
 
 .nav-link {
     display: block;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.5rem;
     color: #fff;
 }
 
@@ -65,16 +73,19 @@
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
     color: #fff;
+    margin-left: auto;
+    white-space: nowrap;
 }
 
 .navbar-nav {
     display: flex;
-    box-orient: vertical;
+    -webkit-box-orient: horizontal;
     box-direction: normal;
     flex-direction: row;
     padding-left: 0;
     margin-bottom: 0;
     list-style: none;
+    overflow-x: auto;
 }
 
 .mr-auto, .mx-auto {
@@ -89,7 +100,7 @@
     background-color: #343a40!important;
 }
 
-@media (min-width: 992px)
+@media (min-width: 752px)
 .navbar-expand-lg .navbar-nav {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
@@ -121,6 +132,13 @@
     width: 50%;
 }
 
+.left {
+    display: block;
+    margin-left: 0;
+    margin-right: auto;
+    width: 50%;
+}
+
 .border-box {
     border-width: 2px;
     border-color: rgb(0 0 0);
@@ -138,11 +156,11 @@
 
 .left-text {
     text-align: left;
-    font-weight: bold;
-    font-size: 18px;
+    font-size: 15px;
     max-width: 80%;
     margin-left: auto;
     margin-right: auto;
+    flex: 1; /* Make the child elements expand and take up all available space within the row */
 }
 
 .answer {

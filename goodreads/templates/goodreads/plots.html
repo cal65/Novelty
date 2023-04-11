@@ -42,22 +42,36 @@
 <button name="runscript" onclick="reanalyze()" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 pb-2 px-4 rounded">
     Re-Analyze
 </button>
+<br>
+<div class ="navbar" style="position: fixed;">
+    <ul>
+        <li><p class = "nav-title">Goodreads Plots</p></li>
+        <li><a class = "nav-link bg-dark" href ="#Summary"> Summary </a></li>
+        <li><a class = "nav-link bg-dark" href="#Finish"> Finished </a></li>
+        <li><a class = "nav-link bg-dark" href="#Genres"> Genres </a></li>
+        <li><a class = "nav-link bg-dark" href="#Genres-Movies"> Genres - Movie </a></li>
+        <li><a class = "nav-link bg-dark" href="#Network"> Actors' Network </a></li>
+    </ul>
+</div>
+
+<section id = "Summary">
 <div class="center-text">
     <br>
-	<p>
-        <font size="+10"><b> Welcome to your plots! </b></font>
-        <br><br>
-    This opening graph shows some summary statistics about your library. Your library is split up into fiction and
+
+        This graph shows some summary statistics about your library. Your library is split up into fiction and
         non-fiction, male and female authors.
         Other graphs show the distribution of when the books were written, what the longest ones are, and the most
         common genres you've read.
-</p>
+
 </div>
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">SUMMARY IMAGE</div>
     <div class="plotly" style="height: 900px;">
         <iframe class="iframe" src="{% static summary_plot_url %}" alt="summary-plot"> </iframe>
     </div>
-<br> <br>
+<br> 
+</section>
+<section id = "Finish">
+<br>
     <div class="center-text">
     This shows the books that are the least commonly finished in your library.
     The numbers represent how many people marked a book as "to read" and the number that marked it as "finished". <br>The plot is divided into books that you have finished and those that you have not. 
@@ -68,6 +82,8 @@
     </div>
 
         <br>
+    </section>
+    <section id = "Genres">
         <br>
     <div class="center-text">
     This shows the genres that you read, compared to an average. It is split into genres in which you read more than average and those that you read below average. <br> The ratios will not add up to 100% because books can have multiple genres. 
@@ -78,6 +94,7 @@
     </div>
 
         <br>
+    </section>
         <br>
 
 

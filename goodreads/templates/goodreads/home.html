@@ -12,50 +12,43 @@
 
     <body>
     {% block navbar %}
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                <div class="collapse navbar-collapse" id="navbarText">
-                  <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active pr-2">
-                      <a class="nav-link" href="{% url 'index-view' %}">Home</a>
-                    </li>
-                    <li class="nav-item active pr-2">
-                      {% block domain-home %}
-                      <a class="nav-link" href="{% url 'books-home' %}">Books</a>
-                      {% endblock domain-home %}
-                    </li>
-                    <li class="nav-item active pr-2">
-                      {% block upload %}
-                      <a class="nav-link" href="{% url 'upload-view-goodreads' %}">Upload Data</a>
-                      {% endblock upload %}
-                      
-                    </li>
-                     <li class="nav-item active pr-2">
-                    {% block about %}
-                      <a class="nav-link" href="{% url 'about-this' %}">About This</a>
-                      {% endblock about %}
-                    </li>
-                    <li class="nav-item active pr-2">
-                      {% block plots %}
-                      <a class="nav-link" href="{% url 'plots' %}">Plots</a>
-                      {% endblock plots %}
-                    </li>
-                    <li class="nav-item active pr-2">
-                      {% block gallery %}
-                      <a class="nav-link" href="{% url 'gallery-books' %}">Gallery</a>
-                      {% endblock gallery %}
-                    </li>
-                    <li class="list-style-image">
-                      <img src="/static/admin/img/logo.png" alt="Novelty" class="logo"> </img>
-                    </li>
-                  </ul>
-                  <span class="navbar-text">
-                    <a href="{% url 'logout' %}">Logout</a>
-                  </span>
-                </div>
-              </nav>
-          {% endblock navbar %}
-        <div>
-            <img class="center" src="../../static/admin/img/N_logo.svg" alt="Novelty">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="navbar-collapse" id="navbarText" style="flex-basis: auto;">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item active pr-2">
+                  <a class="nav-link" href="{% url 'index-view' %}">Home</a>
+                </li>
+                <li class="nav-item active pr-2">
+                  {% block d1 %}
+                  <a class="nav-link" href="{% url 'books-home' %}">Books</a>
+                  {% endblock d1 %}
+                </li>
+                <li class="nav-item active pr-2">
+                  {% block d2 %}
+                  <a class="nav-link" href="{% url 'music-home' %}">Music</a>
+                  {% endblock d2 %}
+                </li>
+                 <li class="nav-item active pr-2">
+                {% block d3 %}
+                  <a class="nav-link" href="{% url 'streaming-home' %}">Streaming</a>
+                  {% endblock d3 %}
+                </li>
+                <li class="nav-item active pr-2">
+                  {% block d4 %}
+                  <a class="nav-link" href="{% url 'geography-home' %}">Travel</a>
+                  {% endblock d4 %}
+                </li>
+              <span class="navbar-text">
+                <a href="{% url 'user-login' %}">Login</a>
+              </span>
+          </ul>
+              
+            </div>
+          </nav>
+    {% endblock navbar %}
+
+        <div style="background-color: lightgray;">
+            <img class="center" src="static/admin/img/N_logo.svg"  alt="Novelty">
         </div>
 
         <br>
@@ -69,43 +62,36 @@
             </div>
 
             <div class="row">
-                <div class="left-text">
+                <div class="left">
                     <a href="{% url 'books-home' %}">
-                        <img src="/static/admin/img/bookshelf.jpg" alt="Shelf" style="height: 5em;">
-                        <br>
-                        Books
+                        <img src="/static/admin/img/goodreads/BOOKS_Logo.svg" style="height: 70px" alt="Shelf">
                     </a> 
                 </div>
             </div>
             <div class="row">
-                <div class="left-text"><a href="{% url 'music-home' %}">
-                    <img src="/static/admin/img/music.jpg" alt="Music" style="height:5em;"> 
-                <br>
-                Music
+                <div class="left">
+                    <a href="{% url 'music-home' %}">
+                    <img src="/static/admin/img/spotify/MUSIC_Logo.svg" style="height: 70px" alt="Music"> 
                     </a>
                 </div> 
             </div>
             <div class="row">
-                <div class="center"><a href="{% url 'geography-home' %}">
-                    <img src="/static/admin/img/backpacker.jpg" alt="Travel" style="height:5em;"> 
-                    <br>
-                    Travel
+                <div class="left"><a href="{% url 'geography-home' %}">
+                    <img src="/static/admin/img/geography/TRAVEL_Logo.svg" style="height: 70px" alt="Travel" > 
                 </a>
                 </div>
             </div>
             <div class ="row">    
-                <div class="center" style="padding: 4px 4px;"> <a href="{% url 'streaming-home' %}">
-                    <img src="/static/admin/img/noun_video streaming_749860.png" alt="Streaming" style="height:5em;">
-                    <br>
-                    Streaming 
+                <div class="left"> <a href="{% url 'streaming-home' %}">
+                    <img src="/static/admin/img/netflix/STREAMING_Logo.svg" style="height: 70px" alt="Streaming">
+
                     </a>
                 </div>
             </div>
         </div>
 
-        <br><br><br>
+        <br>
         <div class="center center-text">
-            <br>
             <a href="{% url 'faq' %}">
                 FAQ
             </a> <br> </div>
