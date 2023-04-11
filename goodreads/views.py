@@ -92,6 +92,9 @@ def gallery_music(request):
 def gallery_streaming(request):
     return render(request, "netflix/gallery.html")
 
+def gallery_geography(request):
+    return render(request, "geography/gallery.html")
+
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def finish_plot_view(request):
