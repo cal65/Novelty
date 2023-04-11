@@ -1,0 +1,38 @@
+{% extends "goodreads/basefile.html" %}
+
+{% block content %}
+<body>
+	<br>
+	<div class = "center" >
+		<img class = "center" src="/static/admin/img/backpacker.jpg" alt="Novelty" style="height:30% width: 30%;">
+	</div>
+	<br>
+	<div class = "info">
+		About Novelty Insights - Travel
+	</div>
+	<br>
+	<div class = "center">
+	This space will allow you to explore your own explorations. It is currently not developed, although prototypes of graphs I am planning on developing are below. This is very different from the other domains because there is not a single source of data. For this to work well, data from where one has lived and traveled is required. <br> <br>
+</div>
+	<div class="plotly">
+		<iframe class ="iframe" horizontal-align= "middle" src="/static/admin/img/geography/Geography_Cal.html" alt="Map"> </iframe>
+</div>
+<div class = "center">
+	This graph shows the countries you have been to grouped by the official language of the country. <br>
+</div>
+<div class="center-image"><img src="/static/admin/img/Official_lang_outlines.jpeg" alt="Language Outlines" style="height:45em;"> </img>
+</div>
+<div class = "center" style="font-weight:bold">
+	<br>
+	This graph shows the places where I was each year spaced by how far they were from my geographic mean of that year. <br>
+</div>
+<div class = "center" width="80%">
+	<object class ="object-map" height="650" width="900" margin-left="auto" margin-right="auto" data="/static/admin/img/geography/geodist.html" alt="Dist map"> </object>
+</div>
+<br><br>
+<div class = "center-image"><img src="/static/admin/img/geography/Alpha_All.jpeg" alt="Global Cities"> </img>
+</div>
+
+<br><br><br><br>
+</body>
+{% endblock content %}
