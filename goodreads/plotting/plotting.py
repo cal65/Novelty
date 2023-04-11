@@ -809,7 +809,7 @@ def month_plot(
             text=str(int(year)),
             xref=f"x{i + 1}",
             yref=f"y{i + 1}",
-            font=dict(color="white", size=min(5, 20 - n_years * 0.25)),
+            font=dict(color="white", size=min(5, 25 - n_years * 0.25)),
             bgcolor="grey",
             bordercolor="grey",
             borderwidth=1,

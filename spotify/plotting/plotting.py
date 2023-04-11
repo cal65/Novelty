@@ -917,8 +917,8 @@ def write_skips_summary(df, track_col="trackname", artist_col="artistname"):
     )
     played = skips_df["n"].values[:2].astype(int)
     skipped = skips_df["skips"].values[:2].astype(int)
-    text = f"Your most skipped tracks are <b>{skippedTracks[0]}</b> and <b>{skippedTracks[1]}</b> which you "
-    text += f"skipped {skipped[0]} out of {played[0]}  and {skipped[1]} times out of {played[1]} respectively."
+    text = f"Your most skipped tracks are <b>{skippedTracks[0]}</b> (skipped {skipped[0]} out of {played[0]}) and "
+    text += f"<b>{skippedTracks[1]}</b> ({skipped[1]} out of {played[1]})."
     return text
 
 
@@ -960,7 +960,7 @@ def write_last_listened(df):
 
     text = f"You listened to <b>{forgotten_song['trackname']}</b> by {forgotten_song['artistname']} {forgotten_song['n']} times in this period."
     text += (
-        f"  However you haven't listened to it in {forgotten_song['days_since']} days"
+        f"  However you haven't listened to it in {forgotten_song['days_since']} days."
     )
     return text
 
