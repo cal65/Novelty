@@ -176,10 +176,6 @@ def plot_song_day(df, artist_col, song_col, date_col):
 
     fig.update_layout(
         title="Song Plays",
-        width=2000,
-        height=max(
-            500, min(num_songs * 20, 3000)
-        ),  # ensure that the plot is between 100 and 3000
         showlegend=True,
     )
     fig.update_layout(standard_layout)
@@ -552,60 +548,6 @@ def plot_top_artists_over_time(df, periods=10):
     return fig
 
 
-def format_daily(df, date_col="endtime"):
-    df = df.copy()
-    df[date_col] = pd.to_datetime(df[date_col])
-    df["wday"] = pd.to_datetime(df["date"]).dt.weekday
-    df["weekend"] = df["wday"].isin([5, 6])
-    df["time_of_day"] = pd.to_datetime("2000-01-01 " + df[date_col].dt.time.astype(str))
-    df["time_period"] = df["time_of_day"].dt.round("15min").dt.time
-    weekend_count = (
-        df[["date", "weekend"]]
-        .drop_duplicates()
-        .groupby("weekend")
-        .count()
-        .reset_index()
-    )
-    df_period = pd.pivot_table(
-        df, index=["time_period", "weekend"], values="minutes", aggfunc=sum
-    ).reset_index()
-    df_period = pd.merge(df_period, weekend_count, on="weekend")
-    df_period["minutes_scaled"] = df_period["minutes"] / df_period["date"]
-    return df_period
-
-
-def plot_daily(df, date_col="endtime"):
-    df = format_daily(df, date_col=date_col)
-    fig = go.Figure()
-    weekend_df = df.loc[df["weekend"] == True]
-    weekday_df = df.loc[df["weekend"] == False]
-    fig.add_trace(
-        go.Scatter(
-            x=weekend_df["time_minute"],
-            y=weekend_df["minutes_scaled"]/15,
-            customdata=weekend_df["time_period"],
-            hovertemplate="Time: <b>%{customdata}</b><extra></extra>",
-            name="Weekend",
-            line=dict(color="firebrick", width=2),
-        )
-    )
-    fig.add_trace(
-        go.Scatter(
-            x=weekday_df["time_minute"],
-            y=weekday_df["minutes_scaled"]/15,
-            customdata=weekday_df["time_period"],
-            hovertemplate="Time: <b>%{customdata}</b><extra></extra>",
-            name="Weekday",
-            line=dict(color="blue", width=2),
-        )
-    )
-    fig.update_layout(standard_layout)
-    fig.update_layout(xaxis=dict(ticktext=pd.unique(df["time_period"]), title="Time"),
-                      yaxis=dict(title='Usage', tickformat=',.0%'))
-
-    return fig
-
-
 def plot_weekly(df, date_col="date"):
     d = dict(enumerate(calendar.day_name))
     df_wday = pd.pivot_table(
@@ -617,12 +559,10 @@ def plot_weekly(df, date_col="date"):
     # weekly boxplot
     fig = go.Figure()
     for day in d.values():
-        df_day = df_wday.loc[df_wday['day_of_week'] == day]
-        fig.add_trace(go.Box(y=df_day['minutes'].round(1),
-                             name=day)
-                      )
-        fig.update_layout(standard_layout)
-        fig.update_layout(title="Weekday Usage")
+        df_day = df_wday.loc[df_wday["day_of_week"] == day]
+        fig.add_trace(go.Box(y=df_day["minutes"].round(1), name=day))
+    fig.update_layout(standard_layout)
+    fig.update_layout(title="Weekday Usage")
     return fig
 
 
@@ -860,6 +800,7 @@ def plot_popularity(
         title="Popularity",
         title_x=0.5,
         xaxis_title="Popularity (Spotify calculation)",
+        yaxis_title="Count",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
     )
@@ -919,7 +860,7 @@ def plot_daily(df, date_col="endtime"):
     weekday_df = daily_df.loc[daily_df["weekend"] == False]
     fig.add_trace(
         go.Scatter(
-            x=weekend_df["time_of_day "],
+            x=weekend_df["time_of_day"],
             y=weekend_df["minutes_scaled"],
             customdata=weekend_df["time_period"],
             hovertemplate="Weekend<br>Time: <b>%{customdata}</b><extra></extra>",
@@ -943,28 +884,11 @@ def plot_daily(df, date_col="endtime"):
             tickformat="%H:%M:%S",
             type="date",
             title="Time",
-        )
+        ),
+        yaxis=dict(title="Usage", tickformat=",.0%"),
     )
     fig.update_layout(standard_layout)
     return fig
-
-
-def plot_weekly(df, date_col="date"):
-    d = dict(enumerate(calendar.day_name))
-    df_wday = pd.pivot_table(
-        df, index=date_col, values="minutes", aggfunc=sum
-    ).reset_index()
-    df_wday[date_col] = pd.to_datetime(df_wday[date_col])
-    df_wday["wday"] = df_wday["date"].dt.weekday
-    df_wday["day_of_week"] = df_wday["wday"].map(d)
-    ylim_99 = df_wday["minutes"].quantile(0.99)  # an extreme outlier can ruin the plot
-    plot = sns.boxplot(data=df_wday, x="day_of_week", y="minutes", order=d.values())
-    plot.set(ylim=(-1, ylim_99), xlabel="Day of Week")
-    for label in plot.get_xticklabels():
-        label.set_visible(True)
-    figure = plot.get_figure()
-    plt.close()
-    return figure
 
 
 def format_skips(df, ratio_limit=0.4, n=5):

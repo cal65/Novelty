@@ -207,7 +207,7 @@ def spot_plots_view(request):
     popularity_url = "Graphs/{}/spotify_popularity_plot_{}.html".format(
         username, username
     )
-    weekly_url = "Graphs/{}/spotify_weekday_plot_{}.jpeg".format(username, username)
+    weekly_url = "Graphs/{}/spotify_weekday_plot_{}.html".format(username, username)
     daily_url = "Graphs/{}/spotify_daily_plot_{}.html".format(username, username)
     release_year_url = "Graphs/{}/spotify_year_plot_{}.html".format(username, username)
     genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
@@ -465,7 +465,7 @@ def write_metrics(user, time, found, not_found, file_path="metrics.csv"):
 
 ### Geography
 def geography(request):
-    return render(request, "goodreads/geography.html")
+    return render(request, "geography/geography.html")
 
 
 def streaming(request):
