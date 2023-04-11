@@ -47,10 +47,12 @@
           </nav>
     {% endblock navbar %}
 
+    {% block logowide %}
         <div style="background-color: lightgray;">
-            <img class="center" src="static/admin/img/N_logo.svg"  alt="Novelty">
+            <img class="center" src="/static/admin/img/N_logo.svg"  alt="Novelty">
         </div>
-
+    {% endblock logowide %}
+    {% block content %}
         <br>
         <div class="container1">
             <div class="row">
@@ -95,5 +97,6 @@
             <a href="{% url 'faq' %}">
                 FAQ
             </a> <br> </div>
+            {% endblock content %}
     </body>
 </html>
