@@ -49,13 +49,14 @@
         <li><a class = "nav-link bg-dark" href ="#Summary"> Summary </a></li>
         <li><a class = "nav-link bg-dark" href="#Finish"> Finished </a></li>
         <li><a class = "nav-link bg-dark" href="#Genres"> Genres </a></li>
-        <li><a class = "nav-link bg-dark" href="#Genres-Movies"> Genres - Movie </a></li>
-        <li><a class = "nav-link bg-dark" href="#Network"> Actors' Network </a></li>
+        <li><a class = "nav-link bg-dark" href="#Popularity"> Popularity </a></li>
+        <li><a class = "nav-link bg-dark" href="#Map"> Authors' Map </a></li>
+        <li><a class = "nav-link bg-dark" href="#Monthly"> Reading Calendar </a></li>
     </ul>
 </div>
 
 <section id = "Summary">
-<div class="center-text">
+<div class="caption-text">
     <br>
 
         This graph shows some summary statistics about your library. Your library is split up into fiction and
@@ -72,7 +73,7 @@
 </section>
 <section id = "Finish">
 <br>
-    <div class="center-text">
+    <div class="caption-text">
     This shows the books that are the least commonly finished in your library.
     The numbers represent how many people marked a book as "to read" and the number that marked it as "finished". <br>The plot is divided into books that you have finished and those that you have not. 
         </div>
@@ -85,7 +86,7 @@
     </section>
     <section id = "Genres">
         <br>
-    <div class="center-text">
+    <div class="caption-text">
     This shows the genres that you read, compared to an average. It is split into genres in which you read more than average and those that you read below average. <br> The ratios will not add up to 100% because books can have multiple genres. 
         </div>
     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">GENRE COMPARISON IMAGE</div>
@@ -97,8 +98,8 @@
     </section>
         <br>
 
-
-        <div class="center-text">
+    <section id = "Popularity">
+    <div class="caption-text">
         This shows the number of Goodreads users who have read this book, i.e. its popularity. It is divided into logarithmic tiers. <br>
             Most people read primarily popular books, and the 100,000-1,000,000 band is generally the most crowded. <br>
             It may surprise you how few other people have read some of your books. <br>
@@ -110,9 +111,12 @@
                 alt="popularity-spectrum" />
         </iframe>
     </div>
-
     <br>
-    <div class="center-text">
+    </section>
+
+    <section id="Map">
+    <br>
+    <div class="caption-text">
         Below is an interactive map of the countries represented by the authors you have read.
     </div>
         <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">NATIONALITY MAP IMAGE</div>
@@ -120,15 +124,19 @@
         <iframe src="{% static nationality_map_url %}" class="iframe" style="height: 950px;" alt="nationality-map" >
     </iframe>
     </div>
-    <br><br><br>
-    <div class="center-text">
+    <br>
+</section>
+<section id = "Monthly">
+<br><br>
+    <div class="caption-text">
         Below is an interactive plot of the books you've read and what month you read them.
     </div>
         <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">MONTHLY READING HISTORY</div>
-    <div class="plotly" style="height: 1000px;">
+    <div class="plotly" style="height: 1500px;">
         <iframe src="{% static monthly_pages_read_url %}" class="iframe"  alt="monthly-history" >
     </iframe>
     </div>
     <br> <br>
+</section>
     <br> <br>
 {% endblock content %}

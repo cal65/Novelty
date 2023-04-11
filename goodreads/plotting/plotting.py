@@ -787,13 +787,14 @@ def month_plot(
         df_month_totals = pd.pivot_table(
             df_year, index="month_read", values=page_col, aggfunc=sum
         )
+        # Each year, make bar for book and month
         fig.add_trace(
             go.Bar(
                 x=df_year["month_read"],
                 y=df_year[page_col],
                 marker_color=df_year["color"],
                 hovertext=df_year["text"],
-                hovertemplate="%{hovertext}<extra></extra> ",
+                hovertemplate="%{hovertext}<extra></extra>",
                 text=df_year["author"],
                 textposition="inside",
                 textangle=0,
@@ -803,13 +804,14 @@ def month_plot(
             row=i + 1,
             col=1,
         )
+        # Add the year to the side
         fig.add_annotation(
             x=13,
             y=df_month_totals[page_col].mean(),
             text=str(int(year)),
             xref=f"x{i + 1}",
             yref=f"y{i + 1}",
-            font=dict(color="white", size= min(5, 20 - n_years * 0.75)),
+            font=dict(color="white", size=min(5, 20 - n_years * 0.25)),
             bgcolor="grey",
             bordercolor="grey",
             borderwidth=1,
