@@ -92,6 +92,7 @@ def gallery_music(request):
 def gallery_streaming(request):
     return render(request, "netflix/gallery.html")
 
+
 def gallery_geography(request):
     return render(request, "geography/gallery.html")
 
@@ -420,7 +421,7 @@ def upload_netflix(request):
     df = nd.pipeline_steps(df=df)
     logger.info(df.head())
     df_unmerged = df.loc[pd.isnull(df["netflix_id"])]
-    n_miss = len(df_unmerged['name'].unique())
+    n_miss = len(df_unmerged["name"].unique())
     logger.info(f"Number of unmerged shows {n_miss}")
     for name in df_unmerged["name"].unique():
         nd.lookup_and_insert(name)

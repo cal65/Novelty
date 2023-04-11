@@ -290,7 +290,7 @@ def publication_histogram(df, date_col="original_publication_year", start_year=1
         customdata=df_recent["title_simple"],
         hovertemplate="%{customdata}<extra></extra>",
         showlegend=False,
-        name='',
+        name="",
     )
 
 
@@ -772,8 +772,6 @@ def month_plot(
 
     if lims is not None:
         df = df[(df["year_read"] >= lims[0]) & (df["year_read"] <= lims[1])]
-
-
 
     df["color"] = df[author_gender_col].map(
         {"female": "lightsalmon", "male": "deepskyblue", "other": "green"}
