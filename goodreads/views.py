@@ -49,7 +49,7 @@ def run_script_function(request):
 
 
 def index(request):
-    # print(user)
+    next = request.POST.get('next', '/')
     if request.user.is_authenticated:
         base_auth_template = "goodreads/basefile.html"
     else:

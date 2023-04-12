@@ -16,6 +16,7 @@ def create_folder(username):
 
 def register(request):
     if request.method == 'POST':
+        next = request.GET['next']
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
@@ -26,7 +27,11 @@ def register(request):
             path = 'goodreads/static/Graphs/{}'.format(username)
             create_folder(path)
 
-            return redirect('user-login')
+            login(request, user)
+            if next:
+                return redirect(next)
+            else:
+                return redirect('user-login')
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})

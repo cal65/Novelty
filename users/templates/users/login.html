@@ -16,7 +16,8 @@
                 {{ form|crispy }}
                 <div class="pt-2"><button class="btn btn-lg btn-primary btn-block" type="submit" value="login">Sign in</button></div>
             </form>
-            <div>*Don’t have an account? Click <a class="hover:no-underline text-blue-500" href="{% url 'register' %}">Here</a> to register.</div>
+            <div>*Don’t have an account?
+                Click <a class="hover:no-underline text-blue-500" href="{% url 'register'%}?next={{next}}">Here</a> to register.</div>
         </div>
     </div>
 
