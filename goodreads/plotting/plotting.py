@@ -207,58 +207,58 @@ def finish_plot(
     read_col="read_percentage",
     title_col="title_simple",
     n=10,
-    plot_name="finish_plot_",
 ):
     df[exclusive_shelf] = df[exclusive_shelf].replace(
         {"currently-reading": "unread", "to-read": "unread"}
     )
-    df_read = df.sort_values(read_col)
-    df_read = df_read[pd.notnull(df[read_col])]
-    # have a duplicate data problem occasionally with multiple book versions
-    df_read = df_read.drop_duplicates(subset=title_col)
-    # keep only bottom n
-    df_read_n = (
-        df_read.groupby(exclusive_shelf)
-        .apply(lambda x: x.head(n))
-        .reset_index(drop=True)
-    )
 
-    cat_type = CategoricalDtype(
-        categories=pd.unique(df_read_n[title_col]), ordered=True
-    )
-    df_read_n[title_col] = df_read_n[title_col].astype(cat_type)
-    df_read_n["read_half"] = df_read_n[read_col] / 2
-    df_read_n["display_text"] = df_read_n.apply(
-        lambda x: f"{int(x['read'])} / {int(x['added_by'])}", axis=1
-    )
-    logger.info(
-        f"Debugging df_read_n: {df_read_n[[title_col, read_col, exclusive_shelf]].sample(2)}"
-    )
-    p = (
-        ggplot(df_read_n, aes(x=title_col))
-        + geom_col(aes(y=1), fill="darkblue")
-        + geom_col(aes(y=read_col), fill="darkred")
-        + geom_text(
-            aes(y="read_half", label="display_text"),
-            size=n * 3 / 5,
-            color="white",
-            ha="left",
+    df_finish = df.loc[pd.notnull(df['read_percentage'])].sort_values('read_percentage')
+    df_finish_read = df_finish.loc[df_finish['exclusive_shelf'] == 'read']
+    df_finish_unread = df_finish.loc[df_finish['exclusive_shelf'] != 'read']
+
+    def finish_bar_flat(df):
+        return go.Bar(
+            x=[1] * len(df),
+            y=df[title_col],
+            orientation="h",
+            customdata=df["added_by"],
+            marker_color='blue',
+            hovertemplate="%{y}<br><b>Total Added: %{customdata}<extra></extra>",
+            width=1,
+            showlegend=False)
+
+    def finish_bar_perc(df):
+        hovertemplate = "%{y}<br><b>Year:</b> %{customdata[1]}<br>"
+        hovertemplate += "<b>Total Finished:</b> %{customdata[0]}<extra></extra>"
+        return go.Bar(
+            x=df["read_percentage"].round(3),
+            y=df[title_col],
+            marker_color='red',
+            text=df["read_percentage"].map(lambda n: '{:.2%}'.format(n)),
+            customdata=np.stack((df['read'], df['original_publication_year']), axis=-1),
+            textposition="inside",
+            textangle=0,
+            hovertemplate=hovertemplate,
+            textfont=dict(size=8),
+            orientation="h",
+            width=1,
+            showlegend=False,
         )
-        + facet_grid("exclusive_shelf ~ .", scales="free", space="free")
-        + ylim(0, 1)
-        + xlab("Title")
-        + ylab("Reading Percentage")
-        + scale_y_continuous(labels=percent_format())
-        + coord_flip()
-        + ggtitle("Least Finished Reads")
-        + theme(plot_title=element_text(hjust=0.5), panel_background=element_blank())
+
+    fig = make_subplots(
+        rows=2, cols=1, subplot_titles=['Read', 'Unread'])
+    fig.add_trace(finish_bar_flat(df_finish_read.head(n)), row=1, col=1)
+
+    fig.add_trace(finish_bar_perc(df_finish_read.head(n)), row=1, col=1)
+
+    fig.add_trace(finish_bar_flat(df_finish_unread.head(n)), row=2, col=1)
+
+    fig.add_trace(finish_bar_perc(df_finish_unread.head(n)), row=2, col=1)
+    fig.update_layout(barmode='overlay')
+    logger.info(
+        f"Debugging df_finish_read: {df_finish_read[[title_col, read_col, exclusive_shelf]].sample(2)}"
     )
-    p.save(
-        f"goodreads/static/Graphs/{name}/{plot_name}{name}.jpeg",
-        width=12,
-        height=8,
-        dpi=300,
-    )
+    return fig
 
 
 def gender_bar_plot(df, gender_col="gender", narrative_col="narrative"):
@@ -281,14 +281,16 @@ def gender_bar_plot(df, gender_col="gender", narrative_col="narrative"):
     return traces
 
 
-def publication_histogram(df, date_col="original_publication_year", start_year=1800):
+def publication_histogram(df, date_col="original_publication_year", title_col="title_simple", start_year=1800):
     df_recent = df[df[date_col] > start_year]
-    n_bins = int(max(len(df_recent) / 5, 15))
-    return go.Histogram(
-        x=df_recent[date_col],
-        nbinsx=n_bins,
-        customdata=df_recent["title_simple"],
-        hovertemplate="%{customdata}<extra></extra>",
+    df_publication = pd.pivot_table(df_recent, index=date_col, values=[title_col],
+                                    aggfunc=[len, lambda x: ', '.join(x[:3])]).reset_index()
+    df_publication.columns = [date_col, 'n', title_col]
+    return go.Bar(
+        x=df_publication[date_col],
+        y=df_publication['n'],
+        customdata=df_publication[title_col],
+        hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<br>%{customdata}<extra></extra>",
         showlegend=False,
         name="",
     )
@@ -520,7 +522,7 @@ def summary_plot(
         fig.add_trace(trace, row=1, col=1)
 
     fig.add_trace(
-        publication_histogram(df, date_col=date_col, start_year=start_year),
+        publication_histogram(df, date_col=date_col, title_col=title_col, start_year=start_year),
         row=1,
         col=2,
     )
@@ -855,7 +857,8 @@ def main(username):
     except Exception as exception:
         logger.info(" summary plot failed: " + str(exception))
     create_read_plot_heatmap(df=read_df, username=username)
-    finish_plot(df, username)
+    fig_finish = finish_plot(df, username)
+    fig_finish.write_html(f"goodreads/static/Graphs/{username}/finish_plot_{username}.html")
     genres_avg = pd.read_csv("artifacts/genres_avg.csv")
     genre_difference = format_genre_table(read_df, genres_avg=genres_avg, n=10)
     fig_genres = plot_genre_difference(genre_difference, username)
