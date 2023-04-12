@@ -1,3 +1,4 @@
+{% extends "goodreads/home.html" %}
 {% load static %}
 <!DOCTYPE html>
 <html>
@@ -14,9 +15,8 @@
 
     <body>
 
-    <div>
-        <img class="center" src="../../static/admin/img/logo.png" alt="Novelty"> </img>
-    </div>
+    {% block content %}
+    <br>
     <div class="center-text">
     	1. What is this all about? <br>
     </div>
@@ -31,14 +31,21 @@
     	3. What should we learn from these visualizations?
     </div> 
     <div class="answer">
-    	Data is neutral. The graphs simply present truth about what a person has read, putting the books in a context that is likely novel to the reader. I believe some people will look at their graphs and find some confirmation about their patterns and interests and perhaps some surprises.<br>
-    </div>
+    	Data is neutral. The graphs simply present truth about what a person has read, putting the books in a context that is likely novel to the reader. I believe some people will look at their graphs and find some confirmation about their patterns and interests and perhaps some surprises.<br><br>
+    </div> 
     <div class="center-text">
         4. What will you do with my data?
     </div> 
         <div class="answer">
-        Your data will not leave the website without your permission. It will not be sold to advertisers for targeted ads. It may be aggregated to compute averages, which contribute to insights. This is currently only implemented for the genre comparison graphs in the Goodreads section.<br>
+        Your data will not leave the website without your permission. It will not be sold to advertisers for targeted ads. It may be aggregated to compute averages, which contribute to insights. This is currently only implemented for the genre comparison graphs in the Goodreads section.<br><br>
     </div>
+    <div class="center-text">
+        5. Why do I have to make an account?
+    </div>
+    <div class="answer">
+        If I could do it again, I would make some graphs accessible without an account, and I may be able to implement this in the future. For now, an account is required, although no personal information is asked or stored (your email doesn't even need to be real). Creating an account does mean your plots are saved and easily accessible in the future. <br><br>
+    </div>
+    {% endblock content %}
 
 
 </body>

@@ -4,7 +4,7 @@
     flex-wrap: wrap;
     justify-content: left;
     align-items: flex-start;
-    max-width: 30%;
+    max-width: 40%;
     margin: 0 auto;
 }
 
@@ -159,9 +159,9 @@
 
 .left-text {
     text-align: left;
-    font-size: 1em;
+    font-size: 0.8em;
     lineheight: 1em;
-    max-width: 80%;
+    max-width: 90%;
     margin-left: 0;
     margin-right: auto;
     flex: 1; /* Make the child elements expand and take up all available space within the row */

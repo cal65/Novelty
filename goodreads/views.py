@@ -137,7 +137,7 @@ def popularity_spectrum_view(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def plots_view(request):
     username = request.user
-    finish_plot_url = "Graphs/{}/finish_plot_{}.jpeg".format(username, username)
+    finish_plot_url = "Graphs/{}/finish_plot_{}.html".format(username, username)
     nationality_map_url = "Graphs/{}/author_map_{}.html".format(username, username)
     popularity_spectrum_url = "Graphs/{}/read_heatmap_{}.html".format(
         username, username
