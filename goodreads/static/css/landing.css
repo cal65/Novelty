@@ -77,6 +77,7 @@
     color: #fff;
     margin-left: auto;
     white-space: nowrap;
+    font-family: courier new;
 }
 
 .navbar-nav {
@@ -88,6 +89,7 @@
     margin-bottom: 0;
     list-style: none;
     overflow-x: auto;
+    font-family: courier new;
 }
 
 .mr-auto, .mx-auto {
