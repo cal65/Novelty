@@ -323,7 +323,7 @@ def create_melted_genre_df(df, title_col="title_simple"):
     return genre_df_m
 
 
-def genre_bar_plot(df, n_shelves=4, min_count=3):
+def genre_bar_plot(df, n_shelves=5, min_count=3):
     """
     Because genres are stored in multiple columns starting with 'shelf', to plot them we need to melt the shelves
     Currently 7 shelves are stored, but including them all can lead to a busy graph
@@ -369,11 +369,10 @@ def format_genre_table(df, genres_avg, n=10):
         aggfunc=[len, lambda x: "<br>".join(x[:3])],
     ).reset_index()
     genre_count.columns = ["Shelf", "n", "titles"]
-    genre_count["Ratio_User"] = genre_count["n"] / genre_count["n"].sum()
-    # normalize this so that the average value is 1
-    genre_count["Ratio_User"] = (
-        genre_count["Ratio_User"] / genre_count["Ratio_User"].mean()
-    )
+    genre_count["Ratio_User"] = genre_count["n"] / genre_count["n"].sum() * 100
+    # remove genres where you've only read 1 book, it can skew results
+    genre_count = genre_count.loc[genre_count["n"] > 1]
+
     #
     genre_table_merged = pd.merge(genres_avg, genre_count, on="Shelf", how="outer")
     genre_table_merged["Ratio_User"] = genre_table_merged["Ratio_User"].fillna(0)

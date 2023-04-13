@@ -170,7 +170,7 @@ def plot_song_day(df, artist_col, song_col, date_col):
                 mode="markers",
                 marker={"size": np.sqrt(df_art["n"]) * 4},
                 name=artist,
-                hovertemplate="name: %{y} - %{customdata} <br>plays: %{text} <br> date: %{x} <extra></extra>",
+                hovertemplate="%{y} - %{customdata} <br>%{x}<br>plays: %{text}<extra></extra>",
             )
         )
 
@@ -273,14 +273,18 @@ def count_new(
 
 def plot_new(count_new_df, date_col="date", firsts_col="first", win=7):
     fig = go.Figure(
-        [go.Bar(x=count_new_df[date_col], y=count_new_df[firsts_col], name="New Songs")]
+        [go.Bar(x=count_new_df[date_col],
+                y=count_new_df[firsts_col],
+                hovertemplate="%{x}<br><b>New Songs: </b>%{y}<extra></extra>",
+                name="New Songs")]
     )
     fig.add_trace(
         go.Scatter(
             x=count_new_df[date_col],
-            y=count_new_df[f"rolling_{firsts_col}"],
+            y=count_new_df[f"rolling_{firsts_col}"].round(1),
             mode="lines",
             line=go.scatter.Line(color="purple"),
+            hovertemplate="%{x}<br><b>New Songs: </b>%{y}<br>(Rolling Average)<extra></extra>",
             name=f"New Songs - {win} Day Rolling",
         )
     )
@@ -320,6 +324,7 @@ def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=
     """
     Timeline plot with a bar chart for a date column, plus a rolling average line of window win
     """
+    df_sum_sub[minutes_col] = df_sum_sub[minutes_col].round(1)
     fig = go.Figure()
     if podcast:
         for p in [True, False]:
@@ -329,11 +334,16 @@ def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=
                     x=df_sum_sub[date_col],
                     y=df_sum_sub[minutes_col],
                     name="Daily Minutes",
+                    hovertemplate="<b>Date: </b>%{x}<br><b>Minutes: </b>%{y}<extra></extra>"
                 )
             )
     else:
         fig.add_trace(
-            go.Bar(x=df_sum[date_col], y=df_sum[minutes_col], name="Daily Minutes")
+            go.Bar(
+                x=df_sum[date_col],
+                y=df_sum[minutes_col],
+                hovertemplate="<b>Date: </b>%{x}<br><b>Minutes: </b>%{y}<extra></extra>",
+                name="Daily Minutes")
         )
     fig.add_trace(
         go.Scatter(
@@ -374,6 +384,7 @@ def format_artist_list_day(
     artist_col="artistname",
     date_col="date",
     minutes_col="minutes",
+        other=False,
 ):
     """
     Different unction from `format_artist_day`
@@ -382,9 +393,12 @@ def format_artist_list_day(
     """
     df = df.copy()
     if artist_list is not None:
-        df[artist_col] = [
-            name if name in artist_list else "Other" for name in df[artist_col]
-        ]
+        if other:
+            df[artist_col] = [
+                name if name in artist_list else "Other" for name in df[artist_col]
+            ]
+        else:
+            df = df.loc[df[artist_col].isin(artist_list)]
     df_artist_day = pd.pivot_table(
         df, index=[artist_col, date_col], values=minutes_col, aggfunc=sum
     ).reset_index()
@@ -777,6 +791,7 @@ def plot_popularity(
     df, minutes_col="minutes", track_col="trackname", artist_col="artistname"
 ):
     df = df.copy()
+    df = df.loc[df["popularity"] > 0]
     df["song"] = df[track_col] + " - " + df[artist_col]
     df_agg = get_max_agg(
         df, feature_col="popularity", minutes_col=minutes_col, index_col="song"
