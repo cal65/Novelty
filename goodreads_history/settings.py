@@ -38,9 +38,9 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
     "goodreads.apps.GoodreadsConfig",
     "users",
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -121,6 +121,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGOUT_REDIRECT_URL = "index-view"
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = BASE_DIR + "/sent_emails"
 
 
 # Internationalization

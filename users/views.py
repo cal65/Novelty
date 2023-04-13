@@ -16,6 +16,7 @@ def create_folder(username):
 
 def register(request):
     if request.method == 'POST':
+        next = request.GET['next']
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
@@ -24,9 +25,16 @@ def register(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             path = 'goodreads/static/Graphs/{}'.format(username)
-            create_folder(path)
+            try:
+                create_folder(path)
+            except:
+                print(f"Folder already exists for {username}")
 
-            return redirect('user-login')
+            login(request, user)
+            if next:
+                return redirect(next)
+            else:
+                return redirect('user-login')
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
@@ -44,7 +52,6 @@ def login_user(request):
         username = request.POST['username']
         password = request.POST['password']
 
-        # user = authenticate(request=request, username=username, password=password)
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
@@ -65,3 +72,13 @@ def login_user(request):
     context = {'form': form, 'next': next}
     return render(request, 'users/login.html', context)
 
+# def password_reset(request):
+#     return render(request, "registration/password_reset_form.html")
+#
+#
+# def password_reset_confirm(request):
+#     return render(request, "registration/password_reset_confirm.html")
+#
+#
+# def password_reset_done(request):
+#     return render(request, "registration/password_reset_done.html")

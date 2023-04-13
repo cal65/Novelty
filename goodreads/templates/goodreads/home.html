@@ -52,6 +52,12 @@
             <img class="center" src="/static/admin/img/N_logo.svg"  alt="Novelty">
         </div>
     {% endblock logowide %}
+
+    <div class="center-text">
+    {% block title %}
+    {% endblock title %}
+    </div>
+    
     {% block content %}
         <br>
         <div class="container1">
@@ -99,6 +105,6 @@
             <a href="{% url 'faq' %}">
                 FAQ
             </a> <br> </div>
-            {% endblock content %}
+    {% endblock content %}
     </body>
 </html>
