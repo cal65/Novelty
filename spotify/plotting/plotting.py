@@ -324,7 +324,7 @@ def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=
     """
     Timeline plot with a bar chart for a date column, plus a rolling average line of window win
     """
-    df_sum_sub[minutes_col] = df_sum_sub[minutes_col].round(1)
+    df_sum[minutes_col] = df_sum[minutes_col].round(1)
     fig = go.Figure()
     if podcast:
         for p in [True, False]:
