@@ -377,16 +377,20 @@ def pipeline_steps(df):
     """
     Full pipeline given df from netflix export csv
     Step 1: Merge based on the raw title in Netflix export with database titles
+    Step 2: Merge based on the stem of the title in export with database titles
+    Step 3: Merge based on the stem of the title in export with stem of title in database
     """
     df = df.copy()
-    df = df[df["title"] != ""]
+    df = df[df["title"] != " "]
     df = df[pd.notnull(df["title"])]
+    df.reset_index(drop=True, inplace=True)
     df["id"] = np.arange(0, len(df))
     df["date"] = pd.to_datetime(df["date"])
     # split the raw Netflix show title into Name, Season and Episode. Add new columns
     split_titles_df = pd.DataFrame([split_title(t) for t in df["title"]])
     df = pd.concat([df, split_titles_df], axis=1)
     titles_df = pd.DataFrame.from_records(NetflixTitles.objects.all().values())
+
     # match title with full title. This gets movies and comedy specials
     step1 = net_merge(df, titles_df, left="title", right="title", ids=None)
     # match cleared out name with title. This matches TV shows

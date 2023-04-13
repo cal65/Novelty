@@ -59,12 +59,11 @@
 </div>
 
 <section id ="Timeline">
-<div class="center-text">
     <br>
-</div>
+
     <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">OVERALL TIMELINE</div>
-        <div style="display: flex; justify-content: center; height: 650px;">
-            <iframe style="width: 60%;" src="{% static timeline_url %}" class="text-center" alt="timeline"></iframe>
+        <div class="plotly" style="height: 750px;">
+            <iframe class="iframe" src="{% static timeline_url %}" alt="timeline"></iframe>
         </div>
         <br>
     <div class="caption-text">

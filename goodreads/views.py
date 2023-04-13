@@ -82,6 +82,7 @@ def faq(request):
 
 
 def gallery_books(request):
+    logger.info(f"books gallery requested")
     return render(request, "goodreads/gallery.html")
 
 
@@ -283,12 +284,14 @@ def upload(request):
     df = pd.read_csv(csv_file)
     df.to_csv(f"goodreads/static/Graphs/{user}/export_{user}.csv")
     df = process_export_upload(df)
+    messages.info(request, f"Starting Goodreads export")
     logger.info(f"starting export table addition for {str(len(df))} rows")
     exportDataObjs = populateExportData(df, user)
     logger.info(f"starting authors table addition")
     populateAuthors(df)
     logger.info(f"starting books table addition")
     populateBooks(exportDataObjs, user, wait=3, metrics=True)
+    messages.success(f"Upload completed")
     # return
     template = "goodreads/csv_upload.html"
     return render(request, template)
@@ -409,13 +412,12 @@ def upload_netflix(request):
     template = "netflix/csv_upload_netflix.html"
     csv_file = request.FILES["file"]
     # save csv file in database
-    logger.info(f"Netflix upload started for {user}")
     df = pd.read_csv(csv_file)
     df.to_csv(f"goodreads/static/Graphs/{user}/netflix_history_{user}.csv")
     df.columns = [c.lower() for c in df.columns]
     df["date"] = pd.to_datetime(df["date"])
     # load up the existing data in database for this user
-    logger.info(f"starting Netflix table addition for {len(df)} rows out of original ")
+    logger.info(f"starting {user} Netflix table addition for {len(df)} rows")
     nd.ingest_netflix(df, user)
     logger.info(f"Netflix ingestion complete")
     df = nd.pipeline_steps(df=df)
@@ -423,11 +425,16 @@ def upload_netflix(request):
     df_unmerged = df.loc[pd.isnull(df["netflix_id"])]
     n_miss = len(df_unmerged["name"].unique())
     logger.info(f"Number of unmerged shows {n_miss}")
+    netflix_message(request, template, n_miss)
     for name in df_unmerged["name"].unique():
         nd.lookup_and_insert(name)
 
     return render(request, template, {"hasData": True})
 
+
+def netflix_message(request, template, n):
+    logger.info("Netflix message sent")
+    return render(request, template, {'n': n})
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def netflix_plots_view(request):
