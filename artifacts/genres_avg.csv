@@ -1,539 +1,539 @@
-"Shelf","Freq","Ratio_Total","Source"
-"16th Century",1,0.0103476821192053,"Average"
-"17th Century",1,0.0103476821192053,"Average"
-"18th Century",4,0.0413907284768212,"Average"
-"19th Century",43,0.444950331125828,"Average"
-"20th Century",26,0.269039735099338,"Average"
-"21st Century",3,0.0310430463576159,"Average"
-"Abuse",2,0.0206953642384106,"Average"
-"Academia",3,0.0310430463576159,"Average"
-"Academic",282,2.91804635761589,"Average"
-"Action",34,0.35182119205298,"Average"
-"Activism",2,0.0206953642384106,"Average"
-"Adhd",1,0.0103476821192053,"Average"
-"Adoption",4,0.0413907284768212,"Average"
-"Adult",964,9.97516556291391,"Average"
-"Adult Fiction",403,4.17011589403974,"Average"
-"Adventure",747,7.72971854304636,"Average"
-"Africa",187,1.93501655629139,"Average"
-"African American",60,0.620860927152318,"Average"
-"African American Literature",1,0.0103476821192053,"Average"
-"African American Romance",1,0.0103476821192053,"Average"
-"African Literature",2,0.0206953642384106,"Average"
-"Agriculture",3,0.0310430463576159,"Average"
-"Alcohol",2,0.0206953642384106,"Average"
-"Algeria",1,0.0103476821192053,"Average"
-"Aliens",20,0.206953642384106,"Average"
-"Alternate History",25,0.258692052980132,"Average"
-"Amazon",3,0.0310430463576159,"Average"
-"American",156,1.61423841059603,"Average"
-"American History",61,0.631208609271523,"Average"
-"American Revolution",1,0.0103476821192053,"Average"
-"Americana",2,0.0206953642384106,"Average"
-"Amish",2,0.0206953642384106,"Average"
-"Ancient",4,0.0413907284768212,"Average"
-"Ancient History",7,0.0724337748344371,"Average"
-"Angels",2,0.0206953642384106,"Average"
-"Angola",1,0.0103476821192053,"Average"
-"Animals",107,1.10720198675497,"Average"
-"Anthologies",49,0.50703642384106,"Average"
-"Anthropology",52,0.538079470198676,"Average"
-"Anti Racist",26,0.269039735099338,"Average"
-"Apocalyptic",52,0.538079470198676,"Average"
-"Archaeology",2,0.0206953642384106,"Average"
-"Architecture",16,0.165562913907285,"Average"
-"Art",129,1.33485099337748,"Average"
-"Art and Photography",1,0.0103476821192053,"Average"
-"Art Design",5,0.0517384105960265,"Average"
-"Art History",11,0.113824503311258,"Average"
-"Arthurian",8,0.0827814569536424,"Average"
-"Artificial Intelligence",7,0.0724337748344371,"Average"
-"Asia",206,2.13162251655629,"Average"
-"Asian Literature",166,1.71771523178808,"Average"
-"Astronomy",6,0.0620860927152318,"Average"
-"Atheism",4,0.0413907284768212,"Average"
-"Australia",24,0.248344370860927,"Average"
-"Autistic Spectrum Disorder",7,0.0724337748344371,"Average"
-"Autobiography",828,8.56788079470199,"Average"
-"Aviation",3,0.0310430463576159,"Average"
-"Bande Dessinée",3,0.0310430463576159,"Average"
-"Bangladesh",1,0.0103476821192053,"Average"
-"Banking",2,0.0206953642384106,"Average"
-"Banned Books",1,0.0103476821192053,"Average"
-"Baseball",9,0.0931291390728477,"Average"
-"Basketball",2,0.0206953642384106,"Average"
-"Batman",5,0.0517384105960265,"Average"
-"BDSM",3,0.0310430463576159,"Average"
-"Beauty and The Beast",1,0.0103476821192053,"Average"
-"Belgium",3,0.0310430463576159,"Average"
-"Bicycles",1,0.0103476821192053,"Average"
-"Biography",764,7.90562913907285,"Average"
-"Biography Memoir",189,1.9557119205298,"Average"
-"Biology",68,0.70364238410596,"Average"
-"Birds",5,0.0517384105960265,"Average"
-"Bisexual",1,0.0103476821192053,"Average"
-"Book Club",173,1.79014900662252,"Average"
-"Books About Books",54,0.558774834437086,"Average"
-"Botswana",9,0.0931291390728477,"Average"
-"Boys Love",1,0.0103476821192053,"Average"
-"Brain",2,0.0206953642384106,"Average"
-"Brazil",3,0.0310430463576159,"Average"
-"British Literature",138,1.42798013245033,"Average"
-"Buddhism",19,0.196605960264901,"Average"
-"Buisness",26,0.269039735099338,"Average"
-"Business",466,4.82201986754967,"Average"
-"Canada",74,0.765728476821192,"Average"
-"Canadian Literature",2,0.0206953642384106,"Average"
-"Cartography",1,0.0103476821192053,"Average"
-"Cartoon",1,0.0103476821192053,"Average"
-"Catholic",1,0.0103476821192053,"Average"
-"Cats",1,0.0103476821192053,"Average"
-"Central Africa",1,0.0103476821192053,"Average"
-"Chapter Books",1,0.0103476821192053,"Average"
-"Chess",3,0.0310430463576159,"Average"
-"Chick Lit",228,2.35927152317881,"Average"
-"Childrens",573,5.92922185430464,"Average"
-"China",232,2.40066225165563,"Average"
-"Chinese Literature",9,0.0931291390728477,"Average"
-"Christian",91,0.941639072847682,"Average"
-"Christian Fiction",6,0.0620860927152318,"Average"
-"Christian Living",25,0.258692052980132,"Average"
-"Christianity",43,0.444950331125828,"Average"
-"Christmas",16,0.165562913907285,"Average"
-"Church",3,0.0310430463576159,"Average"
-"Cities",12,0.124172185430464,"Average"
-"Civil War",16,0.165562913907285,"Average"
-"Class",2,0.0206953642384106,"Average"
-"Classic Literature",5,0.0517384105960265,"Average"
-"Classical Music",1,0.0103476821192053,"Average"
-"Classics",1987,20.5608443708609,"Average"
-"Climate Change",11,0.113824503311258,"Average"
-"Climate Change Fiction",2,0.0206953642384106,"Average"
-"Climbing",10,0.103476821192053,"Average"
-"Collections",6,0.0620860927152318,"Average"
-"College",3,0.0310430463576159,"Average"
-"Combat",6,0.0620860927152318,"Average"
-"Comedy",126,1.30380794701987,"Average"
-"Comic Book",15,0.155215231788079,"Average"
-"Comic Fantasy",3,0.0310430463576159,"Average"
-"Comic Strips",3,0.0310430463576159,"Average"
-"Comics",261,2.70074503311258,"Average"
-"Comics Manga",9,0.0931291390728477,"Average"
-"Coming Of Age",46,0.475993377483444,"Average"
-"Comix",4,0.0413907284768212,"Average"
-"Communication",9,0.0931291390728477,"Average"
-"Computer Science",20,0.206953642384106,"Average"
-"Computers",7,0.0724337748344371,"Average"
-"Conspiracy Theories",1,0.0103476821192053,"Average"
-"Contemporary",1523,15.7595198675497,"Average"
-"Contemporary Romance",26,0.269039735099338,"Average"
-"Cookbooks",7,0.0724337748344371,"Average"
-"Cooking",18,0.186258278145695,"Average"
-"Counselling",5,0.0517384105960265,"Average"
-"Couture",4,0.0413907284768212,"Average"
-"Cozy Mystery",7,0.0724337748344371,"Average"
-"Crafts",6,0.0620860927152318,"Average"
-"Crime",736,7.6158940397351,"Average"
-"Criticism",18,0.186258278145695,"Average"
-"Cthulhu Mythos",1,0.0103476821192053,"Average"
-"Cults",3,0.0310430463576159,"Average"
-"Cultural",1741,18.0153145695364,"Average"
-"Cultural Studies",1,0.0103476821192053,"Average"
-"Culture",23,0.237996688741722,"Average"
-"Currency",33,0.341473509933775,"Average"
-"Cyberpunk",30,0.310430463576159,"Average"
-"Cycling",15,0.155215231788079,"Average"
-"Czech Literature",18,0.186258278145695,"Average"
-"Danish",2,0.0206953642384106,"Average"
-"Dark",2,0.0206953642384106,"Average"
-"Dark Fantasy",16,0.165562913907285,"Average"
-"Dc Comics",9,0.0931291390728477,"Average"
-"Death",13,0.134519867549669,"Average"
-"Demons",10,0.103476821192053,"Average"
-"Denmark",6,0.0620860927152318,"Average"
-"Design",42,0.434602649006622,"Average"
-"Detective",111,1.14859271523179,"Average"
-"Diary",2,0.0206953642384106,"Average"
-"Disability",4,0.0413907284768212,"Average"
-"Dogs",13,0.134519867549669,"Average"
-"Dragonlance",3,0.0310430463576159,"Average"
-"Dragons",35,0.362168874172185,"Average"
-"Drama",132,1.3658940397351,"Average"
-"Drawing",1,0.0103476821192053,"Average"
-"Dungeons and Dragons",3,0.0310430463576159,"Average"
-"Dutch Literature",6,0.0620860927152318,"Average"
-"Dystopia",387,4.00455298013245,"Average"
-"Eastern Africa",11,0.113824503311258,"Average"
-"Eastern Philosophy",1,0.0103476821192053,"Average"
-"Ecclesiology",1,0.0103476821192053,"Average"
-"Ecology",3,0.0310430463576159,"Average"
-"Economics",242,2.50413907284768,"Average"
-"Education",56,0.579470198675497,"Average"
-"Egypt",6,0.0620860927152318,"Average"
-"Emergency Services",1,0.0103476821192053,"Average"
-"Emotion",1,0.0103476821192053,"Average"
-"Engineering",2,0.0206953642384106,"Average"
-"English History",12,0.124172185430464,"Average"
-"Entrepreneurship",40,0.413907284768212,"Average"
-"Environment",139,1.43832781456954,"Average"
-"Epic",24,0.248344370860927,"Average"
-"Epic Fantasy",265,2.7421357615894,"Average"
-"Erotica",16,0.165562913907285,"Average"
-"Espionage",65,0.672599337748344,"Average"
-"Essays",209,2.16266556291391,"Average"
-"Ethiopia",1,0.0103476821192053,"Average"
-"European History",16,0.165562913907285,"Average"
-"European Literature",537,5.55670529801325,"Average"
-"Evangelism",1,0.0103476821192053,"Average"
-"Evolution",15,0.155215231788079,"Average"
-"Fae",1,0.0103476821192053,"Average"
-"Fairies",3,0.0310430463576159,"Average"
-"Fairy Tales",38,0.393211920529801,"Average"
-"Faith",26,0.269039735099338,"Average"
-"Family",97,1.00372516556291,"Average"
-"Fantasy",2233,23.1063741721854,"Average"
-"Fashion",4,0.0413907284768212,"Average"
-"Feminism",287,2.96978476821192,"Average"
-"Film",8,0.0827814569536424,"Average"
-"Finance",93,0.962334437086093,"Average"
-"Finnish Literature",3,0.0310430463576159,"Average"
-"Fitness",31,0.320778145695364,"Average"
-"Folklore",8,0.0827814569536424,"Average"
-"Food",99,1.02442052980132,"Average"
-"Food and Drink",98,1.01407284768212,"Average"
-"Food History",1,0.0103476821192053,"Average"
-"Food Writing",3,0.0310430463576159,"Average"
-"Foodie",1,0.0103476821192053,"Average"
-"Football",4,0.0413907284768212,"Average"
-"France",213,2.20405629139073,"Average"
-"French Literature",42,0.434602649006622,"Average"
-"French Revolution",2,0.0206953642384106,"Average"
-"Futurism",2,0.0206953642384106,"Average"
-"Games",10,0.103476821192053,"Average"
-"Gaming",2,0.0206953642384106,"Average"
-"Gardening",4,0.0413907284768212,"Average"
-"Gay",12,0.124172185430464,"Average"
-"Gay Fiction",1,0.0103476821192053,"Average"
-"Gender",28,0.289735099337748,"Average"
-"Gender Studies",6,0.0620860927152318,"Average"
-"Genetics",4,0.0413907284768212,"Average"
-"Geography",14,0.144867549668874,"Average"
-"Geology",1,0.0103476821192053,"Average"
-"German Literature",52,0.538079470198676,"Average"
-"Germany",46,0.475993377483444,"Average"
-"Ghana",2,0.0206953642384106,"Average"
-"Ghosts",3,0.0310430463576159,"Average"
-"GLBT",110,1.13824503311258,"Average"
-"Gothic",74,0.765728476821192,"Average"
-"Grad School",3,0.0310430463576159,"Average"
-"Graphic Novels",260,2.69039735099338,"Average"
-"Graphic Novels Comics",58,0.600165562913907,"Average"
-"Greece",2,0.0206953642384106,"Average"
-"Greek Mythology",4,0.0413907284768212,"Average"
-"Halloween",1,0.0103476821192053,"Average"
-"Hard Boiled",6,0.0620860927152318,"Average"
-"Harem",1,0.0103476821192053,"Average"
-"Health",301,3.11465231788079,"Average"
-"Health Care",10,0.103476821192053,"Average"
-"High Fantasy",319,3.30091059602649,"Average"
-"High School",1,0.0103476821192053,"Average"
-"Historical",2044,21.1506622516556,"Average"
-"Historical Fantasy",4,0.0413907284768212,"Average"
-"Historical Fiction",1812,18.75,"Average"
-"Historical Mystery",41,0.424254966887417,"Average"
-"Historical Romance",14,0.144867549668874,"Average"
-"History",946,9.78890728476821,"Average"
-"History Of Science",4,0.0413907284768212,"Average"
-"Holiday",20,0.206953642384106,"Average"
-"Holocaust",20,0.206953642384106,"Average"
-"Horror",360,3.72516556291391,"Average"
-"Horticulture",1,0.0103476821192053,"Average"
-"How To",4,0.0413907284768212,"Average"
-"Hugo Awards",5,0.0517384105960265,"Average"
-"Humanities",27,0.279387417218543,"Average"
-"Humor",521,5.39114238410596,"Average"
-"Hungarian Literature",3,0.0310430463576159,"Average"
-"Hungary",5,0.0517384105960265,"Average"
-"Illness",1,0.0103476821192053,"Average"
-"India",97,1.00372516556291,"Average"
-"Indian Literature",12,0.124172185430464,"Average"
-"Indonesian Literature",1,0.0103476821192053,"Average"
-"Information Science",1,0.0103476821192053,"Average"
-"Inspirational",38,0.393211920529801,"Average"
-"International Development",2,0.0206953642384106,"Average"
-"International Rel...",3,0.0310430463576159,"Average"
-"International Relations",2,0.0206953642384106,"Average"
-"Internet",2,0.0206953642384106,"Average"
-"Iran",6,0.0620860927152318,"Average"
-"Ireland",66,0.68294701986755,"Average"
-"Irish Literature",21,0.217301324503311,"Average"
-"Islam",10,0.103476821192053,"Average"
-"Israel",12,0.124172185430464,"Average"
-"Italian Literature",68,0.70364238410596,"Average"
-"Italy",94,0.972682119205298,"Average"
-"Ivory Coast",1,0.0103476821192053,"Average"
-"Japan",174,1.80049668874172,"Average"
-"Japanese Literature",94,0.972682119205298,"Average"
-"Jazz",3,0.0310430463576159,"Average"
-"Jewish",16,0.165562913907285,"Average"
-"Journalism",16,0.165562913907285,"Average"
-"Juvenile",5,0.0517384105960265,"Average"
-"Kenya",2,0.0206953642384106,"Average"
-"Kids",10,0.103476821192053,"Average"
-"Labor",1,0.0103476821192053,"Average"
-"Language",71,0.734685430463576,"Average"
-"Latin American",19,0.196605960264901,"Average"
-"Latin American Literature",2,0.0206953642384106,"Average"
-"Law",12,0.124172185430464,"Average"
-"Lds",1,0.0103476821192053,"Average"
-"Leadership",119,1.23137417218543,"Average"
-"Lebanon",1,0.0103476821192053,"Average"
-"Legal Thriller",28,0.289735099337748,"Average"
-"Lesbian",6,0.0620860927152318,"Average"
-"LGBT",257,2.65935430463576,"Average"
-"Library Science",1,0.0103476821192053,"Average"
-"Linguistics",10,0.103476821192053,"Average"
-"Literary Criticism",11,0.113824503311258,"Average"
-"Literary Fiction",814,8.42301324503311,"Average"
-"Literature",1240,12.8311258278146,"Average"
-"Logic",1,0.0103476821192053,"Average"
-"Love",7,0.0724337748344371,"Average"
-"Love Story",1,0.0103476821192053,"Average"
-"Lovecraftian",3,0.0310430463576159,"Average"
-"M M Romance",1,0.0103476821192053,"Average"
-"Magic",344,3.55960264900662,"Average"
-"Magical Realism",240,2.48344370860927,"Average"
-"Management",67,0.693294701986755,"Average"
-"Manga",132,1.3658940397351,"Average"
-"Maps",1,0.0103476821192053,"Average"
-"Marriage",16,0.165562913907285,"Average"
-"Martial Arts",5,0.0517384105960265,"Average"
-"Marvel",4,0.0413907284768212,"Average"
-"Mathematics",29,0.300082781456954,"Average"
-"Media Tie In",25,0.258692052980132,"Average"
-"Medical",83,0.85885761589404,"Average"
-"Medicine",104,1.07615894039735,"Average"
-"Medieval",22,0.227649006622517,"Average"
-"Medieval History",4,0.0413907284768212,"Average"
-"Medievalism",2,0.0206953642384106,"Average"
-"Memoir",797,8.24710264900662,"Average"
-"Mental Health",88,0.910596026490066,"Average"
-"Mental Illness",9,0.0931291390728477,"Average"
-"Mermaids",1,0.0103476821192053,"Average"
-"Metaphysics",2,0.0206953642384106,"Average"
-"Microhistory",5,0.0517384105960265,"Average"
-"Middle Grade",258,2.66970198675497,"Average"
-"Military",23,0.237996688741722,"Average"
-"Military Fiction",52,0.538079470198676,"Average"
-"Military History",35,0.362168874172185,"Average"
-"Mmorpg",4,0.0413907284768212,"Average"
-"Modern",1,0.0103476821192053,"Average"
-"Modern Classics",1,0.0103476821192053,"Average"
-"Money",25,0.258692052980132,"Average"
-"Monsters",1,0.0103476821192053,"Average"
-"Morocco",3,0.0310430463576159,"Average"
-"Mountaineering",11,0.113824503311258,"Average"
-"Mozambique",1,0.0103476821192053,"Average"
-"Murder Mystery",2,0.0206953642384106,"Average"
-"Music",58,0.600165562913907,"Average"
-"Musicians",1,0.0103476821192053,"Average"
-"Mystery",1402,14.5074503311258,"Average"
-"Mystery Thriller",461,4.77028145695364,"Average"
-"Mythology",113,1.1692880794702,"Average"
-"Native American History",1,0.0103476821192053,"Average"
-"Native Americans",4,0.0413907284768212,"Average"
-"Natural History",13,0.134519867549669,"Average"
-"Nature",105,1.08650662251656,"Average"
-"Neurodiversity",10,0.103476821192053,"Average"
-"Neuroscience",14,0.144867549668874,"Average"
-"New Adult",7,0.0724337748344371,"Average"
-"New Age",7,0.0724337748344371,"Average"
-"New York",63,0.651903973509934,"Average"
-"Nigeria",13,0.134519867549669,"Average"
-"Nobel Prize",12,0.124172185430464,"Average"
-"Noir",51,0.52773178807947,"Average"
-"Nordic Noir",8,0.0827814569536424,"Average"
-"North American Hi...",69,0.713990066225166,"Average"
-"Northern Africa",13,0.134519867549669,"Average"
-"Novella",40,0.413907284768212,"Average"
-"Novels",824,8.52649006622517,"Average"
-"Nutrition",13,0.134519867549669,"Average"
-"Outdoors",9,0.0931291390728477,"Average"
-"Pakistan",3,0.0310430463576159,"Average"
-"Palaeontology",1,0.0103476821192053,"Average"
-"Paranormal",165,1.70736754966887,"Average"
-"Paranormal Romance",11,0.113824503311258,"Average"
-"Parenting",55,0.569122516556291,"Average"
-"Personal Development",195,2.01779801324503,"Average"
-"Personal Finance",24,0.248344370860927,"Average"
-"Philosophy",452,4.67715231788079,"Average"
-"Photography",7,0.0724337748344371,"Average"
-"Physics",19,0.196605960264901,"Average"
-"Picture Books",77,0.796771523178808,"Average"
-"Pirates",5,0.0517384105960265,"Average"
-"Plays",108,1.11754966887417,"Average"
-"Poetry",179,1.85223509933775,"Average"
-"Poetry Plays",1,0.0103476821192053,"Average"
-"Poland",4,0.0413907284768212,"Average"
-"Police",1,0.0103476821192053,"Average"
-"Polish Literature",12,0.124172185430464,"Average"
-"Political Science",23,0.237996688741722,"Average"
-"Politics",513,5.30836092715232,"Average"
-"Polyamorous",1,0.0103476821192053,"Average"
-"Pop Culture",4,0.0413907284768212,"Average"
-"Popular Science",20,0.206953642384106,"Average"
-"Portugal",2,0.0206953642384106,"Average"
-"Portuguese Literature",1,0.0103476821192053,"Average"
-"Post Apocalyptic",37,0.382864238410596,"Average"
-"Poverty",13,0.134519867549669,"Average"
-"Presidents",8,0.0827814569536424,"Average"
-"Productivity",48,0.496688741721854,"Average"
-"Programming",5,0.0517384105960265,"Average"
-"Pseudoscience",1,0.0103476821192053,"Average"
-"Psychoanalysis",2,0.0206953642384106,"Average"
-"Psychological Thriller",19,0.196605960264901,"Average"
-"Psychology",552,5.71192052980132,"Average"
-"Punk",1,0.0103476821192053,"Average"
-"Queer",109,1.12789735099338,"Average"
-"Rabbits",1,0.0103476821192053,"Average"
-"Race",239,2.47309602649007,"Average"
-"Read For School",7,0.0724337748344371,"Average"
-"Realistic Fiction",111,1.14859271523179,"Average"
-"Reference",58,0.600165562913907,"Average"
-"Regency",1,0.0103476821192053,"Average"
-"Relationships",29,0.300082781456954,"Average"
-"Religion",182,1.88327814569536,"Average"
-"Research",1,0.0103476821192053,"Average"
-"Retellings",34,0.35182119205298,"Average"
-"Robots",3,0.0310430463576159,"Average"
-"Role Playing Games",2,0.0206953642384106,"Average"
-"Roman",21,0.217301324503311,"Average"
-"Romance",885,9.15769867549669,"Average"
-"Romania",1,0.0103476821192053,"Average"
-"Romanian Literature",1,0.0103476821192053,"Average"
-"Romanovs",1,0.0103476821192053,"Average"
-"Romantic Suspense",2,0.0206953642384106,"Average"
-"Romanticism",2,0.0206953642384106,"Average"
-"Russia",100,1.03476821192053,"Average"
-"Russian History",4,0.0413907284768212,"Average"
-"Russian Literature",35,0.362168874172185,"Average"
-"Scandinavian Lite...",20,0.206953642384106,"Average"
-"Scandinavian Literature",34,0.35182119205298,"Average"
-"School",183,1.89362582781457,"Average"
-"Science",606,6.27069536423841,"Average"
-"Science Fiction",1217,12.5931291390728,"Average"
-"Science Fiction Fantasy",556,5.75331125827815,"Average"
-"Science Nature",1,0.0103476821192053,"Average"
-"Scotland",17,0.17591059602649,"Average"
-"Seinen",44,0.455298013245033,"Average"
-"Self Help",466,4.82201986754967,"Average"
-"Sequential Art",290,3.00082781456954,"Average"
-"Sex Work",3,0.0310430463576159,"Average"
-"Sexuality",20,0.206953642384106,"Average"
-"Shapeshifters",1,0.0103476821192053,"Average"
-"Shonen",18,0.186258278145695,"Average"
-"Short Stories",491,5.0807119205298,"Average"
-"Short Story Collection",10,0.103476821192053,"Average"
-"Slice Of Life",7,0.0724337748344371,"Average"
-"Soccer",2,0.0206953642384106,"Average"
-"Social Change",1,0.0103476821192053,"Average"
-"Social Issues",23,0.237996688741722,"Average"
-"Social Justice",94,0.972682119205298,"Average"
-"Social Media",2,0.0206953642384106,"Average"
-"Social Movements",126,1.30380794701987,"Average"
-"Social Science",11,0.113824503311258,"Average"
-"Social Work",1,0.0103476821192053,"Average"
-"Society",4,0.0413907284768212,"Average"
-"Sociology",218,2.25579470198676,"Average"
-"South Africa",3,0.0310430463576159,"Average"
-"Southern",16,0.165562913907285,"Average"
-"Southern Africa",16,0.165562913907285,"Average"
-"Southern Gothic",1,0.0103476821192053,"Average"
-"Space",169,1.7487582781457,"Average"
-"Space Opera",114,1.1796357615894,"Average"
-"Spain",14,0.144867549668874,"Average"
-"Spanish Civil War",1,0.0103476821192053,"Average"
-"Spanish Literature",29,0.300082781456954,"Average"
-"Speculative Fiction",78,0.807119205298013,"Average"
-"Spirituality",132,1.3658940397351,"Average"
-"Sports",152,1.57284768211921,"Average"
-"Sports and Games",1,0.0103476821192053,"Average"
-"Spy Thriller",76,0.786423841059603,"Average"
-"Star Trek",1,0.0103476821192053,"Average"
-"Star Wars",20,0.206953642384106,"Average"
-"Steampunk",48,0.496688741721854,"Average"
-"Storytime",2,0.0206953642384106,"Average"
-"Sudan",2,0.0206953642384106,"Average"
-"Superheroes",14,0.144867549668874,"Average"
-"Supernatural",39,0.403559602649007,"Average"
-"Survival",19,0.196605960264901,"Average"
-"Suspense",285,2.94908940397351,"Average"
-"Sustainability",12,0.124172185430464,"Average"
-"Sweden",16,0.165562913907285,"Average"
-"Swedish Literature",3,0.0310430463576159,"Average"
-"Tanzania",1,0.0103476821192053,"Average"
-"Taoism",3,0.0310430463576159,"Average"
-"Taxation",1,0.0103476821192053,"Average"
-"Teaching",12,0.124172185430464,"Average"
-"Technical",2,0.0206953642384106,"Average"
-"Technology",83,0.85885761589404,"Average"
-"Teen",23,0.237996688741722,"Average"
-"Terrorism",2,0.0206953642384106,"Average"
-"Textbooks",2,0.0206953642384106,"Average"
-"The United States Of America",12,0.124172185430464,"Average"
-"Theatre",45,0.465645695364238,"Average"
-"Theology",44,0.455298013245033,"Average"
-"Theory",10,0.103476821192053,"Average"
-"Thriller",849,8.7851821192053,"Average"
-"Time Travel",61,0.631208609271523,"Average"
-"Tragedy",1,0.0103476821192053,"Average"
-"Trains",1,0.0103476821192053,"Average"
-"Transport",4,0.0413907284768212,"Average"
-"Travel",204,2.11092715231788,"Average"
-"Travelogue",1,0.0103476821192053,"Average"
-"True Crime",90,0.931291390728477,"Average"
-"True Story",1,0.0103476821192053,"Average"
-"Tudor Period",2,0.0206953642384106,"Average"
-"Tunisia",1,0.0103476821192053,"Average"
-"Turkish",4,0.0413907284768212,"Average"
-"Turkish Literature",2,0.0206953642384106,"Average"
-"Ukraine",3,0.0310430463576159,"Average"
-"Unfinished",19,0.196605960264901,"Average"
-"Urban",2,0.0206953642384106,"Average"
-"Urban Fantasy",103,1.06581125827815,"Average"
-"Urban Planning",9,0.0931291390728477,"Average"
-"Urban Studies",4,0.0413907284768212,"Average"
-"Urbanism",5,0.0517384105960265,"Average"
-"Utopia",1,0.0103476821192053,"Average"
-"Vampires",56,0.579470198675497,"Average"
-"Vegan",1,0.0103476821192053,"Average"
-"Victorian",11,0.113824503311258,"Average"
-"Video Games",3,0.0310430463576159,"Average"
-"Walking",3,0.0310430463576159,"Average"
-"War",449,4.64610927152318,"Average"
-"Warcraft",5,0.0517384105960265,"Average"
-"Web",1,0.0103476821192053,"Average"
-"Website Design",1,0.0103476821192053,"Average"
-"Weird Fiction",2,0.0206953642384106,"Average"
-"Werewolves",1,0.0103476821192053,"Average"
-"Western Africa",19,0.196605960264901,"Average"
-"Westerns",29,0.300082781456954,"Average"
-"Wine",1,0.0103476821192053,"Average"
-"Witches",11,0.113824503311258,"Average"
-"Womens",51,0.52773178807947,"Average"
-"Womens Fiction",254,2.62831125827815,"Average"
-"Womens Studies",2,0.0206953642384106,"Average"
-"World History",15,0.155215231788079,"Average"
-"World Of Warcraft",5,0.0517384105960265,"Average"
-"World War I",47,0.486341059602649,"Average"
-"World War II",152,1.57284768211921,"Average"
-"Writing",317,3.28021523178808,"Average"
-"X Men",2,0.0206953642384106,"Average"
-"Young Adult",1220,12.6241721854305,"Average"
-"Young Adult Contemporary",24,0.248344370860927,"Average"
-"Young Adult Fantasy",64,0.662251655629139,"Average"
-"Young Adult Romance",2,0.0206953642384106,"Average"
-"Young Readers",1,0.0103476821192053,"Average"
-"Zen",1,0.0103476821192053,"Average"
-"Zimbabwe",3,0.0310430463576159,"Average"
-"Zombies",2,0.0206953642384106,"Average"
+Shelf,Freq,Ratio_Total
+16th Century,1,0.001949546
+17th Century,1,0.001949546
+18th Century,4,0.007798183
+19th Century,43,0.083830468
+20th Century,26,0.05068819
+21st Century,3,0.005848637
+Abuse,2,0.003899092
+Academia,3,0.005848637
+Academic,282,0.549771903
+Action,34,0.066284556
+Activism,2,0.003899092
+Adhd,1,0.001949546
+Adoption,4,0.007798183
+Adult,964,1.879362109
+Adult Fiction,403,0.78566694
+Adventure,747,1.45631068
+Africa,187,0.364565056
+African American,60,0.116972745
+African American Literature,1,0.001949546
+African American Romance,1,0.001949546
+African Literature,2,0.003899092
+Agriculture,3,0.005848637
+Alcohol,2,0.003899092
+Algeria,1,0.001949546
+Aliens,20,0.038990915
+Alternate History,25,0.048738644
+Amazon,3,0.005848637
+American,156,0.304129138
+American History,61,0.118922291
+American Revolution,1,0.001949546
+Americana,2,0.003899092
+Amish,2,0.003899092
+Ancient,4,0.007798183
+Ancient History,7,0.01364682
+Angels,2,0.003899092
+Angola,1,0.001949546
+Animals,107,0.208601396
+Anthologies,49,0.095527742
+Anthropology,52,0.101376379
+Anti Racist,26,0.05068819
+Apocalyptic,52,0.101376379
+Archaeology,2,0.003899092
+Architecture,16,0.031192732
+Art,129,0.251491403
+Art and Photography,1,0.001949546
+Art Design,5,0.009747729
+Art History,11,0.021445003
+Arthurian,8,0.015596366
+Artificial Intelligence,7,0.01364682
+Asia,206,0.401606426
+Asian Literature,166,0.323624595
+Astronomy,6,0.011697275
+Atheism,4,0.007798183
+Australia,24,0.046789098
+Autistic Spectrum Disorder,7,0.01364682
+Autobiography,828,1.614223886
+Aviation,3,0.005848637
+Bande Dessinée,3,0.005848637
+Bangladesh,1,0.001949546
+Banking,2,0.003899092
+Banned Books,1,0.001949546
+Baseball,9,0.017545912
+Basketball,2,0.003899092
+Batman,5,0.009747729
+BDSM,3,0.005848637
+Beauty and The Beast,1,0.001949546
+Belgium,3,0.005848637
+Bicycles,1,0.001949546
+Biography,764,1.489452957
+Biography Memoir,189,0.368464148
+Biology,68,0.132569111
+Birds,5,0.009747729
+Bisexual,1,0.001949546
+Book Club,173,0.337271416
+Books About Books,54,0.105275471
+Botswana,9,0.017545912
+Boys Love,1,0.001949546
+Brain,2,0.003899092
+Brazil,3,0.005848637
+British Literature,138,0.269037314
+Buddhism,19,0.037041369
+Buisness,26,0.05068819
+Business,466,0.908488322
+Canada,74,0.144266386
+Canadian Literature,2,0.003899092
+Cartography,1,0.001949546
+Cartoon,1,0.001949546
+Catholic,1,0.001949546
+Cats,1,0.001949546
+Central Africa,1,0.001949546
+Chapter Books,1,0.001949546
+Chess,3,0.005848637
+Chick Lit,228,0.444496432
+Childrens,573,1.117089718
+China,232,0.452294615
+Chinese Literature,9,0.017545912
+Christian,91,0.177408664
+Christian Fiction,6,0.011697275
+Christian Living,25,0.048738644
+Christianity,43,0.083830468
+Christmas,16,0.031192732
+Church,3,0.005848637
+Cities,12,0.023394549
+Civil War,16,0.031192732
+Class,2,0.003899092
+Classic Literature,5,0.009747729
+Classical Music,1,0.001949546
+Classics,1987,3.873747417
+Climate Change,11,0.021445003
+Climate Change Fiction,2,0.003899092
+Climbing,10,0.019495458
+Collections,6,0.011697275
+College,3,0.005848637
+Combat,6,0.011697275
+Comedy,126,0.245642765
+Comic Book,15,0.029243186
+Comic Fantasy,3,0.005848637
+Comic Strips,3,0.005848637
+Comics,261,0.508831442
+Comics Manga,9,0.017545912
+Coming Of Age,46,0.089679105
+Comix,4,0.007798183
+Communication,9,0.017545912
+Computer Science,20,0.038990915
+Computers,7,0.01364682
+Conspiracy Theories,1,0.001949546
+Contemporary,1523,2.969158186
+Contemporary Romance,26,0.05068819
+Cookbooks,7,0.01364682
+Cooking,18,0.035091824
+Counselling,5,0.009747729
+Couture,4,0.007798183
+Cozy Mystery,7,0.01364682
+Crafts,6,0.011697275
+Crime,736,1.434865676
+Criticism,18,0.035091824
+Cthulhu Mythos,1,0.001949546
+Cults,3,0.005848637
+Cultural,1741,3.394159161
+Cultural Studies,1,0.001949546
+Culture,23,0.044839552
+Currency,33,0.06433501
+Cyberpunk,30,0.058486373
+Cycling,15,0.029243186
+Czech Literature,18,0.035091824
+Danish,2,0.003899092
+Dark,2,0.003899092
+Dark Fantasy,16,0.031192732
+Dc Comics,9,0.017545912
+Death,13,0.025344095
+Demons,10,0.019495458
+Denmark,6,0.011697275
+Design,42,0.081880922
+Detective,111,0.216399579
+Diary,2,0.003899092
+Disability,4,0.007798183
+Dogs,13,0.025344095
+Dragonlance,3,0.005848637
+Dragons,35,0.068234101
+Drama,132,0.25734004
+Drawing,1,0.001949546
+Dungeons and Dragons,3,0.005848637
+Dutch Literature,6,0.011697275
+Dystopia,387,0.754474208
+Eastern Africa,11,0.021445003
+Eastern Philosophy,1,0.001949546
+Ecclesiology,1,0.001949546
+Ecology,3,0.005848637
+Economics,242,0.471790073
+Education,56,0.109174562
+Egypt,6,0.011697275
+Emergency Services,1,0.001949546
+Emotion,1,0.001949546
+Engineering,2,0.003899092
+English History,12,0.023394549
+Entrepreneurship,40,0.07798183
+Environment,139,0.27098686
+Epic,24,0.046789098
+Epic Fantasy,265,0.516629625
+Erotica,16,0.031192732
+Espionage,65,0.126720474
+Essays,209,0.407455063
+Ethiopia,1,0.001949546
+European History,16,0.031192732
+European Literature,537,1.046906071
+Evangelism,1,0.001949546
+Evolution,15,0.029243186
+Fae,1,0.001949546
+Fairies,3,0.005848637
+Fairy Tales,38,0.074082739
+Faith,26,0.05068819
+Family,97,0.189105938
+Fantasy,2233,4.353335673
+Fashion,4,0.007798183
+Feminism,287,0.559519632
+Film,8,0.015596366
+Finance,93,0.181307755
+Finnish Literature,3,0.005848637
+Fitness,31,0.060435918
+Folklore,8,0.015596366
+Food,99,0.19300503
+Food and Drink,98,0.191055484
+Food History,1,0.001949546
+Food Writing,3,0.005848637
+Foodie,1,0.001949546
+Football,4,0.007798183
+France,213,0.415253246
+French Literature,42,0.081880922
+French Revolution,2,0.003899092
+Futurism,2,0.003899092
+Games,10,0.019495458
+Gaming,2,0.003899092
+Gardening,4,0.007798183
+Gay,12,0.023394549
+Gay Fiction,1,0.001949546
+Gender,28,0.054587281
+Gender Studies,6,0.011697275
+Genetics,4,0.007798183
+Geography,14,0.027293641
+Geology,1,0.001949546
+German Literature,52,0.101376379
+Germany,46,0.089679105
+Ghana,2,0.003899092
+Ghosts,3,0.005848637
+GLBT,110,0.214450033
+Gothic,74,0.144266386
+Grad School,3,0.005848637
+Graphic Novels,260,0.506881897
+Graphic Novels Comics,58,0.113073654
+Greece,2,0.003899092
+Greek Mythology,4,0.007798183
+Halloween,1,0.001949546
+Hard Boiled,6,0.011697275
+Harem,1,0.001949546
+Health,301,0.586813273
+Health Care,10,0.019495458
+High Fantasy,319,0.621905096
+High School,1,0.001949546
+Historical,2044,3.984871525
+Historical Fantasy,4,0.007798183
+Historical Fiction,1812,3.53257691
+Historical Mystery,41,0.079931376
+Historical Romance,14,0.027293641
+History,946,1.844270285
+History Of Science,4,0.007798183
+Holiday,20,0.038990915
+Holocaust,20,0.038990915
+Horror,360,0.701836472
+Horticulture,1,0.001949546
+How To,4,0.007798183
+Hugo Awards,5,0.009747729
+Humanities,27,0.052637735
+Humor,521,1.015713339
+Hungarian Literature,3,0.005848637
+Hungary,5,0.009747729
+Illness,1,0.001949546
+India,97,0.189105938
+Indian Literature,12,0.023394549
+Indonesian Literature,1,0.001949546
+Information Science,1,0.001949546
+Inspirational,38,0.074082739
+International Development,2,0.003899092
+International Rel...,3,0.005848637
+International Relations,2,0.003899092
+Internet,2,0.003899092
+Iran,6,0.011697275
+Ireland,66,0.12867002
+Irish Literature,21,0.040940461
+Islam,10,0.019495458
+Israel,12,0.023394549
+Italian Literature,68,0.132569111
+Italy,94,0.183257301
+Ivory Coast,1,0.001949546
+Japan,174,0.339220962
+Japanese Literature,94,0.183257301
+Jazz,3,0.005848637
+Jewish,16,0.031192732
+Journalism,16,0.031192732
+Juvenile,5,0.009747729
+Kenya,2,0.003899092
+Kids,10,0.019495458
+Labor,1,0.001949546
+Language,71,0.138417749
+Latin American,19,0.037041369
+Latin American Literature,2,0.003899092
+Law,12,0.023394549
+Lds,1,0.001949546
+Leadership,119,0.231995945
+Lebanon,1,0.001949546
+Legal Thriller,28,0.054587281
+Lesbian,6,0.011697275
+LGBT,257,0.501033259
+Library Science,1,0.001949546
+Linguistics,10,0.019495458
+Literary Criticism,11,0.021445003
+Literary Fiction,814,1.586930245
+Literature,1240,2.417436737
+Logic,1,0.001949546
+Love,7,0.01364682
+Love Story,1,0.001949546
+Lovecraftian,3,0.005848637
+M M Romance,1,0.001949546
+Magic,344,0.67064374
+Magical Realism,240,0.467890981
+Management,67,0.130619566
+Manga,132,0.25734004
+Maps,1,0.001949546
+Marriage,16,0.031192732
+Martial Arts,5,0.009747729
+Marvel,4,0.007798183
+Mathematics,29,0.056536827
+Media Tie In,25,0.048738644
+Medical,83,0.161812298
+Medicine,104,0.202752759
+Medieval,22,0.042890007
+Medieval History,4,0.007798183
+Medievalism,2,0.003899092
+Memoir,797,1.553787967
+Mental Health,88,0.171560027
+Mental Illness,9,0.017545912
+Mermaids,1,0.001949546
+Metaphysics,2,0.003899092
+Microhistory,5,0.009747729
+Middle Grade,258,0.502982805
+Military,23,0.044839552
+Military Fiction,52,0.101376379
+Military History,35,0.068234101
+Mmorpg,4,0.007798183
+Modern,1,0.001949546
+Modern Classics,1,0.001949546
+Money,25,0.048738644
+Monsters,1,0.001949546
+Morocco,3,0.005848637
+Mountaineering,11,0.021445003
+Mozambique,1,0.001949546
+Murder Mystery,2,0.003899092
+Music,58,0.113073654
+Musicians,1,0.001949546
+Mystery,1402,2.73326315
+Mystery Thriller,461,0.898740593
+Mythology,113,0.22029867
+Native American History,1,0.001949546
+Native Americans,4,0.007798183
+Natural History,13,0.025344095
+Nature,105,0.204702304
+Neurodiversity,10,0.019495458
+Neuroscience,14,0.027293641
+New Adult,7,0.01364682
+New Age,7,0.01364682
+New York,63,0.122821383
+Nigeria,13,0.025344095
+Nobel Prize,12,0.023394549
+Noir,51,0.099426834
+Nordic Noir,8,0.015596366
+North American Hi...,69,0.134518657
+Northern Africa,13,0.025344095
+Novella,40,0.07798183
+Novels,824,1.606425703
+Nutrition,13,0.025344095
+Outdoors,9,0.017545912
+Pakistan,3,0.005848637
+Palaeontology,1,0.001949546
+Paranormal,165,0.32167505
+Paranormal Romance,11,0.021445003
+Parenting,55,0.107225017
+Personal Development,195,0.380161422
+Personal Finance,24,0.046789098
+Philosophy,452,0.881194682
+Photography,7,0.01364682
+Physics,19,0.037041369
+Picture Books,77,0.150115023
+Pirates,5,0.009747729
+Plays,108,0.210550942
+Poetry,179,0.34896869
+Poetry Plays,1,0.001949546
+Poland,4,0.007798183
+Police,1,0.001949546
+Polish Literature,12,0.023394549
+Political Science,23,0.044839552
+Politics,513,1.000116973
+Polyamorous,1,0.001949546
+Pop Culture,4,0.007798183
+Popular Science,20,0.038990915
+Portugal,2,0.003899092
+Portuguese Literature,1,0.001949546
+Post Apocalyptic,37,0.072133193
+Poverty,13,0.025344095
+Presidents,8,0.015596366
+Productivity,48,0.093578196
+Programming,5,0.009747729
+Pseudoscience,1,0.001949546
+Psychoanalysis,2,0.003899092
+Psychological Thriller,19,0.037041369
+Psychology,552,1.076149257
+Punk,1,0.001949546
+Queer,109,0.212500487
+Rabbits,1,0.001949546
+Race,239,0.465941436
+Read For School,7,0.01364682
+Realistic Fiction,111,0.216399579
+Reference,58,0.113073654
+Regency,1,0.001949546
+Relationships,29,0.056536827
+Religion,182,0.354817328
+Research,1,0.001949546
+Retellings,34,0.066284556
+Robots,3,0.005848637
+Role Playing Games,2,0.003899092
+Roman,21,0.040940461
+Romance,885,1.725347994
+Romania,1,0.001949546
+Romanian Literature,1,0.001949546
+Romanovs,1,0.001949546
+Romantic Suspense,2,0.003899092
+Romanticism,2,0.003899092
+Russia,100,0.194954576
+Russian History,4,0.007798183
+Russian Literature,35,0.068234101
+Scandinavian Lite...,20,0.038990915
+Scandinavian Literature,34,0.066284556
+School,183,0.356766873
+Science,606,1.181424728
+Science Fiction,1217,2.372597185
+Science Fiction Fantasy,556,1.08394744
+Science Nature,1,0.001949546
+Scotland,17,0.033142278
+Seinen,44,0.085780013
+Self Help,466,0.908488322
+Sequential Art,290,0.565368269
+Sex Work,3,0.005848637
+Sexuality,20,0.038990915
+Shapeshifters,1,0.001949546
+Shonen,18,0.035091824
+Short Stories,491,0.957226966
+Short Story Collection,10,0.019495458
+Slice Of Life,7,0.01364682
+Soccer,2,0.003899092
+Social Change,1,0.001949546
+Social Issues,23,0.044839552
+Social Justice,94,0.183257301
+Social Media,2,0.003899092
+Social Movements,126,0.245642765
+Social Science,11,0.021445003
+Social Work,1,0.001949546
+Society,4,0.007798183
+Sociology,218,0.425000975
+South Africa,3,0.005848637
+Southern,16,0.031192732
+Southern Africa,16,0.031192732
+Southern Gothic,1,0.001949546
+Space,169,0.329473233
+Space Opera,114,0.222248216
+Spain,14,0.027293641
+Spanish Civil War,1,0.001949546
+Spanish Literature,29,0.056536827
+Speculative Fiction,78,0.152064569
+Spirituality,132,0.25734004
+Sports,152,0.296330955
+Sports and Games,1,0.001949546
+Spy Thriller,76,0.148165477
+Star Trek,1,0.001949546
+Star Wars,20,0.038990915
+Steampunk,48,0.093578196
+Storytime,2,0.003899092
+Sudan,2,0.003899092
+Superheroes,14,0.027293641
+Supernatural,39,0.076032284
+Survival,19,0.037041369
+Suspense,285,0.55562054
+Sustainability,12,0.023394549
+Sweden,16,0.031192732
+Swedish Literature,3,0.005848637
+Tanzania,1,0.001949546
+Taoism,3,0.005848637
+Taxation,1,0.001949546
+Teaching,12,0.023394549
+Technical,2,0.003899092
+Technology,83,0.161812298
+Teen,23,0.044839552
+Terrorism,2,0.003899092
+Textbooks,2,0.003899092
+The United States Of America,12,0.023394549
+Theatre,45,0.087729559
+Theology,44,0.085780013
+Theory,10,0.019495458
+Thriller,849,1.655164347
+Time Travel,61,0.118922291
+Tragedy,1,0.001949546
+Trains,1,0.001949546
+Transport,4,0.007798183
+Travel,204,0.397707334
+Travelogue,1,0.001949546
+True Crime,90,0.175459118
+True Story,1,0.001949546
+Tudor Period,2,0.003899092
+Tunisia,1,0.001949546
+Turkish,4,0.007798183
+Turkish Literature,2,0.003899092
+Ukraine,3,0.005848637
+Unfinished,19,0.037041369
+Urban,2,0.003899092
+Urban Fantasy,103,0.200803213
+Urban Planning,9,0.017545912
+Urban Studies,4,0.007798183
+Urbanism,5,0.009747729
+Utopia,1,0.001949546
+Vampires,56,0.109174562
+Vegan,1,0.001949546
+Victorian,11,0.021445003
+Video Games,3,0.005848637
+Walking,3,0.005848637
+War,449,0.875346044
+Warcraft,5,0.009747729
+Web,1,0.001949546
+Website Design,1,0.001949546
+Weird Fiction,2,0.003899092
+Werewolves,1,0.001949546
+Western Africa,19,0.037041369
+Westerns,29,0.056536827
+Wine,1,0.001949546
+Witches,11,0.021445003
+Womens,51,0.099426834
+Womens Fiction,254,0.495184622
+Womens Studies,2,0.003899092
+World History,15,0.029243186
+World Of Warcraft,5,0.009747729
+World War I,47,0.091628651
+World War II,152,0.296330955
+Writing,317,0.618006005
+X Men,2,0.003899092
+Young Adult,1220,2.378445822
+Young Adult Contemporary,24,0.046789098
+Young Adult Fantasy,64,0.124770928
+Young Adult Romance,2,0.003899092
+Young Readers,1,0.001949546
+Zen,1,0.001949546
+Zimbabwe,3,0.005848637
+Zombies,2,0.003899092
