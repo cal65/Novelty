@@ -45,8 +45,8 @@ headers = {
 def get_soup(url):
     try:
         page = requests.get(url, cookies=cookies, headers=headers, timeout=5)
-    except requests.exceptions.ConnectionError:
-        logger.info("Connection refused - too many requests")
+    except Exception as e:
+        logger.info(f"Error {e} in page requests")
         return None
     soup = BeautifulSoup(page.content, "html.parser")
     return soup
