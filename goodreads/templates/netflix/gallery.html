@@ -6,13 +6,13 @@
 
 <!-- customize navbar -->
 {% block domain-home %}
-        <a class="nav-link" href="{% url 'streaming-home' %}">Music</a>
+        <a class="nav-link" href="{% url 'streaming-home' %}">Streaming</a>
 {% endblock domain-home %}
 {% block upload %}
         <a class="nav-link" href="{% url 'upload-view-netflix' %}">Upload Data</a>
 {% endblock upload %}
 {% block about %}
-        <a class="nav-link" href="{% url 'about-this-netflix' %}">About This</a>
+      <a class="nav-link" href="{% url 'about-this-netflix' %}">About This</a>
 {% endblock about %}
 {% block plots %}
         <a class="nav-link" href="{% url 'netflix-plots' %}">Plots</a>
