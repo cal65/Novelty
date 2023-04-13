@@ -223,7 +223,7 @@ def finish_plot(
             orientation="h",
             customdata=df["added_by"],
             marker_color='blue',
-            hovertemplate="%{y}<br><b>Total Added: %{customdata}<extra></extra>",
+            hovertemplate="%{y}<br><b>Total Added:</b> %{customdata}<extra></extra>",
             width=1,
             showlegend=False)
 
