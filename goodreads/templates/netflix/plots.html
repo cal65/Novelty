@@ -34,6 +34,7 @@
           $('img').attr('src', (_, oldSrc) => {
             const url = new URL(oldSrc);
             url.searchParams.set('t', cacheBuster);
+            console.log(url.toString())
             return url.toString();
           });
         })
@@ -94,7 +95,7 @@
 <br>
     <br>
     <div class="caption-text">
-        This shows the different types of shows you've watched grouped by a genre type.
+        This graph displays the shows you've watched grouped by a genre type. Most shows have multiple genres, but a single genre is chosen semi-arbitrarily.
     </div>
 </section>
 
@@ -104,7 +105,7 @@
         <iframe src="{% static genre_movie_url %}"  class="iframe" alt="genres" /> </iframe>
     </div>
 <div class="caption-text">
-    This shows the different types of movies you've watched grouped by a genre type.
+    This shows the movies you've watched grouped by a genre type. Occasionally shows are mislabeled as movies and vice versa.
 </div>
 </section>
 <section id ="Network">

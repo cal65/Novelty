@@ -70,6 +70,7 @@ genres_hierarchy = [
     "Stand-up Comedy",
     "Mexican",
     "Korean",
+    "Comedies",
     "Musicals",
     "Mystery",
     "Indian",

@@ -18,12 +18,13 @@ function getCookie(name) {
   }
     return cookieValue;
   }
-  function upload(){
+  
+function upload(){
   const csrftoken = getCookie('csrftoken');
   var form = document.getElementById('json-form')
   console.log(arguments)
-  console.log(form)
-     $.post({
+  $("#progress").toggle()
+  $.post({
       url: "{% url 'json-upload-spotify' %}",
       data:  new FormData(form),
       cache: false,
@@ -32,6 +33,8 @@ function getCookie(name) {
       headers: { "X-CSRFToken": csrftoken },
       success: function(data) {
             console.log(data)
+            $("#progress").toggle()
+            $("#done").toggle()
           },
       error: function(data ){
             console.log("Something went wrong");
@@ -58,7 +61,16 @@ function getCookie(name) {
          </button></div>
       </form>
    </div>
+
+   <div id = "progress" style="height: 50px; line-height: 50px; display: none; align-items: left;" >
+        <p style="float: left;">Beginning upload...</p>
+        <img src="/static/admin/img/time-hourglass.gif" style="height: 50px; float: left;">
+    </div>
+    <div id = "done" style="height: 50px; line-height: 50px; display: none; align-items: left;">
+        <p>Upload complete.</p>
+    </div>
 </div>
+
 <div class="pt-2" style="display: flex; justify-content: center;">
    <form method="POST">
       {% csrf_token %}
@@ -66,10 +78,12 @@ function getCookie(name) {
       Analyze
       </button>
    </form>
+
+
 </div>
 
 <div class = "center">
-   Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Streaming Upload</span>. This may take some time for your browser to process, based on the amount of books in your upload. Then click <span class="text-blue-800">Analyze</span> when you can. Afterwards, navigate to your <span class="text-blue-800"><a href="{% url 'spotify-plots' %}">Plots</a></span> page.
+   Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Streaming Upload</span>. This may take some time for your browser to process, based on the amount of songs in your upload. Then click <span class="text-blue-800">Analyze</span> when you can. Afterwards, navigate to your <span class="text-blue-800"><a href="{% url 'spotify-plots' %}">Plots</a></span> page.
 </div>
 <br><br>
 
