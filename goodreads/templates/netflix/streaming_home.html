@@ -3,25 +3,20 @@
 <body>
 	{% block content %}
 	<br>
-	<div class = "center" >
-	<img class = "center" src="/static/admin/img/noun_video streaming_749860.png" alt="Novelty" style="width:20%">
-	</div>
-	<div class = "info">
-		Welcome to Novelty Insights - Streaming
+	<div style="background-color: #FFCCCB;">
+	<img class = "center" src="/static/admin/img/netflix/STREAMING_Logo.svg" style="height: 100px;" alt="Streaming">
 	</div>
 	<br>
-	<div class = "center">
+	<div class = "caption-text">
 		Come and understand better what you have watched over the years. What series did you first watch? What genres do you watch the most? The least of? When were you the most active with your tv bingeing? What actors have you knowingly or unknowingly followed?
-	</div>
+
 	<br>
-	<div class = "info">
 		How does it work?
-	</div>
 	<br>
-	<div class = "center">
 	This analysis is for those with a Netflix account. You can request a data export from Netflix. On the desktop verion of <a href="https://www.netflix.com/" class= "link">https://www.netflix.com/</a>, you can go scroll to the account page and find your user profile. Click on the arrow to the right and look for <b> Viewing Activity</b>. More instructions are available  <a href ="https://help.netflix.com/en/node/101917" class="link"> here</a>. The basic export will return all the movies/episodes you have watched and the date you last watched them. The download is instantaneous.
 	<br> <br>
 	At the header of this site, there is an <a href="{% url 'upload-view-netflix' %}" class= "link">Upload Data </a> section of this site. The export you should upload is the csv file you downloaded that should be called <b>NetflixViewingHistory.csv</b>.
+</div>
 	<br> <br>
 	<br> <br>
 	{% endblock content %}
