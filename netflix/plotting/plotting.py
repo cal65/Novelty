@@ -70,7 +70,6 @@ genres_hierarchy = [
     "Stand-up Comedy",
     "Mexican",
     "Korean",
-    "British",
     "Musicals",
     "Mystery",
     "Indian",
@@ -85,8 +84,8 @@ genres_hierarchy = [
     "Dramas",
     "Horror",
     "LGBTQ",
-    "International",
     "Reality",
+    "British",
 ]
 
 

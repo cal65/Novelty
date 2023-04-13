@@ -23,7 +23,6 @@ function getCookie(name) {
   const csrftoken = getCookie('csrftoken');
   var form = document.getElementById('csv-form')
   console.log(arguments)
-  console.log(form)
    $("#progress").toggle()
      $.post({
       url: "{% url 'upload-netflix' %}",
@@ -33,9 +32,10 @@ function getCookie(name) {
       processData: false,
       headers: { "X-CSRFToken": csrftoken },
       success: function(data) {
-            console.log(data)
             $("#progress").toggle()
             var hasData = true
+            console.log(hasData)
+            $('#Analyze').prop('disabled', false);
           },
       error: function(data ){
             console.log("Something went wrong");
@@ -74,7 +74,7 @@ function getCookie(name) {
 <div class="pt-2" style="display: flex; justify-content: center;">
    <form method="POST">
     {% csrf_token %}
-    <button type="submit" name="runscriptNetflix" class="bg-blue-800 disabled:bg-gray-800 hover:enabled:bg-blue-900 text-white font-bold py-2 px-4 rounded" {{ hasData|yesno:",disabled" }}>
+    <button id="Analyze" type="submit" name="runscriptNetflix" class="bg-blue-800 disabled:bg-gray-800 hover:enabled:bg-blue-900 text-white font-bold py-2 px-4 rounded" {{ hasData|yesno:",disabled" }}>
       Analyze
     </button>
    </form>

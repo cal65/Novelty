@@ -1,9 +1,11 @@
 {% extends "goodreads/basefile.html" %}
-{% block content %}
 
+{% block content %}
+<div style="text-align: center;" class="font-bold pt-4 text-3xl">
 {% block gal-title %}
-<div style="text-align: center;" class="font-bold pt-4 text-3xl">BOOKS GALLERY</div>
+BOOKS GALLERY
 {% endblock gal-title %}
+</div>
 
 
 <div class = "center-text">
@@ -21,7 +23,7 @@
 <br>
 <div class="plotly">
     {% block plotly2 %}
-    <iframe class='iframe' src="/static/admin/img/goodreads/author_map_cal65.html" alt="Cal Author Map" > <br></iframe>
+    <iframe class='iframe' src="/static/admin/img/goodreads/finish_plot_cal65.html" alt="Cal Author Map" > <br></iframe>
     {% endblock plotly2 %}
 </div>
 
@@ -30,13 +32,29 @@
 <br>
 <div class="plotly">
     {% block plotly3 %}
-    <iframe class='iframe' src="/static/admin/img/read_heatmap_cal65.html" alt="Cal Reading Dist Plot" > <br></iframe>
+    <iframe class='iframe' src="/static/admin/img/goodreads/author_map_cal65.html" alt="Cal Reading Dist Plot" > <br></iframe>
     {% endblock plotly3 %}
 </div>
 <div class="plotly">
     {% block plotly4 %}
+    <iframe class='iframe' src="/static/admin/img/goodreads/goodreads_genre_diff_cal65.html" alt="Cal Reading Dist Plot" > <br></iframe>
     {% endblock plotly4 %}
 </div>
 <br>
 <br>
+<div class="plotly">
+    {% block plotly5 %}
+    <iframe class='iframe' src="/static/admin/img/goodreads/read_heatmap_cal65.html" alt="Cal Reading Dist Plot" > <br></iframe>
+    {% endblock plotly5 %}
+</div>
+<br>
+<br>
+<div class="plotly">
+    {% block plotly6 %}
+    <iframe class='iframe' src="/static/admin/img/goodreads/monthly_pages_read_cal65.html" alt="Cal Reading Dist Plot" style="height:1600px;" > <br></iframe>
+    {% endblock plotly6 %}
+</div>
+<br>
+<br>
+
 {% endblock content %}
