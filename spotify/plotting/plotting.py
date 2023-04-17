@@ -334,7 +334,8 @@ def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=
                     x=df_sum_sub[date_col],
                     y=df_sum_sub[minutes_col],
                     name="Daily Minutes",
-                    hovertemplate="<b>Date: </b>%{x}<br><b>Minutes: </b>%{y}<extra></extra>"
+                    hovertemplate="<b>Date: </b>%{x}<br><b>Minutes: </b>%{y}<extra></extra>",
+                    showlegend=False,
                 )
             )
     else:
@@ -343,7 +344,8 @@ def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=
                 x=df_sum[date_col],
                 y=df_sum[minutes_col],
                 hovertemplate="<b>Date: </b>%{x}<br><b>Minutes: </b>%{y}<extra></extra>",
-                name="Daily Minutes")
+                name="Daily Minutes",
+            showlegend=False)
         )
     fig.add_trace(
         go.Scatter(
@@ -351,6 +353,7 @@ def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=
             y=df_sum["rolling_average"],
             mode="lines",
             line=go.scatter.Line(color="red"),
+            hovertemplate="<b>Date: </b>%{x}<br><b>Minutes (Rolling Average):</b> %{y}<extra></extra>",
             name=f"{win} Day Rolling Average",
         )
     )
@@ -715,7 +718,7 @@ def plot_years(
             x=years_df[feature_col],
             y=years_df[minutes_col],
             customdata=years_df[index_col],
-            hovertemplate="top artist: %{customdata}<extra></extra>",
+            hovertemplate="Top artist: %{customdata}<extra></extra>",
             name="Minutes - Top Artist",
         )
     )
@@ -807,7 +810,7 @@ def plot_popularity(
             x=pop["popularity"],
             y=round(pop["minutes"]),
             customdata=pop["song"],
-            hovertemplate="Popularity: %{x} <br> Total Minutes: %{y} <br> Top Track: %{customdata}<extra></extra>",
+            hovertemplate="Popularity: %{x} <br>Total Minutes: %{y} <br>Top Track: %{customdata}<extra></extra>",
             name="Minutes - Total",
         )
     )
