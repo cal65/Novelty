@@ -1,4 +1,3 @@
-import os
 import csv
 import sys
 from datetime import datetime
@@ -284,14 +283,12 @@ def upload(request):
     df = pd.read_csv(csv_file)
     df.to_csv(f"goodreads/static/Graphs/{user}/export_{user}.csv")
     df = process_export_upload(df)
-    messages.info(request, f"Starting Goodreads export")
     logger.info(f"starting export table addition for {str(len(df))} rows")
     exportDataObjs = populateExportData(df, user)
     logger.info(f"starting authors table addition")
     populateAuthors(df)
     logger.info(f"starting books table addition")
     populateBooks(exportDataObjs, user, wait=3, metrics=True)
-    messages.success(f"Upload completed")
     # return
     template = "goodreads/csv_upload.html"
     return render(request, template)
@@ -300,9 +297,7 @@ def upload(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def upload_view_goodreads(request):
     template = "goodreads/csv_upload.html"
-    user = request.user
     # check if user has uploaded a csv file before running the analysis
-    logger.info(request)
     if request.method == "GET":
         return render(request, template)
     logger.info(f"request post is {request.POST}")

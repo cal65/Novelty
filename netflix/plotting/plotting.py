@@ -1,17 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
-import psycopg2
-import matplotlib
 import plotly.graph_objects as go
-import plotly.figure_factory as ff
-from plotly.subplots import make_subplots
-import calendar
-import matplotlib.pyplot as plt
-from matplotlib import dates
-import seaborn as sns
 import plotly.graph_objs as go
-from datetime import timedelta
 import networkx as nx
 import plotly.express as px
 import logging
@@ -29,6 +20,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+palette = px.colors.qualitative.Plotly
 
 def plot_genres(df, username, title_type):
     # df should be already formatted, genres cleaned up
@@ -41,7 +33,7 @@ def plot_genres(df, username, title_type):
     ).sort_values("size")
     fig = go.Figure()
     df_shows = df_count.loc[df_count["title_type"] == title_type]
-    for g in df_genre_count["genre_chosen"]:
+    for i, g in enumerate(df_genre_count["genre_chosen"]):
         df_sub = df_shows.loc[df_shows["genre_chosen"] == g]
 
         fig.add_trace(
