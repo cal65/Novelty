@@ -47,9 +47,8 @@ def convert_to_ExportData(row, username):
         djangoExport = ExportData.objects.get(
             book_id=str(row.book_id), username=username
         )
-    except:
+    except Exception as e:
         djangoExport = ExportData()
-        logger.info(f"convert to export data - new book id {row.book_id}")
         new = True
 
     f_names = get_field_names(ExportData)

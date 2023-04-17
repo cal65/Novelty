@@ -273,10 +273,14 @@ def count_new(
 
 def plot_new(count_new_df, date_col="date", firsts_col="first", win=7):
     fig = go.Figure(
-        [go.Bar(x=count_new_df[date_col],
+        [
+            go.Bar(
+                x=count_new_df[date_col],
                 y=count_new_df[firsts_col],
                 hovertemplate="%{x}<br><b>New Songs: </b>%{y}<extra></extra>",
-                name="New Songs")]
+                name="New Songs",
+            )
+        ]
     )
     fig.add_trace(
         go.Scatter(
@@ -291,7 +295,7 @@ def plot_new(count_new_df, date_col="date", firsts_col="first", win=7):
     fig.update_layout(
         title="New Songs",
         yaxis=dict(
-            title="New Songs",
+            title="Minutes",
         ),
     )
     fig.update_layout(standard_layout)
@@ -345,7 +349,8 @@ def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=
                 y=df_sum[minutes_col],
                 hovertemplate="<b>Date: </b>%{x}<br><b>Minutes: </b>%{y}<extra></extra>",
                 name="Daily Minutes",
-            showlegend=False)
+                showlegend=False,
+            )
         )
     fig.add_trace(
         go.Scatter(
@@ -362,6 +367,7 @@ def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=
         yaxis=dict(
             title="Minutes",
         ),
+        hovermode="x unified",
     )
     fig.update_layout(standard_layout)
     return fig
@@ -387,7 +393,7 @@ def format_artist_list_day(
     artist_col="artistname",
     date_col="date",
     minutes_col="minutes",
-        other=False,
+    other=False,
 ):
     """
     Different unction from `format_artist_day`
@@ -1030,6 +1036,8 @@ def main(username):
     for i, figure in enumerate(overall):
         for trace in range(len(figure["data"])):
             fig.add_trace(figure["data"][trace], row=i + 1, col=1)
+            fig.update_yaxes(title_text="Minutes", row=i + 1, col=1)
+
         for annotation in figure.select_annotations():
             fig.add_annotation(annotation, row=i + 1, col=1)
     fig.update_layout(standard_layout)

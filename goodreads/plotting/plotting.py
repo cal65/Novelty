@@ -212,9 +212,12 @@ def finish_plot(
         {"currently-reading": "unread", "to-read": "unread"}
     )
 
-    df_finish = df.loc[pd.notnull(df['read_percentage'])].sort_values('read_percentage')
-    df_finish_read = df_finish.loc[df_finish['exclusive_shelf'] == 'read']
-    df_finish_unread = df_finish.loc[df_finish['exclusive_shelf'] != 'read']
+    df_finish = df.loc[pd.notnull(df["read_percentage"])].sort_values("read_percentage")
+    df_finish["original_publication_year"] = df_finish[
+        "original_publication_year"
+    ].fillna("Unknown")
+    df_finish_read = df_finish.loc[df_finish["exclusive_shelf"] == "read"]
+    df_finish_unread = df_finish.loc[df_finish["exclusive_shelf"] != "read"]
 
     def finish_bar_flat(df):
         return go.Bar(
@@ -222,20 +225,21 @@ def finish_plot(
             y=df[title_col],
             orientation="h",
             customdata=df["added_by"],
-            marker_color='blue',
+            marker_color="blue",
             hovertemplate="%{y}<br><b>Total Added:</b> %{customdata}<extra></extra>",
             width=1,
-            showlegend=False)
+            showlegend=False,
+        )
 
     def finish_bar_perc(df):
         hovertemplate = "%{y}<br><b>Year:</b> %{customdata[1]}<br>"
         hovertemplate += "<b>Total Finished:</b> %{customdata[0]}<extra></extra>"
         return go.Bar(
-            x=df["read_percentage"].round(3),
+            x=df["read_percentage"].round(1),
             y=df[title_col],
-            marker_color='red',
-            text=df["read_percentage"].map(lambda n: '{:.2%}'.format(n)),
-            customdata=np.stack((df['read'], df['original_publication_year']), axis=-1),
+            marker_color="red",
+            text=df["read_percentage"].map(lambda n: "{:.2%}".format(n)),
+            customdata=np.stack((df["read"], df["original_publication_year"]), axis=-1),
             textposition="inside",
             textangle=0,
             hovertemplate=hovertemplate,
@@ -245,16 +249,21 @@ def finish_plot(
             showlegend=False,
         )
 
-    fig = make_subplots(
-        rows=2, cols=1, subplot_titles=['Read', 'Unread'])
-    fig.add_trace(finish_bar_flat(df_finish_read.head(n)), row=1, col=1)
+    if len(df_finish_unread) > 0:
+        fig = make_subplots(rows=2, cols=1, subplot_titles=["Read", "Unread"])
+        fig.add_trace(finish_bar_flat(df_finish_read.head(n)), row=1, col=1)
 
-    fig.add_trace(finish_bar_perc(df_finish_read.head(n)), row=1, col=1)
+        fig.add_trace(finish_bar_perc(df_finish_read.head(n)), row=1, col=1)
 
-    fig.add_trace(finish_bar_flat(df_finish_unread.head(n)), row=2, col=1)
+        fig.add_trace(finish_bar_flat(df_finish_unread.head(n)), row=2, col=1)
 
-    fig.add_trace(finish_bar_perc(df_finish_unread.head(n)), row=2, col=1)
-    fig.update_layout(barmode='overlay')
+        fig.add_trace(finish_bar_perc(df_finish_unread.head(n)), row=2, col=1)
+    else:
+        fig = go.Figure()
+        fig.add_trace(finish_bar_flat(df_finish_read.head(n)), row=1, col=1)
+        fig.add_trace(finish_bar_perc(df_finish_read.head(n)), row=1, col=1)
+
+    fig.update_layout(barmode="overlay")
     logger.info(
         f"Debugging df_finish_read: {df_finish_read[[title_col, read_col, exclusive_shelf]].sample(2)}"
     )
@@ -281,14 +290,31 @@ def gender_bar_plot(df, gender_col="gender", narrative_col="narrative"):
     return traces
 
 
-def publication_histogram(df, date_col="original_publication_year", title_col="title_simple", start_year=1800):
+def len_title_pivot(df, index_cols, add_value_cols, title_col="title_simple", n=3):
+    if add_value_cols is None:
+        value_cols = [title_col]
+    else:
+        value_cols = add_value_cols + [title_col]
+    df_pivot = pd.pivot_table(
+        df,
+        index=index_cols,
+        values=value_cols,
+        aggfunc=[len, lambda x: ", ".join(x[:n])],
+    ).reset_index()
+    return df_pivot
+
+
+def publication_histogram(
+    df, date_col="original_publication_year", title_col="title_simple", start_year=1800
+):
     df_recent = df[df[date_col] > start_year]
-    df_publication = pd.pivot_table(df_recent, index=date_col, values=[title_col],
-                                    aggfunc=[len, lambda x: ', '.join(x[:3])]).reset_index()
-    df_publication.columns = [date_col, 'n', title_col]
+    df_publication = len_title_pivot(
+        df_recent, index_cols=[date_col], add_value_cols=None, title_col="title_simple"
+    )
+    df_publication.columns = [date_col, "n", title_col]
     return go.Bar(
         x=df_publication[date_col],
-        y=df_publication['n'],
+        y=df_publication["n"],
         customdata=df_publication[title_col],
         hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<br>%{customdata}<extra></extra>",
         showlegend=False,
@@ -301,13 +327,13 @@ def plot_longest_books(
     n=15,
     pages_col="number_of_pages",
     title_col="title_simple",
-    my_rating_col="my_rating",
 ):
     highest = df[pd.notnull(df[pages_col])].sort_values(pages_col).tail(n)
     highest[title_col] = factorize(highest[title_col])
     return go.Bar(
         x=highest[pages_col],
         y=highest[title_col],
+        text=highest[pages_col],
         orientation="h",
         hovertemplate="<b>Title:</b> %{y}<br><b>Number of Pages:</b> %{x}<extra></extra>",
         showlegend=False,
@@ -323,7 +349,7 @@ def create_melted_genre_df(df, title_col="title_simple"):
     return genre_df_m
 
 
-def genre_bar_plot(df, n_shelves=5, min_count=3):
+def genre_bar_plot(df, title_col="title_simple", n_shelves=5, min_count=3):
     """
     Because genres are stored in multiple columns starting with 'shelf', to plot them we need to melt the shelves
     Currently 7 shelves are stored, but including them all can lead to a busy graph
@@ -335,8 +361,10 @@ def genre_bar_plot(df, n_shelves=5, min_count=3):
         genre_df_m["variable"].str.replace("shelf", "").astype(int)
     )
     genre_df_m = genre_df_m[genre_df_m["shelf_number"] <= n_shelves]
-    shelf_table_df = pd.DataFrame(genre_df_m["Shelf"].value_counts()).reset_index()
-    shelf_table_df.columns = ["Shelf", "Count"]
+    shelf_table_df = len_title_pivot(
+        genre_df_m, index_cols=["Shelf"], add_value_cols=None, title_col=title_col
+    )
+    shelf_table_df.columns = ["Shelf", "Count", title_col]
     shelf_table_df.sort_values("Count", ascending=False, inplace=True)
     shelf_table_df["Shelf"] = factorize(shelf_table_df["Shelf"])
 
@@ -352,7 +380,8 @@ def genre_bar_plot(df, n_shelves=5, min_count=3):
             x=plot_df["Count"],
             y=plot_df["Shelf"],
             orientation="h",
-            hovertemplate="<b>Shelf:</b> %{y}<br><b>Count:</b> %{x}",
+            customdata=plot_df[title_col],
+            hovertemplate="<b>Shelf:</b> %{y}<br><b>Count:</b> %{x}<br><b>Titles:</b> %{customdata}<extra></extra>",
             showlegend=False,
         )
     else:
@@ -521,7 +550,9 @@ def summary_plot(
         fig.add_trace(trace, row=1, col=1)
 
     fig.add_trace(
-        publication_histogram(df, date_col=date_col, title_col=title_col, start_year=start_year),
+        publication_histogram(
+            df, date_col=date_col, title_col=title_col, start_year=start_year
+        ),
         row=1,
         col=2,
     )
@@ -857,7 +888,9 @@ def main(username):
         logger.info(" summary plot failed: " + str(exception))
     create_read_plot_heatmap(df=read_df, username=username)
     fig_finish = finish_plot(df, username)
-    fig_finish.write_html(f"goodreads/static/Graphs/{username}/finish_plot_{username}.html")
+    fig_finish.write_html(
+        f"goodreads/static/Graphs/{username}/finish_plot_{username}.html"
+    )
     genres_avg = pd.read_csv("artifacts/genres_avg.csv")
     genre_difference = format_genre_table(read_df, genres_avg=genres_avg, n=10)
     fig_genres = plot_genre_difference(genre_difference, username)

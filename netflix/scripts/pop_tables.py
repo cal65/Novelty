@@ -9,10 +9,9 @@ post_pass = os.getenv("cal65_pass")
 
 
 engine = create_engine(
-        "postgresql+psycopg2://cal65:"
-        + os.environ["cal65_pass"]
-        + "@127.0.0.1/goodreads"
-    )
+    "postgresql+psycopg2://cal65:" + os.environ["cal65_pass"] + "@127.0.0.1/goodreads"
+)
+
 
 def populate_table_from_csv(csv_file_path, table, database="goodreads"):
     """populate table in the PostgreSQL database"""
@@ -38,9 +37,9 @@ def scrape_table(table):
         host="localhost", database="goodreads", user="cal65", password=post_pass
     )
     tablename = f"goodreads_netflix{table}"
-    if table == 'genres':
+    if table == "genres":
         keyword = "genres"
-    elif table == 'actors':
+    elif table == "actors":
         keyword = "cast"
     query_id = f"""
         select netflix_id from {tablename} where {keyword} is Null;

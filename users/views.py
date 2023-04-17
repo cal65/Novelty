@@ -7,6 +7,16 @@ from .forms import UserRegisterForm, LoginForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth import authenticate, login, logout
 
+import logging
+
+logging.basicConfig(
+    filename="logs.txt",
+    filemode="a",
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    level=logging.INFO,
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
 
 # function to create folder for user on registration 
 def create_folder(username):
@@ -15,6 +25,12 @@ def create_folder(username):
 
 
 def register(request):
+    try:
+        headers = request.headers["User-Agent"]
+    except Exception:
+        headers = ""
+    logger.info(f"registration request with headers {headers}")
+
     if request.method == 'POST':
         next = request.GET['next']
         form = UserRegisterForm(request.POST)

@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 palette = px.colors.qualitative.Plotly
 
+
 def plot_genres(df, username, title_type):
     # df should be already formatted, genres cleaned up
     # only tv shows or movies
