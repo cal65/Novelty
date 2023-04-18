@@ -202,7 +202,6 @@ def factorize(series):
 
 def finish_plot(
     df,
-    name,
     exclusive_shelf="exclusive_shelf",
     read_col="read_percentage",
     title_col="title_simple",
@@ -212,34 +211,35 @@ def finish_plot(
         {"currently-reading": "unread", "to-read": "unread"}
     )
 
-    df_finish = df.loc[pd.notnull(df["read_percentage"])].sort_values("read_percentage")
+    df_finish = df.loc[pd.notnull(df[read_col])].sort_values(read_col)
     df_finish["original_publication_year"] = df_finish[
         "original_publication_year"
     ].fillna("Unknown")
     df_finish_read = df_finish.loc[df_finish["exclusive_shelf"] == "read"]
     df_finish_unread = df_finish.loc[df_finish["exclusive_shelf"] != "read"]
+    cols = plotly.colors.DEFAULT_PLOTLY_COLORS
 
-    def finish_bar_flat(df):
+    def finish_bar_flat(df1):
         return go.Bar(
             x=[1] * len(df),
-            y=df[title_col],
+            y=df1[title_col],
             orientation="h",
-            customdata=df["added_by"],
-            marker_color="blue",
+            customdata=df1["added_by"],
+            marker_color=cols[0],
             hovertemplate="%{y}<br><b>Total Added:</b> %{customdata}<extra></extra>",
             width=1,
             showlegend=False,
         )
 
-    def finish_bar_perc(df):
+    def finish_bar_perc(df2):
         hovertemplate = "%{y}<br><b>Year:</b> %{customdata[1]}<br>"
         hovertemplate += "<b>Total Finished:</b> %{customdata[0]}<extra></extra>"
         return go.Bar(
-            x=df["read_percentage"].round(1),
-            y=df[title_col],
-            marker_color="red",
-            text=df["read_percentage"].map(lambda n: "{:.2%}".format(n)),
-            customdata=np.stack((df["read"], df["original_publication_year"]), axis=-1),
+            x=df2[read_col],
+            y=df2[title_col],
+            marker_color=cols[1],
+            text=df2[read_col].map(lambda x: "{:.1%}".format(x)),
+            customdata=np.stack((df2["read"], df2["original_publication_year"]), axis=-1),
             textposition="inside",
             textangle=0,
             hovertemplate=hovertemplate,
@@ -260,8 +260,8 @@ def finish_plot(
         fig.add_trace(finish_bar_perc(df_finish_unread.head(n)), row=2, col=1)
     else:
         fig = go.Figure()
-        fig.add_trace(finish_bar_flat(df_finish_read.head(n)), row=1, col=1)
-        fig.add_trace(finish_bar_perc(df_finish_read.head(n)), row=1, col=1)
+        fig.add_trace(finish_bar_flat(df_finish_read.head(n)))
+        fig.add_trace(finish_bar_perc(df_finish_read.head(n)))
 
     fig.update_layout(barmode="overlay")
     logger.info(
@@ -434,7 +434,9 @@ def plot_genre_difference(genre_difference, username):
         f"plotting genres comparison plot for df of {len(genre_difference)} rows"
     )
     cols = plotly.colors.DEFAULT_PLOTLY_COLORS
-    fig = make_subplots(1, 2, subplot_titles=["Above Average", "Below Average"])
+    fig = make_subplots(
+        1, 2, subplot_titles=["Above Average", "Below Average"], vertical_spacing=0.05
+    )
 
     genre_above = genre_difference.loc[genre_difference["Result"] == "Above Average"]
     fig.add_trace(
@@ -511,8 +513,12 @@ def plot_genre_difference(genre_difference, username):
         col=2,
     )
 
-    fig.update_layout(title=f"Genre Comparison for {username}")
+    fig.update_layout(title=f"Genre Comparison for {username}",
+                      legend=dict(yanchor="bottom"))
     fig.update_layout(standard_layout)
+    fig.update_xaxes(showline=True, linecolor="rgb(36,36,36)")
+    fig.update_yaxes(showline=True, linecolor="rgb(36,36,36)")
+
     return fig
 
 
@@ -541,6 +547,7 @@ def summary_plot(
             "Longest Books",
             "Genres",
         ),
+        vertical_spacing=0.1,
     )
 
     gender_traces = gender_bar_plot(
@@ -568,6 +575,8 @@ def summary_plot(
     )
     fig.update_layout(title=f"Summary - {username}")
     fig.update_layout(standard_layout)
+    fig.update_xaxes(showline=True, linecolor="rgb(36,36,36)")
+    fig.update_yaxes(showline=True, linecolor="rgb(36,36,36)")
 
     return fig
 
@@ -887,7 +896,7 @@ def main(username):
     except Exception as exception:
         logger.info(" summary plot failed: " + str(exception))
     create_read_plot_heatmap(df=read_df, username=username)
-    fig_finish = finish_plot(df, username)
+    fig_finish = finish_plot(df)
     fig_finish.write_html(
         f"goodreads/static/Graphs/{username}/finish_plot_{username}.html"
     )

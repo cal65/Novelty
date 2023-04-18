@@ -40,6 +40,10 @@
     padding: 0.5rem 1rem;
 }
 
+.bg-button {
+    background-color: #636efa;
+}
+
 .navbar-expand-lg {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
