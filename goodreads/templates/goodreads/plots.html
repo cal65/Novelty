@@ -65,7 +65,6 @@
         common genres you've read.
 
 </div>
-    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">SUMMARY IMAGE</div>
     <div class="plotly" style="height: 900px;">
         <iframe class="iframe" src="{% static summary_plot_url %}" alt="summary-plot"> </iframe>
     </div>
@@ -78,7 +77,6 @@
     The percentage represents how many people marked a book as "to read" out of the total number that marked it as "finished". <br>
     The plot is divided into books that you have finished and those that you have not. 
         </div>
-    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">FINISH PLOT IMAGE</div>
     <div class="plotly  ">
         <iframe class="iframe" src="{% static finish_plot_url %}"  alt="finish-plot" /></iframe>
     </div>
@@ -90,7 +88,6 @@
     <div class="caption-text">
     This shows the genres that you read, compared to an average. It is split into genres in which you read more than average and those that you read below average. <br> The ratios will not add up to 100% because books can have multiple genres. 
         </div>
-    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">GENRE COMPARISON IMAGE</div>
     <div class="plotly">
         <iframe class="iframe" src="{% static genre_diff_url %}"  alt="genre-comparison-plot"> </iframe>
     </div>
@@ -106,7 +103,6 @@
             It may surprise you how few other people have read some of your books. <br>
             Orange represents Fiction, dark green Non-fiction. This plot utilizes a new pacakge and is a work in progress.
     </div>
-    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">POPULARITY SPECTRUM IMAGE</div>
     <div class="center-text" style="display: flex; justify-content: center; width: 70%; height: 750px;">
         <iframe style="width: 100%; height: 100%;" src="{% static popularity_spectrum_url %}"  class="text-center"
                 alt="popularity-spectrum" />
@@ -120,7 +116,6 @@
     <div class="caption-text">
         Below is an interactive map of the countries represented by the authors you have read.
     </div>
-        <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">NATIONALITY MAP IMAGE</div>
     <div class="plotly" style="align-items: center; height: 950px">
         <iframe src="{% static nationality_map_url %}" class="iframe" style="height: 950px;" alt="nationality-map" >
     </iframe>

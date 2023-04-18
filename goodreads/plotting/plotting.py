@@ -202,6 +202,7 @@ def factorize(series):
 
 def finish_plot(
     df,
+    username,
     exclusive_shelf="exclusive_shelf",
     read_col="read_percentage",
     title_col="title_simple",
@@ -217,7 +218,7 @@ def finish_plot(
     ].fillna("Unknown")
     df_finish_read = df_finish.loc[df_finish["exclusive_shelf"] == "read"]
     df_finish_unread = df_finish.loc[df_finish["exclusive_shelf"] != "read"]
-    cols = plotly.colors.DEFAULT_PLOTLY_COLORS
+    cols = plotly.colors.qualitative.Plotly
 
     def finish_bar_flat(df1):
         return go.Bar(
@@ -263,7 +264,8 @@ def finish_plot(
         fig.add_trace(finish_bar_flat(df_finish_read.head(n)))
         fig.add_trace(finish_bar_perc(df_finish_read.head(n)))
 
-    fig.update_layout(barmode="overlay")
+    fig.update_layout(barmode="overlay", title=f"Finish Plot - {username}")
+    fig.update_layout(standard_layout)
     logger.info(
         f"Debugging df_finish_read: {df_finish_read[[title_col, read_col, exclusive_shelf]].sample(2)}"
     )
@@ -433,7 +435,7 @@ def plot_genre_difference(genre_difference, username):
     logger.info(
         f"plotting genres comparison plot for df of {len(genre_difference)} rows"
     )
-    cols = plotly.colors.DEFAULT_PLOTLY_COLORS
+    cols = plotly.colors.qualitative.Plotly
     fig = make_subplots(
         1, 2, subplot_titles=["Above Average", "Below Average"], vertical_spacing=0.05
     )
@@ -452,7 +454,7 @@ def plot_genre_difference(genre_difference, username):
             ),
             orientation="h",
             name="Your Genres",
-            marker=dict(color=cols[0]),
+            marker=dict(color=cols[2]),
             hovertemplate="<b>%{y}</b><br><b>Ratio:</b> %{customdata[0]} <br><b>Titles:</b> %{customdata[1]}",
         ),
         row=1,
@@ -467,7 +469,7 @@ def plot_genre_difference(genre_difference, username):
             ),
             orientation="h",
             name="Average Reader's Genres",
-            marker=dict(color=cols[1]),
+            marker=dict(color=cols[3]),
             hovertemplate="<b>%{y}</b><br><b>Ratio:</b> %{customdata}",
         ),
         row=1,
@@ -488,7 +490,7 @@ def plot_genre_difference(genre_difference, username):
             ),
             orientation="h",
             name="Your Genres",
-            marker=dict(color=cols[0]),
+            marker=dict(color=cols[2]),
             hovertemplate="<b>%{y}</b><br><b>Ratio:</b> %{customdata[0]} <br><b>Titles:</b> %{customdata[1]}",
             showlegend=False,
         ),
@@ -505,7 +507,7 @@ def plot_genre_difference(genre_difference, username):
             ),
             orientation="h",
             name="Average Reader's Genres",
-            marker=dict(color=cols[1]),
+            marker=dict(color=cols[3]),
             hovertemplate="<b>%{y}</b><br><b>Ratio:</b> %{customdata}",
             showlegend=False,
         ),
@@ -514,7 +516,9 @@ def plot_genre_difference(genre_difference, username):
     )
 
     fig.update_layout(title=f"Genre Comparison for {username}",
-                      legend=dict(yanchor="bottom"))
+                      legend=dict(yanchor="top", y=-0.1, xanchor="center",
+                                  x=0.5,
+                                  orientation='h'))
     fig.update_layout(standard_layout)
     fig.update_xaxes(showline=True, linecolor="rgb(36,36,36)")
     fig.update_yaxes(showline=True, linecolor="rgb(36,36,36)")
@@ -896,7 +900,7 @@ def main(username):
     except Exception as exception:
         logger.info(" summary plot failed: " + str(exception))
     create_read_plot_heatmap(df=read_df, username=username)
-    fig_finish = finish_plot(df)
+    fig_finish = finish_plot(df, username)
     fig_finish.write_html(
         f"goodreads/static/Graphs/{username}/finish_plot_{username}.html"
     )
