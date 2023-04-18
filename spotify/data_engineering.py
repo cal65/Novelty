@@ -25,8 +25,11 @@ SPOTIPY_CLIENT_SECRET = os.environ["SPOTIFY_CLIENT_SECRET"]
 os.environ["SPOTIPY_CLIENT_ID"] = os.environ["SPOTIFY_CLIENT_ID"]
 os.environ["SPOTIPY_CLIENT_SECRET"] = os.environ["SPOTIFY_CLIENT_SECRET"]
 
-sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID,
-                                                           client_secret=SPOTIPY_CLIENT_SECRET))
+sp = spotipy.Spotify(
+    auth_manager=SpotifyClientCredentials(
+        client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET
+    )
+)
 
 ms_per_minute = 60 * 1000
 
@@ -64,23 +67,25 @@ def convert_to_SpotifyStreaming(row, username):
     djangoSpotifyStreaming.save()
     return djangoSpotifyStreaming
 
+
 def convert_to_SpotifyTrack(track_series):
     djangoSpotifyTrack = SpotifyTracks()
-    djangoSpotifyTrack.uri = track_series['uri']
-    djangoSpotifyTrack.name = track_series['name']
-    djangoSpotifyTrack.artist = track_series['artist']
-    djangoSpotifyTrack.duration = track_series['duration']
-    djangoSpotifyTrack.popularity = track_series['popularity']
-    djangoSpotifyTrack.release_date = track_series['release_date']
-    djangoSpotifyTrack.genres = track_series['genres']
-    djangoSpotifyTrack.album = track_series['album']
-    djangoSpotifyTrack.explicit = track_series['explicit']
-    djangoSpotifyTrack.trackname = track_series['trackname']
-    djangoSpotifyTrack.artistname = track_series['artistname']
-    djangoSpotifyTrack.podcast = track_series['podcast']
-    djangoSpotifyTrack.genre_chosen= track_series['genre_chosen']
+    djangoSpotifyTrack.uri = track_series["uri"]
+    djangoSpotifyTrack.name = track_series["name"]
+    djangoSpotifyTrack.artist = track_series["artist"]
+    djangoSpotifyTrack.duration = track_series["duration"]
+    djangoSpotifyTrack.popularity = track_series["popularity"]
+    djangoSpotifyTrack.release_date = track_series["release_date"]
+    djangoSpotifyTrack.genres = track_series["genres"]
+    djangoSpotifyTrack.album = track_series["album"]
+    djangoSpotifyTrack.explicit = track_series["explicit"]
+    djangoSpotifyTrack.trackname = track_series["trackname"]
+    djangoSpotifyTrack.artistname = track_series["artistname"]
+    djangoSpotifyTrack.podcast = track_series["podcast"]
+    djangoSpotifyTrack.genre_chosen = track_series["genre_chosen"]
     djangoSpotifyTrack.save()
     return djangoSpotifyTrack
+
 
 def lowercase_cols(df):
     df = df.copy()
@@ -123,7 +128,7 @@ def get_historical_track_info_from_id(
             "trackname": trackname,
             "artistname": artistname,
             "podcast": False,
-            'genre_chosen': '',
+            "genre_chosen": "",
         }
     )
     if track_id is None:
@@ -131,7 +136,7 @@ def get_historical_track_info_from_id(
         return empty_series
     else:
         try:
-            if True: #with Timeout(6):
+            if True:  # with Timeout(6):
                 if searchType == "track":
                     track_info_dict = sp.track(track_id)
                     track_info_series = pd.Series(
@@ -150,7 +155,7 @@ def get_historical_track_info_from_id(
                             "trackname": trackname,
                             "artistname": artistname,
                             "podcast": False,
-                            'genre_chosen': '',
+                            "genre_chosen": "",
                         }
                     )
                 elif searchType == "show":
@@ -169,7 +174,7 @@ def get_historical_track_info_from_id(
                             "trackname": trackname,
                             "artistname": artistname,
                             "podcast": True,
-                            'genre_chosen': '',
+                            "genre_chosen": "",
                         }
                     )
         except Exception as e:
@@ -218,7 +223,7 @@ def get_audio(uris):
     for uid in uris:
         if uid is not None:
             try:
-                if True: #with Timeout(3):
+                if True:  # with Timeout(3):
                     feat = sp.audio_features(uid)[0]
             except:
                 print(f"Time out error for {uid}")
@@ -249,25 +254,24 @@ def merge_tracks(
 
     return tracks_merged
 
-def update_tracks(df, track_col = 'trackname', artist_col = 'artistname'):
+
+def update_tracks(df, track_col="trackname", artist_col="artistname"):
     df = df.drop_duplicates(subset=[track_col, artist_col])
     track_df = splot.get_data(splot.tracks_all_query())
     df_unmerged = identify_new(df, track_df)
-    logger.info(f"Search uri & track data for {len(df_unmerged)} tracks out of original {len(df)} tracks")
+    logger.info(
+        f"Search uri & track data for {len(df_unmerged)} tracks out of original {len(df)} tracks"
+    )
     for i, row in df_unmerged.iterrows():
         # crude test for podcast show vs track
         if row["msplayed"] > ms_per_minute * 10:
-            uri = search_by_names(
-                row[track_col], row[artist_col], searchType="show"
-            )
+            uri = search_by_names(row[track_col], row[artist_col], searchType="show")
             track_info_series = get_historical_track_info_from_id(
-                    uri, row[track_col], row[artist_col], searchType="show"
-                )
+                uri, row[track_col], row[artist_col], searchType="show"
+            )
             convert_to_SpotifyTrack(track_info_series)
         else:
-            uri = search_by_names(
-                row[track_col], row[artist_col], searchType="track"
-            )
+            uri = search_by_names(row[track_col], row[artist_col], searchType="track")
             track_info_series = get_historical_track_info_from_id(
                 uri, row[track_col], row[artist_col], searchType="track"
             )

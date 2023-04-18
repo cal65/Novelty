@@ -59,13 +59,13 @@
 <div class="caption-text">
     <br>
 
-        This graph shows some summary statistics about your library. Your library is split up into fiction and
-        non-fiction, male and female authors.
+        This graph shows some summary statistics about your library. Your library can be tabulated into fiction and
+        non-fiction and authors by gender.
         Other graphs show the distribution of when the books were written, what the longest ones are, and the most
         common genres you've read.
 
 </div>
-    <div class="plotly" style="height: 900px;">
+    <div class="plotly" style="height: 950px;">
         <iframe class="iframe" src="{% static summary_plot_url %}" alt="summary-plot"> </iframe>
     </div>
 <br> 
@@ -75,7 +75,7 @@
     <div class="caption-text">
     This shows the books that are the least commonly finished in your library.
     The percentage represents how many people marked a book as "to read" out of the total number that marked it as "finished". <br>
-    The plot is divided into books that you have finished and those that you have not. 
+    The plot is divided into books that you have finished and those that you have not (if your export includes books you have marked as "to-read").
         </div>
     <div class="plotly  ">
         <iframe class="iframe" src="{% static finish_plot_url %}"  alt="finish-plot" /></iframe>

@@ -211,6 +211,7 @@ def finish_plot(
     df[exclusive_shelf] = df[exclusive_shelf].replace(
         {"currently-reading": "unread", "to-read": "unread"}
     )
+    df[title_col] = df[title_col].apply(split_title)
 
     df_finish = df.loc[pd.notnull(df[read_col])].sort_values(read_col)
     df_finish["original_publication_year"] = df_finish[
@@ -292,6 +293,28 @@ def gender_bar_plot(df, gender_col="gender", narrative_col="narrative"):
     return traces
 
 
+def split_title(title, n=30):
+    """
+    Useful function for splitting long text up between words
+    """
+    if len(title) < n:
+        return title
+    else:
+        title_splits = title.split(' ')
+        title_length = 0
+        i = 0
+        while title_length < n:
+            title_length += len(title_splits[i]) + 1
+            i += 1
+        if i == len(title_splits)-1:
+            return title
+        else:
+            front = ' '.join(title_splits[:i])
+            back = ' '.join(title_splits[i:])
+            title = '<br>'.join([front, back])
+            return title
+
+
 def len_title_pivot(df, index_cols, add_value_cols, title_col="title_simple", n=3):
     if add_value_cols is None:
         value_cols = [title_col]
@@ -331,6 +354,7 @@ def plot_longest_books(
     title_col="title_simple",
 ):
     highest = df[pd.notnull(df[pages_col])].sort_values(pages_col).tail(n)
+    highest[title_col] = highest[title_col].apply(split_title)
     highest[title_col] = factorize(highest[title_col])
     return go.Bar(
         x=highest[pages_col],
@@ -756,8 +780,9 @@ def create_read_plot_heatmap(
                 z=[[r] for r in r_strat["narrative_int"]],
                 annotation_text=[[r] for r in r_strat["title_simple"]],
                 text=[[r] for r in r_strat["hover_text"]],
+                opacity=(i+1)/len(strats),
                 hoverinfo="text",
-                colorscale="geyser",
+                colorscale="earth",
                 font_colors=["black", "black"],
             )
         )
@@ -782,6 +807,7 @@ def create_read_plot_heatmap(
         plot_bgcolor="rgba(0,0,0,0)",
     )
     fig.update_layout(standard_layout)
+    fig.update_xaxes(showline=True, linecolor="rgb(36,36,36)")
 
     filename = f"goodreads/static/Graphs/{username}/read_heatmap_{username}.html"
     fig.write_html(file=filename)
