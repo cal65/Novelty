@@ -336,3 +336,11 @@
     border-radius: 0.25rem;
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
+
+.bk-plot-wrapper table {
+    margin: 0 auto;
+}
+
+.bglayer {
+    height: 1000px;
+}

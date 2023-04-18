@@ -710,8 +710,12 @@ def bokeh_world_plot(world_df, username):
     )
     p = figure(
         title=f"Author Nationality Map - {username}",
+        plot_width=900,
+        plot_height=750,
+        align="center",
         toolbar_location="below",
         tools="pan, wheel_zoom, box_zoom, reset",
+        sizing_mode='scale_width',
     )
     # Add patch renderer to figure.
     geosource = GeoJSONDataSource(geojson=world_df.to_json())
@@ -739,6 +743,7 @@ def bokeh_world_plot(world_df, username):
 
     p.add_layout(color_bar, "below")
     p.min_border = 0
+    p.title.align = "center"
     save(p)
 
 
@@ -850,8 +855,9 @@ def month_plot(
     if lims is not None:
         df = df[(df["year_read"] >= lims[0]) & (df["year_read"] <= lims[1])]
 
+    cols = plotly.colors.qualitative.Plotly
     df["color"] = df[author_gender_col].map(
-        {"female": "lightsalmon", "male": "deepskyblue", "other": "green"}
+        {"female": cols[1], "male": cols[0], "other": cols[2]}
     )
     df["text"] = df["text"] = (
         df[title_col] + "<br>" + df["author"] + "<br>" + df[date_col].astype(str)
@@ -894,11 +900,12 @@ def month_plot(
         )
     fig.update_layout(
         showlegend=False,
-        title_text=f"Month Breakdown - {username}",
+        title_text=f"Monthly History - {username}",
         title_x=0.5,
         uniformtext_minsize=6,
         uniformtext_mode="hide",
         plot_bgcolor="rgba(0,0,0,0)",
+        height=max(400, 100*n_years),
     )
     fig.update_xaxes(
         tickvals=np.arange(1, 13),
@@ -909,7 +916,7 @@ def month_plot(
     )
     fig.update_yaxes(zeroline=True, zerolinewidth=2, zerolinecolor="black")
 
-    fig["layout"][f"xaxis{n_years}"]["title"] = {"text": "Month"}
+    fig["layout"][f"xaxis{i}"]["title"] = {"text": "Month"}
 
     fig.write_html(file=filename)
 

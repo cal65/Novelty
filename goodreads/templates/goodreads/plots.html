@@ -116,8 +116,8 @@
     <div class="caption-text">
         Below is an interactive map of the countries represented by the authors you have read.
     </div>
-    <div class="plotly" style="align-items: center; height: 950px">
-        <iframe src="{% static nationality_map_url %}" class="iframe" style="height: 950px;" alt="nationality-map" >
+    <div class="plotly" style="align-items: center; height: 950px;">
+        <iframe src="{% static nationality_map_url %}" class="iframe" style="height: 100%; width: 50%;" alt="nationality-map" >
     </iframe>
     </div>
     <br>
@@ -125,11 +125,10 @@
 <section id = "Monthly">
 <br><br>
     <div class="caption-text">
-        Below is an interactive plot of the books you've read and what month you read them.
+        Below is an interactive plot of the books you've read and what month you read them. If you do not record the date in which you finished books, this plot will not show up.
     </div>
-        <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">MONTHLY READING HISTORY</div>
-    <div class="plotly" style="height: 1000px;">
-        <iframe src="{% static monthly_pages_read_url %}" class="iframe"  alt="monthly-history" >
+    <div class="plotly" >
+        <iframe src="{% static monthly_pages_read_url %}" class="iframe"  style="height:1500px;" alt="monthly-history" >
     </iframe>
     </div>
     <br> <br>
