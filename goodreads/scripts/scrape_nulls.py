@@ -4,9 +4,9 @@ from goodreads.models import *
 from goodreads.scripts.append_to_export import append_scraping
 
 
-def scrape_null(book_ids, n):
+def scrape_null(book_ids, n, wait=10):
     for bid in book_ids[:n]:
-        b = append_scraping(bid, wait=25)
+        b = append_scraping(bid, wait=wait)
         b.save()
         print(b.added_by)
 
