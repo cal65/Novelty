@@ -132,8 +132,8 @@ def read_plot_munge(
     # ['0 - 1,000', '1,000 - 10,000', '10,000 - 100,000', '100,000 - 1,000,000'] using fancy local-aware f:, hack
     break_labels = generate_labels([f"{b:,}" for b in breaks])
     # adding obscure and bestsellers commentary
-    break_labels[0] = f"{break_labels[0]} \n Obscure"
-    break_labels[-1] = f"{break_labels[-1]} \n Bestsellers"
+    break_labels[0] = f"{break_labels[0]} <br> Obscure"
+    break_labels[-1] = f"{break_labels[-1]} <br> Bestsellers"
     df["strats"] = pd.cut(
         df[read_col], bins=breaks, labels=break_labels, include_lowest=True
     )
@@ -240,8 +240,10 @@ def finish_plot(
             x=df2[read_col],
             y=df2[title_col],
             marker_color=cols[1],
-            text=df2[read_col].map(lambda x: "{:.1%}".format(x)),
-            customdata=np.stack((df2["read"], df2["original_publication_year"]), axis=-1),
+            text=df2[read_col].map(lambda x: "<b>{:.1%}".format(x)),
+            customdata=np.stack(
+                (df2["read"], df2["original_publication_year"]), axis=-1
+            ),
             textposition="inside",
             textangle=0,
             hovertemplate=hovertemplate,
@@ -300,18 +302,18 @@ def split_title(title, n=30):
     if len(title) < n:
         return title
     else:
-        title_splits = title.split(' ')
+        title_splits = title.split(" ")
         title_length = 0
         i = 0
         while title_length < n:
             title_length += len(title_splits[i]) + 1
             i += 1
-        if i == len(title_splits)-1:
+        if i == len(title_splits) - 1:
             return title
         else:
-            front = ' '.join(title_splits[:i])
-            back = ' '.join(title_splits[i:])
-            title = '<br>'.join([front, back])
+            front = " ".join(title_splits[:i])
+            back = " ".join(title_splits[i:])
+            title = "<br>".join([front, back])
             return title
 
 
@@ -539,10 +541,10 @@ def plot_genre_difference(genre_difference, username):
         col=2,
     )
 
-    fig.update_layout(title=f"Genre Comparison for {username}",
-                      legend=dict(yanchor="top", y=-0.1, xanchor="center",
-                                  x=0.5,
-                                  orientation='h'))
+    fig.update_layout(
+        title=f"Genre Comparison for {username}",
+        legend=dict(yanchor="top", y=-0.1, xanchor="center", x=0.5, orientation="h"),
+    )
     fig.update_layout(standard_layout)
     fig.update_xaxes(showline=True, linecolor="rgb(36,36,36)")
     fig.update_yaxes(showline=True, linecolor="rgb(36,36,36)")
@@ -780,7 +782,7 @@ def create_read_plot_heatmap(
                 z=[[r] for r in r_strat["narrative_int"]],
                 annotation_text=[[r] for r in r_strat["title_simple"]],
                 text=[[r] for r in r_strat["hover_text"]],
-                opacity=(i+1)/len(strats),
+                opacity=(i + 1) / len(strats),
                 hoverinfo="text",
                 colorscale="earth",
                 font_colors=["black", "black"],
@@ -807,7 +809,11 @@ def create_read_plot_heatmap(
         plot_bgcolor="rgba(0,0,0,0)",
     )
     fig.update_layout(standard_layout)
-    fig.update_xaxes(showline=True, linecolor="rgb(36,36,36)")
+    fig.update_xaxes(
+        showline=True,
+        linecolor="rgb(36,36,36)",
+        tickfont=dict(family="Courier New", color="#636efa"),
+    )
 
     filename = f"goodreads/static/Graphs/{username}/read_heatmap_{username}.html"
     fig.write_html(file=filename)
