@@ -5,8 +5,8 @@ from goodreads.scripts.append_to_export import append_scraping
 
 
 def scrape_null(book_ids, n):
-    for b in book_ids[:n]:
-        b = append_scraping(b.book_id, wait=25)
+    for bid in book_ids[:n]:
+        b = append_scraping(bid, wait=25)
         b.save()
         print(b.added_by)
 
@@ -15,6 +15,7 @@ def get_missing_books():
     books_all = Books.objects.all()
     books_ids = [b.book_id for b in books_all]
     missing_ids = [e.book_id for e in export_all if e.book_id not in books_ids]
+    print(len(missing_ids))
     return missing_ids
 
 def get_nulls():
