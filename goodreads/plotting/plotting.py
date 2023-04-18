@@ -226,7 +226,7 @@ def finish_plot(
             x=[1] * len(df),
             y=df1[title_col],
             orientation="h",
-            customdata=df1["added_by"],
+            customdata=df1["added_by"].apply(lambda x: f'{int(x):,}'),
             marker_color=cols[0],
             hovertemplate="%{y}<br><b>Total Added:</b> %{customdata}<extra></extra>",
             width=1,
@@ -242,7 +242,7 @@ def finish_plot(
             marker_color=cols[1],
             text=df2[read_col].map(lambda x: "<b>{:.1%}".format(x)),
             customdata=np.stack(
-                (df2["read"], df2["original_publication_year"]), axis=-1
+                (df2["read"].apply(lambda x: f'{int(x):,}'), df2["original_publication_year"]), axis=-1
             ),
             textposition="inside",
             textangle=0,
@@ -308,7 +308,7 @@ def split_title(title, n=30):
         while title_length < n:
             title_length += len(title_splits[i]) + 1
             i += 1
-        if i == len(title_splits) - 1:
+        if i == len(title_splits):
             return title
         else:
             front = " ".join(title_splits[:i])
