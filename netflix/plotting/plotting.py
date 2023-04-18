@@ -2,9 +2,9 @@ import os
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
-import plotly.graph_objs as go
 import networkx as nx
 import plotly.express as px
+import plotly
 import logging
 
 from goodreads.models import NetflixGenres, NetflixUsers, NetflixActors
@@ -20,7 +20,18 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-palette = px.colors.qualitative.Plotly
+palette = plotly.colors.qualitative.Plotly
+
+
+def load_data(username):
+    """
+    Given a username, return their streaming history merged with titles data
+    """
+    df = pd.DataFrame.from_records(
+        NetflixUsers.objects.filter(username=username).values()
+    )
+    df = nd.pipeline_steps(df)
+    return df
 
 
 def plot_genres(df, username, title_type):
@@ -147,8 +158,15 @@ def plot_timeline(df, username):
     colors = px.colors.qualitative.Dark24
     # wrap names to deal with titles that are too long and ruin the plot
     series_df["name_short"] = series_df["name"].apply(lambda x: x[:40])
+    # order by top genre
+    genres = list(series_df["genre_chosen"].value_counts().index)
+    n_palette = len(palette)
+    if len(genres) > n_palette:
+        other_genres = {k: 'Other' for k in list(genres[(n_palette-1):])}
+        series_df["genre_chosen_truncated"] = series_df["genre_chosen"].map(other_genres).fillna(series_df["genre_chosen"])
+        genres = genres[:n_palette] + ['Other']
 
-    for i, genre in enumerate(series_df["genre_chosen"].unique()):
+    for i, genre in enumerate(genres):
         g_df = series_df.loc[series_df["genre_chosen"] == genre]
         for j, nid in enumerate(g_df["netflix_id"].unique()):
             s_df = g_df.loc[g_df["netflix_id"] == nid]
@@ -157,7 +175,7 @@ def plot_timeline(df, username):
                     x=s_df["date"],
                     y=s_df["name_short"],
                     mode="lines+markers",
-                    marker=dict(color=colors[i % 24], size=s_df["username"] * 5),
+                    marker=dict(color=palette[i], size=s_df["username"] * 5),
                     line=dict(dash="dash", color="rgba(0, 0, 0, 0.3)"),
                     customdata=np.stack(
                         (s_df["season"], s_df["username"], s_df["name"]), axis=-1
@@ -309,10 +327,7 @@ def main(username):
     """
     df has been through pipeline steps already
     """
-    df = pd.DataFrame.from_records(
-        NetflixUsers.objects.filter(username=username).values()
-    )
-    df = nd.pipeline_steps(df)
+    df = load_data(username)
     nids = df["netflix_id"][pd.notnull(df["netflix_id"])].unique().astype(int)
     genres_df = pd.DataFrame.from_records(
         NetflixGenres.objects.filter(netflix_id__in=nids).values()

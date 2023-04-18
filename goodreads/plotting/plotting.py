@@ -14,8 +14,6 @@ from pandas.api.types import is_numeric_dtype, CategoricalDtype
 import psycopg2
 import matplotlib
 from plotnine import *
-import patchworklib as pw
-from mizani.formatters import percent_format
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
 from plotly.subplots import make_subplots
@@ -35,6 +33,8 @@ logger = logging.getLogger(__name__)
 post_pass = os.getenv("cal65_pass")
 matplotlib.pyplot.switch_backend("Agg")
 
+# global color palette
+palette = plotly.colors.qualitative.Plotly
 
 def get_data(query, database="goodreads"):
     conn = psycopg2.connect(
@@ -219,15 +219,14 @@ def finish_plot(
     ].fillna("Unknown")
     df_finish_read = df_finish.loc[df_finish["exclusive_shelf"] == "read"]
     df_finish_unread = df_finish.loc[df_finish["exclusive_shelf"] != "read"]
-    cols = plotly.colors.qualitative.Plotly
 
     def finish_bar_flat(df1):
         return go.Bar(
             x=[1] * len(df),
             y=df1[title_col],
             orientation="h",
-            customdata=df1["added_by"].apply(lambda x: f'{int(x):,}'),
-            marker_color=cols[0],
+            customdata=df1["added_by"].apply(lambda x: f"{int(x):,}"),
+            marker_color=palette[0],
             hovertemplate="%{y}<br><b>Total Added:</b> %{customdata}<extra></extra>",
             width=1,
             showlegend=False,
@@ -239,10 +238,14 @@ def finish_plot(
         return go.Bar(
             x=df2[read_col],
             y=df2[title_col],
-            marker_color=cols[1],
+            marker_color=palette[1],
             text=df2[read_col].map(lambda x: "<b>{:.1%}".format(x)),
             customdata=np.stack(
-                (df2["read"].apply(lambda x: f'{int(x):,}'), df2["original_publication_year"]), axis=-1
+                (
+                    df2["read"].apply(lambda x: f"{int(x):,}"),
+                    df2["original_publication_year"],
+                ),
+                axis=-1,
             ),
             textposition="inside",
             textangle=0,
@@ -403,18 +406,14 @@ def genre_bar_plot(df, title_col="title_simple", n_shelves=5, min_count=3):
     plot_df = shelf_table_df[shelf_table_df["Count"] > min_count]
     plot_df = plot_df.head(30)
 
-    if len(plot_df) > 3:
-        return go.Bar(
-            x=plot_df["Count"],
-            y=plot_df["Shelf"],
-            orientation="h",
-            customdata=plot_df[title_col],
-            hovertemplate="<b>Shelf:</b> %{y}<br><b>Count:</b> %{x}<br><b>Titles:</b> %{customdata}<extra></extra>",
-            showlegend=False,
-        )
-    else:
-        logger.info(f"length of eligible data is too small, only {len(plot_df)} rows")
-        return None
+    return go.Bar(
+        x=plot_df["Count"],
+        y=plot_df["Shelf"],
+        orientation="h",
+        customdata=plot_df[title_col],
+        hovertemplate="<b>Shelf:</b> %{y}<br><b>Count:</b> %{x}<br><b>Titles:</b> %{customdata}<extra></extra>",
+        showlegend=False,
+    )
 
 
 def format_genre_table(df, genres_avg, n=10):
@@ -461,7 +460,7 @@ def plot_genre_difference(genre_difference, username):
     logger.info(
         f"plotting genres comparison plot for df of {len(genre_difference)} rows"
     )
-    cols = plotly.colors.qualitative.Plotly
+
     fig = make_subplots(
         1, 2, subplot_titles=["Above Average", "Below Average"], vertical_spacing=0.05
     )
@@ -480,7 +479,7 @@ def plot_genre_difference(genre_difference, username):
             ),
             orientation="h",
             name="Your Genres",
-            marker=dict(color=cols[2]),
+            marker=dict(color=palette[2]),
             hovertemplate="<b>%{y}</b><br><b>Ratio:</b> %{customdata[0]} <br><b>Titles:</b> %{customdata[1]}",
         ),
         row=1,
@@ -495,7 +494,7 @@ def plot_genre_difference(genre_difference, username):
             ),
             orientation="h",
             name="Average Reader's Genres",
-            marker=dict(color=cols[3]),
+            marker=dict(color=palette[3]),
             hovertemplate="<b>%{y}</b><br><b>Ratio:</b> %{customdata}",
         ),
         row=1,
@@ -516,7 +515,7 @@ def plot_genre_difference(genre_difference, username):
             ),
             orientation="h",
             name="Your Genres",
-            marker=dict(color=cols[2]),
+            marker=dict(color=palette[2]),
             hovertemplate="<b>%{y}</b><br><b>Ratio:</b> %{customdata[0]} <br><b>Titles:</b> %{customdata[1]}",
             showlegend=False,
         ),
@@ -533,7 +532,7 @@ def plot_genre_difference(genre_difference, username):
             ),
             orientation="h",
             name="Average Reader's Genres",
-            marker=dict(color=cols[3]),
+            marker=dict(color=palette[3]),
             hovertemplate="<b>%{y}</b><br><b>Ratio:</b> %{customdata}",
             showlegend=False,
         ),
@@ -715,7 +714,7 @@ def bokeh_world_plot(world_df, username):
         align="center",
         toolbar_location="below",
         tools="pan, wheel_zoom, box_zoom, reset",
-        sizing_mode='scale_width',
+        sizing_mode="scale_width",
     )
     # Add patch renderer to figure.
     geosource = GeoJSONDataSource(geojson=world_df.to_json())
@@ -905,7 +904,7 @@ def month_plot(
         uniformtext_minsize=6,
         uniformtext_mode="hide",
         plot_bgcolor="rgba(0,0,0,0)",
-        height=max(400, 100*n_years),
+        height=max(400, 100 * n_years),
     )
     fig.update_xaxes(
         tickvals=np.arange(1, 13),
