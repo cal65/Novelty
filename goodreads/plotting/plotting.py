@@ -234,7 +234,7 @@ def finish_plot(
         )
 
     def finish_bar_perc(df2):
-        hovertemplate = "%{y}<br><b>Year:</b> %{customdata[1]}<br>"
+        hovertemplate = "<b>%{y}</b><br><b>Year:</b> %{customdata[1]}<br>"
         hovertemplate += "<b>Total Finished:</b> %{customdata[0]}<extra></extra>"
         return go.Bar(
             x=df2[read_col],
@@ -363,7 +363,7 @@ def plot_longest_books(
         y=highest[title_col],
         text=highest[pages_col],
         orientation="h",
-        hovertemplate="<b>Title:</b> %{y}<br><b>Number of Pages:</b> %{x}<extra></extra>",
+        hovertemplate="<b>%{y}</b><br><b>Number of Pages:</b> %{x}<extra></extra>",
         showlegend=False,
     )
 
