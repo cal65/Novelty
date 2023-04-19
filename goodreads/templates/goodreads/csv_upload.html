@@ -36,8 +36,8 @@ function upload(){
             console.log("Something went wrong");
           }
       })
-        toggle("progress");
-        return false;
+        $("#progress").toggle()
+        $("#done").toggle()
     }
 
 
@@ -81,6 +81,9 @@ function toggle(id){
                 <p style="float: left;">Beginning upload..</p> 
                 <img src="/static/admin/img/time-hourglass.gif" style="height: 50px; float: left;">
             </div> 
+        <div id = "done" style="height: 50px; line-height: 50px; display: none; align-items: left;">
+        <p>Upload complete.</p>
+        </div>
       </form>
    </div>
 </div>

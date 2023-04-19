@@ -69,6 +69,7 @@
     This graph shows some your Spotify streaming history, including how many minutes you listened to per day, as well as when you listened to more new songs (new to you), and who your top artist was during a given period.
 </div>
 <br> <br>
+<section id = "Popularity">
 </div>
     <div class ="plotly">
         <iframe class ="iframe" src="{% static popularity_url %}" alt="popularity"></iframe>
@@ -79,6 +80,7 @@
     </div>
     <br>
 
+<section id = "Weekly">
     <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">WEEKDAY USAGE IMAGE</div>
     <div class ="plotly">
         <iframe class ="iframe" src="{% static weekly_url %}"  alt="weekly"></iframe>
@@ -88,7 +90,9 @@
     This shows how much music you listen to per day of the week.
     </div>
     <br>
-        <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">DAILY USAGE IMAGE</div>
+
+ <section id = "Daily">   
+    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">DAILY USAGE IMAGE</div>
     <div class ="plotly">
         <iframe class ="iframe" src="{% static daily_url %}" alt="daily"></iframe>
     </div>
