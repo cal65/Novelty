@@ -32,32 +32,44 @@ MUSIC GALLERY
 {% endblock gal-info %}
 
 
-{% block plotly1 %}
+    {% block plotly1 %}
     <iframe class='iframe' src="/static/admin/img/spotify/overall_cal65.html" alt="Cal Overall Plot" > <br></iframe>
     {% endblock plotly1 %}
 <br>
 <br>
-{% block plotly2 %}
-    <iframe class='iframe' src="/static/admin/img/spotify/spotify_year_plot_cal65.html" alt="Spotify Year Plot" > <br></iframe>
-{% endblock plotly2 %}
+    {% block plotly2 %}
+        <iframe class='iframe' src="/static/admin/img/spotify/spotify_year_plot_cal65.html" alt="Spotify Year Plot" > <br></iframe>
+    {% endblock plotly2 %}
 <br>
 <br>
 
-<div class="plotly">
     {% block plotly3 %}
     <iframe class='iframe' src="/static/admin/img/spotify/spotify_genre_plot_cal65.html" alt="Spotify Genre Plot" > <br></iframe>
     {% endblock plotly3 %}
-</div>
+
+
+    {% block caption3 %}
+    Spotify labels songs with genres. This chart groups your listening history by genre and for each genre, shows the most played artist you have listened to.
+    {% endblock caption3 %}
+
 <br>
 <br>
     {% block plotly4 %}
     <iframe class='iframe' src="/static/admin/img/spotify/spotify_top_songs_cal65.html" alt="Spotify Year Plot" > <br></iframe>
     {% endblock plotly4 %}
+
+    {% block caption4 %}
+    What were your favorite songs in the past year? This chart shows the most heavily played songs, with bubble size representing the number of plays on a day. <br>
+    See which songs you discovered and listened to repeatedly, or which ones you consistently tuned into. <br>
+    {% endblock caption4 %}
+
     <br>
     <br>
     {% block plotly5 %}
     <iframe class='iframe' src="/static/admin/img/spotify/spotify_weekday_plot_cal65.html" alt="Spotify Days" > <br></iframe>
     {% endblock plotly5 %}
+    {% block caption5 %}
+    {% endblock caption5 %}
 <br>
 <br>
 {% block plotly6 %}

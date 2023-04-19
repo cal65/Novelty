@@ -278,7 +278,7 @@ def plot_network(df, username):
 
     fig = go.Figure()
     fig.add_trace(edge_trace)
-    for sb in [True, False]:
+    for i, sb in enumerate([True, False]):
         fig.add_trace(
             go.Scatter(
                 x=[n for n, b in zip(node_x, show_bool) if b is sb],
@@ -290,6 +290,7 @@ def plot_network(df, username):
                 marker=dict(
                     size=10,
                     line_width=2,
+                    color=palette[i],
                 ),
             )
         )

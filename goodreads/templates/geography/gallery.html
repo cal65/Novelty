@@ -6,55 +6,67 @@
 
 <!-- customize navbar -->
 {% block domain-home %}
-        <a class="nav-link" href="{% url 'streaming-home' %}">Music</a>
+        <a class="nav-link" href="{% url 'geography-home' %}">Geography</a>
 {% endblock domain-home %}
 {% block upload %}
-        <a class="nav-link" href="{% url 'upload-view-netflix' %}">Upload Data</a>
 {% endblock upload %}
 {% block about %}
-        <a class="nav-link" href="{% url 'about-this-netflix' %}">About This</a>
 {% endblock about %}
 {% block plots %}
-        <a class="nav-link" href="{% url 'netflix-plots' %}">Plots</a>
 {% endblock plots %}
 {% block gallery %}
-        <a class="nav-link" href="{% url 'gallery-streaming' %}">Gallery</a>
+        <a class="nav-link" href="{% url 'gallery-geography' %}">Gallery</a>
 {% endblock gallery %}
 
 {% block gal-title %}
-<div style="text-align: center;" class="font-bold pt-4 text-3xl">STREAMING GALLERY</div>
+<div style="text-align: center;" class="font-bold pt-4 text-3xl">GEOGRAPHY GALLERY</div>
 {% endblock gal-title %}
 
 {% block gal-info %}
-    These are the sorts of plots you should expect to see if you run your Netflix export through the site:
+    These are the sorts of plots I have prototyped on my own travel data which I have manually maintained:
 {% endblock gal-info %}
 
-{% block plotly1 %}
-    <iframe class='iframe' src="/static/admin/img/netflix/netflix_timeline_cal65.html" alt="Cal Timeline Plot" > <br></iframe>
+    {% block plotly1 %}
+        <iframe class ="iframe" horizontal-align= "middle" src="/static/admin/img/geography/Geography_Cal.html" alt="Map"> </iframe>
     {% endblock plotly1 %}
-<br>
-<br>
-{% block plotly2 %}
-    <iframe class='iframe' src="/static/admin/img/netflix/netflix_genres_cal65_series.html" alt="Cal Genre Plot" > <br></iframe>
-{% endblock plotly2 %}
-<br>
-<br>
-
+    <br>
+    <br>
+    {% block plotly2 %}
+        <img class="center-image" src="/static/admin/img/geography/Alpha_All.jpeg" alt="Cities Alpha Plot" > <br>
+    {% endblock plotly2 %}
+    <br>
+    <br>
 
     {% block plotly3 %}
-    <iframe class='iframe' src="/static/admin/img/netflix/netflix_histogram_cal65.html" alt="Netflix Volume Plot" > <br></iframe>
+    <iframe class='iframe' src="/static/admin/img/geography/geodist.html" alt="Geo Dist Plot" > <br></iframe>
+    <br>
     {% endblock plotly3 %}
 
+    {% block caption3 %}
+    This plot calculates the geographic mean for each year, and then the distance for all my locations from that mean and plots that on the y axis. 
+    {% endblock caption3 %}
+   
 
     {% block plotly4 %}
-    <iframe class='iframe' src="/static/admin/img/netflix/netflix_network_cal65.html" alt="Netflix Network Plot" > <br></iframe>
+    <img class="center-image" src="/static/admin/img/geography/cumulative_lat.jpeg" alt="Latitude Plot" > <br>
     {% endblock plotly4 %}
 
-<br>
-    <br>
+    {% block caption4 %}
+    {% endblock caption4 %}
     <br>
     <br>
 
+    {% block plotly5 %}
+    <img class="center-image" src="/static/admin/img/geography/Official_lang_outlines.jpeg" alt="Language Outlines" style="height:45em;">
+    {% endblock plotly5 %}
+
+    <br>
+    {% block caption5 %}
+    This graph shows the countries you have been to grouped by the official language of the country. <br>
+    {% endblock caption5 %}
+    <br>
+    {% block plotly6 %}
+    {% endblock plotly6 %}
 <br>
 <br>
 
