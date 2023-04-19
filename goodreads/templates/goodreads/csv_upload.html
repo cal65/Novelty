@@ -21,6 +21,7 @@ function getCookie(name) {
 function upload(){
   const csrftoken = getCookie('csrftoken');
   var form = document.getElementById('csv-form')
+  $("#progress").toggle()
   console.log(arguments)
      $.post({
       url: "{% url 'upload' %}",
@@ -31,13 +32,13 @@ function upload(){
       headers: { "X-CSRFToken": csrftoken },
       success: function(data) {
             console.log("Success")
+            $("#progress").toggle()
+            $("#done").toggle()
           },
       error: function(data ){
             console.log("Something went wrong");
           }
       })
-        $("#progress").toggle()
-        $("#done").toggle()
     }
 
 
