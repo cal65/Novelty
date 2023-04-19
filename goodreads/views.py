@@ -81,19 +81,22 @@ def faq(request):
 
 
 def gallery_books(request):
-    logger.info(f"books gallery requested")
+    logger.info(f"Books gallery requested for {request.headers['User-Agent']}")
     return render(request, "goodreads/gallery.html")
 
 
 def gallery_music(request):
+    logger.info(f"Spotify gallery requested for {request.headers['User-Agent']}")
     return render(request, "spotify/gallery.html")
 
 
 def gallery_streaming(request):
+    logger.info(f"Netflix gallery requested for request {request.headers['User-Agent']}")
     return render(request, "netflix/gallery.html")
 
 
 def gallery_geography(request):
+    logger.info(f"geography gallery requested for request {request.headers['User-Agent']}")
     return render(request, "geography/gallery.html")
 
 
