@@ -11,7 +11,7 @@ sys.path.append("..")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
 
 from goodreads.models import Books, Authors
-from append_to_export import (
+from goodreads.scripts.append_to_export import (
     convert_to_ExportData,
     convert_to_Book,
     convert_to_Authors,
@@ -59,13 +59,13 @@ def sync_books(books_df):
     for _, row in books_df.iterrows():
         create_Books_object(row)
 
+
 def sync_authors(authors_df):
     for _, row in authors_df.iterrows():
         try:
-            a = Authors.objects.get(author_name = row.author_name)
+            a = Authors.objects.get(author_name=row.author_name)
         except Exception as e:
             a = Authors()
-
         a.gender = row.gender
         a.nationality1 = row.nationality1
         a.nationality2 = row.nationality2
@@ -74,10 +74,13 @@ def sync_authors(authors_df):
         print(a.__dict__)
     return
 
+
 def export_authors_missing():
-    authors = Authors.objects.filter(nationality_chosen='') | Authors.objects.filter(gender='unknown')
+    authors = Authors.objects.filter(nationality_chosen="") | Authors.objects.filter(
+        gender="unknown"
+    )
     authors_df = objects_to_df(authors)
-    authors_df.to_csv('artifacts/authors_export.csv', index=False)
+    authors_df.to_csv("artifacts/authors_export.csv", index=False)
 
 
 if __name__ == "__main__":

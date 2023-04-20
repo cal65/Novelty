@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument("domain", nargs="+", type=str)
+        parser.add_argument("domain", type=str)
 
     def handle(self, **options):
         if options["domain"] == "Netflix":
