@@ -5,11 +5,12 @@ import os
 import pandas as pd
 import logging
 import django
+from spotify.plotting.plotting import objects_to_df
 
 sys.path.append("..")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
 
-from goodreads.models import Books
+from goodreads.models import Books, Authors
 from append_to_export import (
     convert_to_ExportData,
     convert_to_Book,
@@ -33,7 +34,7 @@ def create_Books_object(row):
     f_names = get_field_names(Books)
     common_fields = list(set(row.keys()).intersection(f_names))
     try:
-        Books.objects.get(book_id=row.book_id)
+        djangoBook = Books.objects.get(book_id=row.book_id)
     except:
         djangoBook = Books()
     for f in common_fields:
@@ -47,6 +48,7 @@ def create_Books_object(row):
             )
             setattr(djangoBook, f, value)
             # update ExportsData table with updated book
+        djangoBook.save()
     return djangoBook
 
 
@@ -56,6 +58,26 @@ def sync_books(books_df):
     books_df.rename(columns={"book.id": "book_id"}, inplace=True)
     for _, row in books_df.iterrows():
         create_Books_object(row)
+
+def sync_authors(authors_df):
+    for _, row in authors_df.iterrows():
+        try:
+            a = Authors.objects.get(author_name = row.author_name)
+        except Exception as e:
+            a = Authors()
+
+        a.gender = row.gender
+        a.nationality1 = row.nationality1
+        a.nationality2 = row.nationality2
+        a.nationality_chosen = row.nationality_chosen
+        a.save()
+        print(a.__dict__)
+    return
+
+def export_authors_missing():
+    authors = Authors.objects.filter(nationality_chosen='') | Authors.objects.filter(gender='unknown')
+    authors_df = objects_to_df(authors)
+    authors_df.to_csv('artifacts/authors_export.csv', index=False)
 
 
 if __name__ == "__main__":
