@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import NetflixUsers
+from .models import NetflixUsers, Books
 
 sys.path.append("..")
 sys.path.append("../spotify/")
@@ -48,7 +48,7 @@ def run_script_function(request):
 
 
 def index(request):
-    next = request.POST.get('next', '/')
+    next = request.POST.get("next", "/")
     if request.user.is_authenticated:
         base_auth_template = "goodreads/basefile.html"
     else:
@@ -91,12 +91,16 @@ def gallery_music(request):
 
 
 def gallery_streaming(request):
-    logger.info(f"Netflix gallery requested for request {request.headers['User-Agent']}")
+    logger.info(
+        f"Netflix gallery requested for request {request.headers['User-Agent']}"
+    )
     return render(request, "netflix/gallery.html")
 
 
 def gallery_geography(request):
-    logger.info(f"geography gallery requested for request {request.headers['User-Agent']}")
+    logger.info(
+        f"geography gallery requested for request {request.headers['User-Agent']}"
+    )
     return render(request, "geography/gallery.html")
 
 
@@ -260,7 +264,7 @@ def populateBooks(exportDataObjs, user, wait=2, metrics=True):
     found = 0
     not_found = 0
     now = datetime.now()
-    for obj in exportDataObjs:
+    for obj in exportDataObjs[:30]:
         status = convert_to_Book(obj, wait=wait)
         if metrics:
             if status == "found":
@@ -290,8 +294,15 @@ def upload(request):
     exportDataObjs = populateExportData(df, user)
     logger.info(f"starting authors table addition")
     populateAuthors(df)
-    logger.info(f"starting books table addition")
-    populateBooks(exportDataObjs, user, wait=3, metrics=True)
+    exportNew = [
+        e
+        for e in exportDataObjs
+        if not Books.objects.filter(book_id=e.book_id).exists()
+    ]
+    logger.info(
+        f"starting books table addition for {len(exportNew)} new books out of {len(df)}"
+    )
+    populateBooks(exportNew, user, wait=3, metrics=True)
     # return
     template = "goodreads/csv_upload.html"
     return render(request, template)
@@ -432,7 +443,8 @@ def upload_netflix(request):
 
 def netflix_message(request, template, n):
     logger.info("Netflix message sent")
-    return render(request, template, {'n': n})
+    return render(request, template, {"n": n})
+
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def netflix_plots_view(request):

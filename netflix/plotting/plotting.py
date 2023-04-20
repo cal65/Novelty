@@ -162,9 +162,13 @@ def plot_timeline(df, username):
     genres = list(series_df["genre_chosen"].value_counts().index)
     n_palette = len(palette)
     if len(genres) > n_palette:
-        other_genres = {k: 'Other' for k in list(genres[(n_palette-1):])}
-        series_df["genre_chosen_truncated"] = series_df["genre_chosen"].map(other_genres).fillna(series_df["genre_chosen"])
-        genres = genres[:n_palette] + ['Other']
+        other_genres = {k: "Other" for k in list(genres[(n_palette - 1) :])}
+        series_df["genre_chosen_truncated"] = (
+            series_df["genre_chosen"]
+            .map(other_genres)
+            .fillna(series_df["genre_chosen"])
+        )
+        genres = genres[:n_palette] + ["Other"]
 
     for i, genre in enumerate(genres):
         g_df = series_df.loc[series_df["genre_chosen"] == genre]
@@ -267,31 +271,37 @@ def plot_network(df, username):
         node_y.append(y)
         show_bool.append(node in df["title"].unique())
 
-    node_names = list(G.nodes)
-    node_adjacencies = []
-    node_text = []
-    for node, adjacencies in enumerate(G.adjacency()):
-        node_adjacencies.append(len(adjacencies[1]))
-        node_text.append(
-            f"<b>{node_names[node]}</b><br> # of connections: {str(len(adjacencies[1]))}"
-        )
+    node_df = pd.DataFrame(
+        {
+            "x": node_x,
+            "y": node_y,
+            "names": list(G.nodes),
+            "n": [len(adjacencies[1]) for adjacencies in G.adjacency()],
+        }
+    )
+    node_df['type'] = ["show" if name in df["title"].unique() else "actor" for name in node_df["names"]]
 
     fig = go.Figure()
     fig.add_trace(edge_trace)
-    for i, sb in enumerate([True, False]):
+    for i, t in enumerate(["show", "actor"]):
+        n_df = node_df.loc[node_df["type"] == t]
+        if t == "show":
+            marker_dict = dict(size=10, line_width=2, color=palette[i])
+        else:
+            marker_dict = dict(
+                size=n_df["n"] * 5,
+                line_width=2,
+                color=palette[i],
+            )
         fig.add_trace(
             go.Scatter(
-                x=[n for n, b in zip(node_x, show_bool) if b is sb],
-                y=[n for n, b in zip(node_y, show_bool) if b is sb],
+                x=n_df["x"],
+                y=n_df["y"],
                 mode="markers",
-                text=[t for t, b in zip(node_text, show_bool) if b is sb],
-                name="Show" if sb else "Actors",
-                hoverinfo="text",
-                marker=dict(
-                    size=10,
-                    line_width=2,
-                    color=palette[i],
-                ),
+                marker=marker_dict,
+                customdata=np.stack((n_df["names"], n_df["n"]), axis=-1),
+                name=t,
+                hovertemplate="<b>%{customdata[0]}</b><br> # of connections: %{customdata[1]}",
             )
         )
 

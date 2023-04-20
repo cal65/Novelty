@@ -232,7 +232,10 @@ def get_details(netflix_id):
     if results is None:
         print(f"No genre response found for {netflix_id}")
         return
-    results["title"] = results["title"].replace("&#39;", "")
+    try:
+        results["title"] = results["title"].replace("&#39;", "")
+    except Exception as e:
+        logger.info(f"Exception {e} encountered for id {netflix_id} and {results.keys()}")
     return pd.Series(results)
 
 
@@ -370,6 +373,18 @@ def net_merge(df, titles_df, left, right, ids, how="inner"):
         df, titles_df, left_on=left, right_on=right, suffixes=("", "_remove"), how=how
     )
     df.drop([c for c in df.columns if "remove" in c], axis=1, inplace=True)
+    return df
+
+def reformat_special(df, user):
+    """
+    Special reformat function for different Netflix export.
+    This occurs when a Netflix download returns an error.
+    """
+    df = df.copy()
+    df = df.loc[df['Profile Name'] == user]
+    df = df.loc[df['Latest Bookmark'] != 'Not latest view']
+    df['Start Time'] = pd.to_datetime(df['Start Time'])
+    df['Date'] = df['Start Time'].dt.date
     return df
 
 
