@@ -34,4 +34,6 @@ urlpatterns = [
     path("gallery-streaming/", gallery_streaming, name="gallery-streaming"),
     path("gallery-geography/", gallery_geography, name="gallery-geography"),
     path("spot-text/", spot_text, name="spot-text"),
+    path("comments/", comments, name="comments"),
+    path("post-comment/", post_comment, name="post-comment")
 ]

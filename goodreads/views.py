@@ -491,3 +491,13 @@ def geography(request):
 
 def streaming(request):
     return render(request, "netflix/streaming_home.html")
+
+
+def comments(request):
+    return render(request, "comments.html")
+
+def post_comment(request):
+    comment = request.POST.get("comment", "")
+    logger.info(comment)
+    # when script finishes, move user to plots view
+    return HttpResponseRedirect("/netflix-plots/")

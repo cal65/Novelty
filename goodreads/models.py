@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 class ExportData(models.Model):
     class Meta:
@@ -107,3 +107,7 @@ class NetflixActors(models.Model):
     netflix_id = models.CharField(max_length=250, primary_key=True)
     cast = models.CharField(max_length=2000, null=True)
 
+class Comments(models.Model):
+    username = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    comments = models.CharField(max_length=10000)
+    timestamp = models.DateTimeField(auto_now=True)
