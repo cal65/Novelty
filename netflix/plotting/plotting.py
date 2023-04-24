@@ -111,6 +111,7 @@ def simplify_genres(genres):
         "Kids for ages 8 to 10": "Kids",
         "for ages 8 to 10": "Kids",
         "Kids & Family": "Kids",
+        "Children & Family": "Kids",
         "Late Night Comedies": "Comedies",
         "Action Thrillers": "Action & Adventure",
         "Independent Dramas": "Dramas",
@@ -127,6 +128,7 @@ def simplify_genres(genres):
         "Spoofs & Satires": "Comedies",
         "Kids  for ages 11 to 12": "Kids",
         "Kids'": "Kids",
+        "Cult Comedies": "Comedies",
     }
     for w in stop_words:
         genres_list = [g.replace(w, "").strip() for g in genres_list]
@@ -155,7 +157,6 @@ def plot_timeline(df, username):
             "username": len,
         },
     ).reset_index()
-    colors = px.colors.qualitative.Dark24
     # wrap names to deal with titles that are too long and ruin the plot
     series_df["name_short"] = series_df["name"].apply(lambda x: x[:40])
     # order by top genre

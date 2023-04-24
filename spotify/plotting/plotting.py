@@ -714,7 +714,7 @@ def plot_years(
         go.Bar(
             x=years_df[feature_col],
             y=years_df["minutes_total"],
-            hovertemplate="Year: %{x} <br> total minutes: %{y}<extra></extra>",
+            hovertemplate="<b>Year:</b %{x}<br> <b>Total minutes:</b> %{y}<extra></extra>",
             name="Minutes - Total",
             hoverinfo="skip",
         )
@@ -724,7 +724,7 @@ def plot_years(
             x=years_df[feature_col],
             y=years_df[minutes_col],
             customdata=years_df[index_col],
-            hovertemplate="Top artist: %{customdata}<extra></extra>",
+            hovertemplate="<b>Year:</b> %{x}<br><b>Top artist:</b> %{customdata}<extra></extra>",
             name="Minutes - Top Artist",
         )
     )
