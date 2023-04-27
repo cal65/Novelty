@@ -1,14 +1,11 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
-from pandas.api.types import is_string_dtype
 import numpy as np
-import json
 import random
 import time
 import sys
 import re
-import gender_guesser.detector as gender
 import logging
 
 logger = logging.getLogger(__name__)
@@ -135,7 +132,7 @@ def get_stats(url, wait=0):
     try:
         numberOfPages_raw = details.find("p", {"data-testid": "pagesFormat"}).text
         numberOfPages = int(re.findall(r"\d+", numberOfPages_raw)[0])
-    except:
+    except Exception as e:
         numberOfPages = None
     time.sleep(wait)
 

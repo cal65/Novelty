@@ -1,5 +1,6 @@
-import argparse
+from django.core.management.base import BaseCommand
 
+import argparse
 import sys
 import os
 import pandas as pd
@@ -7,7 +8,7 @@ import logging
 import django
 from spotify.plotting.plotting import objects_to_df
 
-sys.path.append("..")
+sys.path.append("../..")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
 
 from goodreads.models import Books, Authors
@@ -28,6 +29,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 django.setup()
+
+class Command(BaseCommand):
+    def add_arguments(self, parser):
+        parser.add_argument("domain", type=str)
+
+    def handle(self, **options):
+        args = parser.parse_args()
+        file_path = args.file_path
+        books_df = pd.read_csv(file_path)
+        # to do: check schema
+        sync_books(books_df)
 
 
 def create_Books_object(row):

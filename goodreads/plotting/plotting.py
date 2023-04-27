@@ -1,25 +1,23 @@
 import os
 import warnings
 import argparse
+import matplotlib
+from pandas.api.types import is_numeric_dtype, CategoricalDtype
 import pandas as pd
 import numpy as np
 import geopandas as gpd
-import plotly as plotly
 
 from netflix.plotting.plotting import save_fig
 
-warnings.simplefilter(action="ignore", category=FutureWarning)
-
-from pandas.api.types import is_numeric_dtype, CategoricalDtype
-
 import psycopg2
-import matplotlib
+import plotly as plotly
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
 from plotly.subplots import make_subplots
 
 from spotify.plotting.plotting import standard_layout
 import logging
+warnings.simplefilter(action="ignore", category=FutureWarning)
 
 logging.basicConfig(
     filename="logs.txt",
@@ -35,6 +33,7 @@ matplotlib.pyplot.switch_backend("Agg")
 
 # global color palette
 palette = plotly.colors.qualitative.Plotly
+
 
 def get_data(query, database="goodreads"):
     conn = psycopg2.connect(
@@ -147,7 +146,6 @@ def read_plot_munge(
     strats_count = df["strats"].value_counts()
     logger.info(f"debugging read plot munge: {strats_count}")
     return df
-
 
 
 def factorize(series):
@@ -653,11 +651,11 @@ def bokeh_world_plot(world_df, username):
         filename=f"goodreads/static/Graphs/{username}/author_map_{username}.html",
         title=f"Author Map - {username}",
     )
-    palette = brewer["OrRd"][8]
-    palette = palette[
+    heat_palette = brewer["OrRd"][8]
+    heat_palette = heat_palette[
         ::-1
     ]  # reverse order of colors so higher values have darker colors
-    color_mapper = LogColorMapper(palette=palette, low=1, high=world_df["count"].max())
+    color_mapper = LogColorMapper(palette=heat_palette, low=1, high=world_df["count"].max())
     # Create color bar.
     color_bar = ColorBar(
         color_mapper=color_mapper,
@@ -708,8 +706,33 @@ def bokeh_world_plot(world_df, username):
     save(p)
 
 
-def return_small_countries():
-    return
+def return_small_nationalities(df, nationality_col="nationality_chosen"):
+    small = [
+        "Hong Kong",
+        "Fijian",
+        "Bahamanian",
+        "East Timorese",
+        "El Salvadoran",
+        "Belizean",
+        "Puerto Rican",
+        "Jamaican",
+        "Lebanese",
+        "Palestinian",
+        "Gambian",
+        "Qatari",
+        "Kuwaiti",
+        "Vanuatuan",
+        "Luxembourgish",
+        "Bruneian",
+        "Cypriot",
+        "Djiboutian",
+        "Rwandan",
+        "Montenegrin",
+        "Kosovar",
+        "Singaporean",
+        "Costa Rican",
+    ]
+    return df.loc[df[nationality_col].isin(small)]
 
 
 def create_read_plot_heatmap(
@@ -789,18 +812,25 @@ def create_read_plot_heatmap(
     return fig
 
 
-def month_plot(
-    df, username, date_col, page_col, title_col, author_gender_col, lims=None
-):
+def format_month_plot(df, date_col):
     df["year_read"] = df[date_col].dt.year
     df["month_read"] = df[date_col].dt.month
     logger.info(
         f"Starting Monthly pages read plot for data with \
-    years {pd.unique(df['year_read'])}"
+        years {df['year_read'].unique()}"
     )
     df = df[pd.notnull(df["year_read"])]
-    n_years = len(pd.unique(df["year_read"]))
+    return df
 
+
+def month_plot(
+    df, username, date_col, page_col, title_col, author_gender_col, lims=None
+):
+    df = df.copy()
+    df = format_month_plot(df, date_col=date_col)
+    if lims is not None:
+        df = df[(df["year_read"] >= lims[0]) & (df["year_read"] <= lims[1])]
+    n_years = len(pd.unique(df["year_read"]))
     if n_years < 1:
         logger.info("Not enough date data to plot month plot")
         fig = go.Figure()
@@ -814,60 +844,71 @@ def month_plot(
         )
         return fig
 
-    if lims is not None:
-        df = df[(df["year_read"] >= lims[0]) & (df["year_read"] <= lims[1])]
-
-    cols = plotly.colors.qualitative.Plotly
     df["color"] = df[author_gender_col].map(
-        {"female": cols[1], "male": cols[0], "other": cols[2]}
+        {
+            "female": palette[1],
+            "male": palette[0],
+            "other": palette[2],
+            "non-binary": palette[3],
+        }
     )
     df["text"] = df["text"] = (
         df[title_col] + "<br>" + df["author"] + "<br>" + df[date_col].astype(str)
     )
-    fig = make_subplots(rows=n_years, cols=1, shared_xaxes=True, vertical_spacing=0.01)
+    fig = make_subplots(
+        rows=n_years,
+        cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.01,
+        x_title="Month",
+        y_title="Number of Pages",
+    )
     for i, year in enumerate(sorted(pd.unique(df["year_read"]))):
         df_year = df[df["year_read"] == year]
-        df_month_totals = pd.pivot_table(
+        df_month_max = pd.pivot_table(
             df_year, index="month_read", values=page_col, aggfunc=sum
-        )
-        # Each year, make bar for book and month
-        fig.add_trace(
-            go.Bar(
-                x=df_year["month_read"],
-                y=df_year[page_col],
-                marker_color=df_year["color"],
-                hovertext=df_year["text"],
-                hovertemplate="%{hovertext}<extra></extra>",
-                text=df_year["author"],
-                textposition="inside",
-                textangle=0,
-                textfont=dict(size=8),
-                width=1,
-            ),
-            row=i + 1,
-            col=1,
-        )
-        # Add the year to the side
+        )[page_col].max()
+        for g in df_year[author_gender_col].unique():
+            df_year_g = df_year.loc[df_year[author_gender_col] == g]
+            fig.add_trace(
+                go.Bar(
+                    x=df_year_g["month_read"],
+                    y=df_year_g[page_col],
+                    marker_color=df_year_g["color"],
+                    hovertext=df_year_g["text"],
+                    hovertemplate="%{hovertext}<extra></extra>",
+                    text=df_year_g["author"],
+                    textposition="inside",
+                    textangle=0,
+                    textfont=dict(size=8),
+                    width=1,
+                    showlegend=(i + 1) == n_years,
+                    name=g,
+                ),
+                row=i + 1,
+                col=1,
+            )
+        # Add the year to the side, as a facet label. Set at vertical halfway mark
         fig.add_annotation(
             x=13,
-            y=df_month_totals[page_col].mean(),
+            y=df_month_max / 2,
             text=str(int(year)),
             xref=f"x{i + 1}",
             yref=f"y{i + 1}",
-            font=dict(color="white", size=max(5, 25 - n_years * 0.25)),
+            font=dict(color="white", size=max(5.0, 25 - n_years * 0.25)),
             bgcolor="grey",
             bordercolor="grey",
             borderwidth=1,
             showarrow=False,
         )
     fig.update_layout(
-        showlegend=False,
-        title_text=f"Monthly History - {username}",
+        title_text=f"Month Breakdown - {username}",
         title_x=0.5,
+        barmode="stack",
         uniformtext_minsize=6,
         uniformtext_mode="hide",
         plot_bgcolor="rgba(0,0,0,0)",
-        height=max(400, 100 * n_years),
+        legend=dict(yanchor="top", y=-0.4/n_years, xanchor="center", x=0.5, orientation="h"),
     )
     fig.update_xaxes(
         tickvals=np.arange(1, 13),
@@ -877,9 +918,6 @@ def month_plot(
         zerolinecolor="black",
     )
     fig.update_yaxes(zeroline=True, zerolinewidth=2, zerolinecolor="black")
-
-    fig["layout"][f"xaxis{i}"]["title"] = {"text": "Month"}
-    fig["layout"][f"yaxis{i}"]["title"] = {"text": "Pages"}
 
     return fig
 
@@ -927,12 +965,12 @@ def main(username):
         author_gender_col="gender",
         lims=[2013, 2024],
     )
-    fig_month.write_html(f"goodreads/static/Graphs/{username}/monthly_pages_read_{username}.html")
+    fig_month.write_html(
+        f"goodreads/static/Graphs/{username}/monthly_pages_read_{username}.html"
+    )
 
 
 if __name__ == "__main__":
-    import sys
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--username",
