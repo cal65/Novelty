@@ -10,7 +10,7 @@ from plotly.subplots import make_subplots
 import calendar
 from datetime import date, timedelta
 import matplotlib.pyplot as plt
-from matplotlib import dates
+from scipy.stats import norm
 import seaborn as sns
 import plotly.graph_objs as go
 from sklearn import linear_model as lm
@@ -796,6 +796,15 @@ def plot_genres(df, genre_col, minutes_col="minutes", n=20):
     return fig
 
 
+def create_normal_line(value_series, start=0, end=100, mean=50, sd=19, ):
+    """
+    Given a series, fit a normal distribution curve to it. Designed to complement popularity plot
+    """
+    normal_array = norm.pdf(np.arange(start, end), mean, sd) * value_series.sum()
+
+    return normal_array
+
+
 def plot_popularity(
     df, minutes_col="minutes", track_col="trackname", artist_col="artistname"
 ):
@@ -810,6 +819,8 @@ def plot_popularity(
         df, index="popularity", values=minutes_col, aggfunc=sum
     ).reset_index()
     pop["song"] = pop["popularity"].map(pop_agg_dict)
+    # create a normal distribution line, scaled to this plot
+    normal_array = create_normal_line(pop["minutes"])
     fig = go.Figure()
     fig.add_trace(
         go.Bar(
@@ -820,6 +831,11 @@ def plot_popularity(
             name="Minutes - Total",
         )
     )
+    fig.add_trace(go.Scatter(x=np.arange(0, 100),
+                             y=normal_array,
+                             mode='lines',
+                             name='Normal Distribution',
+                             hoverinfo='none'))
     fig.update_layout(
         title="Popularity",
         title_x=0.5,

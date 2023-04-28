@@ -260,7 +260,7 @@ def update_tracks(df, track_col="trackname", artist_col="artistname"):
     track_df = splot.get_data(splot.tracks_all_query())
     df_unmerged = identify_new(df, track_df)
     logger.info(
-        f"Search uri & track data for {len(df_unmerged)} tracks out of original {len(df)} tracks"
+        f"Search uri & track data for {len(df_unmerged)} tracks out of original {len(df)} unique tracks"
     )
     for i, row in df_unmerged.iterrows():
         # crude test for podcast show vs track

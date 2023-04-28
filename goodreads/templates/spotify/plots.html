@@ -58,30 +58,48 @@
     Re-Analyze
 </button>
 <br>
+<div class ="navbar" style="position: fixed;">
+    <ul>
+        <li><p class = "nav-title">Spotify Plots</p></li>
+        <li><a class = "nav-link bg-dark" href ="#Timeline"> Timeline </a></li>
+        <li><a class = "nav-link bg-dark" href="#Popularity"> Popularity </a></li>
+        <li><a class = "nav-link bg-dark" href="#Weekly"> Weekly </a></li>
+        <li><a class = "nav-link bg-dark" href="#Daily"> Daily </a></li>
+        <li><a class = "nav-link bg-dark" href="#ReleaseYear"> Release Year </a></li>
+        <li><a class = "nav-link bg-dark" href="#Genres"> Genres </a></li>
+        <li><a class = "nav-link bg-dark" href="#TopSong"> Top Songs </a></li>
+    </ul>
+</div>
+
+<section id = "Timeline">
 <div style="display: flex; justify-content: center; height: 950px;">
-        <iframe style="width: 60%;" src="{% static overall_url %}" class="text-center" alt="popularity"></iframe>
+        <iframe style="width: 60%;" src="{% static overall_url %}" class="text-center" alt="Timeline"></iframe>
     </div>
-        <div class="answer" id ="info">
-    </div>
+        
 <div class="caption-text">
 <br>
-
-    This graph shows some your Spotify streaming history, including how many minutes you listened to per day, as well as when you listened to more new songs (new to you), and who your top artist was during a given period.
+    This graph shows some your Spotify streaming history, including how many minutes you listened to per day, as well as when you listened to more new songs (new to you), and the artist you listened to the most during a given period. 
 </div>
+<br><br>
+<div class="caption-text" id ="info">
+</div>
+
 <br> <br>
 <section id = "Popularity">
-</div>
+
+    <div style="text-align: center;" class="image-title"> Popularity Plot - {{ user.get_username }}</div>
     <div class ="plotly">
         <iframe class ="iframe" src="{% static popularity_url %}" alt="popularity"></iframe>
     </div>
     <br>
     <div class ="caption-text">
-        Popularity is a value normalized to 0-100 calculated by Spotify. It measures the total streams of a song weighted by recency.
+        Popularity is a value normalized to 0-100 calculated by a Spotify algorithm, based largely on the total streams of a song weighted by recency. The overall Popularity distribution is close to normally distributed, represented by the red curve on this graph. 
     </div>
+</section>
     <br>
 
 <section id = "Weekly">
-    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">WEEKDAY USAGE IMAGE</div>
+    <div style="text-align: center; " class="image-title">Weekday Usage - {{ user.get_username }}</div>
     <div class ="plotly">
         <iframe class ="iframe" src="{% static weekly_url %}"  alt="weekly"></iframe>
     </div>
@@ -89,40 +107,55 @@
     <div class="caption-text">
     This shows how much music you listen to per day of the week.
     </div>
+</section>
     <br>
 
  <section id = "Daily">   
-    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">DAILY USAGE IMAGE</div>
+    <div style="text-align: center;" class="image-title">Daily Usage - {{ user.get_username }} </div>
     <div class ="plotly">
         <iframe class ="iframe" src="{% static daily_url %}" alt="daily"></iframe>
     </div>
-    <br> 
     <br>
 
-            <div class="caption-text">
+    <div class="caption-text">
     This shows your daily listening patterns, averaged out amongst weekdays and weekends. Most users have different weekend and weekday profiles. Note - plot currently assumes all tracks were listened to in Pacific Standard Time. 
-        </div>
-    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">RELEASE YEAR DISTRIBUTION</div>
+    </div>
+ </section>
+ <br>
+
+ <section id = "ReleaseYear">
+    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xll">Release Year Distribution</div>
     <div class="plotly">
         <iframe src="{% static release_year_url %}"  class="iframe" alt="release year" /></iframe>
     </div>
-        </div>
-    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">GENRES  DISTRIBUTION</div>
+        <div class="caption-text">
+    Spotify provides the release year for songs. This plot groups your listening history by release years (and the number of minutes you've listened to songs from that year). For each year, the artist you've listened to the most from that year is shown in red. Please note that the release year may not be the same as the year the song was originally released, but rather when the version you listened to was released. Most users gravitate towards newer releases and songs from their formative years.
+    </div>
+    </section>
+
+<section id = "Genres">
+    <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">Genres  Distribution</div>
     <div class ="plotly">
         <iframe src="{% static genre_url %}"  class="iframe" alt="genres" /> </iframe>
     </div>
     <br>
+    <div class="caption-text">
+    Spotify also classifies songs into genres. This summarizes your listening history by genre, showing the genres you've spent the most time listening to. For each genre, the artist you've listened to the most is shown in red to help you understand what songs are classified in that genre and how much of your listening can be attributed to one artist.
+    </div>
     <br>
+</section>
+    <br>
+<section id ="TopSong">
      <div style="text-align: center; " class="font-bold pt-4 pb-2 text-2xll">TOP SONGS</div>
     <div class ="plotly">
         <iframe src="{% static top_songs_url %}"  class="iframe" alt="top-songs" /> </iframe>
     </div>
-
-    <p>
+    <div class="caption-text">
+    This chart summarizes the songs you've listened the most times during this streaming period. Each dot represents a day and the size of the dot represents the number of times you listened to the song on that day.
+    </div>
+</section>
         <br>
         <br>
-
-</p>
-    <br>
+        <br>
     <br> <br>
 {% endblock content %}
