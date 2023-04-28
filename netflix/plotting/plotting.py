@@ -55,7 +55,7 @@ def plot_genres(df, username, title_type):
                 y=df_sub["genre_chosen"],
                 customdata=df_sub["name"],
                 text=df_sub["name"],
-                hovertemplate="Genre: %{y} <br> Title: %{customdata} <br> Count: %{x}<extra></extra>",
+                hovertemplate="Genre: %{y} <br> Title: %{customdata} <br>Count: %{x}<extra></extra>",
                 name=g,
                 orientation="h",
                 insidetextanchor="middle",
@@ -64,7 +64,6 @@ def plot_genres(df, username, title_type):
     fig.update_layout(
         barmode="stack",
         xaxis_title="Number of Shows",
-        title=f"Netflix Genres - {username} - {title_type.capitalize()}",
     )
     fig.update_layout(standard_layout)
     return fig
@@ -198,7 +197,6 @@ def plot_timeline(df, username):
         yaxis=dict(tickfont=dict(size=9), title="Show Name", tickmode="linear"),
         xaxis=dict(title="Date"),
         height=len(series_df["name"].unique()) * 12,
-        title=f"Netflix Timeline Plot - {username}",
     )
     fig.update_layout(standard_layout)
     return fig
@@ -233,7 +231,6 @@ def plot_hist(df, username):
         )
     fig.update_layout(
         barmode="overlay",
-        title=f"Netflix History - {username}",
         xaxis=dict(title="Date"),
         yaxis=dict(title="Count"),
     )
@@ -309,7 +306,6 @@ def plot_network(df, username):
         )
 
     fig.update_layout(
-        title=f"Netflix Actors Network Graph - {username}",
         titlefont_size=16,
         hovermode="closest",
         margin=dict(b=20, l=5, r=5, t=40),
