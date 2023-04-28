@@ -1,8 +1,9 @@
 from django.core.management.base import BaseCommand
 
-from goodreads.models import NetflixGenres, NetflixUsers, NetflixActors, Books, Authors
+from goodreads.models import NetflixGenres, NetflixUsers, NetflixActors, Books, Authors, SpotifyStreaming, SpotifyTracks
 from netflix import data_munge as nd
 from goodreads.scripts.append_to_export import append_scraping
+from spotify import data_engineering as de
 import pandas as pd
 import logging
 
@@ -53,3 +54,6 @@ class Command(BaseCommand):
             for b in books_null:
                 b = append_scraping(b.book_id, wait=3)
                 b.save()
+        if options["domain"] == "Spotify":
+            streamed = SpotifyStreaming.objects.all()
+            de.update_tracks(streamed)
