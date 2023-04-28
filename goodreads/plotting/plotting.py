@@ -7,15 +7,13 @@ import pandas as pd
 import numpy as np
 import geopandas as gpd
 
-from netflix.plotting.plotting import save_fig
-
 import psycopg2
 import plotly as plotly
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
 from plotly.subplots import make_subplots
 
-from spotify.plotting.plotting import standard_layout
+from spotify.plotting.utils import standard_layout, save_fig
 import logging
 warnings.simplefilter(action="ignore", category=FutureWarning)
 

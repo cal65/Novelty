@@ -15,6 +15,7 @@ import seaborn as sns
 import plotly.graph_objs as go
 from sklearn import linear_model as lm
 
+from spotify.plotting.utils import standard_layout
 import spotify.data_engineering as de
 import logging
 
@@ -34,13 +35,7 @@ matplotlib.pyplot.switch_backend("Agg")
 
 ms_per_minute = 60 * 1000
 
-standard_layout = dict(
-    title_x=0.5,
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
-    xaxis=dict(showline=True, linecolor="rgb(36,36,36)"),
-    yaxis=dict(showline=True, linecolor="rgb(36,36,36)"),
-)
+
 
 
 def get_data(query, database="goodreads"):

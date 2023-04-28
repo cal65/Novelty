@@ -8,7 +8,8 @@ import plotly
 import logging
 
 from goodreads.models import NetflixGenres, NetflixUsers, NetflixActors
-from spotify.plotting.plotting import standard_layout
+from goodreads.plotting.plotting import split_title
+from spotify.plotting.utils import standard_layout, save_fig
 import netflix.data_munge as nd
 
 logging.basicConfig(
@@ -142,23 +143,24 @@ def simplify_genres(genres):
     return genres_list[0]
 
 
+def format_timeline(df, values=["season", "episode", "genre_chosen", "netflix_id"]):
+    agg_dict = {v: "first" for v in values}
+    agg_dict.update({"username": len})
+    daily_df = pd.pivot_table(
+        df,
+        index=["name", "date"],
+        values=values,
+        aggfunc=agg_dict,
+    ).reset_index()
+    return daily_df
+
+
 def plot_timeline(df, username):
     fig = go.Figure()
     series_df = df.loc[df["title_type"] == "series"]
-    series_df = pd.pivot_table(
-        series_df,
-        index=["name", "date"],
-        values=["season", "episode", "genre_chosen", "netflix_id", "username"],
-        aggfunc={
-            "season": "first",
-            "episode": "first",
-            "genre_chosen": "first",
-            "netflix_id": "first",
-            "username": len,
-        },
-    ).reset_index()
+    series_df = format_timeline(series_df, values=["season", "episode", "genre_chosen", "netflix_id", "username"])
     # wrap names to deal with titles that are too long and ruin the plot
-    series_df["name_short"] = series_df["name"].apply(lambda x: x[:40])
+    series_df["name_short"] = series_df["name"].apply(lambda x: split_title(x, 40))
     # order by top genre
     genres = list(series_df["genre_chosen"].value_counts().index)
     n_palette = len(palette)
@@ -328,11 +330,15 @@ def plot_network(df, username):
     return fig
 
 
-def save_fig(fig, file_path):
-    directory = os.path.dirname(file_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    fig.write_html(file=file_path)
+def find_max(username):
+    """
+    Given user, find the day and show and number of the max binge day
+    """
+    df = load_data(username)
+    daily_df = format_timeline(df, values=['username'])
+    return_max = daily_df.iloc[np.argmax(daily_df['username'])]
+    return_max['date'] = return_max['date'].date()
+    return return_max
 
 
 def main(username):

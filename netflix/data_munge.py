@@ -309,7 +309,7 @@ def ingest_netflix(df, user):
     return
 
 
-def split_title(title):
+def codify_title(title):
     splits = title.split(":")
     splits = [s.strip() for s in splits]
     seas_words = ("Season", "Book", "Chapter", "Volume", "Part", "Collection")
@@ -402,7 +402,7 @@ def pipeline_steps(df):
     df["id"] = np.arange(0, len(df))
     df["date"] = pd.to_datetime(df["date"])
     # split the raw Netflix show title into Name, Season and Episode. Add new columns
-    split_titles_df = pd.DataFrame([split_title(t) for t in df["title"]])
+    split_titles_df = pd.DataFrame([codify_title(t) for t in df["title"]])
     df = pd.concat([df, split_titles_df], axis=1)
     titles_df = pd.DataFrame.from_records(NetflixTitles.objects.all().values())
 

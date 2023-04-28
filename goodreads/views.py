@@ -460,9 +460,8 @@ def netflix_plots_view(request):
         username, username
     )
     network_url = "Graphs/{}/netflix_network_{}.html".format(username, username)
+    max_binge = nplot.find_max(username)
 
-    if "run_script_function" in request.POST:
-        runscriptNetflix(request)
     return render(
         request,
         "netflix/plots.html",
@@ -472,6 +471,9 @@ def netflix_plots_view(request):
             "genre_movie_url": genre_movie_url,
             "histogram_url": histogram_url,
             "network_url": network_url,
+            "binge_show": max_binge.get('name', ''),
+            "binge_date": max_binge.get('date', ''),
+            "binge_n": max_binge.get('username', '')
         },
     )
 
