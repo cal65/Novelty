@@ -11,6 +11,7 @@ import calendar
 from datetime import date, timedelta
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+from statsmodels.stats.weightstats import ztest
 import seaborn as sns
 import plotly.graph_objs as go
 from sklearn import linear_model as lm
@@ -128,7 +129,7 @@ def preprocess(df):
     return df
 
 
-def format_song_day(df, artist_col, song_col, date_col):
+def format_song_day(df, artist_col, song_col, date_col, n=15):
     df_song_day = pd.DataFrame(
         df.groupby([artist_col, song_col, date_col], as_index=False).size()
     )
@@ -137,7 +138,7 @@ def format_song_day(df, artist_col, song_col, date_col):
         df.groupby([artist_col, song_col], as_index=False).size()
     )
     top_songs_df.sort_values("size", ascending=False, inplace=True)
-    top_songs_df = top_songs_df.head(10)
+    top_songs_df = top_songs_df.head(n)
     logger.info(f"top songs: {top_songs_df}")
     df_song_day_select = df_song_day[
         (df_song_day[artist_col].isin(top_songs_df[artist_col]))
@@ -150,28 +151,24 @@ def plot_song_day(df, artist_col, song_col, date_col):
     df_song = format_song_day(
         df=df, artist_col=artist_col, song_col=song_col, date_col=date_col
     )
-    num_songs = len(pd.unique(df_song[song_col]))
-    artists = df_song[artist_col].unique()
+    df_song["combined"] = df_song[song_col] + "<br><b>" + df_song[artist_col] +"</b>"
 
     fig = go.Figure()
-    for artist in artists:
-        df_art = df_song.loc[df_song[artist_col] == artist]
-        fig.add_trace(
-            go.Scatter(
-                x=df_art[date_col],
-                y=df_art[song_col],
-                customdata=df_art[artist_col],
-                text=df_art["n"],
-                mode="markers",
-                marker={"size": np.sqrt(df_art["n"]) * 4},
-                name=artist,
-                hovertemplate="%{y} - %{customdata} <br>%{x}<br>plays: %{text}<extra></extra>",
-            )
+    fig.add_trace(
+        go.Scatter(
+            x=df_song[date_col],
+            y=df_song["combined"],
+            customdata=df_song[artist_col],
+            text=df_song["n"],
+            mode="markers",
+            marker={"size": np.sqrt(df_song["n"]) * 4},
+            name=None,
+            hovertemplate="%{y}<br>%{x}<br>Plays: %{text}<extra></extra>",
         )
+    )
 
     fig.update_layout(
-        title="Song Plays",
-        showlegend=True,
+        showlegend=False,
     )
     fig.update_layout(standard_layout)
     return fig
@@ -317,6 +314,24 @@ def write_new_info(df):
     text += f"such as <b>{songs[0]}</b>, <b>{songs[1]}</b> and <b>{songs[2]}</b>."
 
     return text
+
+
+def write_week_text(df_wday):
+    wday_avg = pd.pivot_table(df_wday, index='day_of_week', values='minutes', aggfunc=np.mean).reset_index()
+    day_high = wday_avg['day_of_week'][np.argmax(wday_avg['minutes'])]
+    day_low = wday_avg['day_of_week'][np.argmin(wday_avg['minutes'])]
+    minutes_high = df_wday.loc[df_wday['day_of_week'] == day_high]
+    minutes_low = df_wday.loc[df_wday['day_of_week'] == day_low]
+    av_high = round(minutes_high['minutes'].mean())
+    av_low = round(minutes_low['minutes'].mean())
+    text_week = f"You listen to the most music on <b>{day_high}</b> and the least on <b>{day_low}</b>, "
+    alpha = ztest(minutes_high['minutes'], minutes_low['minutes'], 0)[1]
+    if alpha > 0.05:
+        text_week += "but the difference between them is not statistically significant."
+    else:
+        text_week += f"with an average of <b>{av_high}</b> and <b>{av_low}</b> minutes respectively."
+
+    return text_week
 
 
 def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=True):
@@ -509,6 +524,9 @@ def flatten_adjacent(df, date_col="date_start"):
 
 
 def plot_top_artists_over_time(df, periods=10):
+    """
+    For now, keep periods <= 10
+    """
     artists_range_df = get_top_artists_range(df, periods=periods)
     artists_range_df = flatten_adjacent(artists_range_df)
     artist_list = artists_range_df["artistname"].unique()
@@ -522,7 +540,8 @@ def plot_top_artists_over_time(df, periods=10):
     art_palette = {}
 
     for i, a in enumerate(artist_df_week["artistname"].unique()):
-        art_palette[a] = px.colors.qualitative.Dark24[i]
+        # assign a color to each artist
+        art_palette[a] = px.colors.qualitative.Plotly[i]
         a_df = artist_df_week.loc[artist_df_week["artistname"] == a]
         fig.add_trace(
             go.Bar(
@@ -531,16 +550,16 @@ def plot_top_artists_over_time(df, periods=10):
                 customdata=a_df["artistname"],
                 width=60 * 60 * 24 * 7 * 1000,
                 name=a,
-                hovertemplate="%{customdata}<br><b>Total Minutes:</b>%{y}<extra></extra> ",
-                marker=dict(color=i),
+                hovertemplate="%{customdata}<br><b>Total Minutes:</b> %{y}<extra></extra> ",
+                marker=dict(color=art_palette[a]),
             )
         )
     fig.update_layout(title="Top Artists over Time", barmode="stack")
     full_fig = fig.full_figure_for_development()
     yrange = full_fig.layout.yaxis.range
-    logger.info(f"artists over time: {artists_range_df}")
     for i, row in artists_range_df.iterrows():
         ## y_annot has some above line and some below line
+        a = row["artistname"]
         y_annot = yrange[1] * (1 + 0.10 * (-1) ** i)
         fig.add_trace(
             go.Scatter(
@@ -550,7 +569,7 @@ def plot_top_artists_over_time(df, periods=10):
                 text=row["artistname"],
                 customdata=[row["artistname"]],
                 hovertemplate="<b>Date:</b> %{x}<br>%{customdata}<extra></extra> ",
-                marker=dict(color=art_palette[row["artistname"]]),
+                marker=dict(color=art_palette[a]),
                 showlegend=False,
             )
         )
@@ -559,14 +578,13 @@ def plot_top_artists_over_time(df, periods=10):
             y=y_annot,
             text=row["artistname"],
             showarrow=False,
-            font=dict(color=art_palette[row["artistname"]]),
+            font=dict(color=art_palette[a]),
         )
 
     fig.update_layout(standard_layout)
     return fig
 
-
-def plot_weekly(df, date_col="date"):
+def format_weekly(df, date_col="date"):
     d = dict(enumerate(calendar.day_name))
     df_wday = pd.pivot_table(
         df, index=date_col, values="minutes", aggfunc=sum
@@ -574,13 +592,17 @@ def plot_weekly(df, date_col="date"):
     df_wday[date_col] = pd.to_datetime(df_wday[date_col])
     df_wday["wday"] = df_wday["date"].dt.weekday
     df_wday["day_of_week"] = df_wday["wday"].map(d)
+    return df_wday
+
+
+def plot_weekly(df, date_col="date"):
+    df_wday = format_weekly(df, date_col=date_col)
     # weekly boxplot
     fig = go.Figure()
-    for day in d.values():
+    for day in df_wday["day_of_week"].unique():
         df_day = df_wday.loc[df_wday["day_of_week"] == day]
         fig.add_trace(go.Box(y=df_day["minutes"].round(1), name=day))
     fig.update_layout(standard_layout)
-    fig.update_layout(title="Weekday Usage")
     return fig
 
 
@@ -724,7 +746,6 @@ def plot_years(
         )
     )
     fig.update_layout(
-        title="Release Year Distribution",
         barmode="overlay",
         xaxis=dict(title="Release Year"),
         yaxis=dict(title="Minutes"),
@@ -781,7 +802,6 @@ def plot_genres(df, genre_col, minutes_col="minutes", n=20):
         )
     )
     fig.update_layout(
-        title="Most Listened to Genres",
         barmode="overlay",
         xaxis=dict(title="Minutes"),
         yaxis=dict(title="Genre"),
@@ -999,37 +1019,7 @@ def write_last_listened(df):
     )
     return text
 
-
-def write_text(filename, texts):
-    if isinstance(texts, list):
-        text = "\n\n".join(texts)
-    else:
-        text = texts
-    with open(filename, "w") as f:
-        f.write(text)
-
-
-def objects_to_df(objects):
-    df = pd.DataFrame.from_records(objects.values())
-    return df
-
-
-def main(username):
-    user_df = objects_to_df(SpotifyStreaming.objects.filter(username=username))
-    tracks_df = objects_to_df(
-        SpotifyTracks.objects.filter(
-            artistname__in=user_df["artistname"], trackname__in=user_df["trackname"]
-        )
-    )
-    df = pd.merge(user_df, tracks_df, on=["artistname", "trackname"], how="left")
-    logger.info(
-        f"Spotify data read for {username} with {len(df)} rows \n : {df.head()}"
-    )
-    df = preprocess(df)
-
-    path = f"goodreads/static/Graphs/{username}"
-    if not (os.path.exists(path) and os.path.isdir(path)):
-        os.mkdir(path)
+def multiplot_overall(df):
     df_sums = sum_days(df, podcast=True)
     new_df = format_new_songs(
         df, time_col="endtime", index_cols=["artistname", "trackname"]
@@ -1041,6 +1031,7 @@ def main(username):
         1,
         subplot_titles=["Volume Timeline", "New Songs", "Top Artists Over Time"],
         shared_xaxes=True,
+        vertical_spacing=0.08,
     )
     overall = [
         plot_overall(df_sums, podcast=True),
@@ -1055,7 +1046,48 @@ def main(username):
         for annotation in figure.select_annotations():
             fig.add_annotation(annotation, row=i + 1, col=1)
     fig.update_layout(standard_layout)
-    fig.write_html(f"goodreads/static/Graphs/{username}/overall_{username}.html")
+    fig.update_xaxes(showline=True, linecolor="rgb(36,36,36)")
+    fig.update_yaxes(showline=True, linecolor="rgb(36,36,36)")
+    fig.update_layout(xaxis_showticklabels=True, xaxis2_showticklabels=True)
+    return fig
+
+
+def write_text(filename, texts):
+    if isinstance(texts, list):
+        text = "\n\n".join(texts)
+    else:
+        text = texts
+    with open(filename, "w") as f:
+        f.write(text)
+
+
+def objects_to_df(objects):
+    df = pd.DataFrame.from_records(objects.values())
+    return df
+
+def load_data(username):
+    user_df = objects_to_df(SpotifyStreaming.objects.filter(username=username))
+    tracks_df = objects_to_df(
+        SpotifyTracks.objects.filter(
+            artistname__in=user_df["artistname"], trackname__in=user_df["trackname"]
+        )
+    )
+    df = pd.merge(user_df, tracks_df, on=["artistname", "trackname"], how="left")
+    logger.info(
+        f"Spotify data read for {username} with {len(df)} rows \n : {df.head()}"
+    )
+    df = preprocess(df)
+    return df
+
+
+def main(username):
+    df = load_data(username)
+    path = f"goodreads/static/Graphs/{username}"
+    if not (os.path.exists(path) and os.path.isdir(path)):
+        os.mkdir(path)
+
+    fig_overall = multiplot_overall(df)
+    fig_overall.write_html(f"goodreads/static/Graphs/{username}/overall_{username}.html")
 
     fig_year = plot_years(
         df, feature_col="release_year", minutes_col="minutes", index_col="artistname"
@@ -1094,3 +1126,9 @@ def main(username):
         filename=f"goodreads/static/Graphs/{username}/spotify_summary_{username}.txt",
         texts=[write_new_info(df), write_skips_summary(df), write_last_listened(df)],
     )
+
+    write_text(
+        filename=f"goodreads/static/Graphs/{username}/spotify_weekly_{username}.txt",
+        texts=[write_week_text(format_weekly(df, date_col="date"))],
+    )
+

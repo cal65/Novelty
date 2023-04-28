@@ -43,7 +43,8 @@
         url: '/spot-text/',
         type: 'GET',
         success: function(data) {
-            $('#info').html(data.info_text);
+            $('#info_text').html(data.info_text);
+            $('#weekly_text').html(data.weekly_text);
         },
         error: function(xhr, errmsg, err) {
             console.log(xhr.status + ": " + xhr.responseText);
@@ -52,9 +53,8 @@
 });
 
 
-    $('#infotext').load("{% static info_text %}");
 </script>
-<button name="runscript" onclick="reanalyze()" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 pb-2 px-4 rounded">
+<button name="runscript" onclick="reanalyze()" class="bg-button hover:bg-blue-900 text-white font-bold py-2 pb-2 px-4 rounded">
     Re-Analyze
 </button>
 <br>
@@ -82,7 +82,7 @@
     This graph shows some your Spotify streaming history, including how many minutes you listened to per day, as well as when you listened to more new songs (new to you), and the artist you listened to the most during a given period. 
 </div>
 <br><br>
-<div class="caption-text" id ="info">
+<div class="caption-text" id ="info_text">
 </div>
 
 <br> <br>
@@ -106,7 +106,7 @@
     </div>
     <br>
     <div class="caption-text">
-    This shows how much music you listen to per day of the week.
+    This shows how much music you listen to per day of the week. <p  id ="weekly_text"> </p>
     </div>
 </section>
     <br>

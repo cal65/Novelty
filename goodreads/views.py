@@ -201,13 +201,17 @@ def runscriptNetflix(request):
 
 def spot_text(request):
     username = request.user
-    info_text_url = "goodreads/static/Graphs/{}/spotify_summary_{}.txt".format(
-        username, username
-    )
+    info_text_url = f"goodreads/static/Graphs/{username}/spotify_summary_{username}.txt"
     with open(info_text_url) as f:
         lines = f.readlines()
+    f.close()
     info_text = "".join(lines)
-    return JsonResponse({"info_text": info_text})
+    weekly_text_url = f"goodreads/static/Graphs/{username}/spotify_weekly_{username}.txt"
+    with open(weekly_text_url) as f:
+        lines2 = f.readlines()
+    f.close()
+    weekly_text = "".join(lines2)
+    return JsonResponse({"info_text": info_text, "weekly_text": weekly_text})
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
@@ -224,8 +228,7 @@ def spot_plots_view(request):
     genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
     top_songs_url = "Graphs/{}/spotify_top_songs_{}.html".format(username, username)
 
-    if "run_script_function" in request.POST:
-        runscriptSpotify(request)
+
     return render(
         request,
         "spotify/plots.html",

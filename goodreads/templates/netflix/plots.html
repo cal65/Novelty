@@ -61,7 +61,7 @@
 <section id ="Timeline">
     <br>
 
-    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">OVERALL TIMELINE</div>
+    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">Netflix Overall Timeline - {{ user.get_username }}</div>
         <div class="plotly" style="height: 750px;">
             <iframe class="iframe" src="{% static timeline_url %}" alt="timeline"></iframe>
         </div>
@@ -75,7 +75,7 @@
         <br>
 <section id ="Volume">        
 <p id="infotext"></p>
-<div style="text-align: center; " class="image-title">VOLUME HISTOGRAM</div>
+<div style="text-align: center; " class="image-title">Volume Histogram</div>
     <div class ="plotly">
         <iframe src="{% static histogram_url %}"  class="iframe" alt="genres" /> </iframe>
     </div>
@@ -87,7 +87,7 @@
 <br> <br>
 </div>
 <section id ="Genres-TV">
-    <div style="text-align: center;" class="image-title">GENRES DISTRIBUTION - TV SHOWS</div>
+    <div style="text-align: center;" class="image-title">Genres - TV Shows</div>
     <div class ="plotly">
         <iframe class ="iframe" src="{% static genre_series_url %}" alt="genre"></iframe>
     </div>
@@ -99,7 +99,7 @@
 </section>
 
 <section id ="Genres-Movies">
-    <div style="text-align: center; " class="image-title">GENRES DISTRIBUTION - MOVIES</div>
+    <div style="text-align: center; " class="image-title">Genres - Movies</div>
     <div class ="plotly">
         <iframe src="{% static genre_movie_url %}"  class="iframe" alt="genres" /> </iframe>
     </div>
@@ -110,7 +110,7 @@
 <section id ="Network">
     <br>
     <br>
-     <div style="text-align: center; " class="image-title">ACTOR NETWORK PLOT</div>
+     <div style="text-align: center; " class="image-title">Actor Network Plot</div>
     <div class ="plotly">
         <iframe src="{% static network_url %}"  class="iframe" alt="top-songs" /> </iframe>
     </div>
