@@ -60,8 +60,8 @@ def convert_to_SpotifyStreaming(row, username):
     """
     djangoSpotifyStreaming = SpotifyStreaming()
     djangoSpotifyStreaming.endtime = row["endtime"]
-    djangoSpotifyStreaming.artistname = row["artistname"]
-    djangoSpotifyStreaming.trackname = row["trackname"]
+    djangoSpotifyStreaming.artistname = row["artistname"][:250]
+    djangoSpotifyStreaming.trackname = row["trackname"][:250]
     djangoSpotifyStreaming.msplayed = row["msplayed"]
     djangoSpotifyStreaming.username = username
     djangoSpotifyStreaming.save()
@@ -71,8 +71,8 @@ def convert_to_SpotifyStreaming(row, username):
 def convert_to_SpotifyTrack(track_series):
     djangoSpotifyTrack = SpotifyTracks()
     djangoSpotifyTrack.uri = track_series["uri"]
-    djangoSpotifyTrack.name = track_series["name"]
-    djangoSpotifyTrack.artist = track_series["artist"]
+    djangoSpotifyTrack.name = track_series["name"][:250]
+    djangoSpotifyTrack.artist = track_series["artist"][:250]
     djangoSpotifyTrack.duration = track_series["duration"]
     djangoSpotifyTrack.popularity = track_series["popularity"]
     djangoSpotifyTrack.release_date = track_series["release_date"]
