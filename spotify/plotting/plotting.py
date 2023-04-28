@@ -714,7 +714,7 @@ def plot_years(
         go.Bar(
             x=years_df[feature_col],
             y=years_df["minutes_total"],
-            hovertemplate="<b>Year:</b %{x}<br> <b>Total minutes:</b> %{y}<extra></extra>",
+            hovertemplate="<b>Year:</b> %{x}<br> <b>Total minutes:</b> %{y}<extra></extra>",
             name="Minutes - Total",
             hoverinfo="skip",
         )
@@ -768,7 +768,7 @@ def plot_genres(df, genre_col, minutes_col="minutes", n=20):
         go.Bar(
             x=genre_df["minutes_total"],
             y=genre_df[genre_col],
-            hovertemplate="genre: %{y} <br> total minutes: %{x}<extra></extra>",
+            hovertemplate="<b>Genre:</b> %{y} <br><b>Total Minutes:</b> %{x}<extra></extra>",
             orientation="h",
             name="Minutes - Total",
         )
@@ -780,7 +780,7 @@ def plot_genres(df, genre_col, minutes_col="minutes", n=20):
             customdata=np.stack(
                 (genre_df["artistname"], genre_df[minutes_col]), axis=-1
             ),
-            hovertemplate="top artist: %{customdata[0]} <br>number of minutes: %{customdata[1]} <extra></extra>",
+            hovertemplate="<b>Top artist:</b> %{customdata[0]} <br><b>Minutes:</b> %{customdata[1]} <extra></extra>",
             orientation="h",
             name="Minutes - Top Artist",
         )
