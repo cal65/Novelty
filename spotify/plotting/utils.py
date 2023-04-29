@@ -7,6 +7,7 @@ standard_layout = dict(
     plot_bgcolor="rgba(0,0,0,0)",
     xaxis=dict(showline=True, linecolor="rgb(36,36,36)"),
     yaxis=dict(showline=True, linecolor="rgb(36,36,36)"),
+    font=dict(family="Courier New"),
 )
 
 def save_fig(fig, file_path):

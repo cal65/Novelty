@@ -31,11 +31,12 @@
           // The server will ignore the 't' parameter and just serve up the image normally. (The images should have been
           // regenerated as a side effect of the /run-script/ POST request.)
           const cacheBuster = String(Date.now());
-          $('img').attr('src', (_, oldSrc) => {
+          $('iframe').attr('src', (_, oldSrc) => {
             const url = new URL(oldSrc);
             url.searchParams.set('t', cacheBuster);
             return url.toString();
           });
+          location.reload();
         })
     }
 </script>
@@ -129,9 +130,9 @@
     </div>
     <div class="plotly" >
         <iframe src="{% static monthly_pages_read_url %}" class="iframe"  style="height:1500px;" alt="monthly-history" >
-    </iframe>
+        </iframe>
     </div>
     <br> <br>
 </section>
-    <br> <br> <br>
+    <br> <br> <br> <br> <br> <br>
 {% endblock content %}

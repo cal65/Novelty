@@ -8,7 +8,8 @@ import numpy as np
 import geopandas as gpd
 
 import psycopg2
-import plotly as plotly
+import plotly
+import plotly.express as px
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
 from plotly.subplots import make_subplots
@@ -27,7 +28,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 post_pass = os.getenv("cal65_pass")
-matplotlib.pyplot.switch_backend("Agg")
 
 # global color palette
 palette = plotly.colors.qualitative.Plotly
@@ -741,7 +741,8 @@ def create_read_plot_heatmap(
     min_break=3,
     date_col="date_read",
     start_year=None,
-    lim=30,
+    lim=40,
+    colorscale="Plotly3",
 ):
     df = read_plot_munge(
         df,
@@ -760,39 +761,33 @@ def create_read_plot_heatmap(
     fig = make_subplots(
         rows=1,
         cols=len(strats),
-        horizontal_spacing=0.015,
-        column_widths=[3] * len(strats),
+        horizontal_spacing=0.025,
     )
-    heatmaps = []
+
     for i in range(len(strats)):
         r_strat = df[df["strats"] == strats[i]].tail(lim)
-        heatmaps.append(
-            ff.create_annotated_heatmap(
-                x=[strats[i]],
-                z=[[r] for r in r_strat["narrative_int"]],
-                annotation_text=[[r] for r in r_strat["title_simple"]],
-                text=[[r] for r in r_strat["hover_text"]],
-                opacity=(i + 1) / len(strats),
-                hoverinfo="text",
-                colorscale="earth",
-                font_colors=["black", "black"],
-            )
+        heatmap = ff.create_annotated_heatmap(
+            x=[strats[i]],
+            z=[[r] for r in r_strat["narrative_int"]],
+            annotation_text=[[r] for r in r_strat["title_simple"]],
+            text=[[r] for r in r_strat["hover_text"]],
+            opacity=(i + 1) / len(strats),
+            hoverinfo="text",
+            colorscale=colorscale,
+            ygap=1,
         )
 
-        fig.add_trace(heatmaps[i].data[0], row=1, col=i + 1)
-
-        annotations = heatmaps[i].layout.annotations
+        fig.add_trace(heatmap.data[0], row=1, col=i + 1)
+        annotations = heatmap.layout.annotations
         for k in range(len(annotations)):
             annotations[k]["xref"] = f"x{i + 1}"
             annotations[k]["yref"] = f"y{i + 1}"
-        for ano in annotations:
-            fig.add_annotation(ano)
+            fig.add_annotation(annotations[k])
 
         if i == 0:
             fig.update_layout(yaxis=dict(visible=False, categoryorder="array"))
         else:
             fig.layout[f"yaxis{i + 1}"] = dict(visible=False, categoryorder="array")
-
     fig.update_layout(
         title=f"Popularity Spectrum - {username}",
         paper_bgcolor="rgba(0,0,0,0)",
@@ -801,9 +796,43 @@ def create_read_plot_heatmap(
     fig.update_layout(standard_layout)
     fig.update_xaxes(
         showline=True,
+        range=[-0.5, 0.5],
         linecolor="rgb(36,36,36)",
-        tickfont=dict(family="Courier New", color="#636efa"),
+        tickfont=dict(color="#636efa"),
     )
+    fill = getattr(px.colors.sequential, colorscale)
+    # Custom legend
+    fig.add_shape(
+        type="rect",
+        xref="paper", yref="paper",
+        fillcolor=fill[0],
+        x0=0.2,
+        y0=-0.05,
+        x1=0.4,
+        y1=-0.15,
+    )
+    fig.add_annotation(text="<b>Non-Fiction</b>",
+                       xref="paper", yref="paper",
+                       x=0.3, y=-0.1, showarrow=False,
+                       xanchor="center",
+                       yanchor="middle",
+                       font=dict(color='white'))
+
+    fig.add_shape(
+        type="rect",
+        xref="paper", yref="paper",
+        fillcolor=fill[-1],
+        x0=0.6,
+        y0=-0.05,
+        x1=0.8,
+        y1=-0.15,
+    )
+    fig.add_annotation(text="<b>Fiction</b>",
+                       xref="paper", yref="paper",
+                       x=0.7, y=-0.1, showarrow=False,
+                       xanchor="center",
+                       yanchor="middle",
+                       font=dict(color='white'))
 
     filename = f"goodreads/static/Graphs/{username}/read_heatmap_{username}.html"
     fig.write_html(file=filename)
