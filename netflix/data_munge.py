@@ -166,7 +166,7 @@ def query_title(title: str):
 
     results_all = response.json()["results"]
     if results_all is None:
-        print(f"No response found for {title}")
+        logger.info(f"No response found for {title}")
         return
     results = results_all[0]  # take first search
     series_results = pd.Series(results)
