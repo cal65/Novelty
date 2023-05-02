@@ -4,6 +4,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
     $(document).ready(function() {
+      let csrftoken = '{{ csrf_token }}'
       $("#submit-comment").click(function() {
          console.log("Button was pressed")
          var comment_text =$("#comment").val()
@@ -12,12 +13,13 @@
          } else {
             $.ajax({
                type: "POST",
+               headers:{'X-CSRFToken':csrftoken},
                url: "{% url 'post-comment' %}",
-               data: {comment: comment_text},
-           success: function(response) {
-             alert("Comment submitted.");
-             $("#comment-text").val("");
-             return true;
+               data: {"comment": comment_text},
+               success: function(response) {
+                alert("Comment submitted.");
+                document.getElementById("comment-form").reset();
+                return true;
            },
            error: function(response) {
              alert("Error submitting comment.");
