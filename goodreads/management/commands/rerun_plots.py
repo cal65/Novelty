@@ -20,12 +20,15 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     def handle(self, **options):
         users_goodreads = list(ExportData.objects.order_by().values_list('username', flat=True).distinct())
+        print(f"Running goodreads for {len(users_goodreads)} users")
         for user in users_goodreads:
             gplot.main(user)
         users_spotify = list(SpotifyStreaming.objects.order_by().values_list('username', flat=True).distinct())
+        print(f"Running spotify for {len(users_spotify)} users")
         for user in users_spotify:
             splot.main(user)
         users_netflix = list(NetflixUsers.objects.order_by().values_list('username', flat=True).distinct())
+        print(f"Running netflix for {len(users_netflix)} users")
         for user in users_netflix:
             nplot.main(user)
 
