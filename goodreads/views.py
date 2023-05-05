@@ -6,6 +6,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django import template
+
 
 from .models import NetflixUsers, Books
 
@@ -36,7 +38,7 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger(__name__)
-
+register = template.Library()
 
 def run_script_function(request):
     """
@@ -295,15 +297,17 @@ def upload(request):
     df = process_export_upload(df)
     logger.info(f"starting export table addition for {user} with {str(len(df))} rows")
     exportDataObjs = populateExportData(df, user)
-    logger.info(f"starting authors table addition")
-    populateAuthors(df)
     exportNew = [
         e
         for e in exportDataObjs
         if not Books.objects.filter(book_id=e.book_id).exists()
     ]
+    newN = len(exportNew)
+    messages.success(request, message=f"Estimated upload time: {newN * 5} seconds.", fail_silently=False)
+    logger.info(f"starting authors table addition")
+    populateAuthors(df)
     logger.info(
-        f"starting books table addition for {len(exportNew)} new books out of {len(df)}"
+        f"starting books table addition for {newN} new books out of {len(df)}"
     )
     populateBooks(exportNew, user, wait=3, metrics=True)
     # return
@@ -406,8 +410,18 @@ def upload_view_netflix(request):
     # check whether user has data
     q = NetflixUsers.objects.filter(username=user).values()
     hasData = len(q) > 0
-    logger.info(f"The request looks like: {request}, {type(request)}")
+   # logger.info(f"The request looks like: {request}, {type(request)}")
+    if request.method == "POST":
+        logger.info(f"The request looks like: {request}, {request.POST}")
     template = "netflix/csv_upload_netflix.html"
+    # Upload
+    if request.method == "POST" and "csv-form" in request.POST:
+        logger.info(
+            f"ZZZ Got an upload {request.method} and post {request.POST}"
+        )
+        return upload_netflix(request)
+        # when script finishes, move user to plots view
+    # Analyze
     if request.method == "POST" and "runscriptNetflix" in request.POST:
         logger.info(
             f"Got running with Netflix request {request.method} and post {request.POST}"
@@ -418,10 +432,10 @@ def upload_view_netflix(request):
     return render(request, template, {"hasData": hasData})
 
 
+@register.simple_tag
 def upload_netflix(request):
-    logger.info(f"upload Netflix")
+    logger.info(f"upload Netflix with request path {request.path}")
     user = request.user
-    template = "netflix/csv_upload_netflix.html"
     csv_file = request.FILES["file"]
     # save csv file in database
     df = pd.read_csv(csv_file)
@@ -436,18 +450,19 @@ def upload_netflix(request):
     logger.info(df.head())
     df_unmerged = df.loc[pd.isnull(df["netflix_id"])]
     n_miss = len(df_unmerged["name"].unique())
+    messages.info(request, message=f"We have {n_miss} shows to query.")
     logger.info(f"Number of unmerged shows {n_miss}")
-    netflix_message(request, template, n_miss)
-    for name in df_unmerged["name"].unique():
+    return JsonResponse({"names": df_unmerged["name"].unique().tolist(), "n_missing": n_miss})
+
+
+def insert_netflix(request):
+    logger.info(f"insert netflix request looks like {request.POST.dict()}")
+    names = request.POST.getlist('names[]')
+    template = "netflix/csv_upload_netflix.html"
+    for name in names:
         nd.lookup_and_insert(name)
-
+        logger.info(f"Ingestion completed for {name}")
     return render(request, template, {"hasData": True})
-
-
-def netflix_message(request, template, n):
-    logger.info("Netflix message sent")
-    return render(request, template, {"n": n})
-
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def netflix_plots_view(request):
@@ -503,6 +518,9 @@ def comments(request):
 
 def post_comment(request):
     comment = request.POST.get("comment", "")
+    next = request.GET['next']
     logger.info(comment)
     # when script finishes, move user to plots view
-    return HttpResponseRedirect("/netflix-plots/")
+    if next:
+        HttpResponseRedirect(next)
+    return HttpResponseRedirect(index(request))

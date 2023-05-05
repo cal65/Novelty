@@ -19,59 +19,84 @@ function getCookie(name) {
     return cookieValue;
   }
 
-  function upload(){
-  const csrftoken = getCookie('csrftoken');
-  var form = document.getElementById('csv-form')
-  console.log(arguments)
-   $("#progress").toggle()
-     $.ajax({
-        type: "POST",
+
+var estimate;
+  function getEstimate(){
+    const csrftoken = getCookie('csrftoken');
+    var form = document.getElementById('csv-form')
+    $("#progress").toggle()
+    console.log(arguments)
+        $.post({
         url: "{% url 'upload-netflix' %}",
-        data:  new FormData(form),
+        data: new FormData(form),
         cache: false,
         contentType: false,
         processData: false,
+        dataType: "json",
         headers: { "X-CSRFToken": csrftoken },
-        success: function(response) {
-            $("#progress").toggle()
-            $("#done").toggle()
-            var hasData = true
-            console.log(hasData)
-            $('#Analyze').prop('disabled', false);
-          },
-        error: function(data ){
-            console.log("Something went wrong");
-            $("#progress").toggle()
-          }
-      })
-      return false;
+        success: function(resp) {
+            console.log("Success")
+            $("#progress").toggle();
+            estimate = resp.names.length;
+            document.getElementById("estimate").innerHTML = estimate;
+            $("#estimate_div").show();
+            insert(resp.names);
+            }
+        })
+    }
+
+
+  function insert(names){
+      const csrftoken = getCookie('csrftoken');
+      console.log(arguments)
+         $.ajax({
+            type: "POST",
+            url: "{% url 'insert-netflix' %}",
+            data: {'names': names, 'a': 4},
+            headers: { "X-CSRFToken": csrftoken},
+            success: function(response) {
+                $("#done").toggle();
+                var hasData = true;
+                console.log(hasData);
+                $('#Analyze').prop('disabled', false);
+              },
+            error: function(names ){
+                console.log("Something went wrong");
+                $("#progress").toggle();
+              }
+          })
+          return false;
     }
 
 
 
 </script>
 <div style="text-align: center;" class="font-bold pt-4 text-3xl">NETFLIX ANALYSIS</div>
-    {% if messages %}
-        {% for message in messages %}
-            <div class="text-red-600 pb-2">
-               <strong>*{{message|safe}}</strong>
-            </div>
-        {% endfor %}
-    {% endif %}
+
 <div class="pt-8" style="display: flex; justify-content: center;">
    <div class="border-2 border-black p-2 w-1/3">
-      <form action="" id="csv-form" method="POST" enctype="multipart/form-data" onsubmit= "event.preventDefault(); return upload();">
+      <form action="" id="csv-form" method="POST" enctype="multipart/form-data" onsubmit= "event.preventDefault(); return getEstimate();">
          {% csrf_token %}
          <input type="file" id="file1" name="file" accept=".csv">
-         <div class="pt-4"><button type="submit" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
+         <div class="pt-4"><button type="submit" name="upload" class="bg-button hover:bg-blue-900 font-bold py-2 px-4 rounded">
                       Streaming Upload
          </button></div>
       </form>
-       <div id = "progress" style="height: 50px; line-height: 50px; display: none; align-items: left;" >
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="text-red-600 pb-2">
+                       <strong>*{{message|safe}}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+       <div id = "progress" class="upload-text" style="display: none;">
             <p style="float: left;">Beginning upload...</p>
             <img src="/static/admin/img/time-hourglass.gif" style="height: 50px; float: left;">
         </div>
-        <div id = "done" style="height: 50px; line-height: 50px; display: none; align-items: left;">
+        <div id = "estimate_div" class="upload-text" style="display: none;"> 
+            Querying data for <span id="estimate"></span> shows.
+        </div>
+        <div id = "done" class="upload-text" style="display: none;">
             <p>Upload complete</p>
         </div>
    </div>
@@ -79,12 +104,12 @@ function getCookie(name) {
 <div class="pt-2" style="display: flex; justify-content: center;">
    <form method="POST">
     {% csrf_token %}
-    <button id="Analyze" type="submit" name="runscriptNetflix" class="bg-blue-800 disabled:bg-gray-800 hover:enabled:bg-blue-900 text-white font-bold py-2 px-4 rounded" {{ hasData|yesno:",disabled" }}>
+    <button id="Analyze" type="submit" name="runscriptNetflix" class="bg-button disabled:bg-gray-800 hover:enabled:bg-blue-900 font-bold py-2 px-4 rounded" {{ hasData|yesno:",disabled" }}>
       Analyze
     </button>
    </form>
 </div>
-
+<br>
 <div class = "center">
    Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Upload</span>. This may take some time for your browser to process, based on the size of your upload. Then click <span class="text-blue-800">Analyze</span> when you can. Afterwards, navigate to your <span class="text-blue-800"><a href="{% url 'netflix-plots' %}">Plots</a></span> page.
 </div>

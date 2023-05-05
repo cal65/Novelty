@@ -1048,7 +1048,8 @@ def multiplot_overall(df):
     fig.update_layout(standard_layout)
     fig.update_xaxes(showline=True, linecolor="rgb(36,36,36)")
     fig.update_yaxes(showline=True, linecolor="rgb(36,36,36)")
-    fig.update_layout(xaxis_showticklabels=True, xaxis2_showticklabels=True)
+    fig.update_layout(xaxis_showticklabels=True, xaxis2_showticklabels=True,
+                      legend=dict(yanchor="bottom", y=0))
     return fig
 
 

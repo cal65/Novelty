@@ -18,6 +18,7 @@ function getCookie(name) {
     return cookieValue;
   }
 
+
 function upload(){
   const csrftoken = getCookie('csrftoken');
   var form = document.getElementById('csv-form')
@@ -58,6 +59,7 @@ function toggle(id){
 
 {% block utitle %}
 <div style="text-align: center;" class="font-bold pt-4 text-3xl">GOODREADS ANALYSIS</div>
+ <div class="pt-8" style="display: flex; justify-content: center;">
     {% if messages %}
         {% for message in messages %}
             <div class="text-red-600 pb-2">
@@ -65,7 +67,7 @@ function toggle(id){
             </div>
         {% endfor %}
     {% endif %}
-<div class="pt-8" style="display: flex; justify-content: center;">
+</div>
 {% endblock utitle %}
 
 {% block upload-script %}
@@ -79,7 +81,7 @@ function toggle(id){
             </button>
         </div>
         <div id = "progress"  style="height: 50px; line-height: 50px; display: none; align-items: left;" >
-                <p style="float: left;">Beginning upload..</p> 
+                <p style="float: left;">Beginning upload...</p> 
                 <img src="/static/admin/img/time-hourglass.gif" style="height: 50px; float: left;">
             </div> 
         <div id = "done" style="height: 50px; line-height: 50px; display: none; align-items: left;">

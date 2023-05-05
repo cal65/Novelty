@@ -28,6 +28,7 @@ urlpatterns = [
     path("spotify-plots/", spot_plots_view, name="spotify-plots"),
     path("upload-view-netflix/", upload_view_netflix, name="upload-view-netflix"),
     path("upload-netflix/", upload_netflix, name="upload-netflix"),
+    path("insert-netflix/", insert_netflix, name="insert-netflix"),
     path("netflix-plots/", netflix_plots_view, name="netflix-plots"),
     path("gallery-books/", gallery_books, name="gallery-books"),
     path("gallery-music/", gallery_music, name="gallery-music"),
