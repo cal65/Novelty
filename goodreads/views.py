@@ -288,7 +288,6 @@ def populateAuthors(df):
 
 def upload(request):
     user = request.user
-    logger.info(f"The request looks like: {request}, {type(request)}")
     csv_file = request.FILES["file"]
     # save csv file in database
     logger.info(f"Goodreads upload started for {user}")
@@ -321,7 +320,6 @@ def upload_view_goodreads(request):
     # check if user has uploaded a csv file before running the analysis
     if request.method == "GET":
         return render(request, template)
-    logger.info(f"request post is {request.POST}")
 
     # run analysis when user clicks on Analyze button
     if request.method == "POST" and "runscript" in request.POST:
@@ -450,7 +448,6 @@ def upload_netflix(request):
     logger.info(df.head())
     df_unmerged = df.loc[pd.isnull(df["netflix_id"])]
     n_miss = len(df_unmerged["name"].unique())
-    messages.info(request, message=f"We have {n_miss} shows to query.")
     logger.info(f"Number of unmerged shows {n_miss}")
     return JsonResponse({"names": df_unmerged["name"].unique().tolist(), "n_missing": n_miss})
 

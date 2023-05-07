@@ -1,17 +1,10 @@
 import os
-import sys
 import requests
-
 import pandas as pd
 import numpy as np
-import re
 import logging
-import argparse
-import functools
 import psycopg2
-from datetime import datetime
 import networkx as nx
-import itertools
 import matplotlib.pyplot as plt
 
 from goodreads.models import NetflixUsers, NetflixTitles, NetflixGenres, NetflixActors
@@ -271,10 +264,10 @@ def format_network(df):
     return G
 
 
-def plot_network(G, cast_df):
-    pos = nx.kamada_kawai_layout(G, scale=0.2)
+def plot_network(graph, cast_df):
+    pos = nx.kamada_kawai_layout(graph, scale=0.2)
     # colors
-    color_mapper = {n: int(n in pd.unique(cast_df["show1"])) for n in G.nodes()}
+    color_mapper = {n: int(n in pd.unique(cast_df["show1"])) for n in graph.nodes()}
     cm2 = {1: "red", 0: "blue"}
     # position of text
     pos_moved = pos.copy()
@@ -284,12 +277,12 @@ def plot_network(G, cast_df):
     plt.style.use("ggplot")
 
     nodes = nx.draw_networkx_nodes(
-        G, pos, node_color=[cm2[c] for c in color_mapper.values()], alpha=0.8
+        graph, pos, node_color=[cm2[c] for c in color_mapper.values()], alpha=0.8
     )
     nodes.set_edgecolor("k")
-    nx.draw_networkx_labels(G, pos_moved, font_size=15, alpha=0.8)
+    nx.draw_networkx_labels(graph, pos_moved, font_size=15, alpha=0.8)
 
-    nx.draw_networkx_edges(G, pos, width=1.0, alpha=0.2)
+    nx.draw_networkx_edges(graph, pos, width=1.0, alpha=0.2)
     return f
 
 
@@ -333,7 +326,7 @@ def codify_title(title):
         else:
             name = splits[0]
         if (len(splits) - season_index) > 1:
-            episode = ": ".join(splits[season_index + 1 :])
+            episode = ": ".join(splits[season_index + 1:])
         else:
             episode = splits[-1]
     elif any(episode_bool):
@@ -375,6 +368,7 @@ def net_merge(df, titles_df, left, right, ids, how="inner"):
     df.drop([c for c in df.columns if "remove" in c], axis=1, inplace=True)
     return df
 
+
 def reformat_special(df, user):
     """
     Special reformat function for different Netflix export.
@@ -410,7 +404,7 @@ def pipeline_steps(df):
     step1 = net_merge(df, titles_df, left="title", right="title", ids=None)
     # match cleared out name with title. This matches TV shows
     step2 = net_merge(df, titles_df, left="name", right="title", ids=step1["id"])
-    ## match the rest
+    # match the rest
     step1_2_ids = pd.unique(step1["id"].append(step2["id"]))
     titles_df["name"] = titles_df["title"].apply(lambda x: x.split(":")[0])
     step3 = net_merge(
