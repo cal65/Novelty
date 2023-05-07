@@ -52,7 +52,7 @@ var estimate;
          $.ajax({
             type: "POST",
             url: "{% url 'insert-netflix' %}",
-            data: {'names': names, 'a': 4},
+            data: {'names': names},
             headers: { "X-CSRFToken": csrftoken},
             success: function(response) {
                 $("#done").toggle();
@@ -82,13 +82,6 @@ var estimate;
                       Streaming Upload
          </button></div>
       </form>
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="text-red-600 pb-2">
-                       <strong>*{{message|safe}}</strong>
-                    </div>
-                {% endfor %}
-            {% endif %}
        <div id = "progress" class="upload-text" style="display: none;">
             <p style="float: left;">Beginning upload...</p>
             <img src="/static/admin/img/time-hourglass.gif" style="height: 50px; float: left;">

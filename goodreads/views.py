@@ -254,6 +254,7 @@ def process_export_upload(df, date_col="Date_Read"):
     df.columns = df.columns.str.lower()
     df["number_of_pages"].fillna(0, inplace=True)
     df["book_id"] = df["book_id"].astype(str)
+    df["original_publication_year"] = df["original_publication_year"].fillna(df["year_published"])
     df = df[pd.notnull(df["book_id"])]
     return df
 
@@ -265,12 +266,12 @@ def populateExportData(df, user):
     return exportDataObjs
 
 
-def populateBooks(exportDataObjs, user, wait=2, metrics=True):
+def populateBooks(book_ids, user, wait=2, metrics=True):
     found = 0
     not_found = 0
     now = datetime.now()
-    for obj in exportDataObjs[:30]:
-        status = convert_to_Book(obj, wait=wait)
+    for book_id in book_ids[:30]:
+        status = convert_to_Book(book_id, wait=wait)
         if metrics:
             if status == "found":
                 found += 1
@@ -286,7 +287,7 @@ def populateAuthors(df):
     return authors
 
 
-def upload(request):
+def upload_goodreads(request):
     user = request.user
     csv_file = request.FILES["file"]
     # save csv file in database
@@ -296,21 +297,26 @@ def upload(request):
     df = process_export_upload(df)
     logger.info(f"starting export table addition for {user} with {str(len(df))} rows")
     exportDataObjs = populateExportData(df, user)
-    exportNew = [
-        e
+    exportNew_ids = [
+        e.book_id
         for e in exportDataObjs
         if not Books.objects.filter(book_id=e.book_id).exists()
     ]
-    newN = len(exportNew)
-    messages.success(request, message=f"Estimated upload time: {newN * 5} seconds.", fail_silently=False)
     logger.info(f"starting authors table addition")
     populateAuthors(df)
-    logger.info(
-        f"starting books table addition for {newN} new books out of {len(df)}"
-    )
-    populateBooks(exportNew, user, wait=3, metrics=True)
-    # return
+    return JsonResponse({'book_ids': exportNew_ids})
+
+
+def insert_goodreads(request):
     template = "goodreads/csv_upload.html"
+    logger.info(f"Insert Goodreads {request.POST}")
+    book_ids = request.POST.getlist('book_ids[]')
+    user = request.user
+    newN = len(book_ids)
+    logger.info(
+        f"starting books table addition for {newN} new books"
+    )
+    populateBooks(book_ids, user, wait=3, metrics=True)
     return render(request, template)
 
 
@@ -408,17 +414,9 @@ def upload_view_netflix(request):
     # check whether user has data
     q = NetflixUsers.objects.filter(username=user).values()
     hasData = len(q) > 0
-   # logger.info(f"The request looks like: {request}, {type(request)}")
     if request.method == "POST":
         logger.info(f"The request looks like: {request}, {request.POST}")
     template = "netflix/csv_upload_netflix.html"
-    # Upload
-    if request.method == "POST" and "csv-form" in request.POST:
-        logger.info(
-            f"ZZZ Got an upload {request.method} and post {request.POST}"
-        )
-        return upload_netflix(request)
-        # when script finishes, move user to plots view
     # Analyze
     if request.method == "POST" and "runscriptNetflix" in request.POST:
         logger.info(
@@ -515,7 +513,7 @@ def comments(request):
 
 def post_comment(request):
     comment = request.POST.get("comment", "")
-    next = request.GET['next']
+    next = request.POST.get("next", "/")
     logger.info(comment)
     # when script finishes, move user to plots view
     if next:

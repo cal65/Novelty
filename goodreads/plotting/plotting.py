@@ -185,14 +185,14 @@ def finish_plot(
             orientation="h",
             customdata=df1["added_by"].apply(lambda x: f"{int(x):,}"),
             marker_color=palette[0],
-            hovertemplate="%{y}<br><b>Total Added:</b> %{customdata}<extra></extra>",
+            hovertemplate="<b>%{y}</b><br>Total Added: <b>%{customdata}</b><extra></extra>",
             width=1,
             showlegend=False,
         )
 
     def finish_bar_perc(df2):
-        hovertemplate = "<b>%{y}</b><br><b>Year:</b> %{customdata[1]}<br>"
-        hovertemplate += "<b>Total Finished:</b> %{customdata[0]}<extra></extra>"
+        hovertemplate = "<b>%{y}</b><br>Year: <b>%{customdata[1]}</b><br>"
+        hovertemplate += "Total Finished: <b>%{customdata[0]}</b><extra></extra>"
         return go.Bar(
             x=df2[read_col],
             y=df2[title_col],
@@ -374,7 +374,7 @@ def genre_bar_plot(df, title_col="title_simple", n_shelves=5, min_count=3):
     )
 
 
-def format_genre_table(df, genres_avg, n=10):
+def format_genre_table(df, genres_avg, n=12):
     melted_genre_df = create_melted_genre_df(df)
     genre_count = pd.pivot_table(
         melted_genre_df,
@@ -970,7 +970,7 @@ def main(username):
         f"goodreads/static/Graphs/{username}/finish_plot_{username}.html"
     )
     genres_avg = pd.read_csv("artifacts/genres_avg.csv")
-    genre_difference = format_genre_table(read_df, genres_avg=genres_avg, n=10)
+    genre_difference = format_genre_table(read_df, genres_avg=genres_avg, n=12)
     fig_genres = plot_genre_difference(genre_difference, username)
     save_fig(
         fig_genres,
