@@ -136,7 +136,8 @@ def read_plot_munge(
     break_labels = generate_labels([f"{b:,}" for b in breaks])
     # adding obscure and bestsellers commentary
     break_labels[0] = f"{break_labels[0]} <br> Obscure"
-    break_labels[-1] = f"{break_labels[-1]} <br> Bestsellers"
+    if max_digits >= 6:
+        break_labels[-1] = f"{break_labels[-1]} <br> Bestsellers"
     df["strats"] = pd.cut(
         df[read_col], bins=breaks, labels=break_labels, include_lowest=True
     )
@@ -755,7 +756,7 @@ def create_read_plot_heatmap(
     strats = pd.unique(df["strats"])
     df["narrative_int"] = df["narrative"].map({"Fiction": 1, "Nonfiction": 0})
     df["hover_text"] = df.apply(
-        lambda x: f"Readers: {'{:,.0f}'.format(x.read)} <br> Title: {x.title_simple} <br> Author: {x.author}",
+        lambda x: f"Readers: <b>{'{:,.0f}'.format(x.read)}</b><br>Title: <b>{x.title_simple}</b> <br>Author: <b>{x.author}</b>",
         axis=1,
     )
     fig = make_subplots(

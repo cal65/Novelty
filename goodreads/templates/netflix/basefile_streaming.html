@@ -5,9 +5,12 @@
     {% endblock title %}
 
 	<!-- customize navbar -->
-	{% block domain-home %}
-            <a class="nav-link" href="{% url 'streaming-home' %}">Streaming</a>
-    {% endblock domain-home %}
+    {% block d1 %}
+            <a class="nav-link" href="{% url 'books-home' %}" >Books</a>
+    {% endblock d1 %}
+    {% block d3 %}
+            <a class="nav-link" href="{% url 'streaming-home' %}" style="color: #EF553B; font-weight: bold;" >Streaming</a>
+    {% endblock d3 %}
 	{% block upload %}
             <a class="nav-link" href="{% url 'upload-view-netflix' %}">Upload Data</a>
     {% endblock upload %}

@@ -27,10 +27,34 @@
                   </a>
                 </li>
                 <li class="nav-item active pr-2">
-                  {% block domain-home %}
-                  <a class="nav-link" href="{% url 'books-home' %}">Books</a>
-                  {% endblock domain-home %}
+                  {% block d1 %}
+                  <a class="nav-link" href="{% url 'books-home' %}" style="color: #636efa; font-weight: bold;">Books</a>
+                  {% endblock d1 %}
                 </li>
+                <li class="nav-item active pr-2">
+                  {% block d2 %}
+                  <a class="nav-link" href="{% url 'music-home' %}">Music</a>
+                  {% endblock d2 %}
+                </li>
+                 <li class="nav-item active pr-2">
+                {% block d3 %}
+                  <a class="nav-link" href="{% url 'streaming-home' %}">Streaming</a>
+                  {% endblock d3 %}
+                </li>
+                <li class="nav-item active pr-2">
+                  {% block d4 %}
+                  <a class="nav-link" href="{% url 'geography-home' %}">Travel</a>
+                  {% endblock d4 %}
+                </li>
+              </ul>
+              <span class="navbar-text">
+                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+              </span>
+            </div>
+          </nav>
+          <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="navbar-sub">
+              <ul class="navbar-nav mr-auto">
                 <li class="nav-item active pr-2">
                   {% block upload %}
                   <a class="nav-link" href="{% url 'upload-view-goodreads' %}">Upload Data</a>
@@ -52,13 +76,10 @@
                   <a class="nav-link" href="{% url 'gallery-books' %}">Gallery</a>
                   {% endblock gallery %}
                 </li>
-
               </ul>
-              <span class="navbar-text">
-                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-              </span>
             </div>
           </nav>
+
       {% endblock navbar %}
 
         <div id="content">
