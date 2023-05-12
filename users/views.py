@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from .forms import UserRegisterForm, LoginForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth import authenticate, login, logout
-
+from django.views.decorators.csrf import csrf_exempt
 import logging
 
 logging.basicConfig(
@@ -24,6 +24,7 @@ def create_folder(username):
     os.mkdir(path)
 
 
+@csrf_exempt
 def register(request):
     try:
         headers = request.headers["User-Agent"]
@@ -44,7 +45,7 @@ def register(request):
             try:
                 create_folder(path)
             except:
-                print(f"Folder already exists for {username}")
+                logger.info(f"Folder already exists for {username}")
 
             login(request, user)
             if next:

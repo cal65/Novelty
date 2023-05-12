@@ -511,11 +511,13 @@ def streaming(request):
 def comments(request):
     return render(request, "comments.html")
 
+
 def post_comment(request):
     comment = request.POST.get("comment", "")
     next = request.POST.get("next", "/")
-    logger.info(comment)
+    logger.info(str(comment))
     # when script finishes, move user to plots view
     if next:
+        logger.info(next)
         HttpResponseRedirect(next)
-    return HttpResponseRedirect(index(request))
+    return HttpResponseRedirect("/")

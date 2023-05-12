@@ -44,11 +44,12 @@
 .navbar-sub {
     position: absolute;
     z-index: 1;
-    -webkit-box-orient: horizontal;
+    /* -webkit-box-orient: horizontal; */
     -ms-flex-align: center;
     align-items: center;
     margin: auto;
     padding: 0.5rem 1rem;
+    padding-bottom: .75rem;
 }
 
 .bg-button {
@@ -247,7 +248,9 @@
     border: 2px solid #636efa;
     border-radius: 5px;
     text-align: center;
-    font-family: 'Roboto', sans-serif;
+    font-size: 1.25rem;
+    font-family: courier new, sans-serif;
+    font-weight: bold;
 }
 
 .logo {
