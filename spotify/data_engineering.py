@@ -79,8 +79,8 @@ def convert_to_SpotifyTrack(track_series):
     djangoSpotifyTrack.genres = track_series["genres"]
     djangoSpotifyTrack.album = track_series["album"]
     djangoSpotifyTrack.explicit = track_series["explicit"]
-    djangoSpotifyTrack.trackname = track_series["trackname"]
-    djangoSpotifyTrack.artistname = track_series["artistname"]
+    djangoSpotifyTrack.trackname = track_series["trackname"][:250]
+    djangoSpotifyTrack.artistname = track_series["artistname"][:250]
     djangoSpotifyTrack.podcast = track_series["podcast"]
     djangoSpotifyTrack.genre_chosen = track_series["genre_chosen"]
     djangoSpotifyTrack.save()
@@ -179,7 +179,7 @@ def get_historical_track_info_from_id(
                     )
         except Exception as e:
             logger.info(f"Error {e} for {track_id}")
-            return None
+            return empty_series
 
     return track_info_series
 
@@ -263,6 +263,7 @@ def update_tracks(df, track_col="trackname", artist_col="artistname"):
         f"Search uri & track data for {len(df_unmerged)} tracks out of original {len(df)} unique tracks"
     )
     for i, row in df_unmerged.iterrows():
+
         # crude test for podcast show vs track
         if row["msplayed"] > ms_per_minute * 10:
             uri = search_by_names(row[track_col], row[artist_col], searchType="show")

@@ -1,4 +1,5 @@
 import os
+import re
 import warnings
 import argparse
 import matplotlib
@@ -71,6 +72,7 @@ def preprocess(df):
     df["date_read"] = pd.to_datetime(df["date_read"])
     df["title_simple"] = df["title"].str.replace(":.*", "")
     df["title_simple"] = df["title_simple"].str.replace("\\(.*\\)", "")
+    df["author"] = df["author"].apply(lambda x: re.sub(r'\s+', ' ', x))
     return df
 
 
