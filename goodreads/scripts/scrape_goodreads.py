@@ -13,9 +13,9 @@ logger.setLevel(logging.INFO)
 
 
 cookies = {
-    "u": "KDNawwKmVEQ5h_qllD3P9E-QvkfEBeX74EL8SJo0ETFzqDbl",
+    "u": "Zeyv_a7lAHi2XqYc8XBUAZEE6R5rNAyN29LV3fPcshXGUy4M",
     "__qca": "P0-58208308-1679029998916",
-    "__gpi": "UID=000004048f7baabd:T=1648685718:RT=1681677779:S=ALNI_MYxDQ7dAo3KLoXnssoo0UOLpKL7ow",
+    "__gpi": "UID=0000097ff616a3c7:T=1682402001:RT=1684724856:S=ALNI_MY4xLYySL-kyW09g_nl8AuOjCRIbQ",
 }
 
 headers = {
