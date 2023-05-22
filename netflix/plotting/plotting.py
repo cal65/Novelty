@@ -230,7 +230,7 @@ def plot_hist(df, username):
             )
         )
     fig.update_layout(
-        barmode="overlay",
+        barmode="stack",
         xaxis=dict(title="Date"),
         yaxis=dict(title="Count"),
     )
