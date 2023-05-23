@@ -37,8 +37,6 @@ matplotlib.pyplot.switch_backend("Agg")
 ms_per_minute = 60 * 1000
 
 
-
-
 def get_data(query, database="goodreads"):
     conn = psycopg2.connect(
         host="localhost", database=database, user="cal65", password=post_pass
@@ -317,15 +315,17 @@ def write_new_info(df):
 
 
 def write_week_text(df_wday):
-    wday_avg = pd.pivot_table(df_wday, index='day_of_week', values='minutes', aggfunc=np.mean).reset_index()
-    day_high = wday_avg['day_of_week'][np.argmax(wday_avg['minutes'])]
-    day_low = wday_avg['day_of_week'][np.argmin(wday_avg['minutes'])]
-    minutes_high = df_wday.loc[df_wday['day_of_week'] == day_high]
-    minutes_low = df_wday.loc[df_wday['day_of_week'] == day_low]
-    av_high = round(minutes_high['minutes'].mean())
-    av_low = round(minutes_low['minutes'].mean())
+    wday_avg = pd.pivot_table(
+        df_wday, index="day_of_week", values="minutes", aggfunc=np.mean
+    ).reset_index()
+    day_high = wday_avg["day_of_week"][np.argmax(wday_avg["minutes"])]
+    day_low = wday_avg["day_of_week"][np.argmin(wday_avg["minutes"])]
+    minutes_high = df_wday.loc[df_wday["day_of_week"] == day_high]
+    minutes_low = df_wday.loc[df_wday["day_of_week"] == day_low]
+    av_high = round(minutes_high["minutes"].mean())
+    av_low = round(minutes_low["minutes"].mean())
     text_week = f"You listen to the most music on <b>{day_high}</b> and the least on <b>{day_low}</b>, "
-    alpha = ztest(minutes_high['minutes'], minutes_low['minutes'], 0)[1]
+    alpha = ztest(minutes_high["minutes"], minutes_low["minutes"], 0)[1]
     if alpha > 0.05:
         text_week += "but the difference between them is not statistically significant."
     else:
@@ -554,7 +554,9 @@ def plot_top_artists_over_time(df, periods=10):
                 marker=dict(color=art_palette[a]),
             )
         )
-    fig.update_layout(barmode="stack")
+    fig.update_layout(
+        barmode="stack", xaxis=dict(title="Date"), yaxis=dict(title="Minutes")
+    )
     full_fig = fig.full_figure_for_development()
     yrange = full_fig.layout.yaxis.range
     for i, row in artists_range_df.iterrows():
@@ -584,6 +586,7 @@ def plot_top_artists_over_time(df, periods=10):
     fig.update_layout(standard_layout)
     return fig
 
+
 def format_weekly(df, date_col="date"):
     d = dict(enumerate(calendar.day_name))
     df_wday = pd.pivot_table(
@@ -597,6 +600,7 @@ def format_weekly(df, date_col="date"):
 
 def plot_weekly(df, date_col="date"):
     df_wday = format_weekly(df, date_col=date_col)
+    df_wday.sort_values('wday', inplace=True)
     # weekly boxplot
     fig = go.Figure()
     for day in df_wday["day_of_week"].unique():
@@ -811,7 +815,13 @@ def plot_genres(df, genre_col, minutes_col="minutes", n=20):
     return fig
 
 
-def create_normal_line(value_series, start=0, end=100, mean=50, sd=19, ):
+def create_normal_line(
+    value_series,
+    start=0,
+    end=100,
+    mean=50,
+    sd=19,
+):
     """
     Given a series, fit a normal distribution curve to it. Designed to complement popularity plot
     """
@@ -846,11 +856,15 @@ def plot_popularity(
             name="Minutes - Total",
         )
     )
-    fig.add_trace(go.Scatter(x=np.arange(0, 100),
-                             y=normal_array,
-                             mode='lines',
-                             name='Normal Distribution',
-                             hoverinfo='none'))
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(0, 100),
+            y=normal_array,
+            mode="lines",
+            name="Normal Distribution",
+            hoverinfo="none",
+        )
+    )
     fig.update_layout(
         title="Popularity",
         title_x=0.5,
@@ -1019,6 +1033,7 @@ def write_last_listened(df):
     )
     return text
 
+
 def multiplot_overall(df):
     df_sums = sum_days(df, podcast=True)
     new_df = format_new_songs(
@@ -1048,8 +1063,11 @@ def multiplot_overall(df):
     fig.update_layout(standard_layout)
     fig.update_xaxes(showline=True, linecolor="rgb(36,36,36)")
     fig.update_yaxes(showline=True, linecolor="rgb(36,36,36)")
-    fig.update_layout(xaxis_showticklabels=True, xaxis2_showticklabels=True,
-                      legend=dict(yanchor="bottom", y=0))
+    fig.update_layout(
+        xaxis_showticklabels=True,
+        xaxis2_showticklabels=True,
+        showlegend=False,
+    )
     return fig
 
 
@@ -1065,6 +1083,7 @@ def write_text(filename, texts):
 def objects_to_df(objects):
     df = pd.DataFrame.from_records(objects.values())
     return df
+
 
 def load_data(username):
     user_df = objects_to_df(SpotifyStreaming.objects.filter(username=username))
@@ -1088,7 +1107,9 @@ def main(username):
         os.mkdir(path)
 
     fig_overall = multiplot_overall(df)
-    fig_overall.write_html(f"goodreads/static/Graphs/{username}/overall_{username}.html")
+    fig_overall.write_html(
+        f"goodreads/static/Graphs/{username}/overall_{username}.html"
+    )
 
     fig_year = plot_years(
         df, feature_col="release_year", minutes_col="minutes", index_col="artistname"
@@ -1111,7 +1132,7 @@ def main(username):
         f"goodreads/static/Graphs/{username}/spotify_popularity_plot_{username}.html"
     )
 
-    fig_genre = plot_genres(df, genre_col="genre_chosen")
+    fig_genre = plot_genres(df, genre_col="genre_chosen", n=25)
     fig_genre.write_html(
         f"goodreads/static/Graphs/{username}/spotify_genre_plot_{username}.html"
     )
@@ -1132,4 +1153,3 @@ def main(username):
         filename=f"goodreads/static/Graphs/{username}/spotify_weekly_{username}.txt",
         texts=[write_week_text(format_weekly(df, date_col="date"))],
     )
-

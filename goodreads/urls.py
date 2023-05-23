@@ -10,6 +10,7 @@ urlpatterns = [
     path("insert-goodreads/", insert_goodreads, name="insert-goodreads"),
     path("upload-spotify-home", upload_view_spotify, name="upload-spotify"),
     path("upload-json-spotify/", upload_spotify, name="json-upload-spotify"),
+    path("insert-spotify/", insert_spotify, name="insert-spotify"),
     path("run-script/", runscript, name="run-script"),
     path("run-script-spotify/", runscriptSpotify, name="run-script-spotify"),
     path("run-script-netflix/", runscriptNetflix, name="run-script-netflix"),

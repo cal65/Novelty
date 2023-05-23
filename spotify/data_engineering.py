@@ -255,26 +255,32 @@ def merge_tracks(
     return tracks_merged
 
 
-def update_tracks(df, track_col="trackname", artist_col="artistname"):
+def get_unmerged(df, track_col="trackname", artist_col="artistname"):
     df = df.drop_duplicates(subset=[track_col, artist_col])
     track_df = splot.get_data(splot.tracks_all_query())
     df_unmerged = identify_new(df, track_df)
-    logger.info(
-        f"Search uri & track data for {len(df_unmerged)} tracks out of original {len(df)} unique tracks"
-    )
-    for i, row in df_unmerged.iterrows():
+    return df_unmerged
 
+
+def update_tracks(tracknames, artistnames, msplayed):
+    """
+    df should already be unmerged
+    """
+    if len(tracknames) != len(artistnames):
+        return Exception("Tracknames and artistnames must be of the same length")
+    for track, artist, ms in zip(tracknames, artistnames, msplayed):
+        ms = int(ms)
         # crude test for podcast show vs track
-        if row["msplayed"] > ms_per_minute * 10:
-            uri = search_by_names(row[track_col], row[artist_col], searchType="show")
+        if ms > ms_per_minute * 10:
+            uri = search_by_names(track, artist, searchType="show")
             track_info_series = get_historical_track_info_from_id(
-                uri, row[track_col], row[artist_col], searchType="show"
+                uri, track, artist, searchType="show"
             )
             convert_to_SpotifyTrack(track_info_series)
         else:
-            uri = search_by_names(row[track_col], row[artist_col], searchType="track")
+            uri = search_by_names(track, artist, searchType="track")
             track_info_series = get_historical_track_info_from_id(
-                uri, row[track_col], row[artist_col], searchType="track"
+                uri, track, artist, searchType="track"
             )
             convert_to_SpotifyTrack(track_info_series)
 

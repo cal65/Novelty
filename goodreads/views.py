@@ -374,12 +374,18 @@ def upload_spotify(request):
         logger.info(
             f"df: {df['endtime'].values[:5]}, \nloaded_df: {loaded_df['endtime'].values[:5]}"
         )
+        # new here means new to the user
         df_new = pd.concat([df, loaded_df, loaded_df]).drop_duplicates(
             keep=False
         )  # nifty line to keep just new data
     else:
         df_new = df
     new_lines = str(len(df_new))
+    if len(df_new) < 1:
+        logger.info(f"No new data for user {user}")
+        return JsonResponse({"tracknames": [0],
+                             "artistnames": [0],
+                             "msplayed": [0]})
     logger.info(
         f"starting spotify table addition for {new_lines} rows out of original {str(len(df))}"
     )
@@ -387,15 +393,24 @@ def upload_spotify(request):
     df_new.to_csv(
         f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv", index=False
     )
-    logger.info(f"starting spotify tracks api calls for {user}")
-    populateSpotifyTracks(df)
-
-    return render(request, template)
+    df_unmerged = de.get_unmerged(df_new, track_col="trackname", artist_col="artistname")
+    logger.info(
+        f"Search uri & track data for {len(df_unmerged)} tracks out of original {len(df)} unique tracks"
+    )
+    return JsonResponse({"tracknames": df_unmerged["trackname"].tolist(),
+                         "artistnames": df_unmerged["artistname"].tolist(),
+                         "msplayed": df_unmerged["msplayed"].tolist()})
 
 
 def insert_spotify(request):
-    names = request.POST.getlist('names[]')
-    return
+    user = request.user
+    template = "spotify/json_upload_spotify.html"
+    artistnames = request.POST.getlist('artistnames[]')
+    tracknames = request.POST.getlist('tracknames[]')
+    msplayed = request.POST.getlist('msplayed[]')
+    logger.info(f"starting spotify tracks api calls for {user}")
+    de.update_tracks(artistnames, tracknames, msplayed)
+    return render(request, template, {"hasData": True})
 
 
 def populateSpotifyStreaming(df, user):
@@ -405,11 +420,6 @@ def populateSpotifyStreaming(df, user):
         axis=1,
     )
     return spotifyStreamingObjs
-
-
-def populateSpotifyTracks(df):
-    de.update_tracks(df)
-    return
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
@@ -462,6 +472,7 @@ def insert_netflix(request):
         nd.lookup_and_insert(name)
         logger.info(f"Ingestion completed for {name}")
     return render(request, template, {"hasData": True})
+
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def netflix_plots_view(request):
