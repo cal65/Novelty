@@ -1,4 +1,4 @@
-{% extends "spotify/basefile_music.html" %}
+ {% extends "spotify/basefile_music.html" %}
 {% load static %}
 
 {% block content %}
@@ -79,7 +79,7 @@
         
 <div class="caption-text">
 <br>
-    This graph shows some your Spotify streaming history, including how many minutes you listened to per day, as well as when you listened to more new songs (new to you), and the artist you listened to the most during a given period. 
+    This graph shows some your Spotify streaming history, including how many minutes you listened to per day, as well as when you listened to more new songs (new to you), and the artist you listened to the most during a given period. The bottom graph shows how much music you listen to per day of the week. <p  id ="weekly_text"> </p>
 </div>
 <br><br>
 <div class="caption-text" id ="info_text">
@@ -99,14 +99,14 @@
 </section>
     <br>
 
-<section id = "Weekly">
-    <div style="text-align: center; " class="image-title">Weekday Usage - {{ user.get_username }}</div>
+<section id = "Top Artists">
+    <div style="text-align: center; " class="image-title">Top Artists Over Time - {{ user.get_username }}</div>
     <div class ="plotly">
-        <iframe class ="iframe" src="{% static weekly_url %}"  alt="weekly"></iframe>
+        <iframe class ="iframe" src="{% static top_artists_url %}"  alt="top_artists"></iframe>
     </div>
     <br>
     <div class="caption-text">
-    This shows how much music you listen to per day of the week. <p  id ="weekly_text"> </p>
+    This graph breaks your history into segments and calculates the artist you listened to the most during that segment. Each artist shown here was your most listened to artist during a period of time, and the bars indicate when and how much you listened to them.
     </div>
 </section>
     <br>

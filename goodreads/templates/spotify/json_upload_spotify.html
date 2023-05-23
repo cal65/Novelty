@@ -19,6 +19,53 @@ function getCookie(name) {
     return cookieValue;
   }
 
+var estimate;
+  function getEstimate(){
+    const csrftoken = getCookie('csrftoken');
+    var form = document.getElementById('csv-form')
+    $("#progress").toggle()
+    console.log(arguments)
+        $.post({
+        url: "{% url 'json-upload-spotify' %}",
+        data: new FormData(form),
+        cache: false,
+        contentType: false,
+        processData: false,
+        dataType: "json",
+        headers: { "X-CSRFToken": csrftoken },
+        success: function(resp) {
+            console.log("Success")
+            $("#progress").toggle();
+            estimate = resp.names.length;
+            document.getElementById("estimate").innerHTML = estimate;
+            $("#estimate_div").show();
+            insert(resp.names);
+            }
+        })
+    }
+
+
+  function insert(names){
+      const csrftoken = getCookie('csrftoken');
+      console.log(arguments)
+         $.ajax({
+            type: "POST",
+            url: "{% url 'insert-netflix' %}",
+            data: {'names': names},
+            headers: { "X-CSRFToken": csrftoken},
+            success: function(response) {
+                $("#done").toggle();
+                var hasData = true;
+                console.log(hasData);
+                $('#Analyze').prop('disabled', false);
+              },
+            error: function(names ){
+                console.log("Something went wrong");
+                $("#progress").toggle();
+              }
+          })
+          return false;
+          
 function upload(){
   const csrftoken = getCookie('csrftoken');
   var form = document.getElementById('json-form')
@@ -44,13 +91,7 @@ function upload(){
     }
 </script>
 <div style="text-align: center;" class="font-bold pt-4 text-3xl">MUSIC ANALYSIS</div>
-    {% if messages %}
-        {% for message in messages %}
-            <div class="text-red-600 pb-2">
-               <strong>*{{message|safe}}</strong>
-            </div>
-        {% endfor %}
-    {% endif %}
+
 <div class="pt-8" style="display: flex; justify-content: center;">
    <div class="border-2 border-black p-2 w-1/3">
         <form action="" id="json-form" method="POST" enctype="multipart/form-data" onsubmit= "event.preventDefault(); return upload();">

@@ -224,7 +224,7 @@ def spot_plots_view(request):
     popularity_url = "Graphs/{}/spotify_popularity_plot_{}.html".format(
         username, username
     )
-    weekly_url = "Graphs/{}/spotify_weekday_plot_{}.html".format(username, username)
+    top_artists_url = "Graphs/{}/spotify_top_artists_plot_{}.html".format(username, username)
     daily_url = "Graphs/{}/spotify_daily_plot_{}.html".format(username, username)
     release_year_url = "Graphs/{}/spotify_year_plot_{}.html".format(username, username)
     genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
@@ -237,7 +237,7 @@ def spot_plots_view(request):
         {
             "overall_url": overall_url,
             "popularity_url": popularity_url,
-            "weekly_url": weekly_url,
+            "top_artists_url": top_artists_url,
             "daily_url": daily_url,
             "release_year_url": release_year_url,
             "genre_url": genre_url,
@@ -309,7 +309,6 @@ def upload_goodreads(request):
 
 def insert_goodreads(request):
     template = "goodreads/csv_upload.html"
-    logger.info(f"Insert Goodreads {request.POST}")
     book_ids = request.POST.getlist('book_ids[]')
     user = request.user
     newN = len(book_ids)
@@ -392,6 +391,11 @@ def upload_spotify(request):
     populateSpotifyTracks(df)
 
     return render(request, template)
+
+
+def insert_spotify(request):
+    names = request.POST.getlist('names[]')
+    return
 
 
 def populateSpotifyStreaming(df, user):

@@ -554,7 +554,7 @@ def plot_top_artists_over_time(df, periods=10):
                 marker=dict(color=art_palette[a]),
             )
         )
-    fig.update_layout(title="Top Artists over Time", barmode="stack")
+    fig.update_layout(barmode="stack")
     full_fig = fig.full_figure_for_development()
     yrange = full_fig.layout.yaxis.range
     for i, row in artists_range_df.iterrows():
@@ -601,7 +601,7 @@ def plot_weekly(df, date_col="date"):
     fig = go.Figure()
     for day in df_wday["day_of_week"].unique():
         df_day = df_wday.loc[df_wday["day_of_week"] == day]
-        fig.add_trace(go.Box(y=df_day["minutes"].round(1), name=day))
+        fig.add_trace(go.Box(y=df_day["minutes"].round(1), name=day, showlegend=False))
     fig.update_layout(standard_layout)
     return fig
 
@@ -1029,14 +1029,14 @@ def multiplot_overall(df):
     fig = make_subplots(
         3,
         1,
-        subplot_titles=["Volume Timeline", "New Songs", "Top Artists Over Time"],
+        subplot_titles=["Volume Timeline", "New Songs", "Weekday Usage"],
         shared_xaxes=True,
         vertical_spacing=0.08,
     )
     overall = [
         plot_overall(df_sums, podcast=True),
         plot_new(count_news),
-        plot_top_artists_over_time(df),
+        plot_weekly(df),
     ]
     for i, figure in enumerate(overall):
         for trace in range(len(figure["data"])):
@@ -1097,9 +1097,9 @@ def main(username):
         f"goodreads/static/Graphs/{username}/spotify_year_plot_{username}.html"
     )
 
-    fig_weekly = plot_weekly(df)
-    fig_weekly.write_html(
-        f"goodreads/static/Graphs/{username}/spotify_weekday_plot_{username}.html"
+    fig_top_artists = plot_top_artists_over_time(df)
+    fig_top_artists.write_html(
+        f"goodreads/static/Graphs/{username}/spotify_top_artists_plot_{username}.html"
     )
     fig_daily = plot_daily(df)
     fig_daily.write_html(
