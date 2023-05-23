@@ -44,12 +44,10 @@
 .navbar-sub {
     position: absolute;
     z-index: 1;
-    /* -webkit-box-orient: horizontal; */
     -ms-flex-align: center;
     align-items: center;
     margin: auto;
-    padding: 0.5rem 1rem;
-    padding-bottom: .75rem;
+    padding: 1rem 1rem;
 }
 
 .bg-button {
@@ -118,6 +116,13 @@
     list-style: none;
     overflow-x: auto;
     font-family: courier new;
+}
+
+.nav-item{
+    padding: 0.5rem 0.5rem;
+    color: #fff;
+    font-family: courier new;
+    line-height: 1.5em;
 }
 
 .mr-auto, .mx-auto {

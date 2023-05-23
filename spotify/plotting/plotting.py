@@ -151,7 +151,7 @@ def plot_song_day(df, artist_col, song_col, date_col):
     df_song = format_song_day(
         df=df, artist_col=artist_col, song_col=song_col, date_col=date_col
     )
-    df_song["combined"] = df_song[song_col] + "<br><b>" + df_song[artist_col] +"</b>"
+    df_song["combined"] = "<b>" + df_song[song_col] + "</b><br>" + df_song[artist_col]
 
     fig = go.Figure()
     fig.add_trace(

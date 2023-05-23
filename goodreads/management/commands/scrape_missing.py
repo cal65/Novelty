@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 
 from goodreads.models import NetflixGenres, NetflixUsers, NetflixActors, Books, Authors, SpotifyStreaming, SpotifyTracks
 from netflix import data_munge as nd
+from spotify.plotting.plotting import objects_to_df
 from goodreads.scripts.append_to_export import append_scraping
 from spotify import data_engineering as de
 import pandas as pd
@@ -47,13 +48,18 @@ class Command(BaseCommand):
             print(f"Found {i} new genres and {j} new acting casts")
             df = pd.DataFrame.from_records(NetflixActors.objects.all().values())
             df.head().to_csv("debug.csv")
-        if options["domain"] == "Goodreads":
+        elif options["domain"] == "Goodreads":
             books_null = Books.objects.filter(added_by__isnull=True)
             authors_null = Authors.objects.filter(nationality_chosen__isnull=True)
             self.stdout.write(f"scraping {len(books_null)} books")
             for b in books_null:
                 b = append_scraping(b.book_id, wait=3)
                 b.save()
-        if options["domain"] == "Spotify":
-            streamed = SpotifyStreaming.objects.all()
+        elif options["domain"] == "Spotify":
+            streamed = objects_to_df(SpotifyStreaming.objects.all())
             de.update_tracks(streamed)
+        elif options["domain"] is None:
+            print("No domain specified")
+        else:
+            d = options["domain"]
+            print(f"Bad domain {d} entered.")
