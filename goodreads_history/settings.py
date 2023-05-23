@@ -60,6 +60,10 @@ INSTALLED_APPS = [
     "adaptor",
     "crispy_forms",
     "django_extensions",
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -96,16 +100,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "goodreads_history.wsgi.application"
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
+]
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 
 DATABASE_URL = os.environ["DATABASE_URL"]
 DATABASES = {"default": dj_database_url.config(default=DATABASE_URL)}
