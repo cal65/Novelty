@@ -148,6 +148,7 @@
 .item {
     font-size: 30px;
     text-align: center;
+    font-family: courier new;
 }
 
 .one-two {
@@ -191,6 +192,7 @@
     margin-left: auto;
     margin-right: auto;
     max-width: 60%;
+    font-family: courier new;
 }
 
 .left-text {
@@ -200,6 +202,7 @@
     max-width: 90%;
     margin-left: 0;
     margin-right: auto;
+    font-family: courier new;
     flex: 1; /* Make the child elements expand and take up all available space within the row */
 }
 
@@ -231,6 +234,7 @@
 
 .link {
   color: mediumblue;
+  font-family: courier new;
 }
 
 .nav-title {
@@ -282,11 +286,23 @@
     height: 90%;
 }
 
-.image-title{
+.image-title {
     font-weight: bold;
     padding-top: 4rem;
     font-size: 1.5rem;  
     line-height: 2rem;
+    font-family: courier new;
+}
+
+.headline {
+    font-weight: bold;
+    padding-top: 4rem;
+    font-size: 3.5rem;  
+    line-height: 2rem;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
     font-family: courier new;
 }
 

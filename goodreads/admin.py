@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ExportData, Authors
+from .models import ExportData, Authors, NetflixTitles, NetflixGenres, SpotifyTracks
 
 
 @admin.register(ExportData)
@@ -25,3 +25,40 @@ class AuthorsAdmin(admin.ModelAdmin):
         "nationality2",
         "nationality_chosen",
     )
+
+@admin.register(NetflixTitles)
+class NetflixTitlesAdmin(admin.ModelAdmin):
+    list_display = (
+        "netflix_id",
+        "title",
+        "director",
+        "release_year",
+        "title_type",
+    )
+
+
+@admin.register(NetflixGenres)
+class NetflixTitlesAdmin(admin.ModelAdmin):
+    list_display = (
+        "netflix_id",
+        "genres",
+    )
+
+
+@admin.register(SpotifyTracks)
+class SpotifyTracksAdmin(admin.ModelAdmin):
+    list_display = (
+        "uri",
+        "name",
+        "artist",
+        "duration",
+        "popularity",
+        "release_date",
+        "genres",
+        "album",
+        "explicit",
+        "trackname",
+        "podcast",
+        "genre_chosen",
+    )
+
