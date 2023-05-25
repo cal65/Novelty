@@ -33,13 +33,27 @@ MUSIC GALLERY
 
 
     {% block plotly1 %}
-    <iframe class='iframe' src="/static/admin/img/spotify/overall_cal65.html" alt="Cal Overall Plot" > <br></iframe>
+    <iframe class='iframe' src="/static/admin/img/spotify/spotify_overall_cal65.html" alt="Cal Overall Plot" > <br></iframe>
     {% endblock plotly1 %}
 <br>
+    {% block caption1 %}
+    <div class="caption-text"> You listened to the most new songs around 2022-05-29, such as <b>Concert Going - Live Vancouver, B.C. 3-30-04 by Barenaked Ladies</b>, <b>Paradise - Live by Coldplay</b> and <b>Iris - Live by The Goo Goo Dolls</b>.
+
+    Your most skipped tracks are <b>Gloire à Son Nom (Anástasis) by Hillsong En Français</b> (skipped 7 out of 8) and <b>Live in the Moment by Portugal. The Man</b> (6 out of 7).
+
+    You listened to <b>Holding on to You</b> by Twenty One Pilots 78 times in this period.  However you haven't listened to it in 9 days.</div>
+    {% endblock caption1 %}
 <br>
+
+    {% block title2 %}
+    <div style="text-align: center;" class="image-title">Release Year Distribution</div>
+    {% endblock title2 %}
     {% block plotly2 %}
         <iframe class='iframe' src="/static/admin/img/spotify/spotify_year_plot_cal65.html" alt="Spotify Year Plot" > <br></iframe>
     {% endblock plotly2 %}
+    {% block caption2 %}
+    Spotify provides the release year for songs. This plot groups your listening history by release years (and the number of minutes you've listened to songs from that year). For each year, the artist you've listened to the most from that year is shown in red. Please note that the release year may not be the same as the year the song was originally released, but rather when the version you listened to was released. Most users gravitate towards newer releases and songs from their formative years.
+    {% endblock caption2 %}
 <br>
 <br>
 
@@ -72,8 +86,10 @@ MUSIC GALLERY
     {% endblock caption5 %}
 <br>
 <br>
-{% block plotly6 %}
-{% endblock plotly6 %}
+    {% block plotly6 %}
+    <div style="text-align: center;" class="image-title"> Popularity Plot - cal65</div>
+    <iframe class='iframe' src="/static/admin/img/spotify/spotify_popularity_plot_cal65.html" alt="Spotify Days" > <br></iframe>
+    {% endblock plotly6 %}
 
     <br>
 

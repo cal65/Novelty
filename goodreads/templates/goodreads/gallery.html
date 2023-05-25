@@ -14,19 +14,29 @@ BOOKS GALLERY
     {% endblock gal-info %}
 </div>
 
+    {% block title1 %}
+    {% endblock title1 %}
 <div class="plotly">
     {% block plotly1 %}
     <iframe class='iframe' src="/static/admin/img/goodreads/goodreads_summary_cal65.html" alt="Cal Summary Plot" > <br></iframe>
     {% endblock plotly1 %}
 </div>
+    {% block caption1 %}
+    {% endblock caption1 %}
 <br>
 <br>
+    {% block title2 %}
+    {% endblock title2 %}
 <div class="plotly">
     {% block plotly2 %}
     <iframe class='iframe' src="/static/admin/img/goodreads/finish_plot_cal65.html" alt="Cal Finish Plot" > <br></iframe>
     {% endblock plotly2 %}
 </div>
 
+<div class="caption-text" >
+    {% block caption2 %}
+    {% endblock caption2 %}
+</div>
 <br>
 <br>
 <br>
