@@ -1108,7 +1108,7 @@ def main(username):
 
     fig_overall = multiplot_overall(df)
     fig_overall.write_html(
-        f"goodreads/static/Graphs/{username}/overall_{username}.html"
+        f"goodreads/static/Graphs/{username}/spotify_overall_{username}.html"
     )
 
     fig_year = plot_years(

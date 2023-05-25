@@ -1,5 +1,6 @@
 {% extends "goodreads/home.html" %}
 {% load crispy_forms_tags %}
+{% load socialaccount %}
 
 {% block content %}
     <h1 class="text-center font-bold pt-4 pb-6 text-2xl">USER REGISTRATION</h1>
@@ -22,8 +23,12 @@
             <div class="form-group">
                 <button class="btn btn-primary" type="submit">Sign Up</button>
             </div>
+            <div class="center bg-button">
+             <a href="{% provider_login_url 'google' %}">Login With Google</a>
+        </div>
         </form>
     </div>
+
     <div class="flex justify-center">
         {% if form.errors %}
             {% for key, value in form.errors.items %}

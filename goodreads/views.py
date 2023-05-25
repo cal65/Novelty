@@ -220,7 +220,7 @@ def spot_text(request):
 def spot_plots_view(request):
     username = request.user
 
-    overall_url = "Graphs/{}/overall_{}.html".format(username, username)
+    overall_url = "Graphs/{}/spotify_overall_{}.html".format(username, username)
     popularity_url = "Graphs/{}/spotify_popularity_plot_{}.html".format(
         username, username
     )
