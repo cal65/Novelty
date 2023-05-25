@@ -80,17 +80,22 @@ MUSIC GALLERY
     <br>
     <br>
     {% block plotly5 %}
-    <iframe class='iframe' src="/static/admin/img/spotify/spotify_weekday_plot_cal65.html" alt="Spotify Days" > <br></iframe>
+    <iframe class='iframe' src="/static/admin/img/spotify/spotify_top_artists_plot_cal65.html" alt="Spotify Days" > <br></iframe>
     {% endblock plotly5 %}
     {% block caption5 %}
+    This graph breaks your history into segments and calculates the artist you listened to the most during that segment. Each artist shown here was your most listened to artist during a period of time, and the bars indicate when and how much you listened to them.
     {% endblock caption5 %}
 <br>
 <br>
-    {% block plotly6 %}
+    {% block title6 %}
     <div style="text-align: center;" class="image-title"> Popularity Plot - cal65</div>
+    {% endblock title6 %}
+    {% block plotly6 %}
     <iframe class='iframe' src="/static/admin/img/spotify/spotify_popularity_plot_cal65.html" alt="Spotify Days" > <br></iframe>
     {% endblock plotly6 %}
-
+    {% block caption6 %}
+    Popularity is a value normalized to 0-100 calculated by a Spotify algorithm, based largely on the total streams of a song weighted by recency. The overall Popularity distribution is close to normally distributed, represented by the red curve on this graph. 
+    {% endblock caption6  %}
     <br>
 
 

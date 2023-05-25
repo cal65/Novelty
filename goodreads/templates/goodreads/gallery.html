@@ -40,6 +40,8 @@ BOOKS GALLERY
 <br>
 <br>
 <br>
+    {% block title3 %}
+    {% endblock title3 %}
 <div class="plotly" style="height: 850px;">
     {% block plotly3 %}
     <iframe class='iframe' src="/static/admin/img/goodreads/author_map_cal65.html" style="height: 100%; width: 50%;" alt="Cal Reading Dist Plot" > <br></iframe>
@@ -47,12 +49,14 @@ BOOKS GALLERY
 </div>
 
 <div class="caption-text" >
-{% block caption3 %}
-    Goodreads allows users to define their own shelves, and these shelves are then tabulated to create a crowdsourced set of genres per book. <br>
-    This following plot shows the genres in which I have read more than an average user, and then genres in which I have read less. <br>
-{% endblock caption3 %}
+    {% block caption3 %}
+        Goodreads allows users to define their own shelves, and these shelves are then tabulated to create a crowdsourced set of genres per book. <br>
+        This following plot shows the genres in which I have read more than an average user, and then genres in which I have read less. <br>
+    {% endblock caption3 %}
 </div>
 
+    {% block title4 %}
+    {% endblock title4 %}
 <div class="plotly">
     {% block plotly4 %}
     <iframe class='iframe' src="/static/admin/img/goodreads/goodreads_genre_diff_cal65.html" alt="Cal Genre Diff Plot" > <br></iframe>
@@ -60,8 +64,8 @@ BOOKS GALLERY
 </div>
 <br>
 <div class="caption-text" >
-{% block caption4 %}
-{% endblock caption4 %}
+    {% block caption4 %}
+    {% endblock caption4 %}
 </div>
 <br>
 <div class="plotly">
@@ -77,12 +81,18 @@ BOOKS GALLERY
     {% endblock caption5 %}
 </div>
 <br>
+    {% block title6 %}
+    {% endblock title6 %}
 <div class="plotly">
     {% block plotly6 %}
     <iframe class='iframe' src="/static/admin/img/goodreads/monthly_pages_read_cal65.html" alt="Cal Reading Dist Plot" style="height:1600px;" > <br></iframe>
     {% endblock plotly6 %}
 </div>
-<br>
-<br>
+    <div class="caption-text" >
+    {% block caption6 %}
+    {% endblock caption6 %}
+    </div>
+<br> <br>
+<br> <br>
 
 {% endblock content %}
