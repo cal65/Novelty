@@ -31,7 +31,7 @@ def register(request):
     except Exception:
         headers = ""
     logger.info(f"registration request with headers {headers}")
-
+    default_auth = 'django.contrib.auth.backends.ModelBackend'
     if request.method == 'POST':
         next = request.GET['next']
         form = UserRegisterForm(request.POST)
@@ -47,7 +47,7 @@ def register(request):
             except:
                 logger.info(f"Folder already exists for {username}")
 
-            login(request, user)
+            login(request, user, backend=default_auth)
             if next:
                 return redirect(next)
             else:

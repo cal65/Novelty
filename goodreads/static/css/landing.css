@@ -351,6 +351,14 @@
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
+.form-upload {
+    border-width: 2px;
+    border-color:rgba(0,0,0);
+    padding:.5rem;
+    width:33.333333%;
+    font-family: courier new;
+}
+
 .btn-block {
     display: block;
     width: 100%;

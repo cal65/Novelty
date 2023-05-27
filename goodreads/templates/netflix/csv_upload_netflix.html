@@ -74,7 +74,7 @@ var estimate;
 <div style="text-align: center;" class="font-bold pt-4 text-3xl">NETFLIX ANALYSIS</div>
 
 <div class="pt-8" style="display: flex; justify-content: center;">
-   <div class="border-2 border-black p-2 w-1/3">
+   <div class="form-upload">
       <form action="" id="csv-form" method="POST" enctype="multipart/form-data" onsubmit= "event.preventDefault(); return getEstimate();">
          {% csrf_token %}
          <input type="file" id="file1" name="file" accept=".csv">
@@ -114,6 +114,7 @@ var estimate;
     Data inaccuracies may exist, owing to either a search mismatch (data from a similarly-named show is pulled), data inaccuracies within the API, or other. Please contact the site creator directly if you find errors.
 
     Netflix also allows users to remove viewing history that they don't want associated with their account. If you see something that doesn't belong in your history, you are encouraged to remove it. Unlike in the Music domain, data here is deleted and regenerated with each new export.
-</div>
+</div><br>
 {% endblock data-notes %}
+<br>
 {% endblock content %}

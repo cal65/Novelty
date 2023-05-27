@@ -75,15 +75,16 @@ genres_hierarchy = [
     "Mexican",
     "Korean",
     "Comedies",
+    "Food & Travel",
     "Musicals",
     "Mystery",
     "Indian",
     "Science & Nature",
     "Documentaries",
     "Historical Dramas",
+    "Anime",
     "Japanese",
     "Crime Action & Adventure",
-    "Anime",
     "Docuseries",
     "Kids",
     "Dramas",
@@ -91,6 +92,7 @@ genres_hierarchy = [
     "LGBTQ",
     "Reality",
     "British",
+    "Chinese",
 ]
 
 
@@ -105,6 +107,7 @@ def simplify_genres(genres):
         "&#39;",
         "Films",
         "Series",
+        "Features",
     ]
     genre_mapper = {
         "for ages 5 to 7": "Kids",
@@ -122,13 +125,15 @@ def simplify_genres(genres):
         "Supernatural Thrillers": "Thrillers",
         "Drama": "Dramas",
         "Sitcoms": "Comedies",
-        "Stand-Up Comedy & Talk ": "Stand-Up Comedy",
+        "Stand-Up Comedy & Talk": "Stand-Up Comedy",
         "Stand-up Comedy": "Stand-Up Comedy",
         "Family Sci-Fi & Fantasy": "Sci-Fi & Fantasy",
         "Spoofs & Satires": "Comedies",
         "Kids  for ages 11 to 12": "Kids",
         "Kids'": "Kids",
         "Cult Comedies": "Comedies",
+        "Music & Musicals": "Musicals",
+
     }
     for w in stop_words:
         genres_list = [g.replace(w, "").strip() for g in genres_list]
@@ -136,9 +141,11 @@ def simplify_genres(genres):
     genres_list = [
         genre_mapper[g] if g in genre_mapper.keys() else g for g in genres_list
     ]
-    for g in genres_list:
-        if g in genres_hierarchy:
+    # iterate through the hierarchy established
+    for g in genres_hierarchy:
+        if g in genres_list:
             return g
+    # if no match in the hierarchy, take top item
     return genres_list[0]
 
 
@@ -220,12 +227,16 @@ def plot_hist(df, username):
     fig = go.Figure()
     for t in df_hist["title_type"].unique():
         df_plot = df_hist.loc[df_hist["title_type"] == t]
+        if t == 'series':
+            hovert = "<b>Time: %{x}<br><b>Top Show: %{customdata}<extra></extra>"
+        else:
+            hovert = "<b>Time: %{x}<br><b>Movie: %{customdata}<extra></extra>"
         fig.add_trace(
             go.Bar(
                 x=df_plot["segment"],
                 y=df_plot["n"],
                 customdata=df_plot["Top Show"],
-                hovertemplate="<b>Time: %{x}<br> <b>Top Show: %{customdata}<extra></extra>",
+                hovertemplate=hovert,
                 name=t,
             )
         )

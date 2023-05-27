@@ -203,6 +203,9 @@ def get_genres(netflix_id):
         return
 
     results = response.json()["results"]
+    if r is None:
+        logger.info(f"Result not subsettable for {netflix_id}")
+        return
     genres = [r["genre"] for r in results]
     genres = ", ".join(genres)
     genres = genres.replace("&#39;", "")
@@ -440,6 +443,17 @@ def save_genres(genre_results):
     return ng
 
 
+def actors_and_genres(netflix_id):
+    actors_results = get_actors(netflix_id)
+    if actors_results is not None:
+        save_actors(actors_results)
+    #
+    genre_results = get_genres(netflix_id)
+    if genre_results is not None:
+        save_genres(genre_results)
+    return
+
+
 def lookup_and_insert(title):
     series_results = query_title(title)
     if series_results is None:
@@ -455,12 +469,6 @@ def lookup_and_insert(title):
     logger.info(f"Saving result of {title} having queried {series_results['title']}")
     save_titles(series_results)
     #
-    actors_results = get_actors(netflix_id)
-    if actors_results is not None:
-        save_actors(actors_results)
-    #
-    genre_results = get_genres(netflix_id)
-    if genre_results is not None:
-        save_genres(genre_results)
+    actors_and_genres(netflix_id)
 
     return
