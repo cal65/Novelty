@@ -203,8 +203,8 @@ def get_genres(netflix_id):
         return
 
     results = response.json()["results"]
-    if r is None:
-        logger.info(f"Result not subsettable for {netflix_id}")
+    if results is None:
+        logger.info(f"No genre response found for {netflix_id}")
         return
     genres = [r["genre"] for r in results]
     genres = ", ".join(genres)
@@ -231,7 +231,9 @@ def get_details(netflix_id):
     try:
         results["title"] = results["title"].replace("&#39;", "")
     except Exception as e:
-        logger.info(f"Exception {e} encountered for id {netflix_id} and {results.keys()}")
+        logger.info(
+            f"Exception {e} encountered for id {netflix_id} and {results.keys()}"
+        )
     return pd.Series(results)
 
 
@@ -329,7 +331,7 @@ def codify_title(title):
         else:
             name = splits[0]
         if (len(splits) - season_index) > 1:
-            episode = ": ".join(splits[season_index + 1:])
+            episode = ": ".join(splits[season_index + 1 :])
         else:
             episode = splits[-1]
     elif any(episode_bool):
@@ -378,10 +380,10 @@ def reformat_special(df, user):
     This occurs when a Netflix download returns an error.
     """
     df = df.copy()
-    df = df.loc[df['Profile Name'] == user]
-    df = df.loc[df['Latest Bookmark'] != 'Not latest view']
-    df['Start Time'] = pd.to_datetime(df['Start Time'])
-    df['Date'] = df['Start Time'].dt.date
+    df = df.loc[df["Profile Name"] == user]
+    df = df.loc[df["Latest Bookmark"] != "Not latest view"]
+    df["Start Time"] = pd.to_datetime(df["Start Time"])
+    df["Date"] = df["Start Time"].dt.date
     return df
 
 
@@ -429,17 +431,23 @@ def save_titles(series_results):
 
 def save_actors(actors_results):
     na = NetflixActors()
-    na.netflix_id = actors_results["netflix_id"]
-    na.cast = actors_results["actors"]
-    na.save()
+    if actors_results is not None:
+        na.netflix_id = actors_results["netflix_id"]
+        na.cast = actors_results["actors"]
+        na.save()
     return na
 
 
 def save_genres(genre_results):
     ng = NetflixGenres()
-    ng.netflix_id = genre_results["netflix_id"]
-    ng.genres = genre_results["genres"]
-    ng.save()
+    if genre_results is not None:
+        try:
+            ng.netflix_id = genre_results["netflix_id"]
+            ng.genres = genre_results["genres"]
+            ng.save()
+        except Exception as e:
+            logger.info(f"Complete fail {e} for results {genre_results}")
+            return None
     return ng
 
 

@@ -55,7 +55,7 @@ def plot_genres(df, username, title_type):
                 y=df_sub["genre_chosen"],
                 customdata=df_sub["name"],
                 text=df_sub["name"],
-                hovertemplate="Genre: %{y} <br> Title: %{customdata} <br>Count: %{x}<extra></extra>",
+                hovertemplate="Genre: <b>%{y}</b><br>Title: <b>%{customdata}</b> <br>Count: <b>%{x}</b><extra></extra>",
                 name=g,
                 orientation="h",
                 insidetextanchor="middle",
@@ -97,6 +97,12 @@ genres_hierarchy = [
 
 
 def simplify_genres(genres):
+    """
+    Takes a string that could be split by comma
+    """
+
+    if pd.isnull(genres):
+        return ""
     genres_list = genres.split(", ")
     stop_words = [
         "TV",
@@ -133,7 +139,6 @@ def simplify_genres(genres):
         "Kids'": "Kids",
         "Cult Comedies": "Comedies",
         "Music & Musicals": "Musicals",
-
     }
     for w in stop_words:
         genres_list = [g.replace(w, "").strip() for g in genres_list]
@@ -164,7 +169,10 @@ def format_timeline(df, values=["season", "episode", "genre_chosen", "netflix_id
 def plot_timeline(df, username):
     fig = go.Figure()
     series_df = df.loc[df["title_type"] == "series"]
-    series_df = format_timeline(series_df, values=["season", "episode", "genre_chosen", "netflix_id", "username"])
+    series_df = format_timeline(
+        series_df,
+        values=["season", "episode", "genre_chosen", "netflix_id", "username"],
+    )
     # wrap names to deal with titles that are too long and ruin the plot
     series_df["name_short"] = series_df["name"].apply(lambda x: split_title(x, 40))
     # order by top genre
@@ -195,7 +203,7 @@ def plot_timeline(df, username):
                     ),
                     name=genre,
                     text=s_df["episode"],
-                    hovertemplate="<b>Date:</b> %{x} <br><b>Name:</b> %{customdata[2]} <br>%{customdata[0]}<br><b>Count:</b> %{customdata[1]} <extra></extra>",
+                    hovertemplate="<b>Date:</b> %{x} <br><b>Name:</b> %{customdata[2]} <br>%{customdata[0]}<br><b>Count:</b> %{customdata[1]}<extra></extra>",
                     legendgroup=genre,
                     showlegend=j == 0,
                 )
@@ -227,10 +235,12 @@ def plot_hist(df, username):
     fig = go.Figure()
     for t in df_hist["title_type"].unique():
         df_plot = df_hist.loc[df_hist["title_type"] == t]
-        if t == 'series':
-            hovert = "<b>Time: %{x}<br><b>Top Show: %{customdata}<extra></extra>"
+        if t == "series":
+            hovert = (
+                "Time: <b>%{x}</b><br>Top Show: <b>%{customdata}</b><extra></extra>"
+            )
         else:
-            hovert = "<b>Time: %{x}<br><b>Movie: %{customdata}<extra></extra>"
+            hovert = "Time: <b>%{x}</b><br>Movie: <b>%{customdata}</b><extra></extra>"
         fig.add_trace(
             go.Bar(
                 x=df_plot["segment"],
@@ -290,7 +300,9 @@ def plot_network(df, username):
             "n": [len(adjacencies[1]) for adjacencies in G.adjacency()],
         }
     )
-    node_df['type'] = ["show" if name in df["title"].unique() else "actor" for name in node_df["names"]]
+    node_df["type"] = [
+        "show" if name in df["title"].unique() else "actor" for name in node_df["names"]
+    ]
 
     fig = go.Figure()
     fig.add_trace(edge_trace)
@@ -342,9 +354,9 @@ def find_max(username):
     Given user, find the day and show and number of the max binge day
     """
     df = load_data(username)
-    daily_df = format_timeline(df, values=['username'])
-    return_max = daily_df.iloc[np.argmax(daily_df['username'])]
-    return_max['date'] = return_max['date'].date()
+    daily_df = format_timeline(df, values=["username"])
+    return_max = daily_df.iloc[np.argmax(daily_df["username"])]
+    return_max["date"] = return_max["date"].date()
     return return_max
 
 

@@ -652,8 +652,6 @@ def plot_one_hit_wonders(
     # the axis labels are terrible, fix
     labels = plot.axes[n - 1][0].get_xticklabels()
     plot.set_xticklabels([format_datetime(d) for d in dates], rotation=30)
-
-    figure = plot.fig
     plt.close()
     return plot
 
