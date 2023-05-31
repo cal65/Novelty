@@ -30,7 +30,7 @@ class Command(BaseCommand):
             dupes = dupes.loc[dupes['title'] == True]
             self.stdout.write(f"Trying to reconcile {len(dupes)} duplicates.")
             for nid in dupes.netflix_id.iloc:
-                titles = get_dupes(nid)
+                titles = get_dupes(netflix_titles, nid)
                 reconciled = reconcile_titles(nid, titles)
             self.stdout.write(f"Successfully reconciled {reconciled} duplicates.")
 
