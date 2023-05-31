@@ -42,7 +42,8 @@ class Command(BaseCommand):
             if len(genres_null) > 0:
                 self.stdout.write(f"looking up {len(genres_null)} genres")
                 for g in genres_null:
-                    result = nd.get_genres(g.netflix_id)
+                    nid = int(g.netflix_id)
+                    result = nd.get_genres(nid)
                     if result is not None:
                         g.genres = result["genres"]
                         g.save()
