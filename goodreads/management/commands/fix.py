@@ -35,6 +35,7 @@ class Command(BaseCommand):
                 reconciled += reconcile_titles(nid, titles)
             self.stdout.write(f"Successfully reconciled {reconciled} duplicates.")
 
+
 def get_dupes(netflix_titles, nid):
     titles = netflix_titles.loc[netflix_titles["netflix_id"] == nid].title.to_list()
     return titles
