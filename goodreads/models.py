@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class ExportData(models.Model):
     class Meta:
         managed = True
@@ -93,19 +94,23 @@ class NetflixTitles(models.Model):
     release_year = models.IntegerField(null=True)
     title_type = models.CharField(max_length=250, null=True)
 
+
 class NetflixUsers(models.Model):
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=250, null=True)
     date = models.DateField(auto_now=False, blank=True, null=True)
     username = models.CharField(max_length=250, null=True)
 
+
 class NetflixGenres(models.Model):
     netflix_id = models.CharField(max_length=250, primary_key=True)
     genres = models.CharField(max_length=250, null=True)
 
+
 class NetflixActors(models.Model):
     netflix_id = models.CharField(max_length=250, primary_key=True)
     cast = models.CharField(max_length=2000, null=True)
+
 
 class Comments(models.Model):
     username = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)

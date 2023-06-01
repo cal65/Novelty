@@ -96,14 +96,9 @@ genres_hierarchy = [
 ]
 
 
-def simplify_genres(genres):
-    """
-    Takes a string that could be split by comma
-    """
-
-    if pd.isnull(genres):
+def reduce_genre(genre):
+    if genre is None:
         return ""
-    genres_list = genres.split(", ")
     stop_words = [
         "TV",
         "Shows",
@@ -141,11 +136,21 @@ def simplify_genres(genres):
         "Music & Musicals": "Musicals",
     }
     for w in stop_words:
-        genres_list = [g.replace(w, "").strip() for g in genres_list]
+        genre = genre.replace(w, "")
+    genre = (", ").join([g.strip() for g in genre.split(", ")])
 
-    genres_list = [
-        genre_mapper[g] if g in genre_mapper.keys() else g for g in genres_list
-    ]
+    genre = genre_mapper[genre] if genre in genre_mapper.keys() else genre
+    return genre
+
+
+def simplify_genres(genres):
+    """
+    Takes a string that could be split by comma
+    """
+
+    genres_list = genres.split(", ")
+    genres_list = [reduce_genre(g) for g in genres_list]
+
     # iterate through the hierarchy established
     for g in genres_hierarchy:
         if g in genres_list:
@@ -358,6 +363,51 @@ def find_max(username):
     return_max = daily_df.iloc[np.argmax(daily_df["username"])]
     return_max["date"] = return_max["date"].date()
     return return_max
+
+
+def plot_comparison(combined_plot, name1, name2):
+    fig = go.Figure()
+    pal = ["#636EFA", "#AB63FA", "#EF553B"]
+    xm = 0
+    for i, p in enumerate([name1, "both", name2]):
+        combined_shows_p = combined_plot.loc[combined_plot["person"] == p]
+        combined_shows_p["genre_ranked"] = combined_shows_p["genre_num"].rank(
+            method="first"
+        )
+        index_max = combined_shows_p["group_index"].max()
+        fig.add_trace(
+            go.Scatter(
+                x=(
+                    combined_shows_p["group_index"]
+                    / combined_shows_p["group_index_max"]
+                )
+                * index_max
+                + xm
+                + 10 * i,
+                y=combined_shows_p["genre_num"] * 25 + combined_shows_p["rand"] / 5,
+                text=combined_shows_p["name"],
+                textposition="bottom center",
+                mode="markers+text",
+                customdata=combined_shows_p["n"],
+                marker=dict(size=3 * np.sqrt(combined_shows_p["n"]) + 3, color=pal[i]),
+                textfont=dict(
+                    family="Courier New, monospace",
+                    size=8,  # Set the font size here
+                    color="RebeccaPurple",
+                ),
+                hovertemplate="<b>%{text}</b><br>Episodes Watched: %{customdata}<br><extra></extra>",
+                name=p,
+            )
+        )
+        xm += index_max
+    fig.update_layout(
+        yaxis=dict(title="Intensity"),
+        xaxis=dict(visible=False),
+        title="Comparison Plot",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+    )
+    return fig
 
 
 def main(username):
