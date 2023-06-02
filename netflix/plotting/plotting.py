@@ -35,20 +35,20 @@ def load_data(username):
     return df
 
 
-def plot_genres(df, username, title_type):
+def plot_genres(df, username, title_type, genre_col = "genre_chosen"):
     # df should be already formatted, genres cleaned up
     # only tv shows or movies
     df_count = pd.DataFrame(
         df.groupby(["name", "genre_chosen", "title_type"], as_index=False).size()
     )
     df_genre_count = pd.DataFrame(
-        df.groupby("genre_chosen", as_index=False).size()
+        df.groupby(genre_col, as_index=False).size()
     ).sort_values("size")
     fig = go.Figure()
     df_shows = df_count.loc[df_count["title_type"] == title_type]
-    for i, g in enumerate(df_genre_count["genre_chosen"]):
-        df_sub = df_shows.loc[df_shows["genre_chosen"] == g]
-
+    for i, g in enumerate(df_genre_count[genre_col]):
+        df_sub = df_shows.loc[df_shows[genre_col] == g]
+        df_sub[genre_col] = '<b>' + df_sub[genre_col] + '</b>'
         fig.add_trace(
             go.Bar(
                 x=df_sub["size"],
@@ -242,10 +242,10 @@ def plot_hist(df, username):
         df_plot = df_hist.loc[df_hist["title_type"] == t]
         if t == "series":
             hovert = (
-                "Time: <b>%{x}</b><br>Top Show: <b>%{customdata}</b><extra></extra>"
+                "<b>Time:</b> %{x}<br><b>Top Show:</b> %{customdata}<extra></extra>"
             )
         else:
-            hovert = "Time: <b>%{x}</b><br>Movie: <b>%{customdata}</b><extra></extra>"
+            hovert = "<b>Time:</b> %{x}<br><b>Movie:</b> %{customdata}<extra></extra>"
         fig.add_trace(
             go.Bar(
                 x=df_plot["segment"],

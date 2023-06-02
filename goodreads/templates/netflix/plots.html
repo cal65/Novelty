@@ -61,7 +61,7 @@
 <section id ="Timeline">
     <br>
 
-    <div style="text-align: center;" class="font-bold pt-4 pb-2 text-2xl">Netflix Overall Timeline - {{ user.get_username }}</div>
+    <div style="text-align: center;" class="image-title">Netflix Overall Timeline - {{ user.get_username }}</div>
         <div class="plotly" style="height: 750px;">
             <iframe class="iframe" src="{% static timeline_url %}" alt="timeline"></iframe>
         </div>

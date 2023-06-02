@@ -38,7 +38,7 @@ class NetflixTitlesAdmin(admin.ModelAdmin):
 
 
 @admin.register(NetflixGenres)
-class NetflixTitlesAdmin(admin.ModelAdmin):
+class NetflixGenresAdmin(admin.ModelAdmin):
     list_display = (
         "netflix_id",
         "genres",
