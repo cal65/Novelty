@@ -30,5 +30,8 @@ class Command(BaseCommand):
         users_netflix = list(NetflixUsers.objects.order_by().values_list('username', flat=True).distinct())
         print(f"Running netflix for {len(users_netflix)} users")
         for user in users_netflix:
-            nplot.main(user)
+            try:
+                nplot.main(user)
+            except Exception as e:
+                print(f"Exception {e} for user {user}")
 
