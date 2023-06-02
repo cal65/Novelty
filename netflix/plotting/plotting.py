@@ -267,6 +267,7 @@ def plot_hist(df, username):
 def plot_network(df, username):
     G = nd.format_network(df)
     pos = nx.kamada_kawai_layout(G, scale=0.3)
+    show_names = df["name"].unique()
     edge_x = []
     edge_y = []
     for edge in G.edges():
@@ -295,7 +296,7 @@ def plot_network(df, username):
         x, y = pos[node]
         node_x.append(x)
         node_y.append(y)
-        show_bool.append(node in df["title"].unique())
+        show_bool.append(node in show_names)
 
     node_df = pd.DataFrame(
         {
@@ -306,7 +307,7 @@ def plot_network(df, username):
         }
     )
     node_df["type"] = [
-        "show" if name in df["title"].unique() else "actor" for name in node_df["names"]
+        "show" if name in show_names else "actor" for name in node_df["names"]
     ]
 
     fig = go.Figure()
@@ -329,7 +330,7 @@ def plot_network(df, username):
                 marker=marker_dict,
                 customdata=np.stack((n_df["names"], n_df["n"]), axis=-1),
                 name=t,
-                hovertemplate="<b>%{customdata[0]}</b><br> # of connections: %{customdata[1]}",
+                hovertemplate="<b>%{customdata[0]}</b><br># of connections: %{customdata[1]}<extra></extra>",
             )
         )
 

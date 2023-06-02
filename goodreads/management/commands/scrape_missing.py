@@ -66,7 +66,8 @@ class Command(BaseCommand):
             genres_missing_ids = list(set(netflix_ids).difference(set(genre_ids)))
             k = 0
             for nid in genres_missing_ids:
-                n = nd.save_genres(nid)
+                genre_results = nd.get_genres(nid)
+                n = nd.save_genres(genre_results)
                 if n:
                     k += 1
             self.stdout.write(f"Scraped {k} genres out of {len(genres_missing_ids)} that weren't in the database.")

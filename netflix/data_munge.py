@@ -182,7 +182,7 @@ def get_actors(netflix_id):
     if results is None:
         logger.info(f"No response found for {netflix_id}")
         return
-    actors = [r["full_name"] for r in results]
+    actors = ', '.join([r["full_name"] for r in results])
     actors_results = pd.Series({"netflix_id": netflix_id, "actors": actors})
     return actors_results
 
@@ -257,8 +257,8 @@ def get_deleted(title):
         return
 
 
-def format_network(df):
-    cast_dict = unique_cast(df, name="title")
+def format_network(df, title_col="name"):
+    cast_dict = unique_cast(df, name=title_col)
     intersections = return_intersections(cast_dict)
     cast_df = create_cast_array(intersections)
     cast_df_m = pd.melt(cast_df, id_vars=["show1"])
