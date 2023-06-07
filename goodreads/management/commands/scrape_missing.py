@@ -81,7 +81,7 @@ class Command(BaseCommand):
                 b.save()
         elif options["domain"] == "Spotify":
             streamed = objects_to_df(SpotifyStreaming.objects.all())
-            de.update_tracks(streamed)
+            de.update_tracks(streamed['tracknames'], streamed['artistnames'], streamed['msplayed'])
         elif options["domain"] is None:
             print("No domain specified")
         else:

@@ -125,7 +125,7 @@
  <br>
 
  <section id = "ReleaseYear">
-    <div style="text-align: center;" class="image-title">Release Year Distribution</div>
+    <div style="text-align: center;" class="image-title">Release Year Distribution - {{ user.get_username }} </div>
     <div class="plotly">
         <iframe src="{% static release_year_url %}"  class="iframe" alt="release year" /></iframe>
     </div>
@@ -135,7 +135,7 @@
     </section>
 
 <section id = "Genres">
-    <div style="text-align: center; " class="image-title">Genres  Distribution</div>
+    <div style="text-align: center; " class="image-title">Genres  Distribution - {{ user.get_username }}</div>
     <div class ="plotly">
         <iframe src="{% static genre_url %}"  class="iframe" alt="genres" /> </iframe>
     </div>
@@ -147,7 +147,7 @@
 </section>
     <br>
 <section id ="TopSong">
-     <div style="text-align: center; " class="image-title">Top Songs</div>
+     <div style="text-align: center; " class="image-title">Top Songs - {{ user.get_username }}</div>
     <div class ="plotly">
         <iframe src="{% static top_songs_url %}"  class="iframe" alt="top-songs" /> </iframe>
     </div>

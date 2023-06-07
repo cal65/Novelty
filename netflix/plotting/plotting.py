@@ -84,7 +84,7 @@ genres_hierarchy = [
     "Historical Dramas",
     "Anime",
     "Japanese",
-    "Crime Action & Adventure",
+    "Crime",
     "Docuseries",
     "Kids",
     "Dramas",
