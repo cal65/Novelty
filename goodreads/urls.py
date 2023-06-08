@@ -14,7 +14,6 @@ urlpatterns = [
     path("run-script/", runscript, name="run-script"),
     path("run-script-spotify/", runscriptSpotify, name="run-script-spotify"),
     path("run-script-netflix/", runscriptNetflix, name="run-script-netflix"),
-    path("finish-plot/", finish_plot_view, name="finish-plot"),
     path("nationality-map/", nationality_map_view, name="nationality-map"),
     path("popularity-spectrum/", popularity_spectrum_view, name="popularity-spectrum"),
     path("about-this/", about_this, name="about-this"),

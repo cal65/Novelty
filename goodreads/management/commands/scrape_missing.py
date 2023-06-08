@@ -81,7 +81,10 @@ class Command(BaseCommand):
                 b.save()
         elif options["domain"] == "Spotify":
             streamed = objects_to_df(SpotifyStreaming.objects.all())
-            df_unmerged = de.get_unmerged(streamed)
+            tracks = objects_to_df(SpotifyTracks.objects.all())
+            tracks_missing = set(streamed['trackname']).difference(set(tracks['trackname']))
+            streamed_unmerged = de.get_unmerged(streamed.loc[streamed['trackname'].isin(tracks_missing)])
+            df_unmerged = streamed_unmerged[streamed_unmerged.loc[streamed_unmerged['uri'].str.len() < 22]]
             self.stdout.write(f"scraping {len(df_unmerged)} tracks")
             de.update_tracks(df_unmerged['trackname'], df_unmerged['artistname'], df_unmerged['msplayed'])
         elif options["domain"] is None:

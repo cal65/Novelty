@@ -75,8 +75,7 @@ def convert_to_ExportData(row, username):
     return djangoExport
 
 
-def convert_to_Authors(row):
-    name = row.author
+def convert_to_Authors(name):
     if Authors.objects.filter(author_name=name).exists():
         return
     else:

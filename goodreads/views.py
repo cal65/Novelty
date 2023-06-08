@@ -1,4 +1,5 @@
 import csv
+import os
 import sys
 from datetime import datetime
 import pandas as pd
@@ -105,16 +106,6 @@ def gallery_geography(request):
     )
     return render(request, "geography/gallery.html")
 
-
-@login_required(redirect_field_name="next", login_url="user-login")
-def finish_plot_view(request):
-    username = request.user
-    finish_plot_url = "goodreads/static/Graphs/{}/finish_plot_{}.jpeg".format(
-        username, username
-    )
-    return render(
-        request, "goodreads/finish_plot.html", {"finish_plot_url": finish_plot_url}
-    )
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
@@ -283,7 +274,7 @@ def populateBooks(book_ids, user, wait=2, metrics=True):
 
 
 def populateAuthors(df):
-    authors = df.apply(lambda x: convert_to_Authors(x), axis=1)
+    authors = df['author'].apply(convert_to_Authors)
     return authors
 
 
@@ -293,6 +284,8 @@ def upload_goodreads(request):
     # save csv file in database
     logger.info(f"Goodreads upload started for {user}")
     df = pd.read_csv(csv_file)
+    if not os.path.exists(f"goodreads/static/Graphs/{user}"):
+        os.mkdir(f"goodreads/static/Graphs/{user}")
     df.to_csv(f"goodreads/static/Graphs/{user}/export_{user}.csv")
     df = process_export_upload(df)
     logger.info(f"starting export table addition for {user} with {str(len(df))} rows")
@@ -364,6 +357,8 @@ def upload_spotify(request):
     # save csv file in database
     logger.info(f"Spotify upload started for {user}")
     df = pd.read_json(json_file)
+    if not os.path.exists(f"goodreads/static/Graphs/{user}"):
+        os.mkdir(f"goodreads/static/Graphs/{user}")
     # change columns from endTime to endtime etc.
     df = de.lowercase_cols(df)
     # load up the existing data in database for this user
@@ -449,6 +444,8 @@ def upload_netflix(request):
     csv_file = request.FILES["file"]
     # save csv file in database
     df = pd.read_csv(csv_file)
+    if not os.path.exists(f"goodreads/static/Graphs/{user}"):
+        os.mkdir(f"goodreads/static/Graphs/{user}")
     df.to_csv(f"goodreads/static/Graphs/{user}/netflix_history_{user}.csv")
     df.columns = [c.lower() for c in df.columns]
     df["date"] = pd.to_datetime(df["date"])
