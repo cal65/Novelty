@@ -81,7 +81,9 @@ class Command(BaseCommand):
                 b.save()
         elif options["domain"] == "Spotify":
             streamed = objects_to_df(SpotifyStreaming.objects.all())
-            de.update_tracks(streamed['trackname'], streamed['artistname'], streamed['msplayed'])
+            df_unmerged = de.get_unmerged(streamed)
+            self.stdout.write(f"scraping {len(df_unmerged)} tracks")
+            de.update_tracks(df_unmerged['trackname'], df_unmerged['artistname'], df_unmerged['msplayed'])
         elif options["domain"] is None:
             print("No domain specified")
         else:
