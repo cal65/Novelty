@@ -16,7 +16,11 @@ import plotly.figure_factory as ff
 from plotly.subplots import make_subplots
 
 from spotify.plotting.utils import standard_layout, save_fig
+from spotify.plotting.plotting import objects_to_df
+from goodreads.models import RefNationality
+
 import logging
+
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 logging.basicConfig(
@@ -72,7 +76,8 @@ def preprocess(df):
     df["date_read"] = pd.to_datetime(df["date_read"])
     df["title_simple"] = df["title"].str.replace(":.*", "")
     df["title_simple"] = df["title_simple"].str.replace("\\(.*\\)", "")
-    df["author"] = df["author"].apply(lambda x: re.sub(r'\s+', ' ', x))
+    df["title_simple"] = df["title_simple"].str.strip()
+    df["author"] = df["author"].apply(lambda x: re.sub(r"\s+", " ", x))
     return df
 
 
@@ -573,21 +578,23 @@ def summary_plot(
 
 def load_map():
     world = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
-    region_query = """
-    select * from goodreads_refnationality
-    """
-    region_df = get_data(region_query)
+    return world
+
+
+def load_nationality_dict():
+    region_df = objects_to_df(RefNationality.objects.all())
     if len(region_df) == 0:
         logger.error("No region data queried")
     country_mapper = {
         "England": "United Kingdom",
         "Bosnia": "Bosnia and Herz.",
         "Dominican Republic": "Dominican Rep.",
+        "South Sudan": "S. Sudan",
+        "Central African Republic": "Central African Rep.",
     }
     region_df["region"] = region_df["region"].replace(country_mapper)
-    region_dict = region_df.set_index("region").to_dict()["nationality"]
-    world["nationality"] = world["name"].map(region_dict)
-    return world
+    nat_dict = region_df.set_index("nationality").to_dict()["region"]
+    return nat_dict
 
 
 def join_titles(titles, limit=3):
@@ -601,10 +608,12 @@ def return_nationality_count(
     author_col="author",
     limit=3,
 ):
+    nat_dict = load_nationality_dict()
+    df['region'] = df[nationality_col].map(nat_dict)
     nationality_count = (
         pd.pivot_table(
             df,
-            index=nationality_col,
+            index='region',
             values=[title_col, author_col],
             aggfunc=[len, lambda x: join_titles(x, limit)],
         )
@@ -612,7 +621,7 @@ def return_nationality_count(
         .reset_index()
     )
     nationality_count.columns = [
-        nationality_col,
+        'region',
         "count",
         "count2",
         title_col,
@@ -622,18 +631,18 @@ def return_nationality_count(
     return nationality_count
 
 
-def merge_map_data(world_df, nationality_count, nationality_col="nationality_chosen"):
+def merge_map_data(world_df, nationality_count, nationality_col="region"):
     if len(world_df) == 0:
         return world_df
     world_df = pd.merge(
         world_df,
         nationality_count,
         how="left",
-        left_on="nationality",
+        left_on="name",
         right_on=nationality_col,
     )
     logger.info(
-        f"Map data merged with {len(pd.unique(world_df['nationality']))} unique nationalities"
+        f"Map data merged with {len(pd.unique(nationality_count[nationality_col]))} unique nationalities"
     )
     return world_df
 
@@ -656,7 +665,9 @@ def bokeh_world_plot(world_df, username):
     heat_palette = heat_palette[
         ::-1
     ]  # reverse order of colors so higher values have darker colors
-    color_mapper = LogColorMapper(palette=heat_palette, low=1, high=world_df["count"].max())
+    color_mapper = LogColorMapper(
+        palette=heat_palette, low=1, high=world_df["count"].max()
+    )
     # Create color bar.
     color_bar = ColorBar(
         color_mapper=color_mapper,
@@ -807,35 +818,47 @@ def create_read_plot_heatmap(
     # Custom legend
     fig.add_shape(
         type="rect",
-        xref="paper", yref="paper",
+        xref="paper",
+        yref="paper",
         fillcolor=fill[0],
         x0=0.2,
         y0=-0.05,
         x1=0.4,
         y1=-0.15,
     )
-    fig.add_annotation(text="<b>Non-Fiction</b>",
-                       xref="paper", yref="paper",
-                       x=0.3, y=-0.1, showarrow=False,
-                       xanchor="center",
-                       yanchor="middle",
-                       font=dict(color='white'))
+    fig.add_annotation(
+        text="<b>Non-Fiction</b>",
+        xref="paper",
+        yref="paper",
+        x=0.3,
+        y=-0.1,
+        showarrow=False,
+        xanchor="center",
+        yanchor="middle",
+        font=dict(color="white"),
+    )
 
     fig.add_shape(
         type="rect",
-        xref="paper", yref="paper",
+        xref="paper",
+        yref="paper",
         fillcolor=fill[-1],
         x0=0.6,
         y0=-0.05,
         x1=0.8,
         y1=-0.15,
     )
-    fig.add_annotation(text="<b>Fiction</b>",
-                       xref="paper", yref="paper",
-                       x=0.7, y=-0.1, showarrow=False,
-                       xanchor="center",
-                       yanchor="middle",
-                       font=dict(color='white'))
+    fig.add_annotation(
+        text="<b>Fiction</b>",
+        xref="paper",
+        yref="paper",
+        x=0.7,
+        y=-0.1,
+        showarrow=False,
+        xanchor="center",
+        yanchor="middle",
+        font=dict(color="white"),
+    )
 
     filename = f"goodreads/static/Graphs/{username}/read_heatmap_{username}.html"
     fig.write_html(file=filename)
@@ -938,7 +961,9 @@ def month_plot(
         uniformtext_minsize=6,
         uniformtext_mode="hide",
         plot_bgcolor="rgba(0,0,0,0)",
-        legend=dict(yanchor="top", y=-0.4/n_years, xanchor="center", x=0.5, orientation="h"),
+        legend=dict(
+            yanchor="top", y=-0.4 / n_years, xanchor="center", x=0.5, orientation="h"
+        ),
     )
     fig.update_xaxes(
         tickvals=np.arange(1, 13),
@@ -983,7 +1008,7 @@ def main(username):
     world_df = load_map()
     nationality_count = return_nationality_count(read_df)
     world_df = merge_map_data(
-        world_df, nationality_count, nationality_col="nationality_chosen"
+        world_df, nationality_count, nationality_col="region"
     )
     bokeh_world_plot(world_df, username)
     fig_month = month_plot(
