@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 
 django.setup()
 
+
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("file_path", type=str)
@@ -38,7 +39,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         df = pd.read_csv(options["file_path"])
         if options["domain"] == "Spotify":
-            sync_df(df, 'SpotifyStreaming')
+            sync_df(df, "SpotifyStreaming")
         elif options["domain"] == "Books":
             sync_books(df)
 
@@ -106,23 +107,24 @@ def export_authors_missing():
 
 
 def sync_df(df, schema):
-    if schema == 'SpotifyTracks':
-        df['release_date'] = pd.to_datetime(df['release_date'])
+    if schema == "SpotifyTracks":
+        df["release_date"] = pd.to_datetime(df["release_date"])
         fields = get_field_names(SpotifyTracks)
         for _, row in df.iterrows():
             try:
-                a = SpotifyTracks.objects.filter(artistname=row.artistname).get(trackname=row.trackname)
+                a = SpotifyTracks.objects.filter(artistname=row.artistname).get(
+                    trackname=row.trackname
+                )
             except Exception as e:
                 a = SpotifyTracks()
             for field in fields:
                 setattr(a, field, row.get(field))
             print(a.__dict__)
             a.save()
-    elif schema == 'NetflixTitles':
+    elif schema == "NetflixTitles":
         fields = get_field_names(NetflixTitles)
 
     return
-
 
 
 if __name__ == "__main__":

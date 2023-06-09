@@ -70,7 +70,9 @@ class Command(BaseCommand):
                 n = nd.save_genres(genre_results)
                 if n:
                     k += 1
-            self.stdout.write(f"Scraped {k} genres out of {len(genres_missing_ids)} that weren't in the database.")
+            self.stdout.write(
+                f"Scraped {k} genres out of {len(genres_missing_ids)} that weren't in the database."
+            )
 
         elif options["domain"] == "Goodreads":
             books_null = Books.objects.filter(added_by__isnull=True)
@@ -82,10 +84,18 @@ class Command(BaseCommand):
         elif options["domain"] == "Spotify":
             streamed = objects_to_df(SpotifyStreaming.objects.all())
             tracks = objects_to_df(SpotifyTracks.objects.all())
-            tracks_missing = set(streamed['trackname']).difference(set(tracks['trackname']))
-            streamed_unmerged = de.get_unmerged(streamed.loc[streamed['trackname'].isin(tracks_missing)])
+            tracks_missing = set(streamed["trackname"]).difference(
+                set(tracks["trackname"])
+            )
+            streamed_unmerged = de.get_unmerged(
+                streamed.loc[streamed["trackname"].isin(tracks_missing)]
+            )
             self.stdout.write(f"scraping {len(streamed_unmerged)} tracks")
-            de.update_tracks(streamed_unmerged['trackname'], streamed_unmerged['artistname'], streamed_unmerged['msplayed'])
+            de.update_tracks(
+                streamed_unmerged["trackname"],
+                streamed_unmerged["artistname"],
+                streamed_unmerged["msplayed"],
+            )
         elif options["domain"] is None:
             print("No domain specified")
         else:

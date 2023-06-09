@@ -25,9 +25,13 @@ class Command(BaseCommand):
     def handle(self, **options):
         if options["domain"] == "Netflix":
             netflix_titles = objects_to_df(NetflixTitles.objects.all())
-            dupes = pd.pivot_table(netflix_titles, index='netflix_id',
-                                   values='title', aggfunc=lambda x: len(pd.unique(x)) > 1).reset_index()
-            dupes = dupes.loc[dupes['title'] == True]
+            dupes = pd.pivot_table(
+                netflix_titles,
+                index="netflix_id",
+                values="title",
+                aggfunc=lambda x: len(pd.unique(x)) > 1,
+            ).reset_index()
+            dupes = dupes.loc[dupes["title"] == True]
             self.stdout.write(f"Trying to reconcile {len(dupes)} duplicates.")
             reconciled = 0
             for nid in dupes.netflix_id.iloc:
