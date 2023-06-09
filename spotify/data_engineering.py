@@ -1,5 +1,7 @@
 import sys
 import os
+
+import numpy as np
 import pandas as pd
 import logging
 import spotipy
@@ -154,7 +156,7 @@ def get_historical_track_info_from_id(
                             "trackname": trackname,
                             "artistname": artistname,
                             "podcast": False,
-                            "genre_chosen": "",
+                            "genre_chosen": genres_list[0] if len(genres_list) > 0 else '',
                         }
                     )
                 elif searchType == "show":
@@ -285,3 +287,29 @@ def update_tracks(tracknames, artistnames, msplayed):
     logger.info("Spotify uploads completed")
 
     return
+
+
+# choose genres
+def consolidate_genres(list_of_genre_lists):
+    list_of_genre_lists = [
+        genre_list for genre_list in list_of_genre_lists if genre_list is not None
+    ]
+    genre_list = [genre for sublist in list_of_genre_lists for genre in sublist]
+    return pd.Series(genre_list)
+
+
+def choose_most_common_genre(list_of_genre_lists):
+    genre_list = consolidate_genres(list_of_genre_lists)
+    genre_count_df = genre_list.value_counts().rename_axis("genres").to_frame("counts")
+    single_list = [
+        most_common_from_sublist(sublist, genre_count_df)
+        for sublist in list_of_genre_lists
+    ]
+    return single_list
+
+
+def most_common_from_sublist(sublist, count_df):
+    if not sublist:
+        return None
+    counts = [count_df.loc[g]["counts"] for g in sublist]
+    return sublist[np.argmax(counts)]

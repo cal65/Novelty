@@ -23,7 +23,6 @@ class Command(BaseCommand):
             "domain",
             type=str,
             help="Optional domain of either Goodreads, Spotify, Netflix, indicates run plots for just that domain.",
-            required=False,
         )
 
     def handle(self, **options):
