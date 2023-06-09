@@ -11,7 +11,7 @@ from spotify.plotting.plotting import objects_to_df
 sys.path.append("../..")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
 
-from goodreads.models import Books, Authors
+from goodreads.models import Books, Authors, SpotifyTracks, NetflixTitles
 from goodreads.scripts.append_to_export import (
     convert_to_ExportData,
     convert_to_Book,
@@ -32,12 +32,16 @@ django.setup()
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
+        parser.add_argument("file_path", type=str)
         parser.add_argument("domain", type=str)
 
     def handle(self, **options):
-        args = parser.parse_args()
-        file_path = args.file_path
-        books_df = pd.read_csv(file_path)
+        df = pd.read_csv(options["file_path"])
+        if options["domain"] == "Spotify":
+            sync_df(df, 'SpotifyStreaming')
+        elif options["domain"] == "Books":
+            sync_books(df)
+
         # to do: check schema
         sync_books(books_df)
 
@@ -62,6 +66,12 @@ def create_Books_object(row):
             # update ExportsData table with updated book
         djangoBook.save()
     return djangoBook
+
+
+def get_field_names(djangoClass):
+    fields = djangoClass._meta.get_fields()
+    f_names = [f.name for f in fields]
+    return set(f_names)
 
 
 def sync_books(books_df):
@@ -93,6 +103,26 @@ def export_authors_missing():
     )
     authors_df = objects_to_df(authors)
     authors_df.to_csv("artifacts/authors_export.csv", index=False)
+
+
+def sync_df(df, schema):
+    if schema == 'SpotifyTracks':
+        df['release_date'] = pd.to_datetime(df['release_date'])
+        fields = get_field_names(SpotifyTracks)
+        for _, row in df.iterrows():
+            try:
+                a = SpotifyTracks.objects.filter(artistname=row.artistname).get(trackname=row.trackname)
+            except Exception as e:
+                a = SpotifyTracks()
+            for field in fields:
+                setattr(a, field, row.get(field))
+            print(a.__dict__)
+            a.save()
+    elif schema == 'NetflixTitles':
+        fields = get_field_names(NetflixTitles)
+
+    return
+
 
 
 if __name__ == "__main__":

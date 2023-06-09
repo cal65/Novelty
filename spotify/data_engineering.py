@@ -2,7 +2,6 @@ import sys
 import os
 import pandas as pd
 import logging
-import signal
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
@@ -139,6 +138,8 @@ def get_historical_track_info_from_id(
             if True:  # with Timeout(6):
                 if searchType == "track":
                     track_info_dict = sp.track(track_id)
+                    artist_id = track_info_dict["artists"][0]["id"]
+                    genres_list = sp.artist(artist_id)["genres"]
                     track_info_series = pd.Series(
                         {
                             "uri": track_id,
@@ -147,9 +148,7 @@ def get_historical_track_info_from_id(
                             "duration": track_info_dict["duration_ms"] / ms_per_minute,
                             "popularity": track_info_dict["popularity"],
                             "release_date": track_info_dict["album"]["release_date"],
-                            "genres": sp.artist(track_info_dict["artists"][0]["id"])[
-                                "genres"
-                            ],
+                            "genres": ', '.join(genres_list),
                             "album": track_info_dict["album"]["name"],
                             "explicit": track_info_dict["explicit"],
                             "trackname": trackname,
@@ -214,7 +213,7 @@ def search_by_names(trackname: str, artistname: str, searchType: str = "track") 
     except Exception as e:
         logger.info(f"Error {e} for {trackname} and {artistname}")
         return None
-
+    logger.info(f"Track {trackname} and uri {uri}")
     return uri
 
 
@@ -283,7 +282,6 @@ def update_tracks(tracknames, artistnames, msplayed):
                 uri, track, artist, searchType="track"
             )
             convert_to_SpotifyTrack(track_info_series)
-
     logger.info("Spotify uploads completed")
 
     return

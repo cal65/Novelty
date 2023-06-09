@@ -4,7 +4,12 @@
     <title>Music Analysis</title>
 {% endblock title %}
 
-
+{% block d1 %}
+        <a class="nav-link" href="{% url 'books-home' %}" >Books</a>
+{% endblock d1 %}
+{% block d2 %}
+        <a class="nav-link" href="{% url 'streaming-home' %}" style="color: #00CC96; font-weight: bold;" >Music</a>
+{% endblock d2 %}
 
 <!-- customize navbar -->
 {% block domain-home %}

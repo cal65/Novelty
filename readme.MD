@@ -16,3 +16,9 @@ How popular are the books you read? Do you have a mix of obscure books and bests
 Novelty Insights is the modern anti-bias tool to return the value of your data to you.
 
 [!Spotify top artists](goodreads/static/admin/img/spotify/spotify_top_artists_plot_cal65.html)
+
+Books gallery: https://novelty-insights.com/gallery-books/
+
+Music gallery: https://novelty-insights.com/gallery-music/
+
+Streaming gallery: https://novelty-insights.com/gallery-streaming/

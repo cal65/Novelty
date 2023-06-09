@@ -84,9 +84,8 @@ class Command(BaseCommand):
             tracks = objects_to_df(SpotifyTracks.objects.all())
             tracks_missing = set(streamed['trackname']).difference(set(tracks['trackname']))
             streamed_unmerged = de.get_unmerged(streamed.loc[streamed['trackname'].isin(tracks_missing)])
-            df_unmerged = streamed_unmerged[streamed_unmerged.loc[streamed_unmerged['uri'].str.len() < 22]]
-            self.stdout.write(f"scraping {len(df_unmerged)} tracks")
-            de.update_tracks(df_unmerged['trackname'], df_unmerged['artistname'], df_unmerged['msplayed'])
+            self.stdout.write(f"scraping {len(streamed_unmerged)} tracks")
+            de.update_tracks(streamed_unmerged['trackname'], streamed_unmerged['artistname'], streamed_unmerged['msplayed'])
         elif options["domain"] is None:
             print("No domain specified")
         else:
