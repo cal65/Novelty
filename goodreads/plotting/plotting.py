@@ -370,7 +370,7 @@ def genre_bar_plot(df, title_col="title_simple", n_shelves=5, min_count=3):
         min_count = 1
 
     plot_df = shelf_table_df[shelf_table_df["Count"] > min_count]
-    plot_df = plot_df.head(30)
+    plot_df = plot_df.head(25)
 
     return go.Bar(
         x=plot_df["Count"],
@@ -745,6 +745,16 @@ def return_small_nationalities(df, nationality_col="nationality_chosen"):
         "Costa Rican",
     ]
     return df.loc[df[nationality_col].isin(small)]
+
+
+def write_small_nationalities(df):
+    if (len(df) < 0):
+        return None
+    else:
+        output = "In addition, you have read authors from small places that might not be visible on the map. This includes: <br>"
+        for i, row in df.iterrows():
+            output += f"{row['nationality_chosen']} author {row['author']}"
+        return output
 
 
 def create_read_plot_heatmap(

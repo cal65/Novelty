@@ -123,7 +123,6 @@ def sync_df(df, schema):
             a.save()
     elif schema == "NetflixTitles":
         fields = get_field_names(NetflixTitles)
-
     return
 
 
