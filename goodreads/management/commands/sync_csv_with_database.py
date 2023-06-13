@@ -43,9 +43,6 @@ class Command(BaseCommand):
         elif options["domain"] == "Books":
             sync_books(df)
 
-        # to do: check schema
-        sync_books(books_df)
-
 
 def create_Books_object(row):
     f_names = get_field_names(Books)
