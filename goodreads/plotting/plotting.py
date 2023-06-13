@@ -16,7 +16,7 @@ import plotly.figure_factory as ff
 from plotly.subplots import make_subplots
 
 from spotify.plotting.utils import standard_layout, save_fig
-from spotify.plotting.plotting import objects_to_df
+from spotify.plotting.plotting import objects_to_df, write_text
 from goodreads.models import RefNationality
 
 import logging
@@ -751,9 +751,10 @@ def write_small_nationalities(df):
     if (len(df) < 0):
         return None
     else:
-        output = "In addition, you have read authors from small places that might not be visible on the map. This includes: <br>"
-        for i, row in df.iterrows():
-            output += f"{row['nationality_chosen']} author {row['author']}"
+        df_write = df[['author', 'nationality_chosen']].drop_duplicates()
+        output = "In addition, you have read authors from small places that might not be visible on the map. This includes:"
+        for i, row in df_write.iterrows():
+            output += f"<br>{row['nationality_chosen']} author {row['author']}"
         return output
 
 
@@ -1021,6 +1022,12 @@ def main(username):
         world_df, nationality_count, nationality_col="region"
     )
     bokeh_world_plot(world_df, username)
+
+    write_text(
+        filename=f"goodreads/static/Graphs/{username}/goodreads_small_{username}.txt",
+        texts=[write_small_nationalities(return_small_nationalities(read_df))],
+    )
+
     fig_month = month_plot(
         read_df,
         username,

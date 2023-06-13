@@ -88,6 +88,15 @@ class SpotifyTracks(models.Model):
     ts_updated = models.DateTimeField(auto_now=True)
 
 
+class SpotifyArtist(models.Model):
+    uri = models.CharField(max_length=250, primary_key=True)
+    artist_name = models.CharField(max_length=250, null=True)
+    popularity = models.IntegerField(blank=True, null=True)
+    followers_total = models.IntegerField(blank=True, null=True)
+    genres = models.CharField(max_length=1000, null=True)
+    image_url = models.CharField(max_length=1000, null=True)
+
+
 class NetflixTitles(models.Model):
     netflix_id = models.CharField(max_length=250, primary_key=True)
     title = models.CharField(max_length=250, null=True)

@@ -9,7 +9,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 sys.path.append("../goodreads")
 
-from goodreads.models import SpotifyStreaming, SpotifyTracks
+from goodreads.models import SpotifyStreaming, SpotifyTracks, SpotifyArtist
 from spotify.plotting import plotting as splot
 
 logging.basicConfig(
@@ -150,13 +150,15 @@ def get_historical_track_info_from_id(
                             "duration": track_info_dict["duration_ms"] / ms_per_minute,
                             "popularity": track_info_dict["popularity"],
                             "release_date": track_info_dict["album"]["release_date"],
-                            "genres": ', '.join(genres_list),
+                            "genres": ", ".join(genres_list),
                             "album": track_info_dict["album"]["name"],
                             "explicit": track_info_dict["explicit"],
                             "trackname": trackname,
                             "artistname": artistname,
                             "podcast": False,
-                            "genre_chosen": genres_list[0] if len(genres_list) > 0 else '',
+                            "genre_chosen": genres_list[0]
+                            if len(genres_list) > 0
+                            else "",
                         }
                     )
                 elif searchType == "show":
@@ -183,6 +185,33 @@ def get_historical_track_info_from_id(
             return empty_series
 
     return track_info_series
+
+
+def get_artist_info(artist_uri):
+    a = SpotifyArtist()
+    a.uri = artist_uri
+    try:
+        artist_info = sp.artist(artist_uri)
+    except spotipy.SpotifyException as e:
+        logger.info(f"Exception {e} thrown. No artist found for {artist_uri}.")
+        a.save()
+        return
+    a.artist_name = artist_info["name"]
+    a.followers_total = artist_info["followers"]["total"]
+    a.popularity = artist_info["popularity"]
+    a.genres = ", ".join(artist_info["genres"])
+    if len(artist_info["images"]) > 0:
+        a.image_url = artist_info["images"][0]["url"]
+    a.save()
+    return a
+
+
+def search_artist(artist_uri):
+    try:
+        artist = SpotifyArtist.objects.get(uri=artist_uri)
+    except SpotifyArtist.DoesNotExist:
+        artist = get_artist_info(artist_uri)
+    return artist
 
 
 def search_by_names(trackname: str, artistname: str, searchType: str = "track") -> str:
@@ -263,6 +292,9 @@ def get_unmerged(df, track_col="trackname", artist_col="artistname"):
     return df_unmerged
 
 
+import time
+
+
 def update_tracks(tracknames, artistnames, msplayed):
     """
     df should already be unmerged
@@ -273,17 +305,16 @@ def update_tracks(tracknames, artistnames, msplayed):
         ms = int(ms)
         # crude test for podcast show vs track
         if ms > ms_per_minute * 10:
-            uri = search_by_names(track, artist, searchType="show")
-            track_info_series = get_historical_track_info_from_id(
-                uri, track, artist, searchType="show"
-            )
-            convert_to_SpotifyTrack(track_info_series)
+            searchType = "show"
         else:
-            uri = search_by_names(track, artist, searchType="track")
-            track_info_series = get_historical_track_info_from_id(
-                uri, track, artist, searchType="track"
-            )
-            convert_to_SpotifyTrack(track_info_series)
+            searchType = "track"
+
+        uri = search_by_names(track, artist, searchType=searchType)
+        track_info_series = get_historical_track_info_from_id(
+            uri, track, artist, searchType=searchType
+        )
+        convert_to_SpotifyTrack(track_info_series)
+        time.sleep(1)
     logger.info("Spotify uploads completed")
 
     return

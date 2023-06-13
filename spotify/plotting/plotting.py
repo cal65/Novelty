@@ -37,77 +37,6 @@ matplotlib.pyplot.switch_backend("Agg")
 ms_per_minute = 60 * 1000
 
 
-def get_data(query, database="goodreads"):
-    conn = psycopg2.connect(
-        host="localhost", database=database, user="cal65", password=post_pass
-    )
-    try:
-        df = pd.read_sql(query, con=conn)
-        logger.info(f"Returning data from query with nrows {len(df)}")
-        return df
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-        return
-
-
-def userdata_query(username):
-    query = f"""
-    select 
-    endtime, artistname, trackname, msplayed
-    from goodreads_spotifystreaming 
-    where username = '{username}'
-    """
-    return query
-
-
-def tracks_query(username):
-    query = f""" 
-    select 
-    endtime, 
-    stream.artistname, 
-    stream.trackname, 
-    msplayed,
-    uri,
-    name, 
-    artist, 
-    duration,
-    popularity,
-    release_date,
-    genres,
-    genre_chosen,
-    album,
-    explicit,
-    podcast
-    from goodreads_spotifystreaming stream 
-    left join goodreads_spotifytracks tracks
-    on stream.artistname = tracks.artistname
-    and stream.trackname = tracks.trackname
-    where  stream.username = '{username}'
-    """
-    return query
-
-
-def tracks_all_query():
-    query = f""" 
-        select 
-        artistname, 
-        trackname, 
-        uri,
-        name, 
-        artist, 
-        duration,
-        popularity,
-        release_date,
-        genres,
-        genre_chosen,
-        album,
-        explicit,
-        podcast
-        from goodreads_spotifytracks tracks
-        """
-    return query
-
-
 def preprocess(df):
     df["endtime"] = pd.to_datetime(df["endtime"], utc=True)
     df["endtime"] = df["endtime"].dt.tz_convert("US/Pacific")
@@ -378,6 +307,7 @@ def plot_overall(df_sum, date_col="date", minutes_col="minutes", win=7, podcast=
             title="Minutes",
         ),
         hovermode="x unified",
+        barmode="stack",
     )
     fig.update_layout(standard_layout)
     return fig
@@ -600,7 +530,7 @@ def format_weekly(df, date_col="date"):
 
 def plot_weekly(df, date_col="date"):
     df_wday = format_weekly(df, date_col=date_col)
-    df_wday.sort_values('wday', inplace=True)
+    df_wday.sort_values("wday", inplace=True)
     # weekly boxplot
     fig = go.Figure()
     for day in df_wday["day_of_week"].unique():
@@ -850,7 +780,7 @@ def plot_popularity(
             x=pop["popularity"],
             y=round(pop["minutes"]),
             customdata=pop["song"],
-            hovertemplate="Popularity: %{x} <br>Total Minutes: %{y} <br>Top Track: %{customdata}<extra></extra>",
+            hovertemplate="<b>Popularity:</b> %{x}<br><b>Total Minutes:</b> %{y} <br><b>Top Track:</b> %{customdata}<extra></extra>",
             name="Minutes - Total",
         )
     )
