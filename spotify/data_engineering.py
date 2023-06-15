@@ -84,6 +84,7 @@ def convert_to_SpotifyTrack(track_series):
     djangoSpotifyTrack.artistname = track_series["artistname"][:250]
     djangoSpotifyTrack.podcast = track_series["podcast"]
     djangoSpotifyTrack.genre_chosen = track_series["genre_chosen"]
+    djangoSpotifyTrack.artist_uri = track_series["artist_uri"]
     djangoSpotifyTrack.save()
     return djangoSpotifyTrack
 
@@ -159,6 +160,7 @@ def get_historical_track_info_from_id(
                             "genre_chosen": genres_list[0]
                             if len(genres_list) > 0
                             else "",
+                            "artist_uri": artist_id,
                         }
                     )
                 elif searchType == "show":
@@ -178,6 +180,7 @@ def get_historical_track_info_from_id(
                             "artistname": artistname,
                             "podcast": True,
                             "genre_chosen": "",
+                            "artist_uri": "",
                         }
                     )
         except Exception as e:
@@ -207,6 +210,12 @@ def get_artist_info(artist_uri):
 
 
 def search_artist(artist_uri):
+    """
+    Takes an artist uri (just called uri in Spotify API)
+    Looks up if that uri is already in database
+    Calls Spotify API if it isn't
+    Returns SpotifyArtist object
+    """
     try:
         artist = SpotifyArtist.objects.get(uri=artist_uri)
     except SpotifyArtist.DoesNotExist:
