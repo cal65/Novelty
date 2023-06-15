@@ -609,11 +609,11 @@ def return_nationality_count(
     limit=3,
 ):
     nat_dict = load_nationality_dict()
-    df['region'] = df[nationality_col].map(nat_dict)
+    df["region"] = df[nationality_col].map(nat_dict)
     nationality_count = (
         pd.pivot_table(
             df,
-            index='region',
+            index="region",
             values=[title_col, author_col],
             aggfunc=[len, lambda x: join_titles(x, limit)],
         )
@@ -621,7 +621,7 @@ def return_nationality_count(
         .reset_index()
     )
     nationality_count.columns = [
-        'region',
+        "region",
         "count",
         "count2",
         title_col,
@@ -748,10 +748,10 @@ def return_small_nationalities(df, nationality_col="nationality_chosen"):
 
 
 def write_small_nationalities(df):
-    if (len(df) < 0):
+    if len(df) < 0:
         return None
     else:
-        df_write = df[['author', 'nationality_chosen']].drop_duplicates()
+        df_write = df[["author", "nationality_chosen"]].drop_duplicates()
         output = "In addition, you have read authors from small places that might not be visible on the map. This includes:"
         for i, row in df_write.iterrows():
             output += f"<br>{row['nationality_chosen']} author {row['author']}"
@@ -1018,9 +1018,7 @@ def main(username):
     # world map plotting
     world_df = load_map()
     nationality_count = return_nationality_count(read_df)
-    world_df = merge_map_data(
-        world_df, nationality_count, nationality_col="region"
-    )
+    world_df = merge_map_data(world_df, nationality_count, nationality_col="region")
     bokeh_world_plot(world_df, username)
 
     write_text(

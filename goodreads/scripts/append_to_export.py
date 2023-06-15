@@ -239,6 +239,3 @@ def convert_to_Book(book_id, wait=2):
         djangoBook.save()
         logger.info(f"Book {djangoBook.book_id} updated in books table")
     return status
-
-
-

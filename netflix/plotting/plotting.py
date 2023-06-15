@@ -35,7 +35,7 @@ def load_data(username):
     return df
 
 
-def plot_genres(df, username, title_type, genre_col = "genre_chosen"):
+def plot_genres(df, username, title_type, genre_col="genre_chosen"):
     # df should be already formatted, genres cleaned up
     # only tv shows or movies
     df_count = pd.DataFrame(
@@ -48,7 +48,7 @@ def plot_genres(df, username, title_type, genre_col = "genre_chosen"):
     df_shows = df_count.loc[df_count["title_type"] == title_type]
     for i, g in enumerate(df_genre_count[genre_col]):
         df_sub = df_shows.loc[df_shows[genre_col] == g]
-        df_sub[genre_col] = '<b>' + df_sub[genre_col] + '</b>'
+        df_sub[genre_col] = "<b>" + df_sub[genre_col] + "</b>"
         fig.add_trace(
             go.Bar(
                 x=df_sub["size"],

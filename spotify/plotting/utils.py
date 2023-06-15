@@ -10,6 +10,7 @@ standard_layout = dict(
     font=dict(family="Courier New"),
 )
 
+
 def save_fig(fig, file_path):
     directory = os.path.dirname(file_path)
     if not os.path.exists(directory):
