@@ -37,5 +37,6 @@ urlpatterns = [
     path("gallery-geography/", gallery_geography, name="gallery-geography"),
     path("spot-text/", spot_text, name="spot-text"),
     path("comments/", comments, name="comments"),
-    path("post-comment/", post_comment, name="post-comment")
+    path("post-comment/", post_comment, name="post-comment"),
+    path("netflix/compare/", netflix_compare, name="netflix-compare"),
 ]

@@ -41,6 +41,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 register = template.Library()
 
+
 def run_script_function(request):
     """
     Main script that generates and saves plots for a user
@@ -105,7 +106,6 @@ def gallery_geography(request):
         f"geography gallery requested for request {request.headers['User-Agent']}"
     )
     return render(request, "geography/gallery.html")
-
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
@@ -199,7 +199,9 @@ def spot_text(request):
         lines = f.readlines()
     f.close()
     info_text = "".join(lines)
-    weekly_text_url = f"goodreads/static/Graphs/{username}/spotify_weekly_{username}.txt"
+    weekly_text_url = (
+        f"goodreads/static/Graphs/{username}/spotify_weekly_{username}.txt"
+    )
     with open(weekly_text_url) as f:
         lines2 = f.readlines()
     f.close()
@@ -215,12 +217,13 @@ def spot_plots_view(request):
     popularity_url = "Graphs/{}/spotify_popularity_plot_{}.html".format(
         username, username
     )
-    top_artists_url = "Graphs/{}/spotify_top_artists_plot_{}.html".format(username, username)
+    top_artists_url = "Graphs/{}/spotify_top_artists_plot_{}.html".format(
+        username, username
+    )
     daily_url = "Graphs/{}/spotify_daily_plot_{}.html".format(username, username)
     release_year_url = "Graphs/{}/spotify_year_plot_{}.html".format(username, username)
     genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
     top_songs_url = "Graphs/{}/spotify_top_songs_{}.html".format(username, username)
-
 
     return render(
         request,
@@ -245,7 +248,9 @@ def process_export_upload(df, date_col="Date_Read"):
     df.columns = df.columns.str.lower()
     df["number_of_pages"].fillna(0, inplace=True)
     df["book_id"] = df["book_id"].astype(str)
-    df["original_publication_year"] = df["original_publication_year"].fillna(df["year_published"])
+    df["original_publication_year"] = df["original_publication_year"].fillna(
+        df["year_published"]
+    )
     df = df[pd.notnull(df["book_id"])]
     return df
 
@@ -274,7 +279,7 @@ def populateBooks(book_ids, user, wait=2, metrics=True):
 
 
 def populateAuthors(df):
-    authors = df['author'].apply(convert_to_Authors)
+    authors = df["author"].apply(convert_to_Authors)
     return authors
 
 
@@ -297,17 +302,15 @@ def upload_goodreads(request):
     ]
     logger.info(f"starting authors table addition")
     populateAuthors(df)
-    return JsonResponse({'book_ids': exportNew_ids})
+    return JsonResponse({"book_ids": exportNew_ids})
 
 
 def insert_goodreads(request):
     template = "goodreads/csv_upload.html"
-    book_ids = request.POST.getlist('book_ids[]')
+    book_ids = request.POST.getlist("book_ids[]")
     user = request.user
     newN = len(book_ids)
-    logger.info(
-        f"starting books table addition for {newN} new books"
-    )
+    logger.info(f"starting books table addition for {newN} new books")
     populateBooks(book_ids, user, wait=3, metrics=True)
     return render(request, template)
 
@@ -378,9 +381,7 @@ def upload_spotify(request):
     new_lines = str(len(df_new))
     if len(df_new) < 1:
         logger.info(f"No new data for user {user}")
-        return JsonResponse({"tracknames": [0],
-                             "artistnames": [0],
-                             "msplayed": [0]})
+        return JsonResponse({"tracknames": [0], "artistnames": [0], "msplayed": [0]})
     logger.info(
         f"starting spotify table addition for {new_lines} rows out of original {str(len(df))}"
     )
@@ -388,21 +389,27 @@ def upload_spotify(request):
     df_new.to_csv(
         f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv", index=False
     )
-    df_unmerged = de.get_unmerged(df_new, track_col="trackname", artist_col="artistname")
+    df_unmerged = de.get_unmerged(
+        df_new, track_col="trackname", artist_col="artistname"
+    )
     logger.info(
         f"Search uri & track data for {len(df_unmerged)} tracks out of original {len(df)} unique tracks"
     )
-    return JsonResponse({"tracknames": df_unmerged["trackname"].tolist(),
-                         "artistnames": df_unmerged["artistname"].tolist(),
-                         "msplayed": df_unmerged["msplayed"].tolist()})
+    return JsonResponse(
+        {
+            "tracknames": df_unmerged["trackname"].tolist(),
+            "artistnames": df_unmerged["artistname"].tolist(),
+            "msplayed": df_unmerged["msplayed"].tolist(),
+        }
+    )
 
 
 def insert_spotify(request):
     user = request.user
     template = "spotify/json_upload_spotify.html"
-    artistnames = request.POST.getlist('artistnames[]')
-    tracknames = request.POST.getlist('tracknames[]')
-    msplayed = request.POST.getlist('msplayed[]')
+    artistnames = request.POST.getlist("artistnames[]")
+    tracknames = request.POST.getlist("tracknames[]")
+    msplayed = request.POST.getlist("msplayed[]")
     logger.info(f"starting spotify tracks api calls for {user}")
     de.update_tracks(artistnames, tracknames, msplayed)
     return render(request, template, {"hasData": True})
@@ -458,12 +465,14 @@ def upload_netflix(request):
     df_unmerged = df.loc[pd.isnull(df["netflix_id"])]
     n_miss = len(df_unmerged["name"].unique())
     logger.info(f"Number of unmerged shows {n_miss}")
-    return JsonResponse({"names": df_unmerged["name"].unique().tolist(), "n_missing": n_miss})
+    return JsonResponse(
+        {"names": df_unmerged["name"].unique().tolist(), "n_missing": n_miss}
+    )
 
 
 def insert_netflix(request):
     logger.info(f"insert netflix request looks like {request.POST.dict()}")
-    names = request.POST.getlist('names[]')
+    names = request.POST.getlist("names[]")
     template = "netflix/csv_upload_netflix.html"
     for name in names:
         nd.lookup_and_insert(name)
@@ -496,9 +505,9 @@ def netflix_plots_view(request):
             "genre_movie_url": genre_movie_url,
             "histogram_url": histogram_url,
             "network_url": network_url,
-            "binge_show": max_binge.get('name', ''),
-            "binge_date": max_binge.get('date', ''),
-            "binge_n": max_binge.get('username', '')
+            "binge_show": max_binge.get("name", ""),
+            "binge_date": max_binge.get("date", ""),
+            "binge_n": max_binge.get("username", ""),
         },
     )
 
@@ -533,3 +542,7 @@ def post_comment(request):
         logger.info(next)
         HttpResponseRedirect(next)
     return HttpResponseRedirect("/")
+
+
+def netflix_compare(request):
+    return render(request, "netflix/compare.html")
