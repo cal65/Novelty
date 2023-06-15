@@ -287,7 +287,7 @@ def merge_tracks(
 
 def get_unmerged(df, track_col="trackname", artist_col="artistname"):
     df = df.drop_duplicates(subset=[track_col, artist_col])
-    track_df = splot.get_data(splot.tracks_all_query())
+    track_df = splot.objects_to_df(SpotifyTracks.objects.all())
     df_unmerged = identify_new(df, track_df)
     return df_unmerged
 
