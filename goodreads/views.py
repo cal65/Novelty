@@ -544,5 +544,14 @@ def post_comment(request):
     return HttpResponseRedirect("/")
 
 
-def netflix_compare(request):
-    return render(request, "netflix/compare.html")
+@login_required(redirect_field_name="next", login_url="user-login")
+def netflix_compare_view(request):
+    return render(request, "streaming/compare.html")
+
+
+def netflix_compare_func(request):
+    user1 = request.user
+    user2 = request.POST.get('user2', '')
+    nplot.compare(user1, user2)
+    compare_url = f"Graphs/{user1}/netflix_comparison_{user1}_{user2}.html"
+    return render(request, "netflix/compare.html", {"compare_url": compare_url})

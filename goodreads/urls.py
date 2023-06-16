@@ -38,5 +38,5 @@ urlpatterns = [
     path("spot-text/", spot_text, name="spot-text"),
     path("comments/", comments, name="comments"),
     path("post-comment/", post_comment, name="post-comment"),
-    path("netflix/compare/", netflix_compare, name="netflix-compare"),
+    path("streaming/compare/", netflix_compare_view, name="netflix-compare"),
 ]

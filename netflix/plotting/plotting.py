@@ -9,6 +9,7 @@ import logging
 
 from goodreads.models import NetflixGenres, NetflixUsers, NetflixActors
 from goodreads.plotting.plotting import split_title
+from spotify.plotting.plotting import objects_to_df
 from spotify.plotting.utils import standard_layout, save_fig
 import netflix.data_munge as nd
 
@@ -408,6 +409,111 @@ def plot_comparison(combined_plot, name1, name2):
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
     )
+    return fig
+
+
+def post_combination(combined_shows, name1, name2):
+    combined_shows["genres"] = combined_shows["genres"].fillna("")
+    combined_shows["genre_chosen"] = combined_shows["genres"].apply(simplify_genres)
+    combined_shows["both"] = pd.notnull(combined_shows[name1]) & pd.notnull(
+        combined_shows[name2]
+    )
+    combined_shows["person"] = combined_shows.apply(
+        lambda x: name1 if pd.isnull(x[name2]) else name2, axis=1
+    )
+    combined_shows.loc[combined_shows["both"] == True, "person"] = "both"
+    return combined_shows
+
+
+genre_numerical_mapper = {
+    "Reality": -1,
+    "Dramas": 1,
+    "Comedies": -0.7,
+    "Stand-Up Comedy": -0.1,
+    "Documentaries": 0.6,
+    "Docuseries": 0.9,
+    "Mystery": -0.1,
+    "British": -0.2,
+    "Korean": 0,
+    "Romantic Comedies": -0.4,
+    "Sci-Fi & Fantasy": 0.1,
+    "Crime": 1,
+    "Horror": 0.4,
+    "Action & Adventure": 0.3,
+    "International": 0,
+    "Romantic": -0.2,
+    "": 0,
+    "Crime Action & Adventure": 0.3,
+    "Kids": -0.8,
+    "Thrillers": 0.9,
+    "Stand-Up Comedy & Talk": -0.1,
+    "Special Interest": 0,
+    "Anime": -0.3,
+    "Action Comedies": 0.2,
+    "Blockbuster": -0.2,
+    "Spoofs & Satires": -0.6,
+    "Music & Musicals": 0.5,
+    "Adult Animation": 0.4,
+    "Military Action & Adventure": 0.8,
+    "Science & Nature": 1,
+    "Classic Movies": 0.5,
+}
+
+
+def numeric_genres(df, user1, user2):
+    df["group_index"] = df.groupby(["genre_chosen", "person"]).cumcount()
+    df["rand"] = np.random.random_sample(len(df)) * len(df) / 10
+    df["n"] = df.apply(lambda x: np.nanmax([x[user1], x[user2]]), axis=1)
+    group_max = pd.DataFrame(
+        df.groupby(["genre_chosen", "person"])["group_index"].max()
+    ).reset_index()
+    group_max.rename(columns={"group_index": "group_index_max"}, inplace=True)
+    df = pd.merge(df, group_max, how="left", on=["genre_chosen", "person"])
+    df["genres"] = df["genres"].fillna("")
+    df["genres_s"] = (
+        df["genres"]
+        .str.split(", ")
+        .apply(lambda x: ", ".join([reduce_genre(g) for g in x]))
+    )
+    df["num_list"] = (
+        df["genres_s"]
+        .str.split(", ")
+        .apply(lambda x: [*map(genre_numerical_mapper.get, x)])
+    )
+    df["genre_num"] = df["num_list"].apply(lambda x: np.mean(pd.Series(x).fillna(0)))
+    return df
+
+
+def compare(user1, user2):
+    user1_df = load_data(user1)
+    user2_df = load_data(user2)
+    logger.info(f"running comparison for {user1} and {user2}")
+    def group_person(df):
+        df_group = pd.pivot_table(
+            df,
+            index=["name", "title_type", "netflix_id"],
+            values=["episode"],
+            aggfunc=len,
+        )
+        return df_group
+
+    def combine_people(df1, df2, name1, name2):
+        combined_shows = pd.concat([df1, df2], axis=1).reset_index()
+        combined_shows.columns = ["name", "title_type", "netflix_id", name1, name2]
+        genres_df = objects_to_df(NetflixGenres.objects.all())
+        combined_shows = pd.merge(
+            combined_shows, genres_df, on="netflix_id", how="left"
+        )
+        return combined_shows
+
+    combined_shows = combine_people(group_person(user1_df), group_person(user2_df))
+    combined_shows = post_combination(combined_shows, user1, user2)
+    combined_shows = numeric_genres(combined_shows, user1, user2)
+    filter1 = combined_shows["title_type"] == "series"
+    filter2 = combined_shows["n"] <= 1
+    filter3 = combined_shows["person"] != "both"
+    combined_plot = combined_shows.loc[~(filter1 & filter2 & filter3)]
+    fig = plot_comparison(combined_plot, user1, user2)
     return fig
 
 
