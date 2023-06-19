@@ -571,3 +571,13 @@ def netflix_compare_func(request):
     else:
         logger.info(f"{user2} does not have Netflix data")
         return JsonResponse({"compare_url": '', "success": False})
+
+def good_text(request):
+    username = request.user
+    small_text_url = f"goodreads/static/Graphs/{username}/goodreads_small_{username}.txt"
+    with open(small_text_url) as f:
+        lines = f.readlines()
+    f.close()
+    small_nations = "".join(lines)
+
+    return JsonResponse({"small_nations": small_nations})

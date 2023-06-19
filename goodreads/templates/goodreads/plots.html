@@ -39,6 +39,19 @@
           location.reload();
         })
     }
+
+    $(document).ready(function() {
+        $.ajax({
+            url: '/good-text/',
+            type: 'GET',
+            success: function(data) {
+                $('#small_nations').html(data.small_nations);
+            },
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    });
 </script>
 <button name="runscript" onclick="reanalyze()" class="bg-button hover:bg-blue-900 text-white font-bold py-2 pb-2 px-4 rounded">
     Re-Analyze
@@ -123,6 +136,8 @@
     </iframe>
     </div>
     <br>
+    <div class="caption-text" id ="small_nations">
+    </div>
 </section>
 <section id = "Monthly">
 <br><br>

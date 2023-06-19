@@ -40,4 +40,5 @@ urlpatterns = [
     path("post-comment/", post_comment, name="post-comment"),
     path("streaming/compare/", netflix_compare_view, name="netflix-compare-view"),
     path("streaming/compare-func/", netflix_compare_func, name="netflix-compare-func"),
+    path("good-text/", good_text, name="good-text"),
 ]

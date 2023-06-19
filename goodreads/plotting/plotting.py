@@ -754,7 +754,7 @@ def write_small_nationalities(df):
         df_write = df[["author", "nationality_chosen"]].drop_duplicates()
         output = "In addition, you have read authors from small places that might not be visible on the map. This includes:"
         for i, row in df_write.iterrows():
-            output += f"<br>{row['nationality_chosen']} author {row['author']}"
+            output += f"<br><b>{row['nationality_chosen']}</b> author <i>{row['author']}</i>"
         return output
 
 
