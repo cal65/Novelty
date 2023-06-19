@@ -32,6 +32,9 @@ def load_data(username):
     df = pd.DataFrame.from_records(
         NetflixUsers.objects.filter(username=username).values()
     )
+    if len(df) ==0:
+        logger.info(f"No data found for user {username}")
+        raise Exception(f"No data found for user {username}")
     df = nd.pipeline_steps(df)
     return df
 
@@ -376,6 +379,7 @@ def plot_comparison(combined_plot, name1, name2):
         combined_shows_p["genre_ranked"] = combined_shows_p["genre_num"].rank(
             method="first"
         )
+        logger.info(f"combined shows: {combined_shows_p.head()}")
         index_max = combined_shows_p["group_index"].max()
         fig.add_trace(
             go.Scatter(
@@ -405,10 +409,11 @@ def plot_comparison(combined_plot, name1, name2):
     fig.update_layout(
         yaxis=dict(title="Intensity"),
         xaxis=dict(visible=False),
-        title="Comparison Plot",
+        title=f"Comparison Plot - {name1} & {name2}",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
     )
+    fig.update_layout(standard_layout)
     return fig
 
 
@@ -487,6 +492,9 @@ def numeric_genres(df, user1, user2):
 def compare(user1, user2):
     user1_df = load_data(user1)
     user2_df = load_data(user2)
+    if len(user1_df) < 1 | len(user2_df) < 1:
+        logger.info(f"No data for this user")
+        return
     logger.info(f"running comparison for {user1} and {user2}")
     def group_person(df):
         df_group = pd.pivot_table(
@@ -506,7 +514,8 @@ def compare(user1, user2):
         )
         return combined_shows
 
-    combined_shows = combine_people(group_person(user1_df), group_person(user2_df))
+    combined_shows = combine_people(group_person(user1_df), group_person(user2_df),
+                                    name1=user1, name2=user2)
     combined_shows = post_combination(combined_shows, user1, user2)
     combined_shows = numeric_genres(combined_shows, user1, user2)
     filter1 = combined_shows["title_type"] == "series"

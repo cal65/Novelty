@@ -546,12 +546,24 @@ def post_comment(request):
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def netflix_compare_view(request):
-    return render(request, "streaming/compare.html")
+    return render(request, "netflix/compare.html")
 
 
 def netflix_compare_func(request):
-    user1 = request.user
+    """
+
+    """
+    from django.templatetags.static import static
+    user1 = str(request.user)
     user2 = request.POST.get('user2', '')
-    nplot.compare(user1, user2)
-    compare_url = f"Graphs/{user1}/netflix_comparison_{user1}_{user2}.html"
-    return render(request, "netflix/compare.html", {"compare_url": compare_url})
+    user2 = str(user2).strip()
+    logger.info(f'netflix compare func called for {user1} and {user2}')
+    fig = nplot.compare(user1, user2)
+    if fig:
+        compare_url = f"Graphs/{user1}/netflix_comparison_{user1}_{user2}.html"
+        fig.write_html(f"goodreads/static/{compare_url}")
+        return JsonResponse({"compare_url": request.build_absolute_uri(static(compare_url)),
+                             "success": True})
+    else:
+        logger.info(f"{user2} does not have Netflix data")
+        return JsonResponse({"compare_url": '', "success": False})

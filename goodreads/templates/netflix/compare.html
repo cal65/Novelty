@@ -5,39 +5,64 @@
 {% block title %}
   <title>Netflix Comparison</title>
 {% endblock title %}
-<script>
-
-function compare(){
-      const csrftoken = getCookie('csrftoken');
-      const username1 = {{user.get_username}}
-      var username2 = document.getElementbyId('compare-form').user.value
-      console.log(username1)
-      console.log(username2)
-         $.ajax({
-            type: "POST",
-            url: "{% url 'netflix-compare' %}",
-            data: {'user1': username1, 'user2': username2},
-            headers: { "X-CSRFToken": csrftoken},
-            success: function(response) {
-                $("#done").toggle();
-                var hasData = true;
-                console.log(hasData);
-                $('#plot').toggle();
-              },
-            error: function(response){
-                console.log("Something went wrong");
-
-              }
-          })
-          return false;
-    }   
-</script>
 
 {% block content %}
+<script>
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+        }
+  }
+    return cookieValue;
+  }
+  
+function compare(){
+      const csrftoken = getCookie('csrftoken');
+      var username1 = "{{ user.get_username }}";
+      var username2 = document.getElementById('compare-form').user.value;
+      console.log(username1);
+      console.log(username2);
+      $.ajax({
+         type: "POST",
+         url: "{% url 'netflix-compare-func' %}",
+         data: {'user2': username2},
+         headers: { "X-CSRFToken": csrftoken},
+         success: function(response) {
+            var compare_url = response.compare_url
+
+            console.log(compare_url)
+
+            var iframeElement = $('<iframe>').attr('src', compare_url).attr('class', 'iframe');
+             $('#plot').append(iframeElement);
+             $('#plot').show();
+           },
+         error: function(response){
+             console.log("Something went wrong");
+
+           }
+      })
+          return false;
+    };   
+
+    // $('#compare-button').click(function() {
+    //     compare();
+    // });
+
+</script>
+
+
 
 <div class="pt-8" style="display: flex; justify-content: center;">
    <div class="border-2 border-black p-2 w-1/3">
-      <form action="" id="compare-form" method="POST" onsubmit="return compare();">
+      <form action="" id="compare-form" method="POST" onsubmit= "event.preventDefault(); return compare();">
          {% csrf_token %}
          <label for="user">Friend's Username:</label><br>
          <textarea id="user" row="3" style="width:40%; border: solid 2px black;">
@@ -51,7 +76,6 @@ function compare(){
    </div>
 </div>
       <div id = "plot" class="plotly" style="display: none;"> 
-        <iframe class ="iframe" src="{% static compare_url %}" alt="genre"></iframe>
       </div>
 
 {% endblock content %}
