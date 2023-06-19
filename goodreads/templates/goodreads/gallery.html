@@ -22,6 +22,10 @@ BOOKS GALLERY
     {% endblock plotly1 %}
 </div>
     {% block caption1 %}
+    This graph shows some summary statistics about your library. Your library can be tabulated into fiction and
+    non-fiction and authors by gender.
+    Other graphs show the distribution of when the books were written, what the longest ones are, and the most
+    common genres you've read.
     {% endblock caption1 %}
 <br>
 <br>
@@ -35,6 +39,10 @@ BOOKS GALLERY
 
 <div class="caption-text" >
     {% block caption2 %}
+    This shows the books that are the least commonly finished in your library.
+    The percentage represents how many people marked a book as "to read" out of the total number that marked it as "finished". <br>
+    Popular books that have been published for a while like the Harry Potter series have a read rate of ~95%. <br>
+    The plot is divided into books that you have finished and those that you have not (if your export includes books you have marked as "to-read").
     {% endblock caption2 %}
 </div>
 <br>
@@ -76,8 +84,10 @@ BOOKS GALLERY
 <br>
 <div class="caption-text" >
     {% block caption5 %}
-    This plot divides the books you have read by how popular they are. The most common books people tend to read have a readership in the 100k to 1million range. You may find you have some books in your library that have had less than 1000 readers.<br>
-    The blue fill represents Fiction books, and the orange fill represents Non-Fiction.
+    This shows the number of Goodreads users who have read this book, i.e. its popularity. It is divided into logarithmic tiers. <br>
+        Most people read primarily popular books, and the 100,000-1,000,000 band is generally the most crowded. <br> The Harry Potter and Hunger Game books are the alltime most popular, with about ~800k readers.
+        It may surprise you how few other people have read some of your books.<br>
+        Pink represents Fiction, blue Non-fiction.
     {% endblock caption5 %}
 </div>
 <br>

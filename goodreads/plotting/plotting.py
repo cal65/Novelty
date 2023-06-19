@@ -721,6 +721,7 @@ def bokeh_world_plot(world_df, username):
 def return_small_nationalities(df, nationality_col="nationality_chosen"):
     small = [
         "Hong Kong",
+        "Hong Konger",
         "Fijian",
         "Bahamanian",
         "East Timorese",
