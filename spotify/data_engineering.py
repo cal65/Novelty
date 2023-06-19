@@ -131,6 +131,7 @@ def get_historical_track_info_from_id(
             "artistname": artistname,
             "podcast": False,
             "genre_chosen": "",
+            "artist_uri": None,
         }
     )
     if track_id is None:
@@ -142,7 +143,8 @@ def get_historical_track_info_from_id(
                 if searchType == "track":
                     track_info_dict = sp.track(track_id)
                     artist_id = track_info_dict["artists"][0]["id"]
-                    genres_list = sp.artist(artist_id)["genres"]
+                    a = search_artist(artist_id)
+                    genres_list = a.genres
                     track_info_series = pd.Series(
                         {
                             "uri": track_id,

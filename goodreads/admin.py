@@ -26,6 +26,7 @@ class AuthorsAdmin(admin.ModelAdmin):
         "nationality_chosen",
     )
 
+
 @admin.register(NetflixTitles)
 class NetflixTitlesAdmin(admin.ModelAdmin):
     list_display = (
@@ -61,4 +62,3 @@ class SpotifyTracksAdmin(admin.ModelAdmin):
         "podcast",
         "genre_chosen",
     )
-

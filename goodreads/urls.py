@@ -32,10 +32,12 @@ urlpatterns = [
     path("insert-netflix/", insert_netflix, name="insert-netflix"),
     path("netflix-plots/", netflix_plots_view, name="netflix-plots"),
     path("gallery-books/", gallery_books, name="gallery-books"),
-    path("gallery-music/", gallery_music, name="gallery-music"),
-    path("gallery-streaming/", gallery_streaming, name="gallery-streaming"),
+    path("music/gallery", gallery_music, name="gallery-music"),
+    path("streaming/gallery", gallery_streaming, name="gallery-streaming"),
     path("gallery-geography/", gallery_geography, name="gallery-geography"),
     path("spot-text/", spot_text, name="spot-text"),
     path("comments/", comments, name="comments"),
-    path("post-comment/", post_comment, name="post-comment")
+    path("post-comment/", post_comment, name="post-comment"),
+    path("streaming/compare/", netflix_compare_view, name="netflix-compare-view"),
+    path("streaming/compare-func/", netflix_compare_func, name="netflix-compare-func"),
 ]
