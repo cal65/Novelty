@@ -562,6 +562,10 @@ def netflix_compare_func(request):
     if fig:
         compare_url = f"Graphs/{user1}/netflix_comparison_{user1}_{user2}.html"
         fig.write_html(f"goodreads/static/{compare_url}")
+        # because netflix_compare_view does not pass in any url paths, we do it here
+        # it's still easiest to use the static files framework, and it's necessary to use the static function
+        # the request build_absolute_uri function makes it an absolute path, because in the html file
+        # we can't just use the {% static url %} pattern
         return JsonResponse({"compare_url": request.build_absolute_uri(static(compare_url)),
                              "success": True})
     else:
