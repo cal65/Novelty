@@ -872,7 +872,7 @@ def create_read_plot_heatmap(
         font=dict(color="white"),
     )
 
-    filename = f"goodreads/static/Graphs/{username}/read_heatmap_{username}.html"
+    filename = f"goodreads/static/Graphs/{username}/goodreads_read_heatmap_{username}.html"
     fig.write_html(file=filename)
     return fig
 
@@ -1007,7 +1007,7 @@ def main(username):
     create_read_plot_heatmap(df=read_df, username=username)
     fig_finish = finish_plot(df, username)
     fig_finish.write_html(
-        f"goodreads/static/Graphs/{username}/finish_plot_{username}.html"
+        f"goodreads/static/Graphs/{username}/goodreads_finish_plot_{username}.html"
     )
     genres_avg = pd.read_csv("artifacts/genres_avg.csv")
     genre_difference = format_genre_table(read_df, genres_avg=genres_avg, n=12)
@@ -1032,7 +1032,7 @@ def main(username):
         username,
         date_col="date_read",
         page_col="number_of_pages",
-        title_col="title",
+        title_col="title_simple",
         author_gender_col="gender",
         lims=[2013, 2024],
     )

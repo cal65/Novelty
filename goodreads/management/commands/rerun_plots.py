@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
-            "domain",
+            "-domain",
             type=str,
             help="Optional domain of either Goodreads, Spotify, Netflix, indicates run plots for just that domain.",
         )

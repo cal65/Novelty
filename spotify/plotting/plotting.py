@@ -1002,6 +1002,8 @@ def multiplot_overall(df):
 def write_text(filename, texts):
     if isinstance(texts, list):
         text = "\n\n".join(texts)
+    elif texts is None:
+        text = ""
     else:
         text = texts
     with open(filename, "w") as f:
