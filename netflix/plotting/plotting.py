@@ -374,6 +374,7 @@ def plot_comparison(combined_plot, name1, name2):
     fig = go.Figure()
     pal = ["#636EFA", "#AB63FA", "#EF553B"]
     xm = 0
+    combined_plot['y'] = combined_plot["genre_num"] * 25 + combined_plot["rand"] / 5
     for i, p in enumerate([name1, "both", name2]):
         combined_shows_p = combined_plot.loc[combined_plot["person"] == p]
         combined_shows_p["genre_ranked"] = combined_shows_p["genre_num"].rank(
@@ -390,7 +391,7 @@ def plot_comparison(combined_plot, name1, name2):
                 * index_max
                 + xm
                 + 10 * i,
-                y=combined_shows_p["genre_num"] * 25 + combined_shows_p["rand"] / 5,
+                y=combined_shows_p['y'],
                 text=combined_shows_p["name"],
                 textposition="bottom center",
                 mode="markers+text",
@@ -412,6 +413,8 @@ def plot_comparison(combined_plot, name1, name2):
         title=f"Comparison Plot - {name1} & {name2}",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
+        legend=dict(yanchor="top", y=0,
+                    xanchor="center", x=0.5, orientation="h")
     )
     fig.update_layout(standard_layout)
     return fig
