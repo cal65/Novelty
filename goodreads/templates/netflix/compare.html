@@ -43,7 +43,8 @@ function compare(){
             var iframeElement = $('<iframe>').attr('src', compare_url).attr('class', 'iframe');
              $('#plot').append(iframeElement);
              $('#plot').show();
-             $('#comp_text').append(comptext)
+             $('#comp_text').append(comptext);
+             $('#additional').show();
            },
          error: function(response){
              console.log("Something went wrong");
