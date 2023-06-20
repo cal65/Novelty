@@ -558,7 +558,7 @@ def netflix_compare_func(request):
     user2 = request.POST.get('user2', '')
     user2 = str(user2).strip()
     logger.info(f'netflix compare func called for {user1} and {user2}')
-    fig = nplot.compare(user1, user2)
+    fig, similarity = nplot.compare(user1, user2)
     if fig:
         compare_url = f"Graphs/{user1}/netflix_comparison_{user1}_{user2}.html"
         fig.write_html(f"goodreads/static/{compare_url}")
@@ -567,10 +567,10 @@ def netflix_compare_func(request):
         # the request build_absolute_uri function makes it an absolute path, because in the html file
         # we can't just use the {% static url %} pattern
         return JsonResponse({"compare_url": request.build_absolute_uri(static(compare_url)),
-                             "success": True})
+                             "success": True, "similarity": similarity})
     else:
         logger.info(f"{user2} does not have Netflix data")
-        return JsonResponse({"compare_url": '', "success": False})
+        return JsonResponse({"compare_url": '', "success": False, "similarity": 0})
 
 
 def good_text(request):

@@ -755,7 +755,9 @@ def write_small_nationalities(df):
         df_write = df[["author", "nationality_chosen"]].drop_duplicates()
         output = "In addition, you have read authors from small places that might not be visible on the map. This includes:"
         for i, row in df_write.iterrows():
-            output += f"<br><b>{row['nationality_chosen']}</b> author <i>{row['author']}</i>"
+            output += (
+                f"<br><b>{row['nationality_chosen']}</b> author <i>{row['author']}</i>"
+            )
         return output
 
 
@@ -872,7 +874,9 @@ def create_read_plot_heatmap(
         font=dict(color="white"),
     )
 
-    filename = f"goodreads/static/Graphs/{username}/goodreads_read_heatmap_{username}.html"
+    filename = (
+        f"goodreads/static/Graphs/{username}/goodreads_read_heatmap_{username}.html"
+    )
     fig.write_html(file=filename)
     return fig
 

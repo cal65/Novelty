@@ -6,30 +6,44 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('goodreads', '0007_netflixtitles_title_type'),
+        ("goodreads", "0007_netflixtitles_title_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='spotifytracks',
-            name='ts_updated',
+            model_name="spotifytracks",
+            name="ts_updated",
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='netflixtitles',
-            name='ts_updated',
+            model_name="netflixtitles",
+            name="ts_updated",
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.CreateModel(
-            name='Comments',
+            name="Comments",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('comments', models.CharField(max_length=10000)),
-                ('timestamp', models.DateTimeField(auto_now=True)),
-                ('username', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("comments", models.CharField(max_length=10000)),
+                ("timestamp", models.DateTimeField(auto_now=True)),
+                (
+                    "username",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

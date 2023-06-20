@@ -20,7 +20,7 @@ from spotify.plotting.utils import standard_layout
 import spotify.data_engineering as de
 import logging
 
-from goodreads.models import SpotifyStreaming, SpotifyTracks
+from goodreads.models import SpotifyStreaming, SpotifyTracks, SpotifyArtist
 
 logging.basicConfig(
     filename="logs.txt",
@@ -1023,10 +1023,17 @@ def load_data(username):
         )
     )
     df = pd.merge(user_df, tracks_df, on=["artistname", "trackname"], how="left")
+    artists_df = objects_to_df(
+        SpotifyArtist.objects.filter(uri__in=user_df["artist_uri"]).values_list(
+            "popularity", "followers_total", "image_url"
+        )
+    )
+    artists_df.rename(columns={"uri": "artist_uri"}, inplace=True)
     logger.info(
         f"Spotify data read for {username} with {len(df)} rows \n : {df.head()}"
     )
     df = preprocess(df)
+    df = pd.merge(df, artists_df, how="left", on="artist_uri")
     return df
 
 

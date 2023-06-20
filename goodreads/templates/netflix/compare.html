@@ -37,12 +37,13 @@ function compare(){
          headers: { "X-CSRFToken": csrftoken},
          success: function(response) {
             var compare_url = response.compare_url
-
             console.log(compare_url)
+            var comptext = "You and " + username2 + " have similarities in <b>" + String(response.similarity) + "%</b> of your shows."
 
             var iframeElement = $('<iframe>').attr('src', compare_url).attr('class', 'iframe');
              $('#plot').append(iframeElement);
              $('#plot').show();
+             $('#comp_text').append(comptext)
            },
          error: function(response){
              console.log("Something went wrong");
@@ -74,5 +75,11 @@ function compare(){
 </div>
       <div id = "plot" class="plotly" style="display: none;"> 
       </div>
+   <div id="comp_text" class="caption-text">
+   </div>
+      <br>
+   <div id="additional" class="caption-text" style="display: none;">
+      Intensity is a custom scale with reality TV shows and comedies on the low end, and drama and crime shows on the high end.
+   </div>
 
 {% endblock content %}

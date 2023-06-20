@@ -525,8 +525,10 @@ def compare(user1, user2):
     filter2 = combined_shows["n"] <= 1
     filter3 = combined_shows["person"] != "both"
     combined_plot = combined_shows.loc[~(filter1 & filter2 & filter3)]
+    both = (combined_shows['person'] == 'both').sum()
+    similarity = round(100 * both / ((combined_shows['person'] == user1).sum() + both), 1)
     fig = plot_comparison(combined_plot, user1, user2)
-    return fig
+    return fig, similarity
 
 
 def main(username):
