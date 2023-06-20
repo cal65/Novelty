@@ -1024,7 +1024,7 @@ def load_data(username):
     )
     df = pd.merge(user_df, tracks_df, on=["artistname", "trackname"], how="left")
     artists_df = objects_to_df(
-        SpotifyArtist.objects.filter(uri__in=user_df["artist_uri"]).values_list(
+        SpotifyArtist.objects.filter(uri__in=df["artist_uri"]).values_list(
             "popularity", "followers_total", "image_url"
         )
     )
