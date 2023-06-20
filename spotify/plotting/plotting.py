@@ -1023,12 +1023,12 @@ def load_data(username):
         )
     )
     df = pd.merge(user_df, tracks_df, on=["artistname", "trackname"], how="left")
-    artists_df = objects_to_df(
-        SpotifyArtist.objects.filter(uri__in=df["artist_uri"]).values_list(
-            "popularity", "followers_total", "image_url"
-        )
+    artists_df = objects_to_df(SpotifyArtist.objects.filter(uri__in=df["artist_uri"]))[
+        ["uri", "popularity", "followers_total", "image_url"]
+    ]
+    artists_df.rename(
+        columns={"uri": "artist_uri", "popularity": "popularity_artist"}, inplace=True
     )
-    artists_df.rename(columns={"uri": "artist_uri"}, inplace=True)
     logger.info(
         f"Spotify data read for {username} with {len(df)} rows \n : {df.head()}"
     )
