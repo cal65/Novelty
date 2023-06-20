@@ -36,16 +36,23 @@ function compare(){
          data: {'user2': username2},
          headers: { "X-CSRFToken": csrftoken},
          success: function(response) {
-            var compare_url = response.compare_url
-            console.log(compare_url)
-            var comptext = "You and " + username2 + " have similarities in <b>" + String(response.similarity) + "%</b> of your shows."
+            var compare_url = response.compare_url;
+            console.log(compare_url);
+            if (response.sucess){
+               var comptext = "You and " + username2 + " have similarities in <b>" + String(response.similarity) + "%</b> of your shows."
 
-            var iframeElement = $('<iframe>').attr('src', compare_url).attr('class', 'iframe');
-             $('#plot').append(iframeElement);
-             $('#plot').show();
-             $('#comp_text').append(comptext);
-             $('#additional').show();
-           },
+               var iframeElement = $('<iframe>').attr('src', compare_url).attr('class', 'iframe');
+                $('#plot').append(iframeElement);
+                $('#plot').show();
+                $('#comp_text').append(comptext);
+                $('#additional').show();
+           }
+           else {
+               var comptext = username2 + " is not a valid username with Netflix data."
+               $('#comp_text').append(comptext);
+            }
+         },
+            
          error: function(response){
              console.log("Something went wrong");
 
@@ -74,8 +81,10 @@ function compare(){
       </form>
    </div>
 </div>
+<br>
       <div id = "plot" class="plotly" style="display: none;"> 
       </div>
+      <br>
    <div id="comp_text" class="caption-text">
    </div>
       <br>

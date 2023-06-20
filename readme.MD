@@ -19,6 +19,6 @@ Novelty Insights is the modern anti-bias tool to return the value of your data t
 
 Books gallery: https://novelty-insights.com/gallery-books/
 
-Music gallery: https://novelty-insights.com/gallery-music/
+Music gallery: https://novelty-insights.com/music/gallery/
 
-Streaming gallery: https://novelty-insights.com/gallery-streaming/
+Streaming gallery: https://novelty-insights.com/streaming/gallery/

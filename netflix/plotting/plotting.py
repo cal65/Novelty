@@ -494,10 +494,12 @@ def numeric_genres(df, user1, user2):
 
 def compare(user1, user2):
     user1_df = load_data(user1)
-    user2_df = load_data(user2)
-    if len(user1_df) < 1 | len(user2_df) < 1:
+    try:
+        user2_df = load_data(user2)
+    except Exception:
         logger.info(f"No data for this user")
-        return
+        return None, None
+    
     logger.info(f"running comparison for {user1} and {user2}")
     def group_person(df):
         df_group = pd.pivot_table(
