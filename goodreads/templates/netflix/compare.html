@@ -38,7 +38,8 @@ function compare(){
          success: function(response) {
             var compare_url = response.compare_url;
             console.log(compare_url);
-            if (response.sucess){
+            console.log(response);
+            if (response.success){
                var comptext = "You and " + username2 + " have similarities in <b>" + String(response.similarity) + "%</b> of your shows."
 
                var iframeElement = $('<iframe>').attr('src', compare_url).attr('class', 'iframe');

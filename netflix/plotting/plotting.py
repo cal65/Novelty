@@ -499,7 +499,7 @@ def compare(user1, user2):
     except Exception:
         logger.info(f"No data for this user")
         return None, None
-    
+
     logger.info(f"running comparison for {user1} and {user2}")
     def group_person(df):
         df_group = pd.pivot_table(
