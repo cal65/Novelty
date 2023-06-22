@@ -6,7 +6,7 @@ import os
 import pandas as pd
 import logging
 import django
-from spotify.plotting.plotting import objects_to_df
+from spotify.plotting.utils import objects_to_df
 
 sys.path.append("../..")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")

@@ -11,7 +11,7 @@ from goodreads.models import (
     SpotifyTracks,
 )
 from netflix import data_munge as nd
-from spotify.plotting.plotting import objects_to_df
+from spotify.plotting.utils import objects_to_df
 from goodreads.scripts.append_to_export import append_scraping
 from spotify import data_engineering as de
 import pandas as pd

@@ -263,16 +263,11 @@ def populateExportData(df, user):
 
 
 def populateBooks(book_ids, user, wait=2, metrics=True):
-    found = 0
-    not_found = 0
+    found = Books.objects.filter(book_id__in=book_ids).count()
+    not_found = len(book_ids) - found
     now = datetime.now()
     for book_id in book_ids[:30]:
         status = convert_to_Book(book_id, wait=wait)
-        if metrics:
-            if status == "found":
-                found += 1
-            else:
-                not_found += 1
     if metrics:
         # output metrics
         write_metrics(user, time=now, found=found, not_found=not_found)

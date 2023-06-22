@@ -2,7 +2,6 @@ import datetime
 import os
 import pandas as pd
 import numpy as np
-import psycopg2
 import matplotlib
 import plotly.graph_objects as go
 import plotly.express as px
@@ -14,10 +13,11 @@ from scipy.stats import norm
 from statsmodels.stats.weightstats import ztest
 import seaborn as sns
 import plotly.graph_objs as go
+import plotly.figure_factory as ff
 from sklearn import linear_model as lm
+from goodreads.plotting.plotting import strat_count
 
-from spotify.plotting.utils import standard_layout
-import spotify.data_engineering as de
+from spotify.plotting.utils import standard_layout, objects_to_df, write_text
 import logging
 
 from goodreads.models import SpotifyStreaming, SpotifyTracks, SpotifyArtist
@@ -620,10 +620,6 @@ def format_group_granular(
     return m_pivotted
 
 
-def load_streaming(username):
-    return get_data(userdata_query(username))
-
-
 def get_max_agg(df, feature_col, minutes_col, index_col):
     """
     Get the dataframe where there is the max aggregated by column, and the value of which max for an index_col
@@ -999,20 +995,48 @@ def multiplot_overall(df):
     return fig
 
 
-def write_text(filename, texts):
-    if isinstance(texts, list):
-        text = "\n\n".join(texts)
-    elif texts is None:
-        text = ""
-    else:
-        text = texts
-    with open(filename, "w") as f:
-        f.write(text)
+def create_follower_heatmap(df, heat_col, lim=40):
+    df = strat_count(df, col=heat_col, min_break=3, opt_labels=["Obscure", "Superstar"])
+    strats = pd.unique(df["strats"])
+    fig = make_subplots(
+        rows=1,
+        cols=len(strats),
+        horizontal_spacing=0.025,
+    )
+    colorscale = "Plotly3"
+    title_col = "artistname"
+    df["minutes_played"] = round(df["msplayed"] / (60 * 60 * 100))
+    df.sort_values("minutes_played", inplace=True)
+    df["hover_text"] = df.apply(
+        lambda x: f"Followers: <b>{'{:,.0f}'.format(x['followers_total'])}</b><br>Artist: <b>{x['artistname']}</b> <br>minutes: <b>{x.minutes_played}</b>",
+        axis=1,
+    )
+    for i in range(len(strats)):
+        r_strat = df[df["strats"] == strats[i]].tail(lim)
+        heatmap = ff.create_annotated_heatmap(
+            x=[strats[i]],
+            z=[[r] for r in r_strat["msplayed"]],
+            annotation_text=[[r] for r in r_strat[title_col]],
+            text=[[r] for r in r_strat["hover_text"]],
+            opacity=(i + 1) / len(strats),
+            hoverinfo="text",
+            colorscale=colorscale,
+            ygap=1,
+        )
+        fig.add_trace(heatmap.data[0], row=1, col=i + 1)
+        annotations = heatmap.layout.annotations
+        for k in range(len(annotations)):
+            annotations[k]["xref"] = f"x{i + 1}"
+            annotations[k]["yref"] = f"y{i + 1}"
+            fig.add_annotation(annotations[k])
 
-
-def objects_to_df(objects):
-    df = pd.DataFrame.from_records(objects.values())
-    return df
+    fig.update_xaxes(
+        showline=True,
+        range=[-0.5, 0.5],
+        linecolor="rgb(36,36,36)",
+        tickfont=dict(color="#636efa"),
+    )
+    return fig
 
 
 def load_data(username):

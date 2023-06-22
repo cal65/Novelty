@@ -41,12 +41,11 @@ function compare(){
             console.log(response);
             if (response.success){
                var comptext = "You and " + username2 + " have similarities in <b>" + String(response.similarity) + "%</b> of your shows."
-
                var iframeElement = $('<iframe>').attr('src', compare_url).attr('class', 'iframe');
-                $('#plot').append(iframeElement);
-                $('#plot').show();
-                $('#comp_text').append(comptext);
-                $('#additional').show();
+               $('#plot').append(iframeElement);
+               $('#plot').show();
+               $('#comp_text').append(comptext);
+               $('#additional').show();
            }
            else {
                var comptext = username2 + " is not a valid username with Netflix data."

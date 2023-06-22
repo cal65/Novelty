@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from spotify.plotting.plotting import objects_to_df
+from spotify.plotting.utils import objects_to_df
 from goodreads.models import NetflixGenres
 from netflix.plotting import plotting as nplot
 

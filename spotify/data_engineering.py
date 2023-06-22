@@ -7,6 +7,8 @@ import logging
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
+import spotify.plotting.utils
+
 sys.path.append("../goodreads")
 
 from goodreads.models import SpotifyStreaming, SpotifyTracks, SpotifyArtist
@@ -255,7 +257,7 @@ def search_by_names(trackname: str, artistname: str, searchType: str = "track") 
     except Exception as e:
         logger.info(f"Error {e} for {trackname} and {artistname}")
         return None
-    logger.info(f"Track {trackname} and uri {uri}")
+    logger.info(f"{searchType} {trackname} and uri {uri}")
     return uri
 
 
@@ -298,7 +300,7 @@ def merge_tracks(
 
 def get_unmerged(df, track_col="trackname", artist_col="artistname"):
     df = df.drop_duplicates(subset=[track_col, artist_col])
-    track_df = splot.objects_to_df(SpotifyTracks.objects.all())
+    track_df = spotify.plotting.utils.objects_to_df(SpotifyTracks.objects.all())
     df_unmerged = identify_new(df, track_df)
     return df_unmerged
 

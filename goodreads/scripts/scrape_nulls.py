@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from goodreads.models import *
 from goodreads.scripts.append_to_export import append_scraping
-from spotify.plotting.plotting import objects_to_df
+from spotify.plotting.utils import objects_to_df
 
 
 def scrape_null(book_ids, n, wait=10):

@@ -15,8 +15,7 @@ import plotly.graph_objects as go
 import plotly.figure_factory as ff
 from plotly.subplots import make_subplots
 
-from spotify.plotting.utils import standard_layout, save_fig
-from spotify.plotting.plotting import objects_to_df, write_text
+from spotify.plotting.utils import standard_layout, save_fig, objects_to_df, write_text
 from goodreads.models import RefNationality
 
 import logging
@@ -118,10 +117,32 @@ def generate_labels(breaks):
         return [f"{breaks[0]} - {breaks[1]}"] + generate_labels(breaks[1:])
 
 
+def strat_count(df, col, min_break=3, opt_labels=None):
+    """
+    Take a dataframe and a column, and minimum digits in last break
+    Divide column into strats of powers of ten, starting from 10^min_break
+    """
+    df.sort_values(col, ascending=False, inplace=True)
+    col_max = int(df[col].max())
+    max_digits = len(str(col_max))
+    digit_range = list(range(min_break, max_digits + 1))
+    breaks = [0] + [10**d for d in digit_range]
+    # ['0 - 1,000', '1,000 - 10,000', '10,000 - 100,000', '100,000 - 1,000,000'] using fancy local-aware f:, hack
+    break_labels = generate_labels([f"{b:,}" for b in breaks])
+    if opt_labels is not None:
+        if len(opt_labels) != 2:
+            raise Exception("labels must be of length 2")
+        else:
+            break_labels[0] = f"{break_labels[0]} <br> {opt_labels[0]}"
+            break_labels[-1] = f"{break_labels[-1]} <br> {opt_labels[1]}"
+    df["strats"] = pd.cut(
+        df[col], bins=breaks, labels=break_labels, include_lowest=True
+    )
+    return df
+
 def read_plot_munge(
     df,
     read_col="read",
-    title_col="title_simple",
     min_break=3,
     date_col="date_read",
     start_year=2010,
@@ -131,23 +152,7 @@ def read_plot_munge(
         return df
     if start_year is not None:
         df = df[df[date_col].dt.year >= start_year]
-    max_read = int(df[read_col].max())
-    max_digits = len(str(max_read))
-    digit_range = list(range(min_break, max_digits + 1))
-    breaks = [0] + [10**d for d in digit_range]
-    df["title_length"] = df[title_col].apply(lambda x: len(x))
-    # order title text by popularity
-    df.sort_values(by="read", inplace=True)
-    df[title_col] = df[title_col].astype("category")
-    # ['0 - 1,000', '1,000 - 10,000', '10,000 - 100,000', '100,000 - 1,000,000'] using fancy local-aware f:, hack
-    break_labels = generate_labels([f"{b:,}" for b in breaks])
-    # adding obscure and bestsellers commentary
-    break_labels[0] = f"{break_labels[0]} <br> Obscure"
-    if max_digits >= 6:
-        break_labels[-1] = f"{break_labels[-1]} <br> Bestsellers"
-    df["strats"] = pd.cut(
-        df[read_col], bins=breaks, labels=break_labels, include_lowest=True
-    )
+    df = strat_count(df, col="read", min_breaks=min_break, opt_labels=["Obscure", 'Bestsellers'])
     # logging
     strats_count = df["strats"].value_counts()
     logger.info(f"debugging read plot munge: {strats_count}")
@@ -764,7 +769,7 @@ def write_small_nationalities(df):
 def create_read_plot_heatmap(
     df,
     username,
-    read_col="read",
+    heat_col="read",
     title_col="title_simple",
     min_break=3,
     date_col="date_read",
@@ -774,8 +779,7 @@ def create_read_plot_heatmap(
 ):
     df = read_plot_munge(
         df,
-        read_col=read_col,
-        title_col=title_col,
+        read_col=heat_col,
         min_break=min_break,
         date_col=date_col,
         start_year=start_year,
@@ -797,7 +801,7 @@ def create_read_plot_heatmap(
         heatmap = ff.create_annotated_heatmap(
             x=[strats[i]],
             z=[[r] for r in r_strat["narrative_int"]],
-            annotation_text=[[r] for r in r_strat["title_simple"]],
+            annotation_text=[[r] for r in r_strat[title_col]],
             text=[[r] for r in r_strat["hover_text"]],
             opacity=(i + 1) / len(strats),
             hoverinfo="text",

@@ -15,7 +15,7 @@ from . import scrape_goodreads
 import gender_guesser.detector as gender_detector
 from .. import google_answer
 from . import wikipedia
-from spotify.plotting.plotting import objects_to_df
+from spotify.plotting.utils import objects_to_df
 
 logging.basicConfig(
     filename="logs.txt",

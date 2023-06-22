@@ -9,8 +9,7 @@ import logging
 
 from goodreads.models import NetflixGenres, NetflixUsers, NetflixActors
 from goodreads.plotting.plotting import split_title
-from spotify.plotting.plotting import objects_to_df
-from spotify.plotting.utils import standard_layout, save_fig
+from spotify.plotting.utils import standard_layout, save_fig, objects_to_df
 import netflix.data_munge as nd
 
 logging.basicConfig(

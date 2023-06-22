@@ -1,5 +1,6 @@
 import os
 
+import pandas as pd
 
 standard_layout = dict(
     title_x=0.5,
@@ -16,3 +17,19 @@ def save_fig(fig, file_path):
     if not os.path.exists(directory):
         os.makedirs(directory)
     fig.write_html(file=file_path)
+
+
+def objects_to_df(objects):
+    df = pd.DataFrame.from_records(objects.values())
+    return df
+
+
+def write_text(filename, texts):
+    if isinstance(texts, list):
+        text = "\n\n".join(texts)
+    elif texts is None:
+        text = ""
+    else:
+        text = texts
+    with open(filename, "w") as f:
+        f.write(text)
