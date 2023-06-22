@@ -117,12 +117,12 @@ function toggle(id){
 </div>
 <br> <br>
 <div class = "center">
-   Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Upload</span>. This may take some time for your browser to process, based on the amount of books in your upload. The script will scrape data fields from Goodreads that do not come from your export. After the scraping is completed, click <span class="text-blue-800">Analyze</span>. If your data has been properly uploaded, this will work for several seconds and then redirect you to your <a href="{% url 'plots' %}">Plots</a> page, which should display graphs like in the gallery.
+   Click <span style="font-weight:bold"> Choose File</span>, select a file, then click  <span class="text-blue-800">Upload</span>. This may take some time for your browser to process, based on the amount of books in your upload. The script will look up author information using public sources - this should take no longer than a minute. Then, it will scrape data fields from Goodreads that do not come from your export, and display an estimate time. After the scraping is completed, click <span class="text-blue-800">Analyze</span>. If your data has been properly uploaded, this will work for several seconds and then redirect you to your <a href="{% url 'plots' %}">Plots</a> page, which should display graphs like in the gallery.
 </div>
 {% block datanotes %}
 <br>
 <div class = "center">
-    <p>Goodreads exports may contain duplicates. In addition to export, some data is scraped, including author genders and nationalities. If you believe you've seen inaccuracies, please notify me.</p> </div>
+    <p>Goodreads exports may contain duplicates. In addition to export, some data is scraped, including author genders and nationalities. If you do not want to wait for the scrape time, you can click Analyze early, but some of your books will not be properly included. If you believe you've seen inaccuracies, please notify me.</p> </div>
 <br><br>
 {% endblock datanotes %}
 
