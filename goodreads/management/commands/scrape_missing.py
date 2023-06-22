@@ -78,7 +78,7 @@ class Command(BaseCommand):
             books_null = Books.objects.filter(added_by__isnull=True)
             authors_null = Authors.objects.filter(nationality_chosen__isnull=True)
             self.stdout.write(f"scraping {len(books_null)} books")
-            for b in books_null:
+            for b in books_null[::-1]:
                 b = append_scraping(b.book_id, wait=3)
                 b.save()
         elif options["domain"] == "Spotify":

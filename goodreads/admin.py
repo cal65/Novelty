@@ -74,6 +74,7 @@ class SpotifyArtistAdmin(admin.ModelAdmin):
     search_fields = ("uri__startswith",)
     list_display = (
         "uri",
+        "artist_name",
         "genres",
         "popularity",
         "followers_total",
