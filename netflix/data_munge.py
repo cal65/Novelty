@@ -229,7 +229,7 @@ def get_details(netflix_id):
         print(f"No genre response found for {netflix_id}")
         return
     try:
-        results["title"] = results["title"].replace("&#39;", "")
+        results["title"] = results["title"].replace("&#39;", "'")
     except Exception as e:
         logger.info(
             f"Exception {e} encountered for id {netflix_id} and {results.keys()}"

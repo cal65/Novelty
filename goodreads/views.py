@@ -252,6 +252,7 @@ def process_export_upload(df, date_col="Date_Read"):
         df["year_published"]
     )
     df = df[pd.notnull(df["book_id"])]
+    df["author"] = df["author"].str.strip()
     return df
 
 

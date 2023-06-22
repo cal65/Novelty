@@ -122,7 +122,7 @@ def strat_count(df, col, min_break=3, opt_labels=None):
     Take a dataframe and a column, and minimum digits in last break
     Divide column into strats of powers of ten, starting from 10^min_break
     """
-    df.sort_values(col, ascending=False, inplace=True)
+    df.sort_values(col, ascending=True, inplace=True)
     col_max = int(df[col].max())
     max_digits = len(str(col_max))
     digit_range = list(range(min_break, max_digits + 1))
@@ -152,7 +152,7 @@ def read_plot_munge(
         return df
     if start_year is not None:
         df = df[df[date_col].dt.year >= start_year]
-    df = strat_count(df, col="read", min_breaks=min_break, opt_labels=["Obscure", 'Bestsellers'])
+    df = strat_count(df, col="read", min_break=min_break, opt_labels=["Obscure", 'Bestsellers'])
     # logging
     strats_count = df["strats"].value_counts()
     logger.info(f"debugging read plot munge: {strats_count}")
