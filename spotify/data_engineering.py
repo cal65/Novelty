@@ -317,7 +317,7 @@ def update_tracks(tracknames, artistnames, msplayed):
     for track, artist, ms in zip(tracknames, artistnames, msplayed):
         ms = int(ms)
         # crude test for podcast show vs track
-        if ms > ms_per_minute * 10:
+        if ms > ms_per_minute * 10 | "episode" in track.lower():
             searchType = "show"
         else:
             searchType = "track"
@@ -327,7 +327,7 @@ def update_tracks(tracknames, artistnames, msplayed):
             uri, track, artist, searchType=searchType
         )
         convert_to_SpotifyTrack(track_info_series)
-        time.sleep(1)
+        time.sleep(0.1)
     logger.info("Spotify uploads completed")
 
     return
