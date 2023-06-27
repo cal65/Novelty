@@ -317,7 +317,7 @@ def update_tracks(tracknames, artistnames, msplayed):
     for track, artist, ms in zip(tracknames, artistnames, msplayed):
         ms = int(ms)
         # crude test for podcast show vs track
-        if ms > ms_per_minute * 10 | "episode" in track.lower():
+        if (ms > ms_per_minute * 10) | ("episode" in track.lower()):
             searchType = "show"
         else:
             searchType = "track"
