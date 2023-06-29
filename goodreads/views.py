@@ -224,6 +224,7 @@ def spot_plots_view(request):
     release_year_url = "Graphs/{}/spotify_year_plot_{}.html".format(username, username)
     genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
     top_songs_url = "Graphs/{}/spotify_top_songs_{}.html".format(username, username)
+    follower_heat_url = "Graphs/{}/spotify_follower_heat_{}.html".format(username, username)
 
     return render(
         request,
@@ -236,6 +237,7 @@ def spot_plots_view(request):
             "release_year_url": release_year_url,
             "genre_url": genre_url,
             "top_songs_url": top_songs_url,
+            "follower_heat_url": follower_heat_url,
         },
     )
 

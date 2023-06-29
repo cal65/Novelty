@@ -1004,10 +1004,10 @@ def create_follower_heatmap(df, heat_col, title_col = "artistname", lim=40):
         horizontal_spacing=0.025,
     )
     colorscale = "Plotly3"
-    df["minutes_played"] = round(df["msplayed"] / (60 * 100))
-    df.sort_values("minutes_played", ascending=False, inplace=True)
+    df["minutes_played"] = (df["msplayed"] / (60 * 100)).astype(int)
+    df.sort_values("minutes_played", ascending=True, inplace=True)
     df["hover_text"] = df.apply(
-        lambda x: f"Followers: <b>{'{:,.0f}'.format(x['followers_total'])}</b><br>Artist: <b>{x['artistname']}</b> <br>minutes: <b>{x.minutes_played}</b>",
+        lambda x: f"Followers: <b>{'{:,.0f}'.format(x['followers_total'])}</b><br>Artist: <b>{x['artistname']}</b> <br>Minutes: <b>{x.minutes_played}</b>",
         axis=1,
     )
     for i in range(len(strats)):
@@ -1020,6 +1020,7 @@ def create_follower_heatmap(df, heat_col, title_col = "artistname", lim=40):
             opacity=(i + 1) / len(strats),
             hoverinfo="text",
             colorscale=colorscale,
+            showscale=(i==0),
             ygap=1,
         )
         fig.add_trace(heatmap.data[0], row=1, col=i + 1)
@@ -1028,13 +1029,19 @@ def create_follower_heatmap(df, heat_col, title_col = "artistname", lim=40):
             annotations[k]["xref"] = f"x{i + 1}"
             annotations[k]["yref"] = f"y{i + 1}"
             fig.add_annotation(annotations[k])
-
+        if i == 0:
+            fig.update_layout(yaxis=dict(visible=False, categoryorder="array"))
+        else:
+            fig.layout[f"yaxis{i + 1}"] = dict(visible=False, categoryorder="array")
+    fig.update_layout(standard_layout)
     fig.update_xaxes(
         showline=True,
         range=[-0.5, 0.5],
         linecolor="rgb(36,36,36)",
         tickfont=dict(color="#636efa"),
     )
+    fig.update_layout(legend_title="Minutes Played")
+
     return fig
 
 

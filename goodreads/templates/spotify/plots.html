@@ -110,7 +110,16 @@
     </div>
 </section>
     <br>
-
+<section id ="ArtistsHeatmap">
+     <div style="text-align: center; " class="image-title">Artists Popularity - {{ user.get_username }}</div>
+    <div class ="plotly">
+        <iframe src="{% static follower_heat_url %}"  class="iframe" alt="Artists-followers" /> </iframe>
+    </div>
+    <div class="caption-text">
+    This chart summarizes the popularity of artists based on their number of followers. For each band of follower count, we have displayed the top 40 artists that you listen to based on total play time. The color scale also refers to the number of minutes you have listened to the artist.
+    </div>
+</section>
+<br>
  <section id = "Daily">   
     <div style="text-align: center;" class="image-title">Daily Usage - {{ user.get_username }} </div>
     <div class ="plotly">
