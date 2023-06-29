@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import ExportData, Authors, NetflixTitles, NetflixGenres, SpotifyTracks, SpotifyArtist
+from .models import (
+    ExportData,
+    Books,
+    Authors,
+    NetflixTitles,
+    NetflixGenres,
+    SpotifyTracks,
+    SpotifyArtist,
+)
 
 
 @admin.register(ExportData)
@@ -13,6 +21,25 @@ class ExportDataAdmin(admin.ModelAdmin):
         "average_rating",
         "original_publication_year",
         "username",
+    )
+
+
+@admin.register(Books)
+class BooksAdmin(admin.ModelAdmin):
+    search_fields = ("book_id__startswith",)
+    list_display = (
+        "book_id",
+        "shelf1",
+        "shelf2",
+        "shelf3",
+        "shelf4",
+        "shelf5",
+        "shelf6",
+        "shelf7",
+        "added_by",
+        "to_reads",
+        "narrative",
+        "ts_updated",
     )
 
 
@@ -80,4 +107,3 @@ class SpotifyArtistAdmin(admin.ModelAdmin):
         "followers_total",
         "image_url",
     )
-

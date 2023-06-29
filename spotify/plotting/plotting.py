@@ -995,7 +995,7 @@ def multiplot_overall(df):
     return fig
 
 
-def create_follower_heatmap(df, heat_col, lim=40):
+def create_follower_heatmap(df, heat_col, title_col = "artistname", lim=40):
     df = strat_count(df, col=heat_col, min_break=3, opt_labels=["Obscure", "Superstar"])
     strats = pd.unique(df["strats"])
     fig = make_subplots(
@@ -1004,9 +1004,8 @@ def create_follower_heatmap(df, heat_col, lim=40):
         horizontal_spacing=0.025,
     )
     colorscale = "Plotly3"
-    title_col = "artistname"
-    df["minutes_played"] = round(df["msplayed"] / (60 * 60 * 100))
-    df.sort_values("minutes_played", inplace=True)
+    df["minutes_played"] = round(df["msplayed"] / (60 * 100))
+    df.sort_values("minutes_played", ascending=False, inplace=True)
     df["hover_text"] = df.apply(
         lambda x: f"Followers: <b>{'{:,.0f}'.format(x['followers_total'])}</b><br>Artist: <b>{x['artistname']}</b> <br>minutes: <b>{x.minutes_played}</b>",
         axis=1,
@@ -1114,3 +1113,11 @@ def main(username):
         filename=f"goodreads/static/Graphs/{username}/spotify_weekly_{username}.txt",
         texts=[write_week_text(format_weekly(df, date_col="date"))],
     )
+
+    top_artists = pd.pivot_table(df, index=['artistname', 'artist_uri', 'followers_total', 'image_url'],
+                                 values='msplayed', aggfunc=sum).reset_index()
+    fig_heat = create_follower_heatmap(top_artists, heat_col='followers_total')
+    fig_heat.write_html(
+        f"goodreads/static/Graphs/{username}/spotify_follower_heat_{username}.html"
+    )
+
