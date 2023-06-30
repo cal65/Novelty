@@ -81,6 +81,11 @@
                 </li>
                 {% block compare %}
                 {% endblock compare %}
+                 <li class="nav-item active pr-2">
+                  {% block view-data %}
+                  <a class="nav-link" href="{% url 'books-view-data' %}">View Data</a>
+                  {% endblock view-data %}
+                </li>
               </ul>
             </div>
           </nav>
