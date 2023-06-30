@@ -42,4 +42,5 @@ urlpatterns = [
     path("streaming/compare-func/", netflix_compare_func, name="netflix-compare-func"),
     path("good-text/", good_text, name="good-text"),
     path("books/view-data", view_data_books, name='books-view-data'),
+    path("music/view-data", view_data_music, name='music-view-data'),
 ]

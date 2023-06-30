@@ -137,7 +137,9 @@ def popularity_spectrum_view(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def plots_view(request):
     username = request.user
-    finish_plot_url = "Graphs/{}/goodreads_finish_plot_{}.html".format(username, username)
+    finish_plot_url = "Graphs/{}/goodreads_finish_plot_{}.html".format(
+        username, username
+    )
     nationality_map_url = "Graphs/{}/author_map_{}.html".format(username, username)
     popularity_spectrum_url = "Graphs/{}/goodreads_read_heatmap_{}.html".format(
         username, username
@@ -224,7 +226,9 @@ def spot_plots_view(request):
     release_year_url = "Graphs/{}/spotify_year_plot_{}.html".format(username, username)
     genre_url = "Graphs/{}/spotify_genre_plot_{}.html".format(username, username)
     top_songs_url = "Graphs/{}/spotify_top_songs_{}.html".format(username, username)
-    follower_heat_url = "Graphs/{}/spotify_follower_heat_{}.html".format(username, username)
+    follower_heat_url = "Graphs/{}/spotify_follower_heat_{}.html".format(
+        username, username
+    )
 
     return render(
         request,
@@ -548,14 +552,13 @@ def netflix_compare_view(request):
 
 
 def netflix_compare_func(request):
-    """
-
-    """
+    """ """
     from django.templatetags.static import static
+
     user1 = str(request.user)
-    user2 = request.POST.get('user2', '')
+    user2 = request.POST.get("user2", "")
     user2 = str(user2).strip()
-    logger.info(f'netflix compare func called for {user1} and {user2}')
+    logger.info(f"netflix compare func called for {user1} and {user2}")
     fig, similarity = nplot.compare(user1, user2)
     if fig:
         compare_url = f"Graphs/{user1}/netflix_comparison_{user1}_{user2}.html"
@@ -564,16 +567,23 @@ def netflix_compare_func(request):
         # it's still easiest to use the static files framework, and it's necessary to use the static function
         # the request build_absolute_uri function makes it an absolute path, because in the html file
         # we can't just use the {% static url %} pattern
-        return JsonResponse({"compare_url": request.build_absolute_uri(static(compare_url)),
-                             "success": True, "similarity": similarity})
+        return JsonResponse(
+            {
+                "compare_url": request.build_absolute_uri(static(compare_url)),
+                "success": True,
+                "similarity": similarity,
+            }
+        )
     else:
         logger.info(f"{user2} does not have Netflix data")
-        return JsonResponse({"compare_url": '', "success": False, "similarity": 0})
+        return JsonResponse({"compare_url": "", "success": False, "similarity": 0})
 
 
 def good_text(request):
     username = request.user
-    small_text_url = f"goodreads/static/Graphs/{username}/goodreads_small_{username}.txt"
+    small_text_url = (
+        f"goodreads/static/Graphs/{username}/goodreads_small_{username}.txt"
+    )
     with open(small_text_url) as f:
         lines = f.readlines()
     f.close()
@@ -586,11 +596,58 @@ def view_data_books(request):
     username = request.user
     user_df = gplot.load_data(username)
     df = gplot.run_all(user_df)
-    df.drop(columns = ['id', 'ts_updated', 'title', 'book_id'], inplace=True)
-    df['read_percentage'] = round(df['read_percentage'] *100, 1)
-    html_cols = ['title_simple', 'author', 'exclusive_shelf', 'date_read', 'shelf1', 'shelf2', 'shelf3',
-            'shelf4', 'shelf5', 'shelf6', 'narrative', 'nationality_chosen',
-            'added_by', 'to_reads', 'read', 'read_percentage']
-    reading_table = df.to_html(index=False, columns=html_cols, classes = 'my_class" id = "rTable')
-    return render(request, "goodreads/books_view_data.html", {'reading_table': reading_table})
+    df.drop(columns=["id", "ts_updated", "title", "book_id"], inplace=True)
+    df["read_percentage"] = round(df["read_percentage"] * 100, 1)
+    html_cols = [
+        "title_simple",
+        "author",
+        "exclusive_shelf",
+        "date_read",
+        "shelf1",
+        "shelf2",
+        "shelf3",
+        "shelf4",
+        "shelf5",
+        "shelf6",
+        "narrative",
+        "nationality_chosen",
+        "added_by",
+        "to_reads",
+        "read",
+        "read_percentage",
+    ]
+    reading_table = df.to_html(
+        index=False, columns=html_cols, classes='my_class" id = "rTable'
+    )
+    return render(
+        request, "goodreads/books_view_data.html", {"reading_table": reading_table}
+    )
 
+
+def view_data_music(request):
+    username = request.user
+    df = splot.load_data(username)
+    df['minutes'] = df['minutes'].round(2)
+    df['duration'] = df['duration'].round(2)
+    html_cols = [
+        "endtime",
+        "artistname",
+        "trackname",
+        "popularity",
+        "release_date",
+        "genres",
+        "album",
+        "explicit",
+        "podcast",
+        "genre_chosen",
+        "date",
+        "minutes",
+        "duration",
+        "played_ratio",
+    ]
+    music_table = df.to_html(
+        index=False, columns=html_cols, classes='my_class" id = "rTable'
+    )
+    return render(
+        request, "spotify/view_data.html", {"music_table": music_table}
+    )
