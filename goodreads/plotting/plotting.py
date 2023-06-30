@@ -16,7 +16,7 @@ import plotly.figure_factory as ff
 from plotly.subplots import make_subplots
 
 from spotify.plotting.utils import standard_layout, save_fig, objects_to_df, write_text
-from goodreads.models import RefNationality
+from goodreads.models import RefNationality, Books, Authors, ExportData
 
 import logging
 
@@ -67,6 +67,17 @@ def userdata_query(username):
     where e.username = '{username}'
     """
     return query
+
+def load_data(username):
+    export_df = objects_to_df(ExportData.objects.filter(username=username))
+    books_df = objects_to_df(Books.objects.filter(book_id__in=export_df['book_id']))
+    authors_df = objects_to_df(Authors.objects.filter(author_name__in=export_df['author']))
+    authors_df.rename(columns={'author_name': 'author'}, inplace=True)
+    authors_df.drop(columns='ts_updated', inplace=True)
+    books_df.drop(columns='ts_updated', inplace=True)
+    df = pd.merge(export_df, books_df, how='left', on='book_id')
+    df = pd.merge(df, authors_df, how='left', on ='author')
+    return df
 
 
 def preprocess(df):

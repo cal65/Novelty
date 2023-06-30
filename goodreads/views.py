@@ -580,3 +580,16 @@ def good_text(request):
     small_nations = "".join(lines)
 
     return JsonResponse({"small_nations": small_nations})
+
+
+def view_data_books(request):
+    username = request.user
+    user_df = gplot.load_data(username)
+    df = gplot.run_all(user_df)
+    df.drop(columns = ['id', 'ts_updated', 'title', 'book_id'], inplace=True)
+    html_cols = ['title_simple', 'author', 'exclusive_shelf', 'date_read', 'shelf1', 'shelf2', 'shelf3',
+            'shelf4', 'shelf5', 'shelf6', 'narrative', 'nationality_chosen',
+            'added_by', 'to_reads', 'read', 'read_percentage']
+    reading_table = df.to_html(index=False, columns=html_cols, classes = 'my_class" id = "rTable')
+    return render(request, "goodreads/books_view_data.html", {'reading_table': reading_table})
+
