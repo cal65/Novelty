@@ -592,6 +592,7 @@ def good_text(request):
     return JsonResponse({"small_nations": small_nations})
 
 
+@login_required(redirect_field_name="next", login_url="user-login")
 def view_data_books(request):
     username = request.user
     user_df = gplot.load_data(username)
@@ -624,6 +625,7 @@ def view_data_books(request):
     )
 
 
+@login_required(redirect_field_name="next", login_url="user-login")
 def view_data_music(request):
     username = request.user
     df = splot.load_data(username)

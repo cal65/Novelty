@@ -1,0 +1,53 @@
+{% extends "goodreads/basefile.html" %}
+
+{% block css-additional %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css"/>
+{% endblock css-additional %}
+{% block content %}
+
+
+
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script>
+$(document).ready( function () {
+
+    var dataTable = $('#rTable').DataTable(
+    	{
+    		"pageLength": 15,
+    		initComplete: function () {
+	        this.api()
+	            .columns()
+	            .every(function () {
+	                var column = this;
+	                var title = column.footer().textContent;
+	 
+	                // Create input element and add event listener
+	                $('<input type="text" placeholder="Search ' + title + '" />')
+	                    .appendTo($(column.footer()).empty())
+	                    .on('keyup change clear', function () {
+	                        if (column.search() !== this.value) {
+	                            column.search(this.value).draw();
+	                        }
+	                    });
+	            });
+	    	},
+	    		dom: 'lBfrtip',
+	        	buttons: ['copy', 'csv', 'excel']
+	    	});
+	    } );
+</script>
+<br>
+<br>
+{% block dt %}
+<div class="plotly" style="font-size: 0.6rem; ">
+
+		{{ reading_table|safe }}   <!-- the rTable tag is passed in via pandas .to_html -->
+</div>
+<br>
+{% endblock dt %}
+<br>
+
+{% endblock content %}
