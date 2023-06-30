@@ -627,8 +627,8 @@ def view_data_books(request):
 def view_data_music(request):
     username = request.user
     df = splot.load_data(username)
-    df['minutes'] = df['minutes'].round(2)
-    df['duration'] = df['duration'].round(2)
+    df["minutes"] = df["minutes"].round(2)
+    df["duration"] = df["duration"].round(2)
     html_cols = [
         "endtime",
         "artistname",
@@ -648,6 +648,4 @@ def view_data_music(request):
     music_table = df.to_html(
         index=False, columns=html_cols, classes='my_class" id = "rTable'
     )
-    return render(
-        request, "spotify/view_data.html", {"music_table": music_table}
-    )
+    return render(request, "spotify/view_data.html", {"music_table": music_table})

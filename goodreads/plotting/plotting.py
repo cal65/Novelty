@@ -68,15 +68,18 @@ def userdata_query(username):
     """
     return query
 
+
 def load_data(username):
     export_df = objects_to_df(ExportData.objects.filter(username=username))
-    books_df = objects_to_df(Books.objects.filter(book_id__in=export_df['book_id']))
-    authors_df = objects_to_df(Authors.objects.filter(author_name__in=export_df['author']))
-    authors_df.rename(columns={'author_name': 'author'}, inplace=True)
-    authors_df.drop(columns='ts_updated', inplace=True)
-    books_df.drop(columns='ts_updated', inplace=True)
-    df = pd.merge(export_df, books_df, how='left', on='book_id')
-    df = pd.merge(df, authors_df, how='left', on ='author')
+    books_df = objects_to_df(Books.objects.filter(book_id__in=export_df["book_id"]))
+    authors_df = objects_to_df(
+        Authors.objects.filter(author_name__in=export_df["author"])
+    )
+    authors_df.rename(columns={"author_name": "author"}, inplace=True)
+    authors_df.drop(columns="ts_updated", inplace=True)
+    books_df.drop(columns="ts_updated", inplace=True)
+    df = pd.merge(export_df, books_df, how="left", on="book_id")
+    df = pd.merge(df, authors_df, how="left", on="author")
     return df
 
 
@@ -151,6 +154,7 @@ def strat_count(df, col, min_break=3, opt_labels=None):
     )
     return df
 
+
 def read_plot_munge(
     df,
     read_col="read",
@@ -163,7 +167,9 @@ def read_plot_munge(
         return df
     if start_year is not None:
         df = df[df[date_col].dt.year >= start_year]
-    df = strat_count(df, col="read", min_break=min_break, opt_labels=["Obscure", 'Bestsellers'])
+    df = strat_count(
+        df, col="read", min_break=min_break, opt_labels=["Obscure", "Bestsellers"]
+    )
     # logging
     strats_count = df["strats"].value_counts()
     logger.info(f"debugging read plot munge: {strats_count}")
