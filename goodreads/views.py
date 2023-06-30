@@ -587,6 +587,7 @@ def view_data_books(request):
     user_df = gplot.load_data(username)
     df = gplot.run_all(user_df)
     df.drop(columns = ['id', 'ts_updated', 'title', 'book_id'], inplace=True)
+    df['read_percentage'] = round(df['read_percentage'] *100, 1)
     html_cols = ['title_simple', 'author', 'exclusive_shelf', 'date_read', 'shelf1', 'shelf2', 'shelf3',
             'shelf4', 'shelf5', 'shelf6', 'narrative', 'nationality_chosen',
             'added_by', 'to_reads', 'read', 'read_percentage']
