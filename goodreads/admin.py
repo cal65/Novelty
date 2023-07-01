@@ -64,11 +64,13 @@ class NetflixTitlesAdmin(admin.ModelAdmin):
         "director",
         "release_year",
         "title_type",
+        "ts_updated",
     )
 
 
 @admin.register(NetflixGenres)
 class NetflixGenresAdmin(admin.ModelAdmin):
+    search_fields = ("netflix_id__startswith",)
     list_display = (
         "netflix_id",
         "genres",

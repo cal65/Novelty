@@ -62,6 +62,7 @@
     font-weight: bold;
     font-family: courier new;
     color: black;
+    border-color: darkgreen;
 }
 
 .bg-button-red {
@@ -69,6 +70,7 @@
     font-weight: bold;
     font-family: courier new;
     color: black;
+    border-color: darkred;
 }
 
 .upload-text {
