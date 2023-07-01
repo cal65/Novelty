@@ -612,8 +612,6 @@ def view_data_books(request):
         "shelf6",
         "narrative",
         "nationality_chosen",
-        "added_by",
-        "to_reads",
         "read",
         "read_percentage",
     ]
@@ -631,8 +629,9 @@ def view_data_music(request):
     df = splot.load_data(username)
     df['minutes'] = df['minutes'].round(2)
     df['duration'] = df['duration'].round(2)
+    df['played_ratio'] = round(df['played_ratio']*100, 1)
     html_cols = [
-        "endtime",
+        "date",
         "artistname",
         "trackname",
         "popularity",
@@ -642,7 +641,6 @@ def view_data_music(request):
         "explicit",
         "podcast",
         "genre_chosen",
-        "date",
         "minutes",
         "duration",
         "played_ratio",
@@ -652,4 +650,24 @@ def view_data_music(request):
     )
     return render(
         request, "spotify/view_data.html", {"music_table": music_table}
+    )
+
+
+@login_required(redirect_field_name="next", login_url="user-login")
+def view_data_streaming(request):
+    username = request.user
+    df = nplot.load_data(username)
+    html_cols = [
+        "date",
+        "title",
+        "title_type",
+        "director",
+        "genres",
+        "cast",
+    ]
+    streaming_table = df.to_html(
+        index=False, columns=html_cols, classes='my_class" id = "rTable'
+    )
+    return render(
+        request, "netflix/view_data.html", {"streaming_table": streaming_table}
     )

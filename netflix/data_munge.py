@@ -469,7 +469,7 @@ def lookup_and_insert(title):
         series_results = get_details(deleted_id)
     # add line if string difference is too far elif series_result['title']
 
-    if series_results is None:
+    if (series_results is None) | ('netflix_id' not in series_results.keys()):
         logger.info(f"No active or deleted Netflix info found for {title}")
         return
 

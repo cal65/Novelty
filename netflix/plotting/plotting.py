@@ -35,6 +35,18 @@ def load_data(username):
         logger.info(f"No data found for user {username}")
         raise Exception(f"No data found for user {username}")
     df = nd.pipeline_steps(df)
+    nids = df["netflix_id"][pd.notnull(df["netflix_id"])].unique().astype(int)
+    genres_df = pd.DataFrame.from_records(
+        NetflixGenres.objects.filter(netflix_id__in=nids).values()
+    )
+    genres_df["genres"] = genres_df["genres"].fillna("")
+    logger.info("Simplifying genres")
+    genres_df["genre_chosen"] = genres_df["genres"].apply(simplify_genres)
+    df = pd.merge(df, genres_df, on='netflix_id', how='left')
+    actors_df = pd.DataFrame.from_records(
+        NetflixActors.objects.filter(netflix_id__in=nids).values()
+    )
+    df = pd.merge(df, actors_df, on='netflix_id', how='left')
     return df
 
 
@@ -537,40 +549,27 @@ def main(username):
     df has been through pipeline steps already
     """
     df = load_data(username)
-    nids = df["netflix_id"][pd.notnull(df["netflix_id"])].unique().astype(int)
-    genres_df = pd.DataFrame.from_records(
-        NetflixGenres.objects.filter(netflix_id__in=nids).values()
-    )
-    genres_df["genres"] = genres_df["genres"].fillna("")
-    logger.info("Simplifying genres")
-    genres_df["genre_chosen"] = genres_df["genres"].apply(simplify_genres)
-    df_merged = pd.merge(df, genres_df, on="netflix_id", how="left")
-    fig_plotline = plot_timeline(df_merged, username)
+    fig_plotline = plot_timeline(df, username)
     save_fig(
         fig_plotline,
         f"goodreads/static/Graphs/{username}/netflix_timeline_{username}.html",
     )
-    fig_genres_s = plot_genres(df_merged, username, "series")
+    fig_genres_s = plot_genres(df, username, "series")
     save_fig(
         fig_genres_s,
         f"goodreads/static/Graphs/{username}/netflix_genres_{username}_series.html",
     )
-    fig_genres_m = plot_genres(df_merged, username, "movie")
+    fig_genres_m = plot_genres(df, username, "movie")
     save_fig(
         fig_genres_m,
         f"goodreads/static/Graphs/{username}/netflix_genres_{username}_movie.html",
     )
-    fig_hist = plot_hist(df_merged, username)
+    fig_hist = plot_hist(df, username)
     save_fig(
         fig_hist,
         f"goodreads/static/Graphs/{username}/netflix_histogram_{username}.html",
     )
-    actors_df = pd.DataFrame.from_records(
-        NetflixActors.objects.filter(netflix_id__in=nids).values()
-    )
-    df_network = pd.merge(
-        df_merged, actors_df, on="netflix_id", how="left"
-    ).drop_duplicates(subset="name")
+    df_network = df.drop_duplicates(subset="name")
     fig_network = plot_network(df_network, username)
     save_fig(
         fig_network,

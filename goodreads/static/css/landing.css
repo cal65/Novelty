@@ -57,6 +57,20 @@
     color: white;
 }
 
+.bg-button-green {
+    background-color: #00CC96;
+    font-weight: bold;
+    font-family: courier new;
+    color: black;
+}
+
+.bg-button-red {
+    background-color: #FFCCCB;
+    font-weight: bold;
+    font-family: courier new;
+    color: black;
+}
+
 .upload-text {
     font-family: courier new;
     height: 50px; 

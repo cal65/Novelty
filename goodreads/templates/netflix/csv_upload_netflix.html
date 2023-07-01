@@ -71,14 +71,14 @@ var estimate;
 
 
 </script>
-<div style="text-align: center;" class="font-bold pt-4 text-3xl">NETFLIX ANALYSIS</div>
+<div style="text-align: center;" class="headline">NETFLIX ANALYSIS</div>
 
 <div class="pt-8" style="display: flex; justify-content: center;">
    <div class="form-upload">
       <form action="" id="csv-form" method="POST" enctype="multipart/form-data" onsubmit= "event.preventDefault(); return getEstimate();">
          {% csrf_token %}
          <input type="file" id="file1" name="file" accept=".csv">
-         <div class="pt-4"><button type="submit" name="upload" class="bg-button hover:bg-blue-900 font-bold py-2 px-4 rounded">
+         <div class="pt-4"><button type="submit" name="upload" class="bg-button-red hover:bg-red-900 font-bold py-2 px-4 rounded">
                       Streaming Upload
          </button></div>
       </form>
@@ -87,7 +87,7 @@ var estimate;
             <img src="/static/admin/img/time-hourglass.gif" style="height: 50px; float: left;">
         </div>
         <div id = "estimate_div" class="upload-text" style="display: none;"> 
-            Querying data for <span id="estimate"></span> shows.
+            Querying data for <span id="estimate"></span> shows. Please be patient.
         </div>
         <div id = "done" class="upload-text" style="display: none;">
             <p>Upload complete</p>
@@ -97,7 +97,7 @@ var estimate;
 <div class="pt-2" style="display: flex; justify-content: center;">
    <form method="POST">
     {% csrf_token %}
-    <button id="Analyze" type="submit" name="runscriptNetflix" class="bg-button disabled:bg-gray-800 hover:enabled:bg-blue-900 font-bold py-2 px-4 rounded" {{ hasData|yesno:",disabled" }}>
+    <button id="Analyze" type="submit" name="runscriptNetflix" class="bg-button-red disabled:bg-gray-800 hover:enabled:bg-red-900 font-bold py-2 px-4 rounded" {{ hasData|yesno:",disabled" }}>
       Analyze
     </button>
    </form>

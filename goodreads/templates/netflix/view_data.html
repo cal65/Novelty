@@ -1,5 +1,4 @@
-{% extends "goodreads/basefile.html" %}
-
+{% extends "goodreads/books_view_data.html" %}
     {% block title %}
         <title>TV Analysis</title>
     {% endblock title %}
@@ -31,4 +30,16 @@
     {% block view-data %}
             <a class="nav-link" href="{% url 'streaming-view-data' %}">View Data</a>
     {% endblock view-data %}
-    
+
+
+{% block dt %}
+<div class="headline">
+    Your Data
+</div>
+<br>
+<div class="plotly" style="font-size: 0.6rem; ">
+
+		{{ streaming_table|safe }}
+</div>
+<br>
+{% endblock dt %}
