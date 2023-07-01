@@ -31,7 +31,7 @@ def get_data(query, database="goodreads"):
         logger.info(f"Returning data from query with nrows {len(df)}")
         return df
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+        logger.error(error)
         return
 
 
@@ -226,7 +226,7 @@ def get_details(netflix_id):
 
     results = response.json()
     if results is None:
-        print(f"No genre response found for {netflix_id}")
+        logger.info(f"No genre response found for {netflix_id}")
         return
     try:
         results["title"] = results["title"].replace("&#39;", "'")
@@ -248,7 +248,7 @@ def get_deleted(title):
     response = requests.request("GET", url, headers=headers, params=querystring)
     results_all = response.json()["results"]
     if results_all is None:
-        print(f"No response found for {title}")
+        logger.info(f"No response found for {title}")
         return
     results = results_all[0]
     if "netflix_id" in results.keys():
