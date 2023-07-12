@@ -12,39 +12,99 @@
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
 <script>
-$(document).ready( function () {
 
-    var dataTable = $('#rTable').DataTable(
-    	{
-    		"pageLength": 15,
-    		initComplete: function () {
-	        this.api()
-	            .columns()
-	            .every(function () {
-	                var column = this;
-	                var title = column.footer().textContent;
-	 
-	                // Create input element and add event listener
-	                $('<input type="text" placeholder="Search ' + title + '" />')
-	                    .appendTo($(column.footer()).empty())
-	                    .on('keyup change clear', function () {
-	                        if (column.search() !== this.value) {
-	                            column.search(this.value).draw();
-	                        }
-	                    });
-	            });
-	    	},
-	    		dom: 'lBfrtip',
-	        	buttons: ['copy', 'csv', 'excel']
-	    	});
-	    } );
+function load_datatable(url, columns) {
+	var cols = columns.map(function(c) {
+	  return { data: c };
+	});
+	$.ajax({
+	    url: url,
+	    method: 'GET',
+	    dataType: 'json',
+	    success: function(response){
+	    	console.log('starting');
+	    	$('#rTable').DataTable({
+	    		data: response,
+	    		columns: cols,
+	    		"pageLength": 25,
+	    		// initComplete: function () {
+		        // this.api()
+		        //     .columns()
+		        //     .every(function () {
+		        //         var column = this;
+		        //         var title = column.footer().textContent;
+		 
+		        //         // Create input element and add event listener
+		        //         $('<input type="text" placeholder="Search ' + title + '" />')
+		        //             .appendTo($(column.footer()).empty())
+		        //             .on('keyup change clear', function () {
+		        //                 if (column.search() !== this.value) {
+		        //                     column.search(this.value).draw();
+		        //                 }
+		        //             });
+		        //     });
+		    	// },
+		    	dom: 'lBfrtip',
+		        buttons: ['copy', 'csv', 'excel']
+		    });
+	    }, 
+	     	error: function(xhr, errmsg, err) {
+		      // Handle any errors
+		      console.log(errmsg);  
+	    	}
+		})
+	}
+
 </script>
 <br>
 <br>
-{% block dt %}
-<div class="plotly" style="font-size: 0.6rem; ">
 
-		{{ reading_table|safe }}   <!-- the rTable tag is passed in via pandas .to_html -->
+{% block dt %}
+<script>
+$(document).ready( function() {
+	load_datatable("{% url 'books-load-data' %}",
+		["title_simple",
+        "author",
+        "exclusive_shelf",
+        "date_read",
+        "shelf1",
+        "shelf2",
+        "shelf3",
+        "shelf4",
+        "shelf5",
+        "shelf6",
+        "narrative",
+        "nationality_chosen",
+        "read",
+        "read_percentage"]);
+});
+</script>
+
+<div class="plotly" style="font-size: 0.6rem; width: 80%">
+
+	<table id="rTable">
+			<thead>
+		  <tr>
+		    <th>Title</th>
+		    <th>Author</th>
+		    <th>exclusive_shelf</th>
+		    <th>Date read</th>
+		    <th>Shelf 1</th>
+		    <th>Shelf 2</th>
+		    <th>Shelf 3</th>
+		    <th>Shelf 4</th>
+		    <th>Shelf 5</th>
+		    <th>Shelf 6</th>
+		    <th>Narrative</th>
+		    <th>Author Nationality</th>
+		    <th>Number of Readers</th>
+		    <th>Finished %</th>
+		  </tr>
+		</thead>
+		<tbody>
+		  <!-- Table body content will be generated dynamically -->
+		</tbody>
+	</table>
 </div>
 <br>
 {% endblock dt %}

@@ -44,4 +44,6 @@ urlpatterns = [
     path("books/view-data", view_data_books, name='books-view-data'),
     path("music/view-data", view_data_music, name='music-view-data'),
     path("streaming/view-data", view_data_streaming, name='streaming-view-data'),
+    path("books/load-data", load_data_books, name='books-load-data'),
+    path("music/load-data", load_data_music, name='music-load-data'),
 ]

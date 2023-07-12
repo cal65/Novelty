@@ -594,7 +594,12 @@ def good_text(request):
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def view_data_books(request):
+    return render(request, "goodreads/books_view_data.html")
+
+
+def load_data_books(request):
     username = request.user
+    logger.info(f"Loading data for {username}")
     user_df = gplot.load_data(username)
     df = gplot.run_all(user_df)
     df.drop(columns=["id", "ts_updated", "title", "book_id"], inplace=True)
@@ -615,21 +620,23 @@ def view_data_books(request):
         "read",
         "read_percentage",
     ]
-    reading_table = df.to_html(
-        index=False, columns=html_cols, classes='my_class" id = "rTable'
-    )
-    return render(
-        request, "goodreads/books_view_data.html", {"reading_table": reading_table}
-    )
+    df = df.fillna('')
+    reading_table = df[html_cols].to_dict(orient='records')
+    logger.info(f"reading table: {reading_table[:4]}")
+    return JsonResponse(reading_table, safe=False)
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def view_data_music(request):
+    return render(request, "spotify/view_data.html")
+
+
+def load_data_music(request):
     username = request.user
     df = splot.load_data(username)
-    df['minutes'] = df['minutes'].round(2)
-    df['duration'] = df['duration'].round(2)
-    df['played_ratio'] = round(df['played_ratio']*100, 1)
+    df["minutes"] = df["minutes"].round(2)
+    df["duration"] = df["duration"].round(2)
+    df["played_ratio"] = round(df["played_ratio"] * 100, 1)
     html_cols = [
         "date",
         "artistname",
@@ -645,12 +652,8 @@ def view_data_music(request):
         "duration",
         "played_ratio",
     ]
-    music_table = df.to_html(
-        index=False, columns=html_cols, classes='my_class" id = "rTable'
-    )
-    return render(
-        request, "spotify/view_data.html", {"music_table": music_table}
-    )
+    music_table = df[html_cols].to_dict(orient='records')
+    return JsonResponse(music_table, safe=False)
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
