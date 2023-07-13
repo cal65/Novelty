@@ -621,6 +621,7 @@ def load_data_books(request):
         "read_percentage",
     ]
     df = df.fillna('')
+    df.sort_values('date_read', inplace=True)
     reading_table = df[html_cols].to_dict(orient='records')
     logger.info(f"reading table: {reading_table[:4]}")
     return JsonResponse(reading_table, safe=False)
@@ -641,24 +642,30 @@ def load_data_music(request):
         "date",
         "artistname",
         "trackname",
-        "popularity",
-        "release_date",
         "genres",
         "album",
-        "explicit",
         "podcast",
-        "genre_chosen",
         "minutes",
         "duration",
-        "played_ratio",
+        "release_date",
+        "popularity",
     ]
+    df = df.fillna('')
     music_table = df[html_cols].to_dict(orient='records')
+    logger.info(f"music table: {music_table[:4]}")
     return JsonResponse(music_table, safe=False)
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def view_data_streaming(request):
+    return render(
+        request, "netflix/view_data.html"
+    )
+
+
+def load_data_streaming(request):
     username = request.user
+    logger.info(f"Loading data for {username}")
     df = nplot.load_data(username)
     html_cols = [
         "date",
@@ -668,9 +675,7 @@ def view_data_streaming(request):
         "genres",
         "cast",
     ]
-    streaming_table = df.to_html(
-        index=False, columns=html_cols, classes='my_class" id = "rTable'
-    )
-    return render(
-        request, "netflix/view_data.html", {"streaming_table": streaming_table}
-    )
+    df = df.fillna('')
+    streaming_table = df[html_cols].to_dict(orient='records')
+    logger.info(f"reading table: {streaming_table[:4]}")
+    return JsonResponse(streaming_table, safe=False)

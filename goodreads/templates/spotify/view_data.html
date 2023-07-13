@@ -28,9 +28,45 @@
 
 
 {% block dt %}
-<div class="plotly" style="font-size: 0.6rem; ">
+<script>
+$(document).ready( function() {
+    load_datatable("{% url 'music-load-data' %}",
+        ["date",
+        "artistname",
+        "trackname",
+        "genres",
+        "album",
+        "podcast",
+        "minutes",
+        "duration",
+        "release_date",
+        "popularity"]);
+});
+</script>
+<div class="headline">
+    Your Data
+</div>
+<div class="plotly" style="font-size: 0.6rem; width: 80%; margin-left: auto; margin-right: auto;">
 
-		{{ music_table|safe }}
+    <table id="rTable">
+        <thead>
+          <tr>
+            <th>Listen Date</th>
+            <th>Artist</th>
+            <th>Track</th>
+            <th>Genres</th>
+            <th>Album</th>
+            <th>Podcast</th>
+            <th>Minutes Played</th>
+            <th>Duration</th>
+            <th>Release Date</th>
+            <th>Popularity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table body content will be generated dynamically -->
+        </tbody>
+    </table>
 </div>
 <br>
 {% endblock dt %}

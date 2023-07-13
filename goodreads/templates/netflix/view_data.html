@@ -33,13 +33,38 @@
 
 
 {% block dt %}
+
+<script>
+$(document).ready( function() {
+    load_datatable("{% url 'streaming-load-data' %}",
+        ["date",
+        "title",
+        "title_type",
+        "director",
+        "genres",
+        "cast"]);
+});
+</script>
 <div class="headline">
     Your Data
 </div>
-<br>
-<div class="plotly" style="font-size: 0.6rem; ">
+<div class="plotly" style="font-size: 0.6rem; width: 80%; margin-left: auto; margin-right: auto;">
 
-		{{ streaming_table|safe }}
+    <table id="rTable">
+            <thead>
+          <tr>
+            <th>Date</th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Director</th>
+            <th>Genres</th>
+            <th>Cast</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table body content will be generated dynamically -->
+        </tbody>
+    </table>
 </div>
 <br>
 {% endblock dt %}

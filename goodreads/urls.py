@@ -26,7 +26,7 @@ urlpatterns = [
     path("streaming/", streaming, name="streaming-home"),
     path("faq/", faq, name="faq"),
     url(r"^favicon\.ico$", RedirectView.as_view(url="/static/admin/img/favicon.ico")),
-    path("spotify-plots/", spot_plots_view, name="spotify-plots"),
+    path("music/plots/", spot_plots_view, name="spotify-plots"),
     path("upload-view-netflix/", upload_view_netflix, name="upload-view-netflix"),
     path("upload-netflix/", upload_netflix, name="upload-netflix"),
     path("insert-netflix/", insert_netflix, name="insert-netflix"),
@@ -46,4 +46,5 @@ urlpatterns = [
     path("streaming/view-data", view_data_streaming, name='streaming-view-data'),
     path("books/load-data", load_data_books, name='books-load-data'),
     path("music/load-data", load_data_music, name='music-load-data'),
+    path("streaming/load-data", load_data_streaming, name='streaming-load-data'),
 ]

@@ -12,7 +12,6 @@
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
 <script>
-
 function load_datatable(url, columns) {
 	var cols = columns.map(function(c) {
 	  return { data: c };
@@ -79,11 +78,14 @@ $(document).ready( function() {
         "read_percentage"]);
 });
 </script>
-
-<div class="plotly" style="font-size: 0.6rem; width: 80%">
+<div class="headline">
+    Your Data
+</div>
+<br>
+<div class="plotly" style="font-size: 0.6rem; width: 80%;  margin-left: auto; margin-right: auto;">
 
 	<table id="rTable">
-			<thead>
+		<thead>
 		  <tr>
 		    <th>Title</th>
 		    <th>Author</th>
@@ -105,6 +107,8 @@ $(document).ready( function() {
 		  <!-- Table body content will be generated dynamically -->
 		</tbody>
 	</table>
+	<br>
+	<br>
 </div>
 <br>
 {% endblock dt %}
