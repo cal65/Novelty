@@ -334,6 +334,7 @@ def format_artist_list_day(
     date_col="date",
     minutes_col="minutes",
     other=False,
+        index_addtl=None,
 ):
     """
     Different unction from `format_artist_day`
@@ -348,10 +349,14 @@ def format_artist_list_day(
             ]
         else:
             df = df.loc[df[artist_col].isin(artist_list)]
+    if index_addtl is not None:
+        index_cols = [artist_col, index_addtl, date_col]
+    else:
+        index_cols = [artist_col, date_col]
     df_artist_day = pd.pivot_table(
-        df, index=[artist_col, date_col], values=minutes_col, aggfunc=sum
+        df, index=index_cols, values=minutes_col, aggfunc=sum
     ).reset_index()
-    df_artist_day.columns = [artist_col, date_col, minutes_col]
+    # df_artist_day.columns = [artist_col, date_col, minutes_col]
     df_artist_day[date_col] = pd.to_datetime(df_artist_day[date_col])
 
     return df_artist_day
@@ -387,11 +392,16 @@ def get_top_artist_date(
     date_col="date",
     artist_col="artistname",
     minutes_col="duration",
+    index_addtl=None,
 ):
     df[date_col] = pd.to_datetime(df[date_col])
     sub_df = df[(df[date_col] >= date_start) & (df[date_col] <= date_end)]
+    if index_addtl is not None:
+        index_cols = [artist_col, index_addtl]
+    else:
+        index_cols = [artist_col]
     sub_df_pivot = pd.pivot_table(
-        sub_df, index=[artist_col], values=minutes_col, aggfunc=sum
+        sub_df, index=index_cols, values=minutes_col, aggfunc=sum
     ).reset_index()
     if len(sub_df_pivot) < 1:
         # there may be no music listened in this period
@@ -405,7 +415,7 @@ def get_top_artist_date(
     return sub_df_pivot
 
 
-def get_top_artists_range(df, periods, artist_col="artistname"):
+def get_top_artists_range(df, periods, artist_col="artistname",index_addtl=None):
     df = df.copy()
     df = df.loc[df[artist_col] != "Other"]
     date_range = pd.date_range(
@@ -415,7 +425,7 @@ def get_top_artists_range(df, periods, artist_col="artistname"):
     for i in range(0, len(date_range) - 1):
         moments.append(
             get_top_artist_date(
-                df, date_start=date_range[i], date_end=date_range[i + 1]
+                df, date_start=date_range[i], date_end=date_range[i + 1], index_addtl=index_addtl
             )
         )
     moments_df = pd.concat(moments)
@@ -457,13 +467,14 @@ def plot_top_artists_over_time(df, periods=10):
     """
     For now, keep periods <= 10
     """
-    artists_range_df = get_top_artists_range(df, periods=periods)
+    artists_range_df = get_top_artists_range(df, periods=periods, artist_col='artistname',
+                                         index_addtl='image_url')
     artists_range_df = flatten_adjacent(artists_range_df)
     artist_list = artists_range_df["artistname"].unique()
 
-    artist_df = format_artist_list_day(df, artist_list=artist_list)
+    artist_df = format_artist_list_day(df, artist_list=artist_list, index_addtl='image_url')
     artist_df_week = format_group_granular(
-        artist_df, granularity="week", index_cols=["artistname"], time_col="date"
+        artist_df, granularity="week", index_cols=["artistname", "image_url"], time_col="date"
     )
 
     fig = go.Figure()
@@ -493,6 +504,7 @@ def plot_top_artists_over_time(df, periods=10):
         ## y_annot has some above line and some below line
         a = row["artistname"]
         y_annot = yrange[1] * (1 + 0.10 * (-1) ** i)
+        y_annot2 = yrange[1] * (1 + 0.05 * (-1) ** (i + 1))
         fig.add_trace(
             go.Scatter(
                 x=[row["date_start"], row["date_end"]],
@@ -505,12 +517,28 @@ def plot_top_artists_over_time(df, periods=10):
                 showlegend=False,
             )
         )
+        # add artist name
         fig.add_annotation(
             x=row["date_mid"],
             y=y_annot,
             text=row["artistname"],
             showarrow=False,
             font=dict(color=art_palette[a]),
+        )
+        # add artist image
+        fig.add_layout_image(
+            dict(
+                source=row['image_url'],
+                xref="x",
+                yref="y",
+                x=row['date_mid'],
+                y=y_annot2,
+                sizex=1000 * 60 * 60 * 24 * 25,
+                sizey=18,
+                opacity=1,
+                xanchor="center",
+                yanchor="middle",
+                layer="above")
         )
 
     fig.update_layout(standard_layout)
