@@ -313,7 +313,8 @@
 
 .headline {
     font-weight: bold;
-    padding-top: 4rem;
+    padding-top: 2.5rem;
+    padding-bottom: 0.5rem;
     font-size: 3.5rem;  
     line-height: 2rem;
     text-align: center;
