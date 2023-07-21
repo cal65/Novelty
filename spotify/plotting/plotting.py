@@ -1080,7 +1080,10 @@ def load_data(username):
             artistname__in=user_df["artistname"], trackname__in=user_df["trackname"]
         )
     )
-    df = pd.merge(user_df, tracks_df, on=["artistname", "trackname"], how="left")
+    if len(tracks_df) > 0:
+        df = pd.merge(user_df, tracks_df, on=["artistname", "trackname"], how="left")
+    else:
+        df = user_df
     artists_df = objects_to_df(SpotifyArtist.objects.filter(uri__in=df["artist_uri"]))[
         ["uri", "popularity", "followers_total", "image_url"]
     ]
