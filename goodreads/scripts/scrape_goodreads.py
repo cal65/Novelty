@@ -165,7 +165,6 @@ def get_read_stats(url):
     if soup is None:
         logger.info("Connection refused for stats page - too many requests")
         return null_return
-
     stats_raw = soup.findAll("div", {"class": "infoBoxRowItem"})
     stats = [s.text.strip() for s in stats_raw]
     try:
@@ -178,7 +177,6 @@ def get_read_stats(url):
     to_reads = re.findall("\d+", to_reads_raw)
     added_by = int("".join(added_by))
     to_reads = int("".join(to_reads))
-
     return {
         "added_by": added_by,
         "to_reads": to_reads,

@@ -367,7 +367,7 @@ def upload_spotify(request):
     # change columns from endTime to endtime etc.
     df = de.lowercase_cols(df)
     # load up the existing data in database for this user
-    loaded_df = splot.load_streaming(user)
+    loaded_df = splot.load_data(user)
     if len(loaded_df) > 0:
         loaded_df["endtime"] = pd.to_datetime(loaded_df["endtime"], utc=True)
         df["endtime"] = pd.to_datetime(df["endtime"], utc=True)
