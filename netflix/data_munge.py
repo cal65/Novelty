@@ -425,8 +425,9 @@ def save_titles(series_results):
     nt.netflix_id = series_results["netflix_id"]
     nt.title_type = series_results["title_type"]
     nt.release_year = series_results["year"]
-    nt.default_image = series_results.get("default_image", 0)
-    nt.alt_votes = series_results.get("alt_votes", 0)
+    nt.default_image = series_results["default_image"]
+    alt_votes = series_results["alt_votes"]
+    nt.alt_votes = 0 if alt_votes == "" else alt_votes
     nt.save()
     return nt
 
