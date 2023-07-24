@@ -64,6 +64,8 @@ class NetflixTitlesAdmin(admin.ModelAdmin):
         "director",
         "release_year",
         "title_type",
+        "alt_votes",
+        "default_image",
         "ts_updated",
     )
 
