@@ -71,10 +71,33 @@ $(document).ready( function() {
 
 <div class="headline">
     Explore Database
+    <br>
 </div>
+<style>
+  .table-container {
+    font-size: 0.6rem;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    max-height: 1500px; /* Set the maximum height for the table container */
+    overflow-y: auto; /* Add a vertical scrollbar when content exceeds the container height */
+  }
+  .table-wrapper {
+    flex: 1; /* Allow the table wrapper to fill the remaining space */
+    max-height: 1600px;
+    overflow-y: auto; /* Add a vertical scrollbar when table content exceeds the container height */
+  }
 
-<div class="plotly" style="font-size: 0.6rem; width: 80%; margin-left: auto; margin-right: auto; display: flex; flex-direction: column;">
-
+  /* Optional: Style the header to make it visually distinct */
+  #rTable thead {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+</style>
+<div class="table-container">
+<div class="table-wrapper">
     <table id="rTable" class="cell-border">
         <thead>
           <tr>
@@ -95,6 +118,7 @@ $(document).ready( function() {
     </table>
     <br>
     <br>
+</div>
     <br>
     <br> <br>
     <br>
