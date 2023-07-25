@@ -7,51 +7,10 @@
 {% block content %}
 
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
-<script>
-function load_datatable(url, columns) {
-	var cols = columns.map(function(c) {
-	  return { data: c };
-	});
-	$.ajax({
-	    url: url,
-	    method: 'GET',
-	    dataType: 'json',
-	    success: function(response){
-	    	console.log('starting');
-	    	$('#rTable').DataTable({
-	    		data: response,
-	    		columns: cols,
-	    		"pageLength": 25,
-	    		initComplete: function () {
-		        this.api()
-		            .columns()
-		            .every(function () {
-		                var column = this;
-		                var title = column.footer().textContent;
-		 
-		                // Create input element and add event listener
-		                $('<input type="text" placeholder="Search ' + title + '" />')
-		                    .appendTo($(column.footer()).empty())
-		                    .on('keyup change clear', function () {
-		                        if (column.search() !== this.value) {
-		                            column.search(this.value).draw();
-		                        }
-		                    });
-		            });
-		    	},
-		    	dom: 'lBfrtip',
-		        buttons: ['copy', 'csv', 'excel']
-		    });
-	    }, 
-	     	error: function(xhr, errmsg, err) {
-		      // Handle any errors
-		      console.log(errmsg);  
-	    	}
-		})
-	}
-</script>
+
 
 {% block dt %}
 <script>
@@ -100,5 +59,46 @@ $(document).ready( function() {
 
 {% endblock dt %}
 	
-
+<script>
+function load_datatable(url, columns) {
+	var cols = columns.map(function(c) {
+	  return { data: c };
+	});
+	$.ajax({
+	    url: url,
+	    method: 'GET',
+	    dataType: 'json',
+	    success: function(response){
+	    	console.log('starting');
+	    	$('#rTable').DataTable({
+	    		data: response,
+	    		columns: cols,
+	    		"pageLength": 25,
+	    		initComplete: function () {
+		        this.api()
+		            .columns()
+		            .every(function () {
+		                var column = this;
+		                var title = column.footer().textContent;
+		                // Create input element and add event listener
+		                $('<input type="text" placeholder="Search ' + title + '" />')
+		                    .appendTo($(column.footer()).empty())
+		                    .on('keyup change clear', function () {
+		                        if (column.search() !== this.value) {
+		                            column.search(this.value).draw();
+		                        }
+		                    });
+		            });
+		    	},
+		    	dom: 'lBfrtip',
+		        buttons: ['copy', 'csv', 'excel']
+		    });
+	    }, 
+	     	error: function(xhr, errmsg, err) {
+		      // Handle any errors
+		      console.log(errmsg);  
+	    	}
+		})
+	}
+</script>
 {% endblock content %}

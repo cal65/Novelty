@@ -332,7 +332,7 @@ def upload_view_goodreads(request):
         )
         run_script_function(request)
         # when script finishes, move user to plots view
-        return HttpResponseRedirect("/plots/")
+        return HttpResponseRedirect("/books/plots/")
     else:
         return render(request, template)
 
@@ -696,12 +696,14 @@ def explore_data_books(request):
     good_df = gplot.run_all(good_df)
     edf = pd.pivot_table(
         good_df,
-        index=["title_simple", "author", "nationality_chosen", "shelf1", "shelf2", "gender"],
-        values=["number_of_pages", "original_publication_year", "read"],
+        index=["title_simple", "author", "nationality_chosen", "gender"],
+        values=["number_of_pages", "original_publication_year", "read", "shelf1", "shelf2"],
         aggfunc={
             "number_of_pages": max,
             "original_publication_year": max,
             "read": max,
+            "shelf1": "first",
+            "shelf2": "first",
         },
     ).reset_index()
     edf["read"] = edf["read"].fillna(0)
@@ -716,6 +718,7 @@ def explore_data_books(request):
         "original_publication_year",
         "read",
         "shelf1",
+        "shelf2"
     ]
     read_table = edf[html_cols].to_dict(orient="records")
     logger.info(f"reading table: {read_table[:4]}")
@@ -728,4 +731,3 @@ def view_explore_books(request):
 
 def explore_data_music():
     stream_df = objects_to_df(SpotifyTracks.objects.all())
-    
