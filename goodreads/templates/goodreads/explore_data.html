@@ -75,12 +75,13 @@ $(document).ready( function() {
 </div>
 <style>
   .table-container {
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     width: 80%;
     margin-left: auto;
     margin-right: auto;
     display: flex;
     flex-direction: column;
+    font-family: courier new;
     max-height: 1500px; /* Set the maximum height for the table container */
     overflow-y: auto; /* Add a vertical scrollbar when content exceeds the container height */
   }
@@ -93,7 +94,9 @@ $(document).ready( function() {
   /* Optional: Style the header to make it visually distinct */
   #rTable thead {
     background-color: #f2f2f2;
+    color: #636efa;
     font-weight: bold;
+    font-size: 0.8rem;
   }
 </style>
 <div class="table-container">
@@ -106,7 +109,7 @@ $(document).ready( function() {
             <th>Gender</th>
             <th>Nationality</th>
             <th>Year</th>
-            <th># Readers</th>
+            <th>Readers</th>
             <th>Shelf1</th>
             <th>Shelf2</th>
             <th>Shelf3</th>
