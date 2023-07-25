@@ -60,7 +60,7 @@
               <ul class="navbar-nav mr-auto">
                 <li class="nav-item active pr-2">
                   {% block upload %}
-                  <a class="nav-link" href="{% url 'upload-view-goodreads' %}">Upload Data</a>
+                  <a class="nav-link" href="{% url 'upload-view-goodreads' %}">Upload</a>
                   {% endblock upload %}
                   
                 </li>
@@ -81,10 +81,15 @@
                 </li>
                 {% block compare %}
                 {% endblock compare %}
-                 <li class="nav-item active pr-2">
-                  {% block view-data %}
-                  <a class="nav-link" href="{% url 'books-view-data' %}">View Data</a>
-                  {% endblock view-data %}
+                <li class="nav-item active pr-2">
+                 {% block view-data %}
+                 <a class="nav-link" href="{% url 'books-view-data' %}">View Data</a>
+                 {% endblock view-data %}
+                </li>
+                <li class="nav-item active pr-2">
+                  {% block explore-data %}
+                  <a class="nav-link" href="{% url 'books-explore' %}">Explore Data</a>
+                  {% endblock explore-data %}
                 </li>
               </ul>
             </div>

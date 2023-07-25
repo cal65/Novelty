@@ -24,23 +24,23 @@ function load_datatable(url, columns) {
 	    		data: response,
 	    		columns: cols,
 	    		"pageLength": 25,
-	    		// initComplete: function () {
-		        // this.api()
-		        //     .columns()
-		        //     .every(function () {
-		        //         var column = this;
-		        //         var title = column.footer().textContent;
+	    		initComplete: function () {
+		        this.api()
+		            .columns()
+		            .every(function () {
+		                var column = this;
+		                var title = column.footer().textContent;
 		 
-		        //         // Create input element and add event listener
-		        //         $('<input type="text" placeholder="Search ' + title + '" />')
-		        //             .appendTo($(column.footer()).empty())
-		        //             .on('keyup change clear', function () {
-		        //                 if (column.search() !== this.value) {
-		        //                     column.search(this.value).draw();
-		        //                 }
-		        //             });
-		        //     });
-		    	// },
+		                // Create input element and add event listener
+		                $('<input type="text" placeholder="Search ' + title + '" />')
+		                    .appendTo($(column.footer()).empty())
+		                    .on('keyup change clear', function () {
+		                        if (column.search() !== this.value) {
+		                            column.search(this.value).draw();
+		                        }
+		                    });
+		            });
+		    	},
 		    	dom: 'lBfrtip',
 		        buttons: ['copy', 'csv', 'excel']
 		    });
@@ -51,5 +51,54 @@ function load_datatable(url, columns) {
 	    	}
 		})
 	}
+</script>
 
+{% block dt %}
+<script>
+$(document).ready( function() {
+	load_datatable("{% url 'books-load-explore' %}",
+		["title_simple",
+        "author",
+        "gender",
+        "nationality_chosen",
+        "original_publication_year",
+        "read",
+        "shelf1"]);
+});
+</script>
+
+<div class="headline">
+    Explore Database
+</div>
+
+<div class="plotly" style="font-size: 0.6rem; width: 80%; margin-left: auto; margin-right: auto;">
+
+    <table id="rTable">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Gender</th>
+            <th>Nationality</th>
+            <th>Year</th>
+            <th># Readers</th>
+            <th>Shelf1</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table body content will be generated dynamically -->
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <br>
+    <br> <br>
+    <br>
+</div>
+<br>
+<br>
+
+{% endblock dt %}
 	
+
+{% endblock content %}

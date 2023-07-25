@@ -8,9 +8,10 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django import template
+from spotify.plotting.utils import objects_to_df
 
 
-from .models import NetflixUsers, Books
+from .models import NetflixUsers, Books, ExportData, Authors, SpotifyTracks, NetflixTitles
 
 sys.path.append("..")
 sys.path.append("../spotify/")
@@ -620,9 +621,9 @@ def load_data_books(request):
         "read",
         "read_percentage",
     ]
-    df = df.fillna('')
-    df.sort_values('date_read', inplace=True)
-    reading_table = df[html_cols].to_dict(orient='records')
+    df = df.fillna("")
+    df.sort_values("date_read", inplace=True)
+    reading_table = df[html_cols].to_dict(orient="records")
     logger.info(f"reading table: {reading_table[:4]}")
     return JsonResponse(reading_table, safe=False)
 
@@ -650,17 +651,15 @@ def load_data_music(request):
         "release_date",
         "popularity",
     ]
-    df = df.fillna('')
-    music_table = df[html_cols].to_dict(orient='records')
+    df = df.fillna("")
+    music_table = df[html_cols].to_dict(orient="records")
     logger.info(f"music table: {music_table[:4]}")
     return JsonResponse(music_table, safe=False)
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
 def view_data_streaming(request):
-    return render(
-        request, "netflix/view_data.html"
-    )
+    return render(request, "netflix/view_data.html")
 
 
 def load_data_streaming(request):
@@ -675,7 +674,58 @@ def load_data_streaming(request):
         "genres",
         "cast",
     ]
-    df = df.fillna('')
-    streaming_table = df[html_cols].to_dict(orient='records')
+    df = df.fillna("")
+    streaming_table = df[html_cols].to_dict(orient="records")
     logger.info(f"reading table: {streaming_table[:4]}")
     return JsonResponse(streaming_table, safe=False)
+
+
+def explore_data_books(request):
+    books_df = objects_to_df(Books.objects.all())
+    books_df["book_id"] = pd.to_numeric(books_df["book_id"]).astype(int)
+    books_df.sort_values("book_id", inplace=True)
+    export_df = objects_to_df(ExportData.objects.all())
+    export_df["book_id"] = export_df["book_id"].astype(float).astype(int)
+
+    authors_df = objects_to_df(Authors.objects.all())
+    good_df = pd.merge(books_df, export_df, how="left", on="book_id")
+    authors_df.rename(columns={"author_name": "author"}, inplace=True)
+    authors_df.drop(columns="ts_updated", inplace=True)
+    good_df = pd.merge(good_df, authors_df, on="author", how="left")
+    good_df["author"] = good_df["author"].fillna("")
+    good_df = gplot.run_all(good_df)
+    edf = pd.pivot_table(
+        good_df,
+        index=["title_simple", "author", "nationality_chosen", "shelf1", "shelf2", "gender"],
+        values=["number_of_pages", "original_publication_year", "read"],
+        aggfunc={
+            "number_of_pages": max,
+            "original_publication_year": max,
+            "read": max,
+        },
+    ).reset_index()
+    edf["read"] = edf["read"].fillna(0)
+    edf = edf.fillna("")
+    edf = edf.loc[edf['title_simple'].str.len() > 1]
+    edf.sort_values('read', ascending=False, inplace=True)
+    html_cols = [
+        "title_simple",
+        "author",
+        "gender",
+        "nationality_chosen",
+        "original_publication_year",
+        "read",
+        "shelf1",
+    ]
+    read_table = edf[html_cols].to_dict(orient="records")
+    logger.info(f"reading table: {read_table[:4]}")
+    return JsonResponse(read_table, safe=False)
+
+
+def view_explore_books(request):
+    return render(request, "goodreads/explore_data.html")
+
+
+def explore_data_music():
+    stream_df = objects_to_df(SpotifyTracks.objects.all())
+    
