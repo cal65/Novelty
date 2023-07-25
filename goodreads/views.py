@@ -180,7 +180,7 @@ def runscriptSpotify(request):
     logger.info(f"Running Spotify script with request method {request.method}")
     if request.method == "POST" and "runscriptSpotify" in request.POST:
         splot.main(username)
-        return HttpResponseRedirect("/spotify-plots/")
+        return HttpResponseRedirect("/music/plots/")
 
     return spot_plots_view(request)
 
@@ -190,7 +190,7 @@ def runscriptNetflix(request):
     logger.info(f"Running Netflix script with request method {request.method}")
     if request.method == "POST" and "runscriptNetflix" in request.POST:
         nplot.main(username)
-        return HttpResponseRedirect("/netflix-plots/")
+        return HttpResponseRedirect("/netflix/plots/")
 
     return netflix_plots_view(request)
 
@@ -697,13 +697,14 @@ def explore_data_books(request):
     edf = pd.pivot_table(
         good_df,
         index=["title_simple", "author", "nationality_chosen", "gender"],
-        values=["number_of_pages", "original_publication_year", "read", "shelf1", "shelf2"],
+        values=["number_of_pages", "original_publication_year", "read", "shelf1", "shelf2", "shelf3"],
         aggfunc={
             "number_of_pages": max,
             "original_publication_year": max,
             "read": max,
             "shelf1": "first",
             "shelf2": "first",
+            "shelf3": "first",
         },
     ).reset_index()
     edf["read"] = edf["read"].fillna(0)
@@ -718,7 +719,8 @@ def explore_data_books(request):
         "original_publication_year",
         "read",
         "shelf1",
-        "shelf2"
+        "shelf2",
+        "shelf3",
     ]
     read_table = edf[html_cols].to_dict(orient="records")
     logger.info(f"reading table: {read_table[:4]}")

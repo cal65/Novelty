@@ -1,7 +1,7 @@
 {% extends "goodreads/basefile.html" %}
 
 {% block css-additional %}
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css"/>
 {% endblock css-additional %}
 {% block content %}
@@ -10,55 +10,6 @@
 <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
-
-
-{% block dt %}
-<script>
-$(document).ready( function() {
-	load_datatable("{% url 'books-load-explore' %}",
-		["title_simple",
-        "author",
-        "gender",
-        "nationality_chosen",
-        "original_publication_year",
-        "read",
-        "shelf1"]);
-});
-</script>
-
-<div class="headline">
-    Explore Database
-</div>
-
-<div class="plotly" style="font-size: 0.6rem; width: 80%; margin-left: auto; margin-right: auto;">
-
-    <table id="rTable">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Gender</th>
-            <th>Nationality</th>
-            <th>Year</th>
-            <th># Readers</th>
-            <th>Shelf1</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Table body content will be generated dynamically -->
-        </tbody>
-    </table>
-    <br>
-    <br>
-    <br>
-    <br> <br>
-    <br>
-</div>
-<br>
-<br>
-
-{% endblock dt %}
-	
 <script>
 function load_datatable(url, columns) {
 	var cols = columns.map(function(c) {
@@ -101,4 +52,57 @@ function load_datatable(url, columns) {
 		})
 	}
 </script>
+
+{% block dt %}
+<script>
+$(document).ready( function() {
+	load_datatable("{% url 'books-load-explore' %}",
+		["title_simple",
+        "author",
+        "gender",
+        "nationality_chosen",
+        "original_publication_year",
+        "read",
+        "shelf1",
+        "shelf2",
+        "shelf3"]);
+});
+</script>
+
+<div class="headline">
+    Explore Database
+</div>
+
+<div class="plotly" style="font-size: 0.6rem; width: 80%; margin-left: auto; margin-right: auto; display: flex; flex-direction: column;">
+
+    <table id="rTable" class="cell-border">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Gender</th>
+            <th>Nationality</th>
+            <th>Year</th>
+            <th># Readers</th>
+            <th>Shelf1</th>
+            <th>Shelf2</th>
+            <th>Shelf3</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table body content will be generated dynamically -->
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <br>
+    <br> <br>
+    <br>
+</div>
+<br>
+<br>
+
+{% endblock dt %}
+	
+
 {% endblock content %}
