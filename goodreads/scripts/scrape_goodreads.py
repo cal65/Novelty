@@ -13,29 +13,48 @@ logger.setLevel(logging.INFO)
 
 
 cookies = {
-    "u": "46_zpdYRTJeeBNKcgeVlZEK5wejdVm-FMzwcSryTvUnOA5dz",
-    "__qca": "P0-58208308-1679029998916",
-    "__gpi": "UID=0000097ff616a3c7:T=1682402001:RT=1689963182:S=ALNI_MY4xLYySL-kyW09g_nl8AuOjCRIbQ",
-    "jwt_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImZSNXpfWTVjYXZQMllsaXU3eks0YUNJVEJPcVBWdGtxTE9XVURfV3dGOTQifQ.eyJpc3MiOiJodHRwczovL3d3dy5nb29kcmVhZHMuY29tIiwic3ViIjoia2NhOi8vcHJvZmlsZTpnb29kcmVhZHMvQTUyS0pMRzUxQ1hRRSIsImF1ZCI6IjYzZGMyNGU3YzYxMWU2ZjE3OTJmODEzMDU4ZjIxNTYwYmQ4YzY5MzhkNTRhLmdvb2RyZWFkcy5jb20iLCJ1c2VyX2lkIjo1MjA0MDE3OSwicm9sZSI6InVzZXIiLCJub25jZSI6bnVsbCwiZXhwIjoxNjg5OTg3NTQ0LCJpYXQiOjE2ODk5ODcyNDR9.FWnjqC_K_WooPvaZLs4dPrgwOt9d0DjC8jZys1mkBGjzDrhHWcuNH1jVDopBglcewMqPHEErSd3J0aEPjFqooBDMR0jY0zOAGD6NOCqS_imTfoeci0nu7JB-ROq9Goc_WhMFq5Rq8ltZvVQxHH4rm1juEd1oOaDT6yiI0fzALc3nj7NuAriaEKTbKcOzyH3W0nBQDIUUclgIw8M4psC4HsyGw0NOBIjRQn0b2YYd2FA9czH1B_E9B-4WqKfv5T80iLRnVSTwJZXlH5tq0iLHFgMPpblrVcuw-HBMScJlzG3kuc8kReWO5RQs7jm4nH3Tl0WAGsPlIp3jJyZnH8DodQ",
-    "session_token": "pmf22d96lZ7G3rCVd4uBLsYyLS1dP9WUEBSw9XbK9GQ2qKTKbYM1JxB/MVLiqPwA1cpvcBIagO3Jw/NWArCEJTNPZmwhWZNB3leo9AvI5HMQd2yg3CAbtuR+QQ+Fnx2R4F0j5yWMBRD7W2FGqmWKL0paRCaZ69kUQxsJtpogih/7e18v9cdmhq3sabtfQL+1mt2G7njLBev3wXqZes8GWFrkIgahSdL0wnTHQA92ijEW7OMMZCEnAVd2L2upTUEwTZuVPQmGDyg=",
+    'ccsid': '981-7720517-4539359',
+    'p': 'dkCKV365TjqNenOKY4VtqQ6sIm7CTPX-c9d94GhAzRXKWDHD',
+    'likely_has_account': 'true',
+    'allow_behavioral_targeting': 'true',
+    'session-id': '141-6452885-9687058',
+    'logged_out_browsing_page_count': '2',
+    'srb_1': '0',
+    'ubid-main': '131-4250835-4161367',
+    'lc-main': 'en_US',
+    'csm-hit': 'tb:28PZZBK444T48GAAWQ0H+b-4K51QZ90N1KMGMJX1EGE|1667883949756&t:1667883949756&adb:adblk_no',
+    'srb_8': '0_ar',
+    '__qca': 'P0-58208308-1679029998916',
+    'locale': 'en',
+    'ntvSession': '{"id":7105107,"placementID":1210536,"lastInteraction":1689465068498,"sessionStart":1689465068498,"sessionEndDate":1689490800000,"experiment":""}',
+    'csm-sid': '269-3996257-5017812',
+    'session-id-time': '2320515620l',
+    'session-token': 'Bll6D6eAe4nNvOkehUMOOiTy4c4dutA4SyuqLzIqhZ5cMhyT2bANWizk46rCLq+4aX5D5pqBvnIaX6QsPa56vc5gkxqXminijtEMeUbLF3qOik7AZPmfvytj6nPBPfT+t9A42Dp7xlKFAZnaVO+Foi21M9N3xAh3QCCPxdSAaPZkhowMHaJGGjttzEyUu2EUX1DMzy5acpvzFWv7UwT1gUzeFee0FrxSfSh8k0dQdkCZP6+7WRHUAIM3gV1xnOzb',
+    'x-main': '"4EosvwpQCoL@Zqhj7Zl8DtXYnjfXD7IkpvU@N8xOvXojNJjDQltTAFj8AHu9yDRf"',
+    'at-main': 'Atza|IwEBIMkjx-aTGd5k5nOkjWE2S50ghFqGwXFblgQVwqkLIK0PpWxkaYVh4LWhhqF7qP3bEFDHsQ8VS7vyBC8aHWvY47-Aef9fMP5aQ01xHNps59k6kvGGqoqG_Jm2mvZsKHzygEteaxC0K45nhUEsdIYZ-KMEQqxV_EsImxEkPmQ3860AaQ7DN9cCviswebYV8FYkIU3I4WLenkGiH7jIfFAi15_BlpSTMsGYft98wFpjb5pKFxRpIs91oQvD7tCfLVf3MwnGve3V_zcWcr_Ft-PbS1KD',
+    'sess-at-main': '"L4X7nx1bEIpiwwD4dl1RnG+lCVmCeLZhDOTptos71YI="',
+    '_session_id2': '709591c189ab49250a9d5e92eaf6ef6d',
+    '__gads': 'ID=df0a6707150d114d:T=1670897981:RT=1690310731:S=ALNI_MZfGBQsHE3Vk7tICMIg8zJxLI8e8Q',
+    '__gpi': 'UID=0000097ff616a3c7:T=1682402001:RT=1690310731:S=ALNI_MY4xLYySL-kyW09g_nl8AuOjCRIbQ',
 }
 
 headers = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-    "Accept-Language": "en-US,en;q=0.9",
-    "Cache-Control": "max-age=0",
-    "Connection": "keep-alive",
-    "DNT": "1",
-    "If-None-Match": 'W/"accfd32b1ffcc24b9de5eaf56d15ccc4"',
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-User": "?1",
-    "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-    "sec-ch-ua": '"Chromium";v="110", "Not A(Brand";v="24", "Google Chrome";v="110"',
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": '"macOS"',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Cache-Control': 'max-age=0',
+    'Connection': 'keep-alive',
+    # 'Cookie': 'ccsid=981-7720517-4539359; p=dkCKV365TjqNenOKY4VtqQ6sIm7CTPX-c9d94GhAzRXKWDHD; likely_has_account=true; allow_behavioral_targeting=true; session-id=141-6452885-9687058; logged_out_browsing_page_count=2; srb_1=0; ubid-main=131-4250835-4161367; lc-main=en_US; csm-hit=tb:28PZZBK444T48GAAWQ0H+b-4K51QZ90N1KMGMJX1EGE|1667883949756&t:1667883949756&adb:adblk_no; srb_8=0_ar; __qca=P0-58208308-1679029998916; locale=en; ntvSession={"id":7105107,"placementID":1210536,"lastInteraction":1689465068498,"sessionStart":1689465068498,"sessionEndDate":1689490800000,"experiment":""}; csm-sid=269-3996257-5017812; session-id-time=2320515620l; session-token=Bll6D6eAe4nNvOkehUMOOiTy4c4dutA4SyuqLzIqhZ5cMhyT2bANWizk46rCLq+4aX5D5pqBvnIaX6QsPa56vc5gkxqXminijtEMeUbLF3qOik7AZPmfvytj6nPBPfT+t9A42Dp7xlKFAZnaVO+Foi21M9N3xAh3QCCPxdSAaPZkhowMHaJGGjttzEyUu2EUX1DMzy5acpvzFWv7UwT1gUzeFee0FrxSfSh8k0dQdkCZP6+7WRHUAIM3gV1xnOzb; x-main="4EosvwpQCoL@Zqhj7Zl8DtXYnjfXD7IkpvU@N8xOvXojNJjDQltTAFj8AHu9yDRf"; at-main=Atza|IwEBIMkjx-aTGd5k5nOkjWE2S50ghFqGwXFblgQVwqkLIK0PpWxkaYVh4LWhhqF7qP3bEFDHsQ8VS7vyBC8aHWvY47-Aef9fMP5aQ01xHNps59k6kvGGqoqG_Jm2mvZsKHzygEteaxC0K45nhUEsdIYZ-KMEQqxV_EsImxEkPmQ3860AaQ7DN9cCviswebYV8FYkIU3I4WLenkGiH7jIfFAi15_BlpSTMsGYft98wFpjb5pKFxRpIs91oQvD7tCfLVf3MwnGve3V_zcWcr_Ft-PbS1KD; sess-at-main="L4X7nx1bEIpiwwD4dl1RnG+lCVmCeLZhDOTptos71YI="; _session_id2=709591c189ab49250a9d5e92eaf6ef6d; __gads=ID=df0a6707150d114d:T=1670897981:RT=1690310731:S=ALNI_MZfGBQsHE3Vk7tICMIg8zJxLI8e8Q; __gpi=UID=0000097ff616a3c7:T=1682402001:RT=1690310731:S=ALNI_MY4xLYySL-kyW09g_nl8AuOjCRIbQ',
+    'DNT': '1',
+    'If-None-Match': 'W/"9404a63aaa98659fb1000399ea02cdf3"',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'none',
+    'Sec-Fetch-User': '?1',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+    'sec-ch-ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"macOS"',
 }
 
 # response = requests.get('https://www.goodreads.com/book/stats/50175419', cookies=cookies, headers=headers)
@@ -169,15 +188,18 @@ def get_read_stats(url):
     stats_raw = soup.findAll("div", {"class": "infoBoxRowItem"})
     stats = [s.text.strip() for s in stats_raw]
     try:
-        added_by_raw = stats[-1]
-        to_reads_raw = stats[-2]
+        ratings_raw = stats[1]
+        reviews_raw = stats[2]
+        to_reads_raw = stats[3]
     except Exception as e:
         logger.info(f"Error {e} for {url}")
         return null_return
-    added_by = re.findall("\d+", added_by_raw)
+    ratings = re.findall("\d+", ratings_raw)
+    reviews = re.findall("\d+", reviews_raw)
     to_reads = re.findall("\d+", to_reads_raw)
-    added_by = int("".join(added_by))
     to_reads = int("".join(to_reads))
+    read = int("".join(ratings)) + int("".join(reviews))
+    added_by = to_reads + read
     return {
         "added_by": added_by,
         "to_reads": to_reads,
