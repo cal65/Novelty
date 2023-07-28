@@ -731,5 +731,25 @@ def view_explore_books(request):
     return render(request, "goodreads/explore_data.html")
 
 
-def explore_data_music():
+def explore_data_music(request):
     stream_df = objects_to_df(SpotifyTracks.objects.all())
+    #artists = objects_to_df(SpotifyArtists.objects.all())
+    html_cols = [
+        "artistname",
+        "trackname",
+        "genres",
+        "album",
+        "podcast",
+        "duration",
+        "release_date",
+        "popularity",
+    ]
+    stream_df = stream_df.fillna("")
+    music_table = stream_df[html_cols].to_dict(orient="records")
+    logger.info(f"music exploration called")
+    return JsonResponse(music_table, safe=False)
+
+
+def view_explore_music(request):
+    return render(request, "spotify/explore_data.html")
+

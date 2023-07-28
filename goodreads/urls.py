@@ -49,4 +49,6 @@ urlpatterns = [
     path("streaming/load-data/", load_data_streaming, name="streaming-load-data"),
     path("books/load-explore-data/", explore_data_books, name="books-load-explore"),
     path("books/explore-data/", view_explore_books, name="books-explore"),
+    path("music/load-explore-data/", explore_data_music, name="music-load-explore"),
+    path("music/explore-data/", view_explore_music, name="music-explore"),
 ]

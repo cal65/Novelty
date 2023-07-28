@@ -1,27 +1,149 @@
 {% extends "goodreads/explore_data.html" %}
-    {% block title %}
-        <title>Music Analysis</title>
-    {% endblock title %}
+{% block title %}
+    <title>Music Analysis</title>
+{% endblock title %}
 
-	<!-- customize navbar -->
-    {% block d1 %}
-            <a class="nav-link" href="{% url 'books-home' %}" >Books</a>
-    {% endblock d1 %}
-    {% block d2 %}
-            <a class="nav-link" href="{% url 'music-home' %}" style="color: #00CC96; font-weight: bold;" >Music</a>
-    {% endblock d2 %}
-	{% block upload %}
-            <a class="nav-link" href="{% url 'upload-spotify' %}">Upload Data</a>
-    {% endblock upload %}
-    {% block about %}
-          <a class="nav-link" href="{% url 'about-this-spotify' %}">About This</a>
-    {% endblock about %}
-    {% block plots %}
-            <a class="nav-link" href="{% url 'spotify-plots' %}">Plots</a>
-    {% endblock plots %}
-    {% block gallery %}
-            <a class="nav-link" href="{% url 'gallery-music' %}">Gallery</a>
-    {% endblock gallery %}
-    {% block view-data %}
-            <a class="nav-link" href="{% url 'music-view-data' %}">View Data</a>
-    {% endblock view-data %}
+<!-- customize navbar -->
+{% block d1 %}
+        <a class="nav-link" href="{% url 'books-home' %}" >Books</a>
+{% endblock d1 %}
+{% block d2 %}
+        <a class="nav-link" href="{% url 'music-home' %}" style="color: #00CC96; font-weight: bold;" >Music</a>
+{% endblock d2 %}
+{% block upload %}
+        <a class="nav-link" href="{% url 'upload-spotify' %}">Upload Data</a>
+{% endblock upload %}
+{% block about %}
+      <a class="nav-link" href="{% url 'about-this-spotify' %}">About This</a>
+{% endblock about %}
+{% block plots %}
+        <a class="nav-link" href="{% url 'spotify-plots' %}">Plots</a>
+{% endblock plots %}
+{% block gallery %}
+        <a class="nav-link" href="{% url 'gallery-music' %}">Gallery</a>
+{% endblock gallery %}
+{% block view-data %}
+        <a class="nav-link" href="{% url 'music-view-data' %}">View Data</a>
+{% endblock view-data %}
+
+{% block content %}
+
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script>
+function load_datatable(url, columns) {
+    var cols = columns.map(function(c) {
+      return { data: c };
+    });
+    $.ajax({
+        url: url,
+        method: 'GET',
+        dataType: 'json',
+        success: function(response){
+            console.log('starting');
+            $('#rTable').DataTable({
+                data: response,
+                columns: cols,
+                "pageLength": 25,
+                initComplete: function () {
+                this.api()
+                    .columns()
+                    .every(function () {
+                        var column = this;
+                        var title = column.footer().textContent;
+                        // Create input element and add event listener
+                        $('<input type="text" placeholder="Search ' + title + '" />')
+                            .appendTo($(column.footer()).empty())
+                            .on('keyup change clear', function () {
+                                if (column.search() !== this.value) {
+                                    column.search(this.value).draw();
+                                }
+                            });
+                    });
+                },
+                dom: 'lBfrtip',
+                buttons: ['copy', 'csv', 'excel']
+            });
+        }, 
+            error: function(xhr, errmsg, err) {
+              // Handle any errors
+              console.log(errmsg);  
+            }
+        })
+    }
+</script>
+
+{% block dt %}
+
+<div class="headline">
+    Explore Database
+    <br>
+</div>
+
+<script>
+$(document).ready( function() {
+    load_datatable("{% url 'music-load-explore' %}",
+        ["artistname",
+        "trackname",
+        "genres",
+        "album",
+        "podcast",
+        "duration",
+        "release_date",
+        "popularity"]);
+});
+</script>
+<style>
+  .table-container {
+    font-size: 0.7rem;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    font-family: courier new;
+    max-height: 1500px; /* Set the maximum height for the table container */
+    overflow-y: auto; /* Add a vertical scrollbar when content exceeds the container height */
+  }
+  .table-wrapper {
+    flex: 1; /* Allow the table wrapper to fill the remaining space */
+    max-height: 1600px;
+    overflow-y: auto; /* Add a vertical scrollbar when table content exceeds the container height */
+  }
+
+  /* Optional: Style the header to make it visually distinct */
+  #rTable thead {
+    background-color: #f2f2f2;
+    color: #00CC96;
+    font-weight: bold;
+    font-size: 0.8rem;
+  }
+</style>
+<div class="table-container">
+<div class="table-wrapper">
+    <table id="rTable" class="cell-border">
+        <thead>
+          <tr>
+            <th>Artist</th>
+            <th>Track</th>
+            <th>Genres</th>
+            <th>Album</th>
+            <th>Podcast</th>
+            <th>Duration</th>
+            <th>Release Date</th>
+            <th>Popularity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table body content will be generated dynamically -->
+        </tbody>
+    </table>
+    <br>
+    <br>
+</div>
+
+
+{% endblock dt %}
+{% endblock content %}

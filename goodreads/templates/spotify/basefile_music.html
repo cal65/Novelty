@@ -1,29 +1,32 @@
 {% extends "goodreads/basefile.html" %}
 
-    {% block title %}
-        <title>Music Analysis</title>
-    {% endblock title %}
+{% block title %}
+    <title>Music Analysis</title>
+{% endblock title %}
 
-	<!-- customize navbar -->
-    {% block d1 %}
-            <a class="nav-link" href="{% url 'books-home' %}" >Books</a>
-    {% endblock d1 %}
-    {% block d2 %}
-            <a class="nav-link" href="{% url 'music-home' %}" style="color: #00CC96; font-weight: bold;" >Music</a>
-    {% endblock d2 %}
-	{% block upload %}
-            <a class="nav-link" href="{% url 'upload-spotify' %}">Upload Data</a>
-    {% endblock upload %}
-    {% block about %}
-          <a class="nav-link" href="{% url 'about-this-spotify' %}">About This</a>
-    {% endblock about %}
-    {% block plots %}
-            <a class="nav-link" href="{% url 'spotify-plots' %}">Plots</a>
-    {% endblock plots %}
-    {% block gallery %}
-            <a class="nav-link" href="{% url 'gallery-music' %}">Gallery</a>
-    {% endblock gallery %}
-    {% block view-data %}
-            <a class="nav-link" href="{% url 'music-view-data' %}">View Data</a>
-    {% endblock view-data %}
+<!-- customize navbar -->
+{% block d1 %}
+        <a class="nav-link" href="{% url 'books-home' %}" >Books</a>
+{% endblock d1 %}
+{% block d2 %}
+        <a class="nav-link" href="{% url 'music-home' %}" style="color: #00CC96; font-weight: bold;" >Music</a>
+{% endblock d2 %}
+{% block upload %}
+        <a class="nav-link" href="{% url 'upload-spotify' %}">Upload</a>
+{% endblock upload %}
+{% block about %}
+      <a class="nav-link" href="{% url 'about-this-spotify' %}">About This</a>
+{% endblock about %}
+{% block plots %}
+        <a class="nav-link" href="{% url 'spotify-plots' %}">Plots</a>
+{% endblock plots %}
+{% block gallery %}
+        <a class="nav-link" href="{% url 'gallery-music' %}">Gallery</a>
+{% endblock gallery %}
+{% block view-data %}
+        <a class="nav-link" href="{% url 'music-view-data' %}">View Data</a>
+{% endblock view-data %}
+{% block explore-data %}
+        <a class="nav-link" href="{% url 'music-explore' %}">Explore Data</a>
+{% endblock explore-data %}
     
