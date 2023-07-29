@@ -208,7 +208,7 @@ def get_genres(netflix_id):
         return
     genres = [r["genre"] for r in results]
     genres = ", ".join(genres)
-    genres = genres.replace("&#39;", "")
+    genres = genres.replace("&#39;", "'")
     genre_results = pd.Series({"netflix_id": netflix_id, "genres": genres})
     return genre_results
 

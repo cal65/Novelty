@@ -443,7 +443,7 @@ def upload_view_netflix(request):
         )
         runscriptNetflix(request)
         # when script finishes, move user to plots view
-        return HttpResponseRedirect("/netflix-plots/")
+        return HttpResponseRedirect("/netflix/plots/")
     return render(request, template, {"hasData": hasData})
 
 
