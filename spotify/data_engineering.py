@@ -194,6 +194,33 @@ def get_historical_track_info_from_id(
     return track_info_series
 
 
+def convert_return(track_info_dict):
+    artist_id = track_info_dict["artists"][0]["id"]
+    a = search_artist(artist_id)
+    genres_list = a.genres
+    track_info_series = pd.Series(
+        {
+            "uri": track_info_dict['uri'].replace('spotify:track:', ''),
+            "name": track_info_dict["name"],
+            "artist": track_info_dict["artists"][0]["name"],
+            "duration": track_info_dict["duration_ms"] / ms_per_minute,
+            "popularity": track_info_dict["popularity"],
+            "release_date": track_info_dict["album"]["release_date"],
+            "genres": ", ".join(genres_list),
+            "album": track_info_dict["album"]["name"],
+            "explicit": track_info_dict["explicit"],
+            "trackname": track_info_dict["name"],
+            "artistname": track_info_dict["artists"][0]["name"],
+            "podcast": False,
+            "genre_chosen": genres_list[0]
+            if len(genres_list) > 0
+            else "",
+            "artist_uri": artist_id,
+        }
+    )
+    return track_info_series
+
+
 def get_artist_info(artist_uri):
     a = SpotifyArtist()
     a.uri = artist_uri
