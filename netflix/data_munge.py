@@ -163,7 +163,7 @@ def query_title(title: str):
         return
     results = results_all[0]  # take first search
     series_results = pd.Series(results)
-    series_results["title"] = series_results["title"].replace("&#39;", "")
+    series_results["title"] = series_results["title"].replace("&#39;", "'")
     return series_results
 
 
