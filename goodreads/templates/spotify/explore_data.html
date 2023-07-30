@@ -25,6 +25,9 @@
 {% block view-data %}
         <a class="nav-link" href="{% url 'music-view-data' %}">View Data</a>
 {% endblock view-data %}
+{% block explore-data %}
+        <a class="nav-link" href="{% url 'music-explore' %}">Explore Data</a>
+{% endblock explore-data %}
 
 {% block content %}
 
@@ -124,7 +127,7 @@ $(document).ready( function() {
 <div class="table-container">
 <div class="table-wrapper">
     <table id="rTable" class="cell-border">
-        <thead>
+        <thead class = "style-music">
           <tr>
             <th>Artist</th>
             <th>Track</th>

@@ -25,6 +25,9 @@
     {% block view-data %}
             <a class="nav-link" href="{% url 'music-view-data' %}">View Data</a>
     {% endblock view-data %}
+    {% block explore-data %}
+            <a class="nav-link" href="{% url 'music-explore' %}">Explore Data</a>
+    {% endblock explore-data %}
 
 
 {% block dt %}
@@ -46,10 +49,10 @@ $(document).ready( function() {
 <div class="headline">
     Your Data
 </div>
-<div class="plotly" style="font-size: 0.6rem; width: 80%; margin-left: auto; margin-right: auto;">
-
+<div class="table-container">
+<div class="table-wrapper">
     <table id="rTable">
-        <thead>
+        <thead class = "column-head style-music">
           <tr>
             <th>Listen Date</th>
             <th>Artist</th>
@@ -69,6 +72,7 @@ $(document).ready( function() {
     </table>
     <br>
     <br>
+</div>
 </div>
 <br>
 {% endblock dt %}

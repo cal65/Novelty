@@ -48,10 +48,10 @@ $(document).ready( function() {
 <div class="headline">
     Your Data
 </div>
-<div class="plotly" style="font-size: 0.6rem; width: 80%; margin-left: auto; margin-right: auto;">
-
+<div class="table-container">
+<div class="table-wrapper">
     <table id="rTable">
-            <thead>
+        <thead class="column-head style-streaming">
           <tr>
             <th>Date</th>
             <th>Title</th>
@@ -65,6 +65,9 @@ $(document).ready( function() {
           <!-- Table body content will be generated dynamically -->
         </tbody>
     </table>
+    <br>
+    <br>
+</div>
 </div>
 <br>
 {% endblock dt %}

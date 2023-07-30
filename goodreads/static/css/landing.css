@@ -420,3 +420,40 @@
 .bglayer {
     height: 1000px;
 }
+
+.table-container {
+    font-size: 0.7rem;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    font-family: courier new;
+    max-height: 1500px; /* Set the maximum height for the table container */
+    overflow-y: auto; /* Add a vertical scrollbar when content exceeds the container height */
+}
+
+.table-wrapper {
+    flex: 1; /* Allow the table wrapper to fill the remaining space */
+    max-height: 1600px;
+    overflow-y: auto; /* Add a vertical scrollbar when table content exceeds the container height */
+}
+
+.style-books {
+    color: #636efa;
+}
+
+.style-music {
+    color: #00CC96
+}
+
+.style-streaming {
+    color: #EF553B;
+}
+
+.column-head {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+

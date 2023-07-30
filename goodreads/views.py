@@ -676,7 +676,7 @@ def load_data_streaming(request):
     ]
     df = df.fillna("")
     streaming_table = df[html_cols].to_dict(orient="records")
-    logger.info(f"reading table: {streaming_table[:4]}")
+    logger.info(f"streaming table called")
     return JsonResponse(streaming_table, safe=False)
 
 

@@ -420,6 +420,8 @@ def pipeline_steps(df):
 
 
 def save_titles(series_results):
+    if NetflixTitles.objects.filter(netflix_id = series_results["netflix_id"]).exists():
+        return
     nt = NetflixTitles()
     nt.title = series_results["title"]
     nt.netflix_id = series_results["netflix_id"]
