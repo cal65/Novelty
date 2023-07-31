@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django import template
-from spotify.plotting.utils import objects_to_df
+from spotify.plotting.utils import objects_to_df, minute_conversion
 
 
 from .models import NetflixUsers, Books, ExportData, Authors, SpotifyTracks, NetflixTitles
@@ -734,13 +734,14 @@ def view_explore_books(request):
 def explore_data_music(request):
     stream_df = objects_to_df(SpotifyTracks.objects.all())
     #artists = objects_to_df(SpotifyArtists.objects.all())
+    stream_df['time_str'] = stream_df['duration'].fillna(0).apply(minute_conversion)
     html_cols = [
         "artistname",
         "trackname",
         "genres",
         "album",
         "podcast",
-        "duration",
+        "time_str",
         "release_date",
         "popularity",
     ]
@@ -752,4 +753,7 @@ def explore_data_music(request):
 
 def view_explore_music(request):
     return render(request, "spotify/explore_data.html")
+
+def view_explore_streaming(request):
+    return render(request, "netflix/explore_data.html")
 

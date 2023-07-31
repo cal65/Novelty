@@ -67,7 +67,8 @@ function load_datatable(url, columns) {
                     });
                 },
                 dom: 'lBfrtip',
-                buttons: ['copy', 'csv', 'excel']
+                buttons: ['copy', 'csv', 'excel'],
+                order: [7, 'desc']
             });
         }, 
             error: function(xhr, errmsg, err) {
@@ -93,28 +94,13 @@ $(document).ready( function() {
         "genres",
         "album",
         "podcast",
-        "duration",
+        "time_str",
         "release_date",
         "popularity"]);
 });
 </script>
 <style>
-  .table-container {
-    font-size: 0.7rem;
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    display: flex;
-    flex-direction: column;
-    font-family: courier new;
-    max-height: 1500px; /* Set the maximum height for the table container */
-    overflow-y: auto; /* Add a vertical scrollbar when content exceeds the container height */
-  }
-  .table-wrapper {
-    flex: 1; /* Allow the table wrapper to fill the remaining space */
-    max-height: 1600px;
-    overflow-y: auto; /* Add a vertical scrollbar when table content exceeds the container height */
-  }
+
 
   /* Optional: Style the header to make it visually distinct */
   #rTable thead {

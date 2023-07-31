@@ -33,3 +33,20 @@ def write_text(filename, texts):
         text = texts
     with open(filename, "w") as f:
         f.write(text)
+
+def minute_conversion(m):
+    """
+    Given float, return minutes and seconds
+    """
+    minutes = int(m)
+    seconds = int((m-minutes)*60)
+    if seconds < 10:
+        seconds_str = f"0{str(seconds)}"
+    else:
+        seconds_str = str(seconds)
+    if minutes == 0:
+        minutes_str = ""
+    else:
+        minutes_str = str(minutes)
+    time_str = f"{minutes_str}:{seconds_str}"
+    return time_str
