@@ -334,7 +334,7 @@ def format_artist_list_day(
     date_col="date",
     minutes_col="minutes",
     other=False,
-        index_addtl=None,
+    index_addtl=None,
 ):
     """
     Different unction from `format_artist_day`
@@ -415,7 +415,7 @@ def get_top_artist_date(
     return sub_df_pivot
 
 
-def get_top_artists_range(df, periods, artist_col="artistname",index_addtl=None):
+def get_top_artists_range(df, periods, artist_col="artistname", index_addtl=None):
     df = df.copy()
     df = df.loc[df[artist_col] != "Other"]
     date_range = pd.date_range(
@@ -425,7 +425,10 @@ def get_top_artists_range(df, periods, artist_col="artistname",index_addtl=None)
     for i in range(0, len(date_range) - 1):
         moments.append(
             get_top_artist_date(
-                df, date_start=date_range[i], date_end=date_range[i + 1], index_addtl=index_addtl
+                df,
+                date_start=date_range[i],
+                date_end=date_range[i + 1],
+                index_addtl=index_addtl,
             )
         )
     moments_df = pd.concat(moments)
@@ -467,14 +470,20 @@ def plot_top_artists_over_time(df, periods=10):
     """
     For now, keep periods <= 10
     """
-    artists_range_df = get_top_artists_range(df, periods=periods, artist_col='artistname',
-                                         index_addtl='image_url')
+    artists_range_df = get_top_artists_range(
+        df, periods=periods, artist_col="artistname", index_addtl="image_url"
+    )
     artists_range_df = flatten_adjacent(artists_range_df)
     artist_list = artists_range_df["artistname"].unique()
 
-    artist_df = format_artist_list_day(df, artist_list=artist_list, index_addtl='image_url')
+    artist_df = format_artist_list_day(
+        df, artist_list=artist_list, index_addtl="image_url"
+    )
     artist_df_week = format_group_granular(
-        artist_df, granularity="week", index_cols=["artistname", "image_url"], time_col="date"
+        artist_df,
+        granularity="week",
+        index_cols=["artistname", "image_url"],
+        time_col="date",
     )
 
     fig = go.Figure()
@@ -528,17 +537,18 @@ def plot_top_artists_over_time(df, periods=10):
         # add artist image
         fig.add_layout_image(
             dict(
-                source=row['image_url'],
+                source=row["image_url"],
                 xref="x",
                 yref="y",
-                x=row['date_mid'],
+                x=row["date_mid"],
                 y=y_annot2,
                 sizex=1000 * 60 * 60 * 24 * 25,
-                sizey=18,
+                sizey=yrange[1] / 11,
                 opacity=1,
                 xanchor="center",
                 yanchor="middle",
-                layer="above")
+                layer="above",
+            )
         )
 
     fig.update_layout(standard_layout)
@@ -1023,7 +1033,7 @@ def multiplot_overall(df):
     return fig
 
 
-def create_follower_heatmap(df, heat_col, title_col = "artistname", lim=40):
+def create_follower_heatmap(df, heat_col, title_col="artistname", min_min=20, lim=40):
     df = strat_count(df, col=heat_col, min_break=3, opt_labels=["Obscure", "Superstar"])
     strats = pd.unique(df["strats"])
     fig = make_subplots(
@@ -1034,6 +1044,7 @@ def create_follower_heatmap(df, heat_col, title_col = "artistname", lim=40):
     colorscale = "Plotly3"
     df["minutes_played"] = (df["msplayed"] / (60 * 100)).astype(int)
     df.sort_values("minutes_played", ascending=True, inplace=True)
+    df = df.loc[df["minutes_played"] > min_min]
     df["hover_text"] = df.apply(
         lambda x: f"Followers: <b>{'{:,.0f}'.format(x['followers_total'])}</b><br>Artist: <b>{x['artistname']}</b> <br>Minutes: <b>{x.minutes_played}</b>",
         axis=1,
@@ -1048,7 +1059,7 @@ def create_follower_heatmap(df, heat_col, title_col = "artistname", lim=40):
             opacity=(i + 1) / len(strats),
             hoverinfo="text",
             colorscale=colorscale,
-            showscale=(i==0),
+            showscale=(i == 0),
             ygap=1,
         )
         fig.add_trace(heatmap.data[0], row=1, col=i + 1)
@@ -1152,10 +1163,13 @@ def main(username):
         texts=[write_week_text(format_weekly(df, date_col="date"))],
     )
 
-    top_artists = pd.pivot_table(df, index=['artistname', 'artist_uri', 'followers_total', 'image_url'],
-                                 values='msplayed', aggfunc=sum).reset_index()
-    fig_heat = create_follower_heatmap(top_artists, heat_col='followers_total')
+    top_artists = pd.pivot_table(
+        df,
+        index=["artistname", "artist_uri", "followers_total", "image_url"],
+        values="msplayed",
+        aggfunc=sum,
+    ).reset_index()
+    fig_heat = create_follower_heatmap(top_artists, heat_col="followers_total")
     fig_heat.write_html(
         f"goodreads/static/Graphs/{username}/spotify_follower_heat_{username}.html"
     )
-
