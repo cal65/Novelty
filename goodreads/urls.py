@@ -51,4 +51,6 @@ urlpatterns = [
     path("books/explore-data/", view_explore_books, name="books-explore"),
     path("music/load-explore-data/", explore_data_music, name="music-load-explore"),
     path("music/explore-data/", view_explore_music, name="music-explore"),
+    path("streaming/load-explore-data/", explore_data_streaming, name="streaming-load-explore"),
+    path("streaming/explore-data/", view_explore_streaming, name="streaming-explore"),
 ]

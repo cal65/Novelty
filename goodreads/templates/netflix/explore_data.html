@@ -1,34 +1,9 @@
-{% extends "goodreads/explore_data.html" %}
-{% block title %}
-    <title>Music Analysis</title>
-{% endblock title %}
+{% extends "netflix/basefile_streaming.html" %}
 
-<!-- customize navbar -->
-{% block d1 %}
-        <a class="nav-link" href="{% url 'books-home' %}" >Books</a>
-{% endblock d1 %}
-{% block d2 %}
-        <a class="nav-link" href="{% url 'music-home' %}" style="color: #00CC96; font-weight: bold;" >Music</a>
-{% endblock d2 %}
-{% block upload %}
-        <a class="nav-link" href="{% url 'upload-spotify' %}">Upload Data</a>
-{% endblock upload %}
-{% block about %}
-      <a class="nav-link" href="{% url 'about-this-spotify' %}">About This</a>
-{% endblock about %}
-{% block plots %}
-        <a class="nav-link" href="{% url 'spotify-plots' %}">Plots</a>
-{% endblock plots %}
-{% block gallery %}
-        <a class="nav-link" href="{% url 'gallery-music' %}">Gallery</a>
-{% endblock gallery %}
-{% block view-data %}
-        <a class="nav-link" href="{% url 'music-view-data' %}">View Data</a>
-{% endblock view-data %}
-{% block explore-data %}
-        <a class="nav-link" href="{% url 'music-explore' %}">Explore Data</a>
-{% endblock explore-data %}
-
+{% block css-additional %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css"/>
+{% endblock css-additional %}
 {% block content %}
 
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
@@ -68,8 +43,8 @@ function load_datatable(url, columns) {
                 },
                 dom: 'lBfrtip',
                 buttons: ['copy', 'csv', 'excel'],
-                order: [7, 'desc'],
-                columnDefs: [{ width: 200, targets: 3 }],
+                order: [1, 'desc'],
+                columnDefs: [{ width: 300, targets: 4 }, { width: 350, targets: 5 },{ width: 300, targets: 6}],
             });
         }, 
             error: function(xhr, errmsg, err) {
@@ -89,15 +64,14 @@ function load_datatable(url, columns) {
 
 <script>
 $(document).ready( function() {
-    load_datatable("{% url 'music-load-explore' %}",
-        ["artistname",
-        "trackname",
+    load_datatable("{% url 'streaming-load-explore' %}",
+        ["title",
+        "release_year",
+        "title_type",
+        "alt_votes",
         "genres",
-        "album",
-        "podcast",
-        "time_str",
-        "release_date",
-        "popularity"]);
+        "cast",
+        "director",]);
 });
 </script>
 <style>
@@ -114,16 +88,15 @@ $(document).ready( function() {
 <div class="table-container">
 <div class="table-wrapper">
     <table id="rTable" class="cell-border">
-        <thead class = "style-music">
+        <thead class = "style-streaming">
           <tr>
-            <th>Artist</th>
-            <th>Track</th>
-            <th>Genres</th>
-            <th>Album</th>
-            <th>Podcast</th>
-            <th>Duration</th>
-            <th>Release Date</th>
+            <th>Title</th>
+            <th>Release Year</th>
+            <th>Title Type</th>
             <th>Popularity</th>
+            <th>Genres</th>
+            <th>Cast</th>
+            <th>Director</th>
           </tr>
         </thead>
         <tbody>

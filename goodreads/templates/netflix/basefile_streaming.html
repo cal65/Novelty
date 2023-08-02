@@ -1,34 +1,36 @@
 {% extends "goodreads/basefile.html" %}
 
-    {% block title %}
-        <title>TV Analysis</title>
-    {% endblock title %}
+{% block title %}
+    <title>TV Analysis</title>
+{% endblock title %}
 
-	<!-- customize navbar -->
-    {% block d1 %}
-            <a class="nav-link" href="{% url 'books-home' %}" >Books</a>
-    {% endblock d1 %}
-    {% block d3 %}
-            <a class="nav-link" href="{% url 'streaming-home' %}" style="color: #EF553B; font-weight: bold;" >Streaming</a>
-    {% endblock d3 %}
-	{% block upload %}
-            <a class="nav-link" href="{% url 'upload-view-netflix' %}">Upload Data</a>
-    {% endblock upload %}
-    {% block about %}
-          <a class="nav-link" href="{% url 'about-this-netflix' %}">About This</a>
-    {% endblock about %}
-    {% block plots %}
-            <a class="nav-link" href="{% url 'netflix-plots' %}">Plots</a>
-    {% endblock plots %}
-    {% block gallery %}
-            <a class="nav-link" href="{% url 'gallery-streaming' %}">Gallery</a>
-    {% endblock gallery %}
-    {% block compare %}
-    <li class="nav-item active pr-2">
-        <a class="nav-link" href="{% url 'netflix-compare-view' %}">Compare</a>
-    </li>
-    {% endblock compare %}
-    {% block view-data %}
-            <a class="nav-link" href="{% url 'streaming-view-data' %}">View Data</a>
-    {% endblock view-data %}
-    
+<!-- customize navbar -->
+{% block d1 %}
+        <a class="nav-link" href="{% url 'books-home' %}" >Books</a>
+{% endblock d1 %}
+{% block d3 %}
+        <a class="nav-link" href="{% url 'streaming-home' %}" style="color: #EF553B; font-weight: bold;" >Streaming</a>
+{% endblock d3 %}
+{% block upload %}
+        <a class="nav-link" href="{% url 'upload-view-netflix' %}">Upload Data</a>
+{% endblock upload %}
+{% block about %}
+      <a class="nav-link" href="{% url 'about-this-netflix' %}">About This</a>
+{% endblock about %}
+{% block plots %}
+        <a class="nav-link" href="{% url 'netflix-plots' %}">Plots</a>
+{% endblock plots %}
+{% block gallery %}
+        <a class="nav-link" href="{% url 'gallery-streaming' %}">Gallery</a>
+{% endblock gallery %}
+{% block compare %}
+<li class="nav-item active pr-2">
+    <a class="nav-link" href="{% url 'netflix-compare-view' %}">Compare</a>
+</li>
+{% endblock compare %}
+{% block view-data %}
+        <a class="nav-link" href="{% url 'streaming-view-data' %}">View Data</a>
+{% endblock view-data %}
+{% block explore-data %}
+        <a class="nav-link" href="{% url 'streaming-explore' %}">Explore Data</a>
+{% endblock explore-data %}

@@ -11,7 +11,7 @@ from django import template
 from spotify.plotting.utils import objects_to_df, minute_conversion
 
 
-from .models import NetflixUsers, Books, ExportData, Authors, SpotifyTracks, NetflixTitles
+from .models import NetflixUsers, Books, ExportData, Authors, SpotifyTracks, NetflixTitles, NetflixGenres, NetflixActors
 
 sys.path.append("..")
 sys.path.append("../spotify/")
@@ -756,4 +756,26 @@ def view_explore_music(request):
 
 def view_explore_streaming(request):
     return render(request, "netflix/explore_data.html")
+
+
+def explore_data_streaming(request):
+    title_df = objects_to_df(NetflixTitles.objects.all())
+    title_df = title_df.loc[pd.notnull(title_df['netflix_id'])]
+    genres_df = objects_to_df(NetflixGenres.objects.all())
+    actors_df = objects_to_df(NetflixActors.objects.all())
+    stream_df = pd.merge(title_df, genres_df, on="netflix_id", how="left")
+    stream_df = pd.merge(stream_df, actors_df, on="netflix_id", how="left")
+    html_cols = [
+        "title",
+        "release_year",
+        "title_type",
+        "alt_votes",
+        "genres",
+        "cast",
+        "director",
+    ]
+    stream_df = stream_df.fillna("")
+    stream_table = stream_df[html_cols].to_dict(orient="records")
+    logger.info(f"netflix exploration called")
+    return JsonResponse(stream_table, safe=False)
 
