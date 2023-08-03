@@ -178,7 +178,7 @@ def convert_return(track_info_dict):
     genres_list = a.genres
     track_info_series = pd.Series(
         {
-            "uri": track_info_dict['uri'].replace('spotify:track:', ''),
+            "uri": track_info_dict["uri"].replace("spotify:track:", ""),
             "name": track_info_dict["name"],
             "artist": track_info_dict["artists"][0]["name"],
             "duration": track_info_dict["duration_ms"] / ms_per_minute,
@@ -190,9 +190,7 @@ def convert_return(track_info_dict):
             "trackname": track_info_dict["name"],
             "artistname": track_info_dict["artists"][0]["name"],
             "podcast": False,
-            "genre_chosen": genres_list[0]
-            if len(genres_list) > 0
-            else "",
+            "genre_chosen": genres_list.split(", ")[0] if len(genres_list) > 0 else "",
             "artist_uri": artist_id,
         }
     )

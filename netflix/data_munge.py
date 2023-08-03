@@ -182,7 +182,7 @@ def get_actors(netflix_id):
     if results is None:
         logger.info(f"No response found for {netflix_id}")
         return
-    actors = ', '.join([r["full_name"] for r in results])
+    actors = ", ".join([r["full_name"] for r in results])
     actors_results = pd.Series({"netflix_id": netflix_id, "actors": actors})
     return actors_results
 
@@ -420,15 +420,17 @@ def pipeline_steps(df):
 
 
 def save_titles(series_results):
-    if NetflixTitles.objects.filter(netflix_id = series_results["netflix_id"]).exists():
+    if NetflixTitles.objects.filter(netflix_id=series_results["netflix_id"]).exists():
         return
     nt = NetflixTitles()
     nt.title = series_results["title"]
     nt.netflix_id = series_results["netflix_id"]
     nt.title_type = series_results["title_type"]
     nt.release_year = series_results["year"]
-    nt.default_image = series_results.get("default_image", series_results.get("img", ""))
-    alt_votes = series_results.get("alt_votes", '')
+    nt.default_image = series_results.get(
+        "default_image", series_results.get("img", "")
+    )
+    alt_votes = series_results.get("alt_votes", "")
     nt.alt_votes = 0 if alt_votes == "" else alt_votes
     nt.save()
     return nt
@@ -474,7 +476,7 @@ def lookup_and_insert(title):
         series_results = get_details(deleted_id)
     # add line if string difference is too far elif series_result['title']
 
-    if (series_results is None) | ('netflix_id' not in series_results.keys()):
+    if (series_results is None) | ("netflix_id" not in series_results.keys()):
         logger.info(f"No active or deleted Netflix info found for {title}")
         return
 
