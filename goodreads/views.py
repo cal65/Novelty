@@ -260,6 +260,7 @@ def process_export_upload(df, date_col="Date_Read"):
     )
     df = df[pd.notnull(df["book_id"])]
     df["author"] = df["author"].str.strip()
+    df["author"] = df["author"].str.replace(r'\s+', ' ', regex=True)
     return df
 
 
