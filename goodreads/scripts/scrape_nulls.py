@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from goodreads.models import *
-from goodreads.scripts.append_to_export import append_scraping
+from goodreads.scripts.append_to_export import append_scraping, scrape_bid, convert_to_ExportData
 from spotify.plotting.utils import objects_to_df
 
 
@@ -9,6 +9,8 @@ def scrape_null(book_ids, n, wait=10):
     for bid in book_ids[:n]:
         b = append_scraping(bid, wait=wait)
         b.save()
+        scraped_dict = scrape_bid(bid, wait=wait/2)
+        e = convert_to_ExportData(scraped_dict, username='Scraped')
         print(b.added_by)
 
 

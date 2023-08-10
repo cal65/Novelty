@@ -43,7 +43,7 @@ def convert_to_ExportData(row, username):
     try:
         # check if ExportData table already has this book
         djangoExport = ExportData.objects.get(
-            book_id=str(row.book_id), username=username
+            book_id=str(row['book_id']), username=username
         )
     except Exception as e:
         djangoExport = ExportData()
@@ -53,7 +53,7 @@ def convert_to_ExportData(row, username):
     common_fields = list(set(row.keys()).intersection(f_names))
 
     for f in common_fields:
-        value = row.get(f)
+        value = row[f]
         existing_value = getattr(djangoExport, f)
         if pd.isnull(value):
             value = None
@@ -62,7 +62,7 @@ def convert_to_ExportData(row, username):
         if value != existing_value:
             if not new:
                 logger.info(
-                    f"updating djangoExport {row.title} for field {f} from {existing_value} to value {value}"
+                    f"updating djangoExport {row['title']} for field {f} from {existing_value} to value {value}"
                 )
                 # update ExportsData table with updated book
                 djangoExport.save()
@@ -173,22 +173,6 @@ def choose_nationality():
     return
 
 
-def query_authors():
-    conn = psycopg2.connect(
-        host="localhost", database="goodreads", user="cal65", password=post_pass
-    )
-    query = f"""
-    select * from goodreads_authors
-    """
-    try:
-        df = pd.read_sql(query, con=conn)
-        logger.info(f"Returning data from query with nrows {len(df)}")
-        return df
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-        return
-
-
 def clean_df(goodreads_data):
     goodreads_data.columns = [c.replace(" ", "_") for c in goodreads_data.columns]
     date_columns = [c for c in goodreads_data.columns if "date" in c.lower()]
@@ -209,17 +193,22 @@ def append_scraping(book_id, wait):
     """
     djangoBook = Books()
     book_fields = get_field_names(Books)
-    url = scrape_goodreads.create_url(str(book_id))
-    scraped_dict = scrape_goodreads.get_stats(url, wait=wait)
-    url_stats = url.replace("show", "stats")
-    stats_dict = scrape_goodreads.get_read_stats(url_stats)
-    scraped_dict.update(stats_dict)
+    scraped_dict = scrape_bid(book_id, wait=wait)
     for k, v in scraped_dict.items():
         if k in book_fields:
             setattr(djangoBook, k, v)
     djangoBook.book_id = book_id
     return djangoBook
 
+
+def scrape_bid(book_id, wait):
+    url = scrape_goodreads.create_url(str(book_id))
+    scraped_dict = scrape_goodreads.get_stats(url, wait=wait)
+    url_stats = url.replace("show", "stats")
+    stats_dict = scrape_goodreads.get_read_stats(url_stats)
+    scraped_dict.update(stats_dict)
+    scraped_dict.update({"book_id": book_id})
+    return scraped_dict
 
 def convert_to_Book(book_id, wait=2):
     """
