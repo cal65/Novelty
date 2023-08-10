@@ -191,6 +191,7 @@ def get_read_stats(url):
         ratings_raw = stats[1]
         reviews_raw = stats[2]
         to_reads_raw = stats[3]
+        added_by_raw = stats[4]
     except Exception as e:
         logger.info(f"Error {e} for {url}")
         return null_return
@@ -199,7 +200,7 @@ def get_read_stats(url):
     to_reads = re.findall("\d+", to_reads_raw)
     to_reads = int("".join(to_reads))
     read = int("".join(ratings)) + int("".join(reviews))
-    added_by = to_reads + read
+    added_by = int("".join(re.findall("\d+", added_by_raw)))
     return {
         "added_by": added_by,
         "to_reads": to_reads,

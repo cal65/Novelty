@@ -1,15 +1,19 @@
 {% extends "goodreads/basefile.html" %}
 
 {% block css-additional %}
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.dataTables.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css"/>
 {% endblock css-additional %}
 {% block content %}
 
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
 <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 <script>
 function load_datatable(url, columns) {
 	var cols = columns.map(function(c) {
@@ -25,23 +29,21 @@ function load_datatable(url, columns) {
 	    		data: response,
 	    		columns: cols,
 	    		"pageLength": 25,
-	    		initComplete: function () {
-		        this.api()
-		            .columns()
-		            .every(function () {
-		                var column = this;
-		                var title = column.footer().textContent;
-		                // Create input element and add event listener
-		                $('<input type="text" placeholder="Search ' + title + '" />')
-		                    .appendTo($(column.footer()).empty())
-		                    .on('keyup change clear', function () {
-		                        if (column.search() !== this.value) {
-		                            column.search(this.value).draw();
-		                        }
-		                    });
-		            });
-		    	},
-		    	dom: 'lBfrtip',
+		    	dom: 'PlBfrtip',
+		    	columnDefs: [
+		            {
+		                searchPanes: {
+		                    show: true
+		                },
+		                targets: [1, 2, 3, 4]
+		            },
+		            {
+		                searchPanes: {
+		                    show: false
+		                },
+		                targets: [0, 5, 6, 7, 8]
+		            }
+		        ],
 		        buttons: ['copy', 'csv', 'excel']
 		    });
 	    }, 
