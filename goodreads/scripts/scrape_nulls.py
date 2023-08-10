@@ -10,7 +10,9 @@ def scrape_null(book_ids, n, wait=10):
         b = append_scraping(bid, wait=wait)
         b.save()
         scraped_dict = scrape_bid(bid, wait=wait/2)
-        e = convert_to_ExportData(scraped_dict, username='Scraped')
+        # don't save if we get a bad page
+        if scraped_dict['author'] is None:
+            e = convert_to_ExportData(scraped_dict, username='Scraped')
         print(b.added_by)
 
 
