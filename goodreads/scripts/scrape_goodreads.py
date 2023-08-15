@@ -121,8 +121,14 @@ def get_stats(url, wait=0):
         publish_info = details.find("p", {"data-testid": "publicationInfo"}).text
         publish_info = publish_info.replace("\n", "")
         publish_info = publish_info.replace("First published", "").strip()
+
     except:
         publish_info = None
+
+    try:
+        original_publication_year = int(re.match('.*?([0-9]+)$', publish_info).group(1))
+    except:
+        original_publication_year = None
 
     try:
         language = soup.find("div", {"itemprop": "inLanguage"}).text
@@ -161,6 +167,7 @@ def get_stats(url, wait=0):
         "title": title,
         "author": author,
         "publish_info": publish_info,
+        "original_publication_year": original_publication_year,
         "language": language,
         "rating": rating,
         "shelf1": shelf1,
