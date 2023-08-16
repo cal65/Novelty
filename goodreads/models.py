@@ -107,6 +107,7 @@ class NetflixTitles(models.Model):
     title_type = models.CharField(max_length=250, null=True)
     default_image = models.CharField(max_length=1000, null=True)
     alt_votes = models.IntegerField(null=True)
+    synopsis = models.CharField(max_length=2000, null=True)
     ts_updated = models.DateTimeField(auto_now=True)
 
 
