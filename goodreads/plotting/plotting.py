@@ -1008,6 +1008,12 @@ def month_plot(
     return fig
 
 
+def genre_join(df):
+    scols = [c for c in df.columns if c.startswith('shelf')]
+    df[scols].iloc[3].index[df[scols].iloc[3].isin(["Fiction", "Nonfiction"])][0]
+
+
+
 def main(username):
     df = get_data(userdata_query(username))
     logger.info(f"Data read with {len(df)} rows \n : {df.head()}")

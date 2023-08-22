@@ -30,12 +30,22 @@ function load_datatable(url, columns) {
 	    		columns: cols,
 	    		"pageLength": 25,
 		    	dom: 'PlBfrtip',
+		    	order: [5, 'desc'],
 		    	columnDefs: [
 		            {
 		                searchPanes: {
-		                    show: true
+		                    show: true,
 		                },
-		                targets: [1, 2, 3, 4]
+		                targets: [1, 2, 3]
+		            },
+		            {
+		            	searchPanes: {
+		                    show: true,
+		                    dtOpts: {
+		                    	order: [0, 'desc']
+		                    }
+		                },
+		                targets: [4]
 		            },
 		            {
 		                searchPanes: {
