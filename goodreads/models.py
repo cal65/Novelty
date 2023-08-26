@@ -23,13 +23,6 @@ class ExportData(models.Model):
     exclusive_shelf = models.CharField(max_length=30, default="read")
     username = models.CharField(max_length=30, default="Random")
     ts_updated = models.DateTimeField(auto_now=True)
-    # author_l_f = models.CharField(max_length=250)
-    # additional_authors = models.CharField(max_length=250)
-    # isbn = models.CharField(max_length=250)
-    # isbn13 = models.CharField(max_length=250)
-    # publisher = models.CharField(max_length=250)
-    # binding = models.CharField(max_length=250)
-    # my_review = models.TextField()
 
 
 class Authors(models.Model):
@@ -103,11 +96,11 @@ class NetflixTitles(models.Model):
     netflix_id = models.CharField(max_length=250, primary_key=True)
     title = models.CharField(max_length=250, null=True)
     director = models.CharField(max_length=250, null=True)
-    release_year = models.IntegerField(null=True)
+    release_year = models.IntegerField(null=True, blank=True)
     title_type = models.CharField(max_length=250, null=True)
-    default_image = models.CharField(max_length=1000, null=True)
-    alt_votes = models.IntegerField(null=True)
-    synopsis = models.CharField(max_length=2000, null=True)
+    default_image = models.CharField(max_length=1000, null=True, blank=True)
+    alt_votes = models.IntegerField(null=True, blank=True)
+    synopsis = models.CharField(max_length=2000, null=True, blank=True)
     ts_updated = models.DateTimeField(auto_now=True)
 
 
