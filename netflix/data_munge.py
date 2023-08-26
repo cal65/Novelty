@@ -432,6 +432,7 @@ def save_titles(series_results):
     )
     alt_votes = series_results.get("alt_votes", "")
     nt.alt_votes = 0 if alt_votes == "" else alt_votes
+    nt.synopsis = series_results["synopsis"]
     nt.save()
     return nt
 
