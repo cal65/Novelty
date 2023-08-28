@@ -114,6 +114,7 @@ def get_stats(url, wait=0):
 
     try:
         author = soup.find("span", {"data-testid": "name"}).text
+        author = re.sub(pattern="\s+", repl=" ", string=author)
     except:
         author = None
 
