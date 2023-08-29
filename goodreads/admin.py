@@ -12,6 +12,7 @@ from .models import (
 
 @admin.register(ExportData)
 class ExportDataAdmin(admin.ModelAdmin):
+    search_fields = ("book_id__startswith", "title__startswith", "author__startswith")
     list_display = (
         "book_id",
         "title",
@@ -57,7 +58,7 @@ class AuthorsAdmin(admin.ModelAdmin):
 
 @admin.register(NetflixTitles)
 class NetflixTitlesAdmin(admin.ModelAdmin):
-    search_fields = ("title__startswith",)
+    search_fields = ("title__startswith", "netflix_id__startswith")
     list_display = (
         "netflix_id",
         "title",
