@@ -419,9 +419,10 @@ def pipeline_steps(df):
     return df_concat
 
 
-def save_titles(series_results):
-    if NetflixTitles.objects.filter(netflix_id=series_results["netflix_id"]).exists():
-        return
+def save_titles(series_results, override=False):
+    if not override:
+        if NetflixTitles.objects.filter(netflix_id=series_results["netflix_id"]).exists():
+            return
     nt = NetflixTitles()
     nt.title = series_results["title"]
     nt.netflix_id = series_results["netflix_id"]
