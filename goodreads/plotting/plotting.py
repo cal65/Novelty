@@ -796,6 +796,7 @@ def create_read_plot_heatmap(
         start_year=start_year,
     )
     strats = pd.unique(df["strats"])
+    strats = strats[pd.notnull(strats)] # occasionally goodreads has errors and returns negative readers
     df["narrative_int"] = df["narrative"].map({"Fiction": 1, "Nonfiction": 0})
     df["hover_text"] = df.apply(
         lambda x: f"Readers: <b>{'{:,.0f}'.format(x.read)}</b><br>Title: <b>{x.title_simple}</b> <br>Author: <b>{x.author}</b>",
@@ -1029,7 +1030,11 @@ def main(username):
         )
     except Exception as exception:
         logger.info(" summary plot failed: " + str(exception))
-    create_read_plot_heatmap(df=read_df, username=username)
+
+    try:
+        create_read_plot_heatmap(df=read_df, username=username)
+    except Exception as exception:
+        logger.info("reader heatmap plot failed: " + str(exception))
     fig_finish = finish_plot(df, username)
     fig_finish.write_html(
         f"goodreads/static/Graphs/{username}/goodreads_finish_plot_{username}.html"
