@@ -41,7 +41,7 @@ function load_datatable(url, columns) {
                     { width: 350, targets: 5},
                     { width: 300, targets: 6},
                     {
-                        searchPanes: {show: true,},
+                        searchPanes: {show: true},
                         targets: [1, 2,  6]
                     },
                     {
@@ -49,23 +49,16 @@ function load_datatable(url, columns) {
                         targets: [0, 3, 4]
                     },
                     {
-                        targets: 5,
-                        render: function (data, type, row) {
-                          if (type === 'sp') {
-                            return data.split(', ')
-                          }
-                          return data;
-                        },
-                        searchPanes: {
-                            show:true,
-                            orthogonal:'sp'
-                        }
-                      }
+                        searchPanes: 
+                            {
+                                show: true,
+                                orthogonal:'sp',
+                                threshold: 2
+                            },
+                            targets: [5]
+                    }
                 ],
                 "deferRender": true,
-                initComplete: function() {
-                    this.api().searchPanes.rebuildPane();
-                }
             });
         }, 
             error: function(xhr, errmsg, err) {

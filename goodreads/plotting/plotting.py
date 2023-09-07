@@ -1011,8 +1011,26 @@ def month_plot(
 
 def genre_join(df):
     scols = [c for c in df.columns if c.startswith('shelf')]
-    df[scols].iloc[3].index[df[scols].iloc[3].isin(["Fiction", "Nonfiction"])][0]
-
+    def find_narrative(row):
+        # join a list of strings or None
+        row_array = list(filter(None, row))
+        try:
+            row_array.remove("Nonfiction")
+            narrative = "Nonfiction"
+        except:
+            try:
+                row_array.remove("Fiction")
+                narrative = "Fiction"
+            except:
+                narrative = "Fiction"
+        # for better formatting, add space to row indices > 1
+        if len(row_array) > 1:
+            row_array = [f" {r}" if i > 0 else r for i, r in enumerate(row_array)]
+        return narrative, row_array
+    genre_returns = df[scols].apply(find_narrative, axis=1)
+    df['narrative'] = [g[0] for g in genre_returns]
+    df["shelves"] = [g[1] for g in genre_returns]
+    return df
 
 
 def main(username):

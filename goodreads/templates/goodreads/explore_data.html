@@ -35,8 +35,9 @@ function load_datatable(url, columns) {
 		            {
 		                searchPanes: {
 		                    show: true,
+		                    orthogonal:'sp'
 		                },
-		                targets: [1, 2, 3]
+		                targets: [1, 2, 3, 6, 7]
 		            },
 		            {
 		            	searchPanes: {
@@ -51,7 +52,7 @@ function load_datatable(url, columns) {
 		                searchPanes: {
 		                    show: false
 		                },
-		                targets: [0, 5, 6, 7, 8]
+		                targets: [0, 5]
 		            }
 		        ],
 		        buttons: ['copy', 'csv', 'excel']
@@ -76,9 +77,8 @@ $(document).ready( function() {
         "nationality_chosen",
         "original_publication_year",
         "read",
-        "shelf1",
-        "shelf2",
-        "shelf3"]);
+        "narrative",
+        "shelves"]);
 });
 </script>
 
@@ -110,9 +110,8 @@ $(document).ready( function() {
             <th>Nationality</th>
             <th>Year</th>
             <th>Readers</th>
-            <th>Shelf1</th>
-            <th>Shelf2</th>
-            <th>Shelf3</th>
+            <th>Narrative</th>
+            <th>Shelves</th>
           </tr>
         </thead>
         <tbody>

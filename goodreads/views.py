@@ -695,17 +695,17 @@ def explore_data_books(request):
     good_df = pd.merge(good_df, authors_df, on="author", how="left")
     good_df["author"] = good_df["author"].fillna("")
     good_df = gplot.run_all(good_df)
+    good_df = gplot.genre_join(good_df)
     edf = pd.pivot_table(
         good_df,
         index=["title_simple", "author", "nationality_chosen", "gender"],
-        values=["number_of_pages", "original_publication_year", "read", "shelf1", "shelf2", "shelf3"],
+        values=["number_of_pages", "original_publication_year", "read", "narrative", "shelves"],
         aggfunc={
             "number_of_pages": max,
             "original_publication_year": max,
             "read": max,
-            "shelf1": "first",
-            "shelf2": "first",
-            "shelf3": "first",
+            "narrative": "first",
+            "shelves": "first",
         },
     ).reset_index()
     edf["read"] = edf["read"].fillna(0)
@@ -719,9 +719,8 @@ def explore_data_books(request):
         "nationality_chosen",
         "original_publication_year",
         "read",
-        "shelf1",
-        "shelf2",
-        "shelf3",
+        "narrative",
+        "shelves",
     ]
     read_table = edf[html_cols].to_dict(orient="records")
     logger.info(f"reading table: {read_table[:4]}")
@@ -760,12 +759,13 @@ def view_explore_streaming(request):
 
 
 def explore_data_streaming(request):
-    title_df = objects_to_df(NetflixTitles.objects.all())
-    title_df = title_df.loc[pd.notnull(title_df['netflix_id'])]
+    title_df = objects_to_df(NetflixTitles.objects.filter(netflix_id__isnull=False))
     genres_df = objects_to_df(NetflixGenres.objects.all())
     actors_df = objects_to_df(NetflixActors.objects.all())
     stream_df = pd.merge(title_df, genres_df, on="netflix_id", how="left")
     stream_df = pd.merge(stream_df, actors_df, on="netflix_id", how="left")
+    # turn comma separated cast into array
+    stream_df["cast"] = stream_df["cast"].str.split(",")
     html_cols = [
         "title",
         "release_year",
