@@ -3,6 +3,9 @@
 {% block css-additional %}
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.dataTables.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css"/>
+
 {% endblock css-additional %}
 {% block content %}
 
@@ -10,6 +13,10 @@
 <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+
+
 <script>
 function load_datatable(url, columns) {
     var cols = columns.map(function(c) {
@@ -25,26 +32,40 @@ function load_datatable(url, columns) {
                 data: response,
                 columns: cols,
                 "pageLength": 25,
-                initComplete: function () {
-                this.api()
-                    .columns()
-                    .every(function () {
-                        var column = this;
-                        var title = column.footer().textContent;
-                        // Create input element and add event listener
-                        $('<input type="text" placeholder="Search ' + title + '" />')
-                            .appendTo($(column.footer()).empty())
-                            .on('keyup change clear', function () {
-                                if (column.search() !== this.value) {
-                                    column.search(this.value).draw();
-                                }
-                            });
-                    });
-                },
-                dom: 'lBfrtip',
+                order: [2, 'desc'],
+                dom: 'PlBfrtip',
                 buttons: ['copy', 'csv', 'excel'],
                 order: [1, 'desc'],
-                columnDefs: [{ width: 300, targets: 4 }, { width: 350, targets: 5 },{ width: 300, targets: 6}],
+                columnDefs: [
+                    { width: 300, targets: 4 }, 
+                    { width: 350, targets: 5},
+                    { width: 300, targets: 6},
+                    {
+                        searchPanes: {show: true,},
+                        targets: [1, 2,  6]
+                    },
+                    {
+                        searchPanes: {show: false},
+                        targets: [0, 3, 4]
+                    },
+                    {
+                        targets: 5,
+                        render: function (data, type, row) {
+                          if (type === 'sp') {
+                            return data.split(', ')
+                          }
+                          return data;
+                        },
+                        searchPanes: {
+                            show:true,
+                            orthogonal:'sp'
+                        }
+                      }
+                ],
+                "deferRender": true,
+                initComplete: function() {
+                    this.api().searchPanes.rebuildPane();
+                }
             });
         }, 
             error: function(xhr, errmsg, err) {
@@ -103,8 +124,6 @@ $(document).ready( function() {
           <!-- Table body content will be generated dynamically -->
         </tbody>
     </table>
-    <br>
-    <br>
 </div>
 
 

@@ -41,6 +41,10 @@
     overflow: hidden;
 }
 
+.dtsp-paneInputButton{
+    font-weight: bold;
+}
+
 .navbar-sub {
     position: absolute;
     z-index: 1;

@@ -427,7 +427,7 @@ def save_titles(series_results, override=False):
     nt.title = series_results["title"]
     nt.netflix_id = series_results["netflix_id"]
     nt.title_type = series_results["title_type"]
-    nt.release_year = series_results["year"]
+    nt.release_year = series_results["year"] if series_results["year"] != '' else None
     nt.default_image = series_results.get(
         "default_image", series_results.get("img", "")
     )
