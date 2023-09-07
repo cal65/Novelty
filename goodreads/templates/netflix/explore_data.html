@@ -58,7 +58,7 @@ function load_datatable(url, columns) {
                             targets: [5]
                     }
                 ],
-                "deferRender": true,
+                "deferLoading": 400,
             });
         }, 
             error: function(xhr, errmsg, err) {
