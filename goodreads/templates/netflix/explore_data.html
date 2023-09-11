@@ -37,26 +37,16 @@ function load_datatable(url, columns) {
                 buttons: ['copy', 'csv', 'excel'],
                 order: [1, 'desc'],
                 columnDefs: [
-                    { width: 300, targets: 4 }, 
-                    { width: 350, targets: 5},
-                    { width: 300, targets: 6},
+                    { width: 400, targets: 3}, 
+                    { width: 450, targets: 4},
                     {
-                        searchPanes: {show: true},
-                        targets: [1, 2,  6]
+                        searchPanes: {show: true, orthogonal:'sp',},
+                        targets: [1, 2, 4]
                     },
                     {
                         searchPanes: {show: false},
-                        targets: [0, 3, 4]
+                        targets: [0, 3]
                     },
-                    {
-                        searchPanes: 
-                            {
-                                show: true,
-                                orthogonal:'sp',
-                                threshold: 2
-                            },
-                            targets: [5]
-                    }
                 ],
                 "deferLoading": 400,
             });
@@ -82,10 +72,8 @@ $(document).ready( function() {
         ["title",
         "release_year",
         "title_type",
-        "alt_votes",
         "genres",
-        "cast",
-        "director",]);
+        "cast",]);
 });
 </script>
 <style>
@@ -107,16 +95,18 @@ $(document).ready( function() {
             <th>Title</th>
             <th>Release Year</th>
             <th>Title Type</th>
-            <th>Popularity</th>
             <th>Genres</th>
             <th>Cast</th>
-            <th>Director</th>
           </tr>
         </thead>
         <tbody>
           <!-- Table body content will be generated dynamically -->
         </tbody>
     </table>
+    <br>
+    <br>
+    <br>
+    <br>
 </div>
 
 

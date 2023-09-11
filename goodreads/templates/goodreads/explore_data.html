@@ -35,7 +35,10 @@ function load_datatable(url, columns) {
 		            {
 		                searchPanes: {
 		                    show: true,
-		                    orthogonal:'sp'
+		                    orthogonal:'sp',
+		                    dtOpts: {
+		                    	select: { style: 'multi'},
+		                    }
 		                },
 		                targets: [1, 2, 3, 6, 7]
 		            },
@@ -43,7 +46,8 @@ function load_datatable(url, columns) {
 		            	searchPanes: {
 		                    show: true,
 		                    dtOpts: {
-		                    	order: [0, 'desc']
+		                    	order: [0, 'desc'],
+		                    	select: { style: 'multi'},
 		                    }
 		                },
 		                targets: [4]
