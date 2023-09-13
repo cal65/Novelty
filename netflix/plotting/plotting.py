@@ -7,6 +7,8 @@ import plotly.express as px
 import plotly
 import logging
 
+from plotly.subplots import make_subplots
+
 from goodreads.models import NetflixGenres, NetflixUsers, NetflixActors
 from goodreads.plotting.plotting import split_title
 from spotify.plotting.utils import standard_layout, save_fig, objects_to_df
@@ -31,7 +33,7 @@ def load_data(username):
     df = pd.DataFrame.from_records(
         NetflixUsers.objects.filter(username=username).values()
     )
-    if len(df) ==0:
+    if len(df) == 0:
         logger.info(f"No data found for user {username}")
         raise Exception(f"No data found for user {username}")
     df = nd.pipeline_steps(df)
@@ -42,11 +44,11 @@ def load_data(username):
     genres_df["genres"] = genres_df["genres"].fillna("")
     logger.info("Simplifying genres")
     genres_df["genre_chosen"] = genres_df["genres"].apply(simplify_genres)
-    df = pd.merge(df, genres_df, on='netflix_id', how='left')
+    df = pd.merge(df, genres_df, on="netflix_id", how="left")
     actors_df = pd.DataFrame.from_records(
         NetflixActors.objects.filter(netflix_id__in=nids).values()
     )
-    df = pd.merge(df, actors_df, on='netflix_id', how='left')
+    df = pd.merge(df, actors_df, on="netflix_id", how="left")
     return df
 
 
@@ -186,37 +188,29 @@ def format_timeline(df, values=["season", "episode", "genre_chosen", "netflix_id
     return daily_df
 
 
-def plot_timeline(df, username):
-    fig = go.Figure()
-    series_df = df.loc[df["title_type"] == "series"]
-    series_df = format_timeline(
-        series_df,
-        values=["season", "episode", "genre_chosen", "netflix_id", "username"],
-    )
-    # wrap names to deal with titles that are too long and ruin the plot
-    series_df["name_short"] = series_df["name"].apply(lambda x: split_title(x, 40))
-    # order by top genre
-    genres = list(series_df["genre_chosen"].value_counts().index)
-    n_palette = len(palette)
-    if len(genres) > n_palette:
-        other_genres = {k: "Other" for k in list(genres[(n_palette - 1) :])}
-        series_df["genre_chosen_truncated"] = (
-            series_df["genre_chosen"]
-            .map(other_genres)
-            .fillna(series_df["genre_chosen"])
-        )
-        genres = genres[:n_palette] + ["Other"]
+def truncate_genres(genres, genres_series, n):
+    """
+    If the number of unique chosen genres exceeds the palette colors, truncate the genres
+    Genres is ordered by most common
+    """
+    other_genres = {k: "Other" for k in list(genres[(n - 1) :])}
+    genres_series = genres_series.map(other_genres).fillna(genres_series)
+    genres = genres[: (n - 1)] + ["Other"]
+    return genres, genres_series
 
-    for i, genre in enumerate(genres):
-        g_df = series_df.loc[series_df["genre_chosen"] == genre]
-        for j, nid in enumerate(g_df["netflix_id"].unique()):
+
+def create_timeline_single(df, genres):
+    fig = go.Figure()
+    for j, genre in enumerate(genres):
+        g_df = df.loc[df["genre_chosen"] == genre]
+        for k, nid in enumerate(g_df["netflix_id"].unique()):
             s_df = g_df.loc[g_df["netflix_id"] == nid]
             fig.add_trace(
                 go.Scatter(
                     x=s_df["date"],
                     y=s_df["name_short"],
                     mode="lines+markers",
-                    marker=dict(color=palette[i], size=s_df["username"] * 5),
+                    marker=dict(color=palette[j], size=s_df["username"] * 5),
                     line=dict(dash="dash", color="rgba(0, 0, 0, 0.3)"),
                     customdata=np.stack(
                         (s_df["season"], s_df["username"], s_df["name"]), axis=-1
@@ -225,15 +219,74 @@ def plot_timeline(df, username):
                     text=s_df["episode"],
                     hovertemplate="<b>Date:</b> %{x} <br><b>Name:</b> %{customdata[2]} <br>%{customdata[0]}<br><b>Count:</b> %{customdata[1]}<extra></extra>",
                     legendgroup=genre,
-                    showlegend=j == 0,
+                    showlegend=k == 0,
                 )
             )
-    fig.update_layout(
-        yaxis=dict(tickfont=dict(size=9), title="Show Name", tickmode="linear"),
-        xaxis=dict(title="Date"),
-        height=len(series_df["name"].unique()) * 12,
-    )
     fig.update_layout(standard_layout)
+    return fig
+
+
+def plot_timeline(df):
+    years = df["date"].dt.year.unique()
+    years = df["date"].dt.year.unique()
+    series_df = df.loc[df["title_type"] == "series"]
+    series_df = format_timeline(
+        series_df,
+        values=["season", "episode", "genre_chosen", "netflix_id", "username"],
+    )
+    series_df["name_short"] = series_df["name"].apply(lambda x: split_title(x, 40))
+    # order by top genre
+    genres = list(series_df["genre_chosen"].value_counts().index)
+    n_palette = len(palette)
+    if len(genres) > n_palette:
+        genres, series_df["genre_chosen"] = truncate_genres(genres, series_df["genre_chosen"], n_palette)
+    current_year = years[0]  # Start with the first year
+    fig = go.Figure()
+
+    for year in years:
+        sub_df = series_df[series_df["date"].dt.year == year]
+        sub_fig = create_timeline_single(sub_df, genres)
+
+        # Add the trace to the figure
+        for trace in sub_fig.data:
+            fig.add_trace(trace)
+
+    fig.update_yaxes(
+        title="Show Name",
+        tickfont=dict(size=9),
+        tickmode="linear",
+    )
+    fig.update_xaxes(title="Date")
+
+    # Create a button to toggle the visibility of traces by year
+    buttons = [
+        dict(
+            label=str(year),
+            method="update",
+            args=[
+                {"visible": [year == trace.x[0].year for trace in fig.data]},
+                {"title": f"Timeline for {year}"}
+            ],
+        )
+        for year in years
+    ]
+
+    # Add buttons to toggle visibility of traces by year
+    fig.update_layout(
+        updatemenus=[
+            dict(
+                active=int(np.where(years==current_year)[0][0]),
+                buttons=buttons,
+                x=0.1,
+                xanchor="left",
+                y=1.15,
+                yanchor="top",
+            )
+        ]
+    )
+
+    # Initialize the plot with the data for the first year
+    fig.update_layout(title=f"Timeline for {current_year}")
     return fig
 
 
@@ -385,7 +438,7 @@ def plot_comparison(combined_plot, name1, name2):
     fig = go.Figure()
     pal = ["#636EFA", "#AB63FA", "#EF553B"]
     xm = 0
-    combined_plot['y'] = combined_plot["genre_num"] * 25 + combined_plot["rand"] / 5
+    combined_plot["y"] = combined_plot["genre_num"] * 25 + combined_plot["rand"] / 5
     for i, p in enumerate([name1, "both", name2]):
         combined_shows_p = combined_plot.loc[combined_plot["person"] == p]
         combined_shows_p["genre_ranked"] = combined_shows_p["genre_num"].rank(
@@ -402,7 +455,7 @@ def plot_comparison(combined_plot, name1, name2):
                 * index_max
                 + xm
                 + 10 * i,
-                y=combined_shows_p['y'],
+                y=combined_shows_p["y"],
                 text=combined_shows_p["name"],
                 textposition="bottom center",
                 mode="markers+text",
@@ -424,8 +477,7 @@ def plot_comparison(combined_plot, name1, name2):
         title=f"Comparison Plot - {name1} & {name2}",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        legend=dict(yanchor="top", y=0,
-                    xanchor="center", x=0.5, orientation="h")
+        legend=dict(yanchor="top", y=0, xanchor="center", x=0.5, orientation="h"),
     )
     fig.update_layout(standard_layout)
     return fig
@@ -512,6 +564,7 @@ def compare(user1, user2):
         return None, None
 
     logger.info(f"running comparison for {user1} and {user2}")
+
     def group_person(df):
         df_group = pd.pivot_table(
             df,
@@ -530,16 +583,19 @@ def compare(user1, user2):
         )
         return combined_shows
 
-    combined_shows = combine_people(group_person(user1_df), group_person(user2_df),
-                                    name1=user1, name2=user2)
+    combined_shows = combine_people(
+        group_person(user1_df), group_person(user2_df), name1=user1, name2=user2
+    )
     combined_shows = post_combination(combined_shows, user1, user2)
     combined_shows = numeric_genres(combined_shows, user1, user2)
     filter1 = combined_shows["title_type"] == "series"
     filter2 = combined_shows["n"] <= 1
     filter3 = combined_shows["person"] != "both"
     combined_plot = combined_shows.loc[~(filter1 & filter2 & filter3)]
-    both = (combined_shows['person'] == 'both').sum()
-    similarity = round(100 * both / ((combined_shows['person'] == user1).sum() + both), 1)
+    both = (combined_shows["person"] == "both").sum()
+    similarity = round(
+        100 * both / ((combined_shows["person"] == user1).sum() + both), 1
+    )
     fig = plot_comparison(combined_plot, user1, user2)
     return fig, similarity
 
@@ -549,7 +605,7 @@ def main(username):
     df has been through pipeline steps already
     """
     df = load_data(username)
-    fig_plotline = plot_timeline(df, username)
+    fig_plotline = plot_timeline(df)
     save_fig(
         fig_plotline,
         f"goodreads/static/Graphs/{username}/netflix_timeline_{username}.html",
