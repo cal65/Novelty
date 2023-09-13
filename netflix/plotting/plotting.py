@@ -287,6 +287,7 @@ def plot_timeline(df):
 
     # Initialize the plot with the data for the first year
     fig.update_layout(title=f"Timeline for {current_year}")
+    fig.update_layout(standard_layout)
     return fig
 
 
