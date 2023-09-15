@@ -51,7 +51,12 @@
                 </li>
               </ul>
               <span class="navbar-text">
-                <a class="nav-link" href="{% url 'logout' %}">{{ user.get_username }} - Logout</a>
+                <a class="nav-link" href="{% url 'logout' %}">
+                  {% if user.is_authenticated %}
+                    {{ user.get_username }} - <a href="{% url 'logout' %}">Logout</a>
+                  {% else %}
+                    <a href="{% url 'user-login' %}">Login</a>
+                  {% endif %}</a>
               </span>
             </div>
           </nav>

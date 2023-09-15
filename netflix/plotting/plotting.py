@@ -69,7 +69,7 @@ def plot_genres(df, username, title_type, genre_col="genre_chosen"):
         fig.add_trace(
             go.Bar(
                 x=df_sub["size"],
-                y=df_sub["genre_chosen"],
+                y=df_sub[genre_col],
                 customdata=df_sub["name"],
                 text=df_sub["name"],
                 hovertemplate="Genre: <b>%{y}</b><br>Title: <b>%{customdata}</b> <br>Count: <b>%{x}</b><extra></extra>",
@@ -228,13 +228,13 @@ def create_timeline_single(df, genres):
 
 def plot_timeline(df):
     years = df["date"].dt.year.unique()
-    years = df["date"].dt.year.unique()
     series_df = df.loc[df["title_type"] == "series"]
     series_df = format_timeline(
         series_df,
         values=["season", "episode", "genre_chosen", "netflix_id", "username"],
     )
     series_df["name_short"] = series_df["name"].apply(lambda x: split_title(x, 40))
+    series_df["name_short"] = "<b>" + series_df["name_short"] + "</b>"
     # order by top genre
     genres = list(series_df["genre_chosen"].value_counts().index)
     n_palette = len(palette)
@@ -284,9 +284,7 @@ def plot_timeline(df):
             )
         ]
     )
-
     # Initialize the plot with the data for the first year
-    fig.update_layout(title=f"Timeline for {current_year}")
     fig.update_layout(standard_layout)
     return fig
 

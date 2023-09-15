@@ -1009,27 +1009,28 @@ def month_plot(
     return fig
 
 
+def find_narrative(row):
+    # join a list of strings or None
+    row_array = list(filter(None, row))
+    if "Audiobook" in row_array:
+        row_array.remove("Audiobook")
+
+    narrative = "Fiction"  # Default value
+    narrative_options = ["Nonfiction", "Fiction"]
+
+    for option in narrative_options:
+        if option in row_array:
+            row_array.remove(option)
+            narrative = option
+            break
+    # for better formatting, add space to row indices > 1
+    if len(row_array) > 1:
+        row_array = [f" {r}" if i > 0 else r for i, r in enumerate(row_array)]
+    return narrative, row_array
+
+
 def genre_join(df):
     scols = [c for c in df.columns if c.startswith('shelf')]
-
-    def find_narrative(row):
-        # join a list of strings or None
-        row_array = list(filter(None, row))
-        if "Audiobook" in row_array:
-            row_array.remove("Audiobook")
-
-        narrative = "Fiction"  # Default value
-        narrative_options = ["Nonfiction", "Fiction"]
-
-        for option in narrative_options:
-            if option in row_array:
-                row_array.remove(option)
-                narrative = option
-                break
-        # for better formatting, add space to row indices > 1
-        if len(row_array) > 1:
-            row_array = [f" {r}" if i > 0 else r for i, r in enumerate(row_array)]
-        return narrative, row_array
 
     genre_returns = df[scols].apply(find_narrative, axis=1)
     df['narrative'] = [g[0] for g in genre_returns]

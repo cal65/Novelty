@@ -2,6 +2,8 @@ import csv
 import os
 import sys
 from datetime import datetime
+
+import numpy as np
 import pandas as pd
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
@@ -721,6 +723,7 @@ def explore_data_books(request):
         "read",
         "narrative",
         "shelves",
+        "number_of_pages",
     ]
     read_table = edf[html_cols].to_dict(orient="records")
     logger.info(f"reading table: {read_table[:4]}")
