@@ -7,7 +7,6 @@ import pandas as pd
 import numpy as np
 import geopandas as gpd
 
-import psycopg2
 import plotly
 import plotly.express as px
 import plotly.graph_objects as go
@@ -36,46 +35,17 @@ post_pass = os.getenv("cal65_pass")
 palette = plotly.colors.qualitative.Plotly
 
 
-def get_data(query, database="goodreads"):
-    conn = psycopg2.connect(
-        host="localhost", database=database, user="cal65", password=post_pass
-    )
-    try:
-        df = pd.read_sql(query, con=conn)
-        logger.info(f"Returning data from query with nrows {len(df)}")
-        return df
-    except (Exception, psycopg2.DatabaseError) as error:
-        logger.info(error)
-        return
-
-
-def userdata_query(username):
-    query = f"""
-    select 
-    e.id, e.book_id, e.title, e.author, e.number_of_pages,
-    e.my_rating, e.average_rating, e.original_publication_year,
-    e.date_read, e.exclusive_shelf, 
-    b.shelf1, b.shelf2, b.shelf3, b.shelf4, b.shelf5, b.shelf6, b.shelf7,
-    b.added_by, b.to_reads,
-    a.gender, a.nationality1, a.nationality2, a.nationality_chosen
-    from goodreads_exportdata e 
-    left join goodreads_authors as a 
-    on e.author = a.author_name
-    left join goodreads_books as b
-    on e.book_id = b.book_id
-    where e.username = '{username}'
-    """
-    return query
-
 def load_data(username):
     export_df = objects_to_df(ExportData.objects.filter(username=username))
-    books_df = objects_to_df(Books.objects.filter(book_id__in=export_df['book_id']))
-    authors_df = objects_to_df(Authors.objects.filter(author_name__in=export_df['author']))
-    authors_df.rename(columns={'author_name': 'author'}, inplace=True)
-    authors_df.drop(columns='ts_updated', inplace=True)
-    books_df.drop(columns='ts_updated', inplace=True)
-    df = pd.merge(export_df, books_df, how='left', on='book_id')
-    df = pd.merge(df, authors_df, how='left', on ='author')
+    books_df = objects_to_df(Books.objects.filter(book_id__in=export_df["book_id"]))
+    authors_df = objects_to_df(
+        Authors.objects.filter(author_name__in=export_df["author"])
+    )
+    authors_df.rename(columns={"author_name": "author"}, inplace=True)
+    authors_df.drop(columns="ts_updated", inplace=True)
+    books_df.drop(columns="ts_updated", inplace=True)
+    df = pd.merge(export_df, books_df, how="left", on="book_id")
+    df = pd.merge(df, authors_df, how="left", on="author")
     return df
 
 
@@ -150,6 +120,7 @@ def strat_count(df, col, min_break=3, opt_labels=None):
     )
     return df
 
+
 def read_plot_munge(
     df,
     read_col="read",
@@ -162,7 +133,9 @@ def read_plot_munge(
         return df
     if start_year is not None:
         df = df[df[date_col].dt.year >= start_year]
-    df = strat_count(df, col="read", min_break=min_break, opt_labels=["Obscure", 'Bestsellers'])
+    df = strat_count(
+        df, col="read", min_break=min_break, opt_labels=["Obscure", "Bestsellers"]
+    )
     # logging
     strats_count = df["strats"].value_counts()
     logger.info(f"debugging read plot munge: {strats_count}")
@@ -795,7 +768,9 @@ def create_read_plot_heatmap(
         start_year=start_year,
     )
     strats = pd.unique(df["strats"])
-    strats = strats[pd.notnull(strats)] # occasionally goodreads has errors and returns negative readers
+    strats = strats[
+        pd.notnull(strats)
+    ]  # occasionally goodreads has errors and returns negative readers
     df["narrative_int"] = df["narrative"].map({"Fiction": 1, "Nonfiction": 0})
     df["hover_text"] = df.apply(
         lambda x: f"Readers: <b>{'{:,.0f}'.format(x.read)}</b><br>Title: <b>{x.title_simple}</b> <br>Author: <b>{x.author}</b>",
@@ -1029,16 +1004,16 @@ def find_narrative(row):
 
 
 def genre_join(df):
-    scols = [c for c in df.columns if c.startswith('shelf')]
+    scols = [c for c in df.columns if c.startswith("shelf")]
 
     genre_returns = df[scols].apply(find_narrative, axis=1)
-    df['narrative'] = [g[0] for g in genre_returns]
+    df["narrative"] = [g[0] for g in genre_returns]
     df["shelves"] = [g[1] for g in genre_returns]
     return df
 
 
 def main(username):
-    df = get_data(userdata_query(username))
+    df = load_data(username)
     logger.info(f"Data read with {len(df)} rows \n : {df.head()}")
     df = run_all(df)
     read_df = df[
