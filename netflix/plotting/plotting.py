@@ -3,11 +3,8 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import networkx as nx
-import plotly.express as px
 import plotly
 import logging
-
-from plotly.subplots import make_subplots
 
 from goodreads.models import NetflixGenres, NetflixUsers, NetflixActors
 from goodreads.plotting.plotting import split_title

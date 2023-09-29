@@ -2,7 +2,6 @@ import os
 import re
 import warnings
 import argparse
-import matplotlib
 from pandas.api.types import is_numeric_dtype, CategoricalDtype
 import pandas as pd
 import numpy as np
