@@ -326,11 +326,17 @@ def plot_longest_books(
 
 
 def create_melted_genre_df(df, title_col="title_simple"):
+    """
+    Dataframe contains multiple columns starting with 'shelf', to plot them we need to melt the shelves
+    """
     shelf_columns = [s for s in df.columns if s.startswith("shelf")]
     genre_df = df[[title_col] + shelf_columns]
     genre_df_m = pd.melt(genre_df, id_vars="title_simple", value_name="Shelf")
-    genre_df_m = genre_df_m[~genre_df_m["Shelf"].isin(["Fiction", "Nonfiction", ""])]
+    # Remove shelves that are not meaningful (hardcoded values)
+    genre_df_m = genre_df_m[~genre_df_m["Shelf"].isin(["Fiction", "Nonfiction", "", "Audiobook"])]
     genre_df_m = genre_df_m[pd.notnull(genre_df_m["Shelf"])]
+    # strip values
+    genre_df_m["Shelf"] = genre_df_m["Shelf"].str.strip()
     return genre_df_m
 
 
@@ -391,10 +397,7 @@ def format_genre_table(df, genres_avg, n=12):
         np.sqrt
     ) - genre_table_merged["Ratio_Total"].apply(np.sqrt)
     genre_table_merged.sort_values("Diff", inplace=True)
-    # remove special genres
-    genre_table_merged = genre_table_merged.loc[
-        genre_table_merged["Shelf"] != "Audiobook"
-    ]
+
     genre_difference = pd.concat(
         [genre_table_merged.head(n), genre_table_merged.tail(n)]
     )
