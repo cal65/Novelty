@@ -608,17 +608,13 @@ def load_data_books(request):
     df = gplot.run_all(user_df)
     df.drop(columns=["id", "ts_updated", "title", "book_id"], inplace=True)
     df["read_percentage"] = round(df["read_percentage"] * 100, 1)
+    df = gplot.genre_join(df)
     html_cols = [
         "title_simple",
         "author",
         "exclusive_shelf",
         "date_read",
-        "shelf1",
-        "shelf2",
-        "shelf3",
-        "shelf4",
-        "shelf5",
-        "shelf6",
+        "shelves",
         "narrative",
         "nationality_chosen",
         "read",

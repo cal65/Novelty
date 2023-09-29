@@ -16,8 +16,24 @@
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 <script>
 function load_datatable(url, columns) {
-	var cols = columns.map(function(c) {
+	var cols_raw = columns.map(function(c) {
 	  return { data: c };
+	});
+	const newData = {
+	  data: "shelves",
+	  render: {
+	    _: "[, ]",
+	    sp: "[]"
+	  }
+	};
+	var cols = cols_raw.map(item => {
+	  if (item.data === "shelves") {
+	    // If 'data' is 'b', merge the new data with the existing item
+	    return { ...item, ...newData };
+	  } else {
+	    // Otherwise, keep the original item
+	    return item;
+	  }
 	});
 	$.ajax({
 	    url: url,
