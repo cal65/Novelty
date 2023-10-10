@@ -7,6 +7,7 @@ from .models import (
     NetflixGenres,
     SpotifyTracks,
     SpotifyArtist,
+    RefNationality,
 )
 
 
@@ -112,3 +113,13 @@ class SpotifyArtistAdmin(admin.ModelAdmin):
         "followers_total",
         "image_url",
     )
+
+
+@admin.register(RefNationality)
+class RefNationalityAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "region",
+        "nationality",
+    )
+

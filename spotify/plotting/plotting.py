@@ -56,6 +56,29 @@ def preprocess(df):
     return df
 
 
+def preprocess_new(df):
+    """ "
+    Preprocess since Spotify changed export format to have columns
+    ['ts', 'username', 'platform', 'ms_played', 'conn_country',
+       'ip_addr_decrypted', 'user_agent_decrypted',
+       'master_metadata_track_name', 'master_metadata_album_artist_name',
+       'master_metadata_album_album_name', 'spotify_track_uri', 'episode_name',
+       'episode_show_name', 'spotify_episode_uri', 'reason_start',
+       'reason_end', 'shuffle', 'skipped', 'offline', 'offline_timestamp',
+       'incognito_mode']
+    """
+    df["endtime"] = pd.to_datetime(["ts"])
+    df["date"] = df["endtime"].dt.date
+    df.rename(
+        columns={
+            "master_metadata_track_name": "trackname",
+            "master_metadata_album_artist_name": "artistname",
+            "master_metadata_album_album_name": "album",
+        }
+    )
+    return df
+
+
 def format_song_day(df, artist_col, song_col, date_col, n=15):
     df_song_day = pd.DataFrame(
         df.groupby([artist_col, song_col, date_col], as_index=False).size()
