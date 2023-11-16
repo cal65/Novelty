@@ -354,24 +354,23 @@ def upload_view_spotify(request):
         )
         runscriptSpotify(request)
         # when script finishes, move user to plots view
-        return HttpResponseRedirect("/spotify-plots/")
+        return HttpResponseRedirect("music/plots/")
     return render(request, template)
 
 
 def upload_spotify(request):
-    logger.info(f"upload spotify")
     user = request.user
-    template = "spotify/json_upload_spotify.html"
+    graphs_path = f"goodreads/static/Graphs/{user}"
     json_file = request.FILES["file"]
-    # save csv file in database
     logger.info(f"Spotify upload started for {user}")
     df = pd.read_json(json_file)
-    if not os.path.exists(f"goodreads/static/Graphs/{user}"):
-        os.mkdir(f"goodreads/static/Graphs/{user}")
+    if not os.path.exists(graphs_path):
+        os.mkdir(graphs_path)
     # change columns from endTime to endtime etc.
     df = de.lowercase_cols(df)
     # load up the existing data in database for this user
     loaded_df = splot.load_data(user)
+    # if there is existing data, dedupe with new data
     if len(loaded_df) > 0:
         loaded_df["endtime"] = pd.to_datetime(loaded_df["endtime"], utc=True)
         df["endtime"] = pd.to_datetime(df["endtime"], utc=True)
@@ -388,13 +387,10 @@ def upload_spotify(request):
     if len(df_new) < 1:
         logger.info(f"No new data for user {user}")
         return JsonResponse({"tracknames": [0], "artistnames": [0], "msplayed": [0]})
-    logger.info(
-        f"starting spotify table addition for {new_lines} rows out of original {str(len(df))}"
-    )
     populateSpotifyStreaming(df_new, user)
-    df_new.to_csv(
-        f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv", index=False
-    )
+    # save csv file in database
+    file_path = f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv"
+    df_new.to_csv(file_path, index=False)
     df_unmerged = de.get_unmerged(
         df_new, track_col="trackname", artist_col="artistname"
     )
@@ -423,10 +419,12 @@ def insert_spotify(request):
 
 def populateSpotifyStreaming(df, user):
     logger.info(f"spotify df {df.head()}")
+    # if 'uri' in df.columns:
+    #     print("something") Add in some logic to deal with newer export
     spotifyStreamingObjs = df.apply(
-        lambda x: de.convert_to_SpotifyStreaming(x, username=str(user)),
-        axis=1,
-    )
+            lambda x: de.convert_to_SpotifyStreaming(x, username=str(user)),
+            axis=1,
+        )
     return spotifyStreamingObjs
 
 
@@ -622,6 +620,7 @@ def load_data_books(request):
     ]
     df = df.fillna("")
     df.sort_values("date_read", inplace=True)
+    df['date_read'] = df['date_read'].dt.date
     reading_table = df[html_cols].to_dict(orient="records")
     logger.info(f"reading table: {reading_table[:4]}")
     return JsonResponse(reading_table, safe=False)
