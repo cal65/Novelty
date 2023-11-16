@@ -1,16 +1,23 @@
 {% extends "goodreads/basefile.html" %}
 
 {% block css-additional %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.dataTables.min.css"/>
+
 {% endblock css-additional %}
 {% block content %}
 
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+
 <script>
-function load_datatable(url, columns) {
+function load_datatable(url, columns, targets) {
 	var cols = columns.map(function(c) {
 	  return { data: c };
 	});
@@ -24,8 +31,20 @@ function load_datatable(url, columns) {
 	    		data: response,
 	    		columns: cols,
 	    		"pageLength": 25,
-		    	dom: 'lBfrtip',
-		        buttons: ['copy', 'csv', 'excel']
+		    	dom: 'PlBfrtip',
+		        buttons: ['copy', 'csv', 'excel'],
+		        columnDefs: [
+		            {
+		                searchPanes: {
+		                    show: true,
+		                    orthogonal:'sp',
+		                    dtOpts: {
+		                    	select: { style: 'multi'},
+		                    }
+		                },
+		                targets: targets
+		            }
+		        ]
 		    });
 	    }, 
 	     	error: function(xhr, errmsg, err) {
@@ -33,30 +52,11 @@ function load_datatable(url, columns) {
 		      console.log(errmsg);  
 	    	}
 		})
+	// processing: true,
+    // serverSide: true
 	}
 
-function make_searchable(){
-	$('#rTable').DataTable({
-		initComplete: function () {
-		        this.api()
-		            .columns()
-		            .every(function () {
-		                var column = this;
-		                var title = column.footer().textContent;
-		 
-		                // Create input element and add event listener
-		                $('<input type="text" placeholder="Search ' + title + '" />')
-		                    .appendTo($(column.footer()).empty())
-		                    .on('keyup change clear', function () {
-		                        if (column.search() !== this.value) {
-		                            column.search(this.value).draw();
-		                        }
-		                    });
-		            });
-		    	},
-		    }
-	)
-}
+
 
 </script>
 <br>
@@ -66,20 +66,16 @@ function make_searchable(){
 <script>
 $(document).ready( function() {
 	load_datatable("{% url 'books-load-data' %}",
-		["title_simple",
+		columns=["title_simple",
         "author",
         "exclusive_shelf",
         "date_read",
-        "shelf1",
-        "shelf2",
-        "shelf3",
-        "shelf4",
-        "shelf5",
-        "shelf6",
+        "shelves",
         "narrative",
         "nationality_chosen",
         "read",
-        "read_percentage"]);
+        "read_percentage"],
+        targets=[1, 4, 5]);
 });
 </script>
 <div class="headline">
@@ -95,12 +91,7 @@ $(document).ready( function() {
 		    <th>Author</th>
 		    <th>exclusive_shelf</th>
 		    <th>Date read</th>
-		    <th>Shelf 1</th>
-		    <th>Shelf 2</th>
-		    <th>Shelf 3</th>
-		    <th>Shelf 4</th>
-		    <th>Shelf 5</th>
-		    <th>Shelf 6</th>
+		    <th>Shelves</th>
 		    <th>Narrative</th>
 		    <th>Author Nationality</th>
 		    <th>Number of Readers</th>

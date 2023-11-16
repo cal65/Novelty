@@ -7,12 +7,13 @@ from .models import (
     NetflixGenres,
     SpotifyTracks,
     SpotifyArtist,
+    RefNationality,
 )
 
 
 @admin.register(ExportData)
 class ExportDataAdmin(admin.ModelAdmin):
-    search_fields = ("book_id__startswith", "title__startswith", "author__startswith")
+    search_fields = ("book_id__startswith", "title__contains", "author__startswith")
     list_display = (
         "book_id",
         "title",
@@ -46,7 +47,7 @@ class BooksAdmin(admin.ModelAdmin):
 
 @admin.register(Authors)
 class AuthorsAdmin(admin.ModelAdmin):
-    search_fields = ("author_name__startswith",)
+    search_fields = ("author_name__contains", "nationality_chosen__startswith")
     list_display = (
         "author_name",
         "gender",
@@ -103,7 +104,7 @@ class SpotifyTracksAdmin(admin.ModelAdmin):
 
 @admin.register(SpotifyArtist)
 class SpotifyArtistAdmin(admin.ModelAdmin):
-    search_fields = ("uri__startswith",)
+    search_fields = ("uri__contains", "artist_name__contains", "genres_contains")
     list_display = (
         "uri",
         "artist_name",
@@ -112,3 +113,13 @@ class SpotifyArtistAdmin(admin.ModelAdmin):
         "followers_total",
         "image_url",
     )
+
+
+@admin.register(RefNationality)
+class RefNationalityAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "region",
+        "nationality",
+    )
+

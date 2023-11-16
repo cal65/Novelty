@@ -44,7 +44,7 @@ def preprocess(df):
     df["minutes"] = df["msplayed"] / ms_per_minute
 
     # processing for merged data
-    if "release_year" not in df.columns:
+    if "release_date" in df.columns:
         df["release_year"] = pd.to_numeric(
             df["release_date"].str[:4], downcast="integer"
         )
@@ -53,6 +53,32 @@ def preprocess(df):
 
     df["played_ratio"] = df["minutes"] / df["duration"]
 
+    return df
+
+
+def preprocess_new(df):
+    """ "
+    Preprocess since Spotify changed export format to have columns
+    ['ts', 'username', 'platform', 'ms_played', 'conn_country',
+       'ip_addr_decrypted', 'user_agent_decrypted',
+       'master_metadata_track_name', 'master_metadata_album_artist_name',
+       'master_metadata_album_album_name', 'spotify_track_uri', 'episode_name',
+       'episode_show_name', 'spotify_episode_uri', 'reason_start',
+       'reason_end', 'shuffle', 'skipped', 'offline', 'offline_timestamp',
+       'incognito_mode']
+    """
+    df["endtime"] = pd.to_datetime(df["ts"])
+    df["date"] = df["endtime"].dt.date
+    df.rename(
+        columns={
+            "master_metadata_track_name": "trackname",
+            "master_metadata_album_artist_name": "artistname",
+            "master_metadata_album_album_name": "album",
+        }, inplace=True
+    )
+    df["spotify_episode_uri"] = df["spotify_episode_uri"].astype(str).fillna('')
+    df["uri"] = df["spotify_track_uri"].str.replace("spotify:track:", "")
+    df["episode_uri"] = df["spotify_episode_uri"].str.replace("spotify:episode:", "")
     return df
 
 
@@ -1086,11 +1112,14 @@ def create_follower_heatmap(df, heat_col, title_col="artistname", min_min=20, li
 
 def load_data(username):
     user_df = objects_to_df(SpotifyStreaming.objects.filter(username=username))
-    tracks_df = objects_to_df(
-        SpotifyTracks.objects.filter(
-            artistname__in=user_df["artistname"], trackname__in=user_df["trackname"]
+    if len(user_df) > 0:
+        tracks_df = objects_to_df(
+            SpotifyTracks.objects.filter(
+                artistname__in=user_df["artistname"], trackname__in=user_df["trackname"]
+            )
         )
-    )
+    else:
+        return user_df
     if len(tracks_df) > 0:
         df = pd.merge(user_df, tracks_df, on=["artistname", "trackname"], how="left")
     else:

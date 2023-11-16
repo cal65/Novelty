@@ -84,20 +84,20 @@ class SpotifyTracks(models.Model):
 
 class SpotifyArtist(models.Model):
     uri = models.CharField(max_length=250, primary_key=True)
-    artist_name = models.CharField(max_length=250, null=True)
+    artist_name = models.CharField(max_length=250, null=True, blank=True)
     popularity = models.IntegerField(blank=True, null=True)
     followers_total = models.IntegerField(blank=True, null=True)
-    genres = models.CharField(max_length=1000, null=True)
-    image_url = models.CharField(max_length=1000, null=True)
+    genres = models.CharField(max_length=1000, blank=True)
+    image_url = models.CharField(max_length=1000, blank=True)
     ts_updated = models.DateTimeField(auto_now=True)
 
 
 class NetflixTitles(models.Model):
     netflix_id = models.CharField(max_length=250, primary_key=True)
     title = models.CharField(max_length=250, null=True)
-    director = models.CharField(max_length=250, null=True)
+    director = models.CharField(max_length=250, null=True, blank=True)
     release_year = models.IntegerField(null=True, blank=True)
-    title_type = models.CharField(max_length=250, null=True)
+    title_type = models.CharField(max_length=250, null=True, blank=True)
     default_image = models.CharField(max_length=1000, null=True, blank=True)
     alt_votes = models.IntegerField(null=True, blank=True)
     synopsis = models.CharField(max_length=2000, null=True, blank=True)
@@ -113,12 +113,12 @@ class NetflixUsers(models.Model):
 
 class NetflixGenres(models.Model):
     netflix_id = models.CharField(max_length=250, primary_key=True)
-    genres = models.CharField(max_length=250, null=True)
+    genres = models.CharField(max_length=250, null=True, blank=True)
 
 
 class NetflixActors(models.Model):
     netflix_id = models.CharField(max_length=250, primary_key=True)
-    cast = models.CharField(max_length=2000, null=True)
+    cast = models.CharField(max_length=2000, null=True, blank=True)
 
 
 class Comments(models.Model):

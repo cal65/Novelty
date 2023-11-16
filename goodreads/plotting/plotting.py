@@ -1000,9 +1000,7 @@ def find_narrative(row):
             row_array.remove(option)
             narrative = option
             break
-    # for better formatting, add space to row indices > 1
-    if len(row_array) > 1:
-        row_array = [f" {r}" if i > 0 else r for i, r in enumerate(row_array)]
+
     return narrative, row_array
 
 

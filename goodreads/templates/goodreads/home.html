@@ -13,42 +13,42 @@
     <body>
     {% block navbar %}
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="navbar-collapse" id="navbarText" style="flex-basis: auto;">
-              <ul class="navbar-nav mr-auto">
-                <li class="nav-item active pr-2">
-                  <a class="nav-link" href="{% url 'index-view' %}">Home</a>
-                </li>
-                <li class="nav-item active pr-2">
-                  {% block d1 %}
-                  <a class="nav-link" href="{% url 'books-home' %}">Books</a>
-                  {% endblock d1 %}
-                </li>
-                <li class="nav-item active pr-2">
-                  {% block d2 %}
-                  <a class="nav-link" href="{% url 'music-home' %}">Music</a>
-                  {% endblock d2 %}
-                </li>
-                 <li class="nav-item active pr-2">
-                {% block d3 %}
-                  <a class="nav-link" href="{% url 'streaming-home' %}">Streaming</a>
-                  {% endblock d3 %}
-                </li>
-                <li class="nav-item active pr-2">
-                  {% block d4 %}
-                  <a class="nav-link" href="{% url 'geography-home' %}">Travel</a>
-                  {% endblock d4 %}
-                </li>
-              <span class="navbar-text">
-                 {% if user.is_authenticated %}
-                    {{ user.get_username }} - <a href="{% url 'logout' %}">Logout</a>
-                  {% else %}
-                    <a href="{% url 'user-login' %}">Login</a>
-                  {% endif %}</a>
-              </span>
-          </ul>
-              
+            <div class="navbar-collapse" id="navbarText">
+                <ul class="navbar-nav">
+                    <li class="nav-item active pr-2">
+                      <a class="nav-link" href="{% url 'index-view' %}">Home</a>
+                    </li>
+                    <li class="nav-item active pr-2">
+                        {% block d1 %}
+                        <a class="nav-link" href="{% url 'books-home' %}">Books</a>
+                        {% endblock d1 %}
+                    </li>
+                    <li class="nav-item active pr-2">
+                        {% block d2 %}
+                        <a class="nav-link" href="{% url 'music-home' %}">Music</a>
+                        {% endblock d2 %}
+                    </li>
+                     <li class="nav-item active pr-2">
+                        {% block d3 %}
+                        <a class="nav-link" href="{% url 'streaming-home' %}">Streaming</a>
+                        {% endblock d3 %}
+                    </li>
+                    <li class="nav-item active pr-2">
+                        {% block d4 %}
+                        <a class="nav-link" href="{% url 'geography-home' %}">Travel</a>
+                        {% endblock d4 %}
+                    </li>
+                
+                <span class="navbar-text">
+                    {% if user.is_authenticated %}
+                        {{ user.get_username }} - <a href="{% url 'logout' %}">Logout</a>
+                    {% else %}
+                        <a href="{% url 'user-login' %}">Login</a>
+                    {% endif %}</a>
+                </span>
+                </ul>   
             </div>
-          </nav>
+        </nav>
     {% endblock navbar %}
 
     {% block logowide %}
