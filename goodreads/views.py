@@ -364,10 +364,15 @@ def upload_spotify(request):
     json_file = request.FILES["file"]
     logger.info(f"Spotify upload started for {user}")
     df = pd.read_json(json_file)
+    file_path = f"goodreads/static/Graphs/{user}/spotify_{user}.csv"
+    df.to_csv(file_path, index=False)
     if not os.path.exists(graphs_path):
         os.mkdir(graphs_path)
     # change columns from endTime to endtime etc.
     df = de.lowercase_cols(df)
+    # detect if upload format is of full Spotify export format
+    if 'ip_addr_decrypted' in df.columns:
+        df = splot.preprocess_new(df)
     # load up the existing data in database for this user
     loaded_df = splot.load_data(user)
     # if there is existing data, dedupe with new data

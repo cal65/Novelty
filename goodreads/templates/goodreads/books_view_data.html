@@ -27,6 +27,10 @@ function load_datatable(url, columns, targets) {
 	    dataType: 'json',
 	    success: function(response){
 	    	console.log('starting');
+	    	console.log(targets);
+	    	const not_targets = columns
+  .map((column, index) => index) // Create an array of indices [0, 1, 2, ...]
+  .filter(index => !targets.includes(index));
 	    	$('#rTable').DataTable({
 	    		data: response,
 	    		columns: cols,
@@ -43,6 +47,12 @@ function load_datatable(url, columns, targets) {
 		                    }
 		                },
 		                targets: targets
+		            },
+		            {
+		                searchPanes: {
+		                    show: false,
+		                },
+		                targets:  not_targets
 		            }
 		        ]
 		    });
@@ -75,7 +85,7 @@ $(document).ready( function() {
         "nationality_chosen",
         "read",
         "read_percentage"],
-        targets=[1, 4, 5]);
+        targets=[1, 4, 5, 6]);
 });
 </script>
 <div class="headline">
