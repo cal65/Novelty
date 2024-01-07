@@ -74,6 +74,7 @@ def preprocess_new(df):
             "master_metadata_track_name": "trackname",
             "master_metadata_album_artist_name": "artistname",
             "master_metadata_album_album_name": "album",
+            "ms_played": "msplayed",
         }, inplace=True
     )
     df["spotify_episode_uri"] = df["spotify_episode_uri"].astype(str).fillna('')
