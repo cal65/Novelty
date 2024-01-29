@@ -41,7 +41,28 @@ function load_datatable(url, columns) {
 	    dataType: 'json',
 	    success: function(response){
 	    	console.log('starting');
-	    	$('#rTable').DataTable({
+
+	    	var cols_raw = columns.map(function(c) {
+                return { data: c };
+            });
+	    	const newData = {
+                data: "shelves",
+                render: {
+                    _: "[, ]",
+                    sp: "[]"
+                }
+            };
+
+            var cols = cols_raw.map(item => {
+                if (item.data === "shelves") {
+                    // If 'data' is 'b', merge the new data with the existing item
+                    return { ...item, ...newData };
+                } else {
+                    // Otherwise, keep the original item
+                    return item;
+                }
+            });
+	    	var dataTableOptions = {
 	    		data: response,
 	    		columns: cols,
 	    		"pageLength": 25,
@@ -54,6 +75,7 @@ function load_datatable(url, columns) {
 		                    orthogonal:'sp',
 		                    dtOpts: {
 		                    	select: { style: 'multi'},
+		                    	order: [1, 'desc']
 		                    }
 		                },
 		                targets: [1, 2, 3, 6, 7]
@@ -73,10 +95,16 @@ function load_datatable(url, columns) {
 		                    show: false
 		                },
 		                targets: [0, 5]
-		            }
+		            },
+                    {
+                        orderData: [1], // Order by the second column (Author) initially
+                        targets: [1]
+                    }
 		        ],
 		        buttons: ['copy', 'csv', 'excel']
-		    });
+		    };
+		     // Initialize DataTable only after finishing modifications
+            $('#rTable').DataTable(dataTableOptions);
 	    }, 
 	     	error: function(xhr, errmsg, err) {
 		      // Handle any errors
