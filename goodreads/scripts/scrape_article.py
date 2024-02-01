@@ -15,3 +15,12 @@ def ids_from_article(url):
     links = [a.attrs['href'] for a in a_refs]
     book_ids = [link.split('/')[-1].split('-')[0] for link in links]
     return book_ids
+
+
+def ids_from_user_list(url):
+    soup = BeautifulSoup(requests.get(url).content, "html.parser")
+    titles = soup.findAll('td', {'class': 'field title'})
+    links_raw = [t.find('a').attrs['href'] for t in titles]
+    book_ids = [int(link.split('/')[-1].split('-')[0].split('.')[0]) for link in links_raw]
+    return book_ids
+

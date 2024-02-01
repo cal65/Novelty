@@ -694,6 +694,8 @@ def explore_data_books(request):
     good_df = pd.merge(books_df, export_df, how="left", on="book_id")
     authors_df.rename(columns={"author_name": "author"}, inplace=True)
     authors_df.drop(columns="ts_updated", inplace=True)
+    # drop a few authors that aren't books
+    authors_df = authors_df.loc[authors_df["author"] != "NOT A BOOK"]
     good_df = pd.merge(good_df, authors_df, on="author", how="left")
     good_df["author"] = good_df["author"].fillna("")
     good_df = gplot.run_all(good_df)

@@ -8,7 +8,8 @@ novelty-multiple.pem
 *.ipynb
 noveltyenv/
 .DS_Store
-
+art/*
+ssl/*
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
