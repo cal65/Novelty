@@ -5,6 +5,7 @@ from .models import (
     Authors,
     NetflixTitles,
     NetflixGenres,
+    NetflixActors,
     SpotifyTracks,
     SpotifyArtist,
     RefNationality,
@@ -59,7 +60,7 @@ class AuthorsAdmin(admin.ModelAdmin):
 
 @admin.register(NetflixTitles)
 class NetflixTitlesAdmin(admin.ModelAdmin):
-    search_fields = ("title__startswith", "netflix_id__startswith")
+    search_fields = ("title__contains", "netflix_id__startswith")
     list_display = (
         "netflix_id",
         "title",
@@ -74,10 +75,19 @@ class NetflixTitlesAdmin(admin.ModelAdmin):
 
 @admin.register(NetflixGenres)
 class NetflixGenresAdmin(admin.ModelAdmin):
-    search_fields = ("netflix_id__startswith",)
+    search_fields = ("netflix_id__startswith", "genre__contains")
     list_display = (
         "netflix_id",
         "genres",
+    )
+
+
+@admin.register(NetflixActors)
+class NetflixActorsCast(admin.ModelAdmin):
+    search_fields = ("netflix_id__startswith", "cast__contains")
+    list_display = (
+        "netflix_id",
+        "cast",
     )
 
 
@@ -122,4 +132,5 @@ class RefNationalityAdmin(admin.ModelAdmin):
         "region",
         "nationality",
     )
+
 

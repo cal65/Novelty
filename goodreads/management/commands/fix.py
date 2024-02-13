@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 values="title",
                 aggfunc=lambda x: len(pd.unique(x)) > 1,
             ).reset_index()
-            dupes = dupes.loc[dupes["title"] == True]
+            dupes = dupes.loc[dupes["title"] is True]
             self.stdout.write(f"Trying to reconcile {len(dupes)} duplicates.")
             reconciled = 0
             for nid in dupes.netflix_id.iloc:
