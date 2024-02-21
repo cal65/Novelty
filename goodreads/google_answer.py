@@ -21,7 +21,7 @@ URL = "https://www.google.com/search?q="
 
 def get_search_url(name):
     name = str(name)
-    return URL + name.replace(" ", "+") + "+nationality"
+    return URL + name.replace(" ", "+") + "+author+nationality"
 
 
 def get_soup(url):
@@ -35,6 +35,8 @@ def get_soup(url):
 
 def get_result(soup):
     raw_results = soup.findAll("div", {"class": "BNeawe iBp4i AP7Wnd"})
+    if len(raw_results) == 0:
+        raw_results = soup.findAll('span', {'class': "FCUp0c rQMQod"})
 
     results = []
     for raw in raw_results:

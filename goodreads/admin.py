@@ -79,6 +79,7 @@ class NetflixGenresAdmin(admin.ModelAdmin):
     list_display = (
         "netflix_id",
         "genres",
+        "ts_updated",
     )
 
 
@@ -88,6 +89,7 @@ class NetflixActorsCast(admin.ModelAdmin):
     list_display = (
         "netflix_id",
         "cast",
+        "ts_updated",
     )
 
 
