@@ -45,7 +45,9 @@ def get_result(soup):
             for child in children:
                 results.append(child.get("aria-label"))
         else:
-            results.append(raw.text)
+            text = raw.text
+            if text not in ['Images', 'People also ask']:
+                results.append(text)
     return results
 
 
