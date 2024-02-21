@@ -8,6 +8,8 @@ novelty-multiple.pem
 *.ipynb
 noveltyenv/
 .DS_Store
+*.sh
+*.sql
 art/*
 ssl/*
 # Elastic Beanstalk Files
