@@ -776,7 +776,7 @@ def create_read_plot_heatmap(
     ]  # occasionally goodreads has errors and returns negative readers
     df["narrative_int"] = df["narrative"].map({"Fiction": 1, "Nonfiction": 0})
     df["hover_text"] = df.apply(
-        lambda x: f"Readers: <b>{'{:,.0f}'.format(x.read)}</b><br>Title: <b>{x.title_simple}</b> <br>Author: <b>{x.author}</b>",
+        lambda x: f"<b>Readers:</b> {'{:,.0f}'.format(x.read)}<br><b>Title:</b> {x.title_simple} <br><b>Author:</b> {x.author}",
         axis=1,
     )
     fig = make_subplots(

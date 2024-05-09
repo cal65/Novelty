@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.utils.datastructures import MultiValueDictKeyError
 
 class TestAuthenticatedViews(TestCase):
     def setUp(self):
@@ -32,7 +33,12 @@ class TestAllUrls(TestCase):
             print(url_name)
             try:
                 url = reverse(url_name)
-                response = self.client.get(url, file=form_data)
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 200)  # Adjust the status code as needed
+            # may get error if form data is required
+            except MultiValueDictKeyError:
+                response = self.client.post(url, file=form_data)
                 self.assertEqual(response.status_code, 200)  # Adjust the status code as needed
             except NoReverseMatch:
                 self.fail(f"URL pattern '{url_pattern}' could not be reversed.")
+
