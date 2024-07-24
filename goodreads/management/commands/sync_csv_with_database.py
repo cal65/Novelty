@@ -137,6 +137,7 @@ def sync_list(df, list_name):
             break
         list_book.author = row['author']
         list_book.book_id = row['book_id']
+        list_book.rank = row['rank']
         list_book.list_name = list_name
         list_book.save()
 

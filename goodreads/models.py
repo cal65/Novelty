@@ -138,4 +138,5 @@ class BooksLists(models.Model):
     title = models.CharField(max_length=250)
     author = models.CharField(max_length=250)
     list_name = models.CharField(max_length=250)
+    rank = models.IntegerField()
 
