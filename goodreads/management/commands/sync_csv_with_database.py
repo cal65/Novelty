@@ -11,7 +11,7 @@ from spotify.plotting.utils import objects_to_df
 sys.path.append("../..")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "local_settings.py")
 
-from goodreads.models import Books, Authors, SpotifyTracks, NetflixTitles
+from goodreads.models import Books, Authors, SpotifyTracks, NetflixTitles, BooksLists
 from goodreads.scripts.append_to_export import (
     convert_to_ExportData,
     convert_to_Book,
@@ -35,6 +35,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("file_path", type=str)
         parser.add_argument("domain", type=str)
+        parser.add_argument("list_name", type=str, default='')
 
     def handle(self, **options):
         df = pd.read_csv(options["file_path"])
@@ -42,6 +43,8 @@ class Command(BaseCommand):
             sync_df(df, "SpotifyStreaming")
         elif options["domain"] == "Books":
             sync_books(df)
+        elif options["domain"] == "List":
+            sync_list(df, list_name=options["list_name"])
 
 
 def create_Books_object(row):
@@ -72,11 +75,11 @@ def get_field_names(djangoClass):
     return set(f_names)
 
 
-def sync_books(books_df):
+def sync_books(df):
     # todo write check on column schema
-    books_df.columns = [c.lower() for c in books_df.columns]
-    books_df.rename(columns={"book.id": "book_id"}, inplace=True)
-    for _, row in books_df.iterrows():
+    df.columns = [c.lower() for c in df.columns]
+    df.rename(columns={"book.id": "book_id"}, inplace=True)
+    for _, row in df.iterrows():
         create_Books_object(row)
 
 
@@ -123,15 +126,19 @@ def sync_df(df, schema):
     return
 
 
-if __name__ == "__main__":
-    """
-    Usage: python append_to_export.py filepath.csv
-    """
-    parser = argparse.ArgumentParser()
-    parser.add_argument("file_path")
+def sync_list(df, list_name):
+    if len(set(['title', 'author', 'book_id']).intersection(set(df.columns))) != 3:
+        print("Data needs right columns")
+        return
+    for i, row in df.iterrows():
+        list_book = BooksLists()
+        list_book.title = row['title']
+        if row['title'] == '':
+            break
+        list_book.author = row['author']
+        list_book.book_id = row['book_id']
+        list_book.rank = row['rank']
+        list_book.list_name = list_name
+        list_book.save()
 
-    args = parser.parse_args()
-    file_path = args.file_path
-    books_df = pd.read_csv(file_path)
-    # to do: check schema
-    sync_books(books_df)
+

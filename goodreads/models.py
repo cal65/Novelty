@@ -125,3 +125,18 @@ class Comments(models.Model):
     username = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     comments = models.CharField(max_length=10000)
     timestamp = models.DateTimeField(auto_now=True)
+
+
+class BooksLists(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'list_name'], name='unique_book_list'
+            )
+        ]
+    book_id = models.CharField(max_length=250)
+    title = models.CharField(max_length=250)
+    author = models.CharField(max_length=250)
+    list_name = models.CharField(max_length=250)
+    rank = models.IntegerField()
+
