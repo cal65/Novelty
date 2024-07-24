@@ -9,6 +9,7 @@ from .models import (
     SpotifyTracks,
     SpotifyArtist,
     RefNationality,
+    BooksLists
 )
 
 
@@ -133,4 +134,12 @@ class RefNationalityAdmin(admin.ModelAdmin):
         "nationality",
     )
 
-
+@admin.register(BooksLists)
+class RefNationalityAdmin(admin.ModelAdmin):
+    list_display = (
+        "book_id",
+        "title",
+        "author",
+        "rank",
+        "list_name"
+    )
