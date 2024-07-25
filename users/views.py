@@ -1,7 +1,7 @@
 import os
 from django.contrib import messages
 from django.views.generic import View
-from django.utils.http import is_safe_url
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.shortcuts import render, redirect
 from .forms import UserRegisterForm, LoginForm
 from django.contrib.sites.shortcuts import get_current_site

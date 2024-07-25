@@ -1,6 +1,6 @@
-from django.urls import path
+from django.urls import path, include
 from django.views.generic import RedirectView
-from django.conf.urls import url
+from django.urls import re_path
 from .views import *
 
 urlpatterns = [
@@ -25,7 +25,7 @@ urlpatterns = [
     path("geography/", geography, name="geography-home"),
     path("streaming/", streaming, name="streaming-home"),
     path("faq/", faq, name="faq"),
-    url(r"^favicon\.ico$", RedirectView.as_view(url="/static/admin/img/favicon.ico")),
+    re_path(r"^favicon\.ico$", RedirectView.as_view(url="/static/admin/img/favicon.ico")),
     path("music/plots/", spot_plots_view, name="spotify-plots"),
     path("upload-view-netflix/", upload_view_netflix, name="upload-view-netflix"),
     path("upload-netflix/", upload_netflix, name="upload-netflix"),
@@ -53,4 +53,7 @@ urlpatterns = [
     path("music/explore-data/", view_explore_music, name="music-explore"),
     path("streaming/load-explore-data/", explore_data_streaming, name="streaming-load-explore"),
     path("streaming/explore-data/", view_explore_streaming, name="streaming-explore"),
+    path('django_plotly_dash/', include('django_plotly_dash.urls')),
+    path('books/lists/', load_lists, name="book-lists")
+
 ]
