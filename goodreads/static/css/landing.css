@@ -339,6 +339,7 @@
     margin-left: auto;
     margin-right: auto;
     min-height: 100px;
+    justify-content: center; 
 }
 
 .object_map {
@@ -460,4 +461,18 @@
     font-weight: bold;
     font-size: 0.8rem;
 }
+
+.dash-frame {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 70vh;
+    justify-content: center; 
+    border: 2px solid #ccc; /* Light grey border */
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+    align-items: center;
+    overflow: auto;
+    /* box-sizing: border-box;
+}
+
 

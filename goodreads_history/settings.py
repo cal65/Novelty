@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
+    "crispy_bootstrap4",
     "channels"
 ]
 
@@ -194,3 +195,4 @@ INTERNAL_IPS = ["127.0.0.1", "35.175.111.52"]
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 XS_SHARING_ALLOWED_METHODS = ['POST','GET','OPTIONS', 'PUT', 'DELETE']
+
