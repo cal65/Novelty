@@ -1,8 +1,7 @@
-from dash import dcc
+from dash import dcc, html
 import pandas as pd
 import os
 from django_plotly_dash import DjangoDash
-import dash_html_components as html
 
 # Initialize the Dash app
 external_stylesheets = [
@@ -14,21 +13,17 @@ df = pd.read_csv('artifacts/nyt_merged.csv')
 df['title_author'] = df['rank'].astype(str) + '. ' + df['title'] + ' - ' + df['author']
 
 app.layout = html.Div(
-    className='caption-text',
-    children=[
-        html.Div(
-            className='dash-frame',
+            className='checklistContainer',
             children=[
                 dcc.Checklist(
                     id='checklist',
+                    className='checklist',
                     options=[{'label': i, 'value': i} for i in df['title_author']],
                     value=[],
                     labelStyle={'display': 'block'}
                 ),
                 html.Div(id='output')
             ]
-        )
-    ]
 )
 
 if __name__ == '__main__':

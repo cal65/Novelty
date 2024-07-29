@@ -41,6 +41,22 @@
     overflow: hidden;
 }
 
+body {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+}
+
+html {
+    height: 100vh;
+}
+
+#content {
+  height: 100%;
+  padding-bottom: 120px;
+  flex-grow: 1;
+}
+
 .dtsp-paneInputButton{
     font-weight: bold;
 }
@@ -467,12 +483,25 @@
     margin-left: auto;
     margin-right: auto;
     min-height: 70vh;
+    height: 50%;
     justify-content: center; 
     border: 2px solid #ccc; /* Light grey border */
     /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
     align-items: center;
     overflow: auto;
-    /* box-sizing: border-box;
 }
 
+.dash-frame > div {
+    height: 100% !important;
+    padding: 0 !important;
+}
 
+.checklistContainer {
+    height: 70%;
+}
+
+.checklist {
+    display: grid;
+    grid-template-rows: repeat(25, auto);
+    grid-auto-flow: column;
+}
