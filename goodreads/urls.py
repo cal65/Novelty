@@ -2,6 +2,7 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from django.urls import re_path
 from .views import *
+from goodreads import dash_list
 
 urlpatterns = [
     path("", index, name="index-view"),

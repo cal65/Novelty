@@ -3,7 +3,6 @@ import os
 import sys
 from datetime import datetime
 
-import numpy as np
 import pandas as pd
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
@@ -808,4 +807,6 @@ def explore_data_streaming(request):
 
 
 def load_lists(request):
-    return render(request, "goodreads/lists.html")
+    username = request.user
+    context = {'username': username}
+    return render(request, "goodreads/lists.html", context)
