@@ -2,6 +2,7 @@ from dash import dcc, html
 import pandas as pd
 import os
 from django_plotly_dash import DjangoDash
+from .models import ExportData,BooksLists
 
 # Initialize the Dash app
 external_stylesheets = [
