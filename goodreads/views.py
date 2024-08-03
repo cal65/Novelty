@@ -809,4 +809,5 @@ def load_lists(request):
     username = request.user
     # context has to contain a dictionary that gets passed to the dash app
     context = {"dash_context": {"usernameInput": {"value": str(username)}}}
+    logger.info(f"Context: {context}")
     return render(request, "goodreads/lists.html", context=context)
