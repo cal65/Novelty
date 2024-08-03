@@ -8,7 +8,7 @@ urlpatterns = [
     path('register/', user_views.register, name='register'),
     path('login/', user_views.login_user, name='user-login'),
     path('accounts/', include('allauth.urls')),
-    path('logout', LogoutView.as_view()),
+    path('logout', LogoutView.as_view(http_method_names=['post']), name='logout'),
     path('', TemplateView.as_view(template_name="index.html")),
     # path('reset/', user_views.password_reset, name='password_reset'),
     # path('reset-done/', user_views.password_reset_done, name='password_reset_done'),

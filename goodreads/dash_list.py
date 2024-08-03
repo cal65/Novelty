@@ -27,6 +27,9 @@ def load_data(username):
     user_df = objects_to_df(
         ExportData.objects.filter(username=username, exclusive_shelf="read")
     )
+    if len(user_df) == 0:
+        list_df["username"] = None
+        return list_df
     df = pd.merge(list_df, user_df[["book_id", "username"]], on="book_id", how="left")
     ## logic to add in matches based on title and author matches
     return df
