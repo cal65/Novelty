@@ -672,8 +672,8 @@ def bokeh_world_plot(world_df, username):
     )
     p = figure(
         title=f"Author Nationality Map - {username}",
-        plot_width=900,
-        plot_height=750,
+        width=900,
+        height=750,
         align="center",
         toolbar_location="below",
         tools="pan, wheel_zoom, box_zoom, reset",

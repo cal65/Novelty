@@ -3,7 +3,6 @@ import os
 import sys
 from datetime import datetime
 
-import numpy as np
 import pandas as pd
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
@@ -12,8 +11,16 @@ from django.contrib import messages
 from django import template
 from spotify.plotting.utils import objects_to_df, minute_conversion
 
-
-from .models import NetflixUsers, Books, ExportData, Authors, SpotifyTracks, NetflixTitles, NetflixGenres, NetflixActors
+from .models import (
+    NetflixUsers,
+    Books,
+    ExportData,
+    Authors,
+    SpotifyTracks,
+    NetflixTitles,
+    NetflixGenres,
+    NetflixActors,
+)
 
 sys.path.append("..")
 sys.path.append("../spotify/")
@@ -24,7 +31,6 @@ from netflix import data_munge as nd
 from netflix.plotting import plotting as nplot
 
 from .plotting import plotting as gplot
-
 
 from .scripts.append_to_export import (
     convert_to_ExportData,
@@ -251,8 +257,9 @@ def spot_plots_view(request):
 
 def process_export_upload(df, date_col="Date_Read"):
     df.columns = df.columns.str.replace(
-        " |\.", "_"
+        r"[ .]", "_", regex=True
     )  # standard export comes in with spaces. R would turn these into dots
+    logger.info(df.columns)
     df[date_col] = pd.to_datetime(df[date_col])
     df.columns = df.columns.str.lower()
     df["number_of_pages"].fillna(0, inplace=True)
@@ -262,7 +269,7 @@ def process_export_upload(df, date_col="Date_Read"):
     )
     df = df[pd.notnull(df["book_id"])]
     df["author"] = df["author"].str.strip()
-    df["author"] = df["author"].replace(r'\s+', ' ', regex=True)
+    df["author"] = df["author"].replace(r"\s+", " ", regex=True)
     return df
 
 
@@ -371,7 +378,7 @@ def upload_spotify(request):
     # change columns from endTime to endtime etc.
     df = de.lowercase_cols(df)
     # detect if upload format is of full Spotify export format
-    if 'ip_addr_decrypted' in df.columns:
+    if "ip_addr_decrypted" in df.columns:
         df = splot.preprocess_new(df)
     # load up the existing data in database for this user
     loaded_df = splot.load_data(user)
@@ -427,9 +434,9 @@ def populateSpotifyStreaming(df, user):
     # if 'uri' in df.columns:
     #     print("something") Add in some logic to deal with newer export
     spotifyStreamingObjs = df.apply(
-            lambda x: de.convert_to_SpotifyStreaming(x, username=str(user)),
-            axis=1,
-        )
+        lambda x: de.convert_to_SpotifyStreaming(x, username=str(user)),
+        axis=1,
+    )
     return spotifyStreamingObjs
 
 
@@ -625,7 +632,7 @@ def load_data_books(request):
     ]
     df = df.fillna("")
     df.sort_values("date_read", inplace=True)
-    df['date_read'] = df['date_read'].dt.date
+    df["date_read"] = df["date_read"].dt.date
     reading_table = df[html_cols].to_dict(orient="records")
     logger.info(f"reading table: {reading_table[:4]}")
     return JsonResponse(reading_table, safe=False)
@@ -703,7 +710,13 @@ def explore_data_books(request):
     edf = pd.pivot_table(
         good_df,
         index=["title_simple", "author", "nationality_chosen", "gender"],
-        values=["number_of_pages", "original_publication_year", "read", "narrative", "shelves"],
+        values=[
+            "number_of_pages",
+            "original_publication_year",
+            "read",
+            "narrative",
+            "shelves",
+        ],
         aggfunc={
             "number_of_pages": max,
             "original_publication_year": max,
@@ -714,8 +727,8 @@ def explore_data_books(request):
     ).reset_index()
     edf["read"] = edf["read"].fillna(0)
     edf = edf.fillna("")
-    edf = edf.loc[edf['title_simple'].str.len() > 1]
-    edf.sort_values('read', ascending=False, inplace=True)
+    edf = edf.loc[edf["title_simple"].str.len() > 1]
+    edf.sort_values("read", ascending=False, inplace=True)
     html_cols = [
         "title_simple",
         "author",
@@ -738,8 +751,8 @@ def view_explore_books(request):
 
 def explore_data_music(request):
     stream_df = objects_to_df(SpotifyTracks.objects.all())
-    #artists = objects_to_df(SpotifyArtists.objects.all())
-    stream_df['time_str'] = stream_df['duration'].fillna(0).apply(minute_conversion)
+    # artists = objects_to_df(SpotifyArtists.objects.all())
+    stream_df["time_str"] = stream_df["duration"].fillna(0).apply(minute_conversion)
     html_cols = [
         "artistname",
         "trackname",
@@ -759,6 +772,7 @@ def explore_data_music(request):
 def view_explore_music(request):
     return render(request, "spotify/explore_data.html")
 
+
 def view_explore_streaming(request):
     return render(request, "netflix/explore_data.html")
 
@@ -773,7 +787,9 @@ def explore_data_streaming(request):
     stream_df["cast"].fillna("", inplace=True)
     stream_df["cast"] = stream_df["cast"].apply(lambda x: x.split(",")[:10])
     # add space to the first value to make consistent but cast could be None
-    stream_df["cast"] = stream_df["cast"].apply(lambda x: [' ' + y if i == 0 else y for i, y in enumerate(x)] )
+    stream_df["cast"] = stream_df["cast"].apply(
+        lambda x: [" " + y if i == 0 else y for i, y in enumerate(x)]
+    )
     html_cols = [
         "title",
         "release_year",
@@ -788,3 +804,9 @@ def explore_data_streaming(request):
     logger.info(f"netflix exploration called")
     return JsonResponse(stream_table, safe=False)
 
+
+def load_lists(request):
+    username = request.user
+    # context has to contain a dictionary that gets passed to the dash app
+    context = {"dash_context": {"usernameInput": {"value": str(username)}}}
+    return render(request, "goodreads/lists.html", context=context)
