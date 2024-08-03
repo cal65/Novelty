@@ -14,7 +14,9 @@ external_stylesheets = [
 ]
 app = DjangoDash("checklist", external_stylesheets=external_stylesheets)
 list_df = objects_to_df(
-    BooksLists.objects.filter(list_name="New York Times Best Books of 21st Century")
+    BooksLists.objects.filter(
+        list_name="New York Times Best Books of 21st Century"
+    ).order_by("-rank")
 )
 list_df["title"] = list_df["title"].str.strip()
 list_df["author"] = list_df["author"].str.strip()
@@ -22,7 +24,9 @@ list_df["title_author"] = list_df["title"] + " - " + list_df["author"]
 
 
 def load_data(username):
-    user_df = objects_to_df(ExportData.objects.filter(username=username))
+    user_df = objects_to_df(
+        ExportData.objects.filter(username=username, exclusive_shelf="read")
+    )
     df = pd.merge(list_df, user_df[["book_id", "username"]], on="book_id", how="left")
     ## logic to add in matches based on title and author matches
     return df
@@ -51,6 +55,7 @@ app.layout = html.Div(
             ],
             value="New York Times Best Books of 21st Century",  # default value
         ),
+        html.Br(),
         dcc.Checklist(
             id="checklist",
             className="checklist",
