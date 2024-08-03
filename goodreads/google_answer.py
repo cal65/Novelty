@@ -19,8 +19,12 @@ logger = logging.getLogger(__name__)
 S = requests.Session()
 
 URL = "https://www.google.com/search?q="
-nationality_dict = objects_to_df(RefNationality.objects.all()).set_index('region')['nationality'].to_dict()
-nationality_dict['United States'] = 'American'
+nationality_dict = (
+    objects_to_df(RefNationality.objects.all())
+    .set_index("region")["nationality"]
+    .to_dict()
+)
+nationality_dict["United States"] = "American"
 
 
 def get_search_url(name):
@@ -41,7 +45,7 @@ def get_result(soup):
     raw_results = soup.findAll("div", {"class": "BNeawe iBp4i AP7Wnd"})
     if len(raw_results) == 0:
         # this result is less likely to be a straight nationality
-        raw_results = soup.findAll('span', {'class': "FCUp0c rQMQod"})
+        raw_results = soup.findAll("span", {"class": "FCUp0c rQMQod"})
 
     results = []
     for raw in raw_results:
@@ -50,9 +54,9 @@ def get_result(soup):
             for child in children:
                 results.append(child.get("aria-label"))
         else:
-            texts = raw.text.split('-')
+            texts = raw.text.split("-")
             for text in texts:
-                if text not in ['Images', 'People also ask']:
+                if text not in ["Images", "People also ask"]:
                     if text in nationality_dict.values():
                         # if it's a nationality, add
                         results.append(text)

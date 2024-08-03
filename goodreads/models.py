@@ -131,12 +131,12 @@ class BooksLists(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['title', 'list_name'], name='unique_book_list'
+                fields=["title", "list_name"], name="unique_book_list"
             )
         ]
+
     book_id = models.CharField(max_length=250)
     title = models.CharField(max_length=250)
     author = models.CharField(max_length=250)
     list_name = models.CharField(max_length=250)
     rank = models.IntegerField()
-
