@@ -1,0 +1,17 @@
+{% extends "goodreads/basefile.html" %}
+{% load static %}
+
+{% block content %}
+
+{%load plotly_dash%}
+
+<div class="container1" style="height: 30px;"><br></div>
+<div class="item"><h2>Books Lists</h2></div>
+
+<div class="dash-frame">
+{%plotly_app name="checklist" initial_arguments=dash_context %}
+
+</div>
+
+{% endblock content %}
+
