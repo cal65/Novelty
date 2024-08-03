@@ -59,7 +59,6 @@ def register(request):
 
 def login_user(request):
     logout(request)
-    username = password = ''
     form = LoginForm
 
     next = ""
@@ -75,7 +74,7 @@ def login_user(request):
                 login(request, user)
                 if next == "":
                     return redirect('index-view')
-                elif not is_safe_url(
+                elif not url_has_allowed_host_and_scheme(
                         url=next,
                         allowed_hosts={request.get_host()},
                         require_https=request.is_secure()):
