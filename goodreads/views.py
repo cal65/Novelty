@@ -11,7 +11,6 @@ from django.contrib import messages
 from django import template
 from spotify.plotting.utils import objects_to_df, minute_conversion
 
-
 from .models import (
     NetflixUsers,
     Books,
@@ -32,7 +31,6 @@ from netflix import data_munge as nd
 from netflix.plotting import plotting as nplot
 
 from .plotting import plotting as gplot
-
 
 from .scripts.append_to_export import (
     convert_to_ExportData,
@@ -258,9 +256,8 @@ def spot_plots_view(request):
 
 
 def process_export_upload(df, date_col="Date_Read"):
-    df.columns = df.columns.str.replace(
-        " |\.", "_"
-    )  # standard export comes in with spaces. R would turn these into dots
+    df.columns = df.columns.str.replace(r'[ .]', '_', regex=True)  # standard export comes in with spaces. R would turn these into dots
+    logger.info(df.columns)
     df[date_col] = pd.to_datetime(df[date_col])
     df.columns = df.columns.str.lower()
     df["number_of_pages"].fillna(0, inplace=True)
@@ -808,5 +805,6 @@ def explore_data_streaming(request):
 
 def load_lists(request):
     username = request.user
-    context = {'username': username}
-    return render(request, "goodreads/lists.html", context)
+    # context has to contain a dictionary that gets passed to the dash app
+    context = {"dash_context": {'usernameInput': {"value": str(username)}}}
+    return render(request, "goodreads/lists.html", context=context)
