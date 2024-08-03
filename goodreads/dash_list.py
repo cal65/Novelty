@@ -37,16 +37,18 @@ def update_checklist(username):
     return list_merged.loc[pd.notnull(list_merged["username"])]["title_author"].values
 
 
-app.layout = html.Div(
+app.layout = html.Div(className="checklistContainer", children=
     [
         dcc.Input(id="usernameInput", style={"display": "none"}, value=" "),
         dcc.Dropdown(
             id="list_selector",
             options=[
                 {
-                    "New York Times Best Books of 21st Century": "New York Times Best Books of 21st Century"
+                    'label': "New York Times Best Books of 21st Century",
+                    'value': "New York Times Best Books of 21st Century"
                 }
             ],
+
             value="New York Times Best Books of 21st Century",  # default value
         ),
         dcc.Checklist(
