@@ -23,25 +23,53 @@ list_df["author"] = list_df["author"].str.strip()
 list_df["title_author"] = list_df["title"] + " - " + list_df["author"]
 
 
-def load_data(username):
+def initiate_lists(list_name):
+    df = objects_to_df(BooksLists.objects.filter(list_name=list_name).order_by("-rank"))
+    df["title"] = df["title"].str.strip()
+    df["author"] = df["author"].str.strip()
+    df["title_author"] = df["title"] + " - " + df["author"]
+    return df
+
+
+def load_data(df, username):
     user_df = objects_to_df(
         ExportData.objects.filter(username=username, exclusive_shelf="read")
     )
     if len(user_df) == 0:
-        list_df["username"] = None
-        return list_df
-    df = pd.merge(list_df, user_df[["book_id", "username"]], on="book_id", how="left")
+        df["username"] = None
+        return df
+    merged_df = pd.merge(df, user_df[["book_id", "username"]], on="book_id", how="left")
+    merged_df = pd.pivot_table(merged_df, index=['title', 'author', 'rank', 'list_name'], values='username',
+                   aggfunc=lambda x: any(pd.notnull(x))).reset_index()
+    merged_df.sort_values("rank", ascending=False, inplace=True)
+    merged_df['username'] = merged_df['username'].replace(False, None)
+    merged_df["title_author"] = merged_df["title"] + " - " + merged_df["author"]
     ## logic to add in matches based on title and author matches
-    return df
+    return merged_df
 
 
 @app.callback(
+    Output(component_id="checklist", component_property="options"),
     Output(component_id="checklist", component_property="value"),
-    Input("usernameInput", "value"),
+    [
+        Input(component_id="list_selector", component_property="value"),
+        Input("usernameInput", "value"),
+    ],
 )
-def update_checklist(username):
-    list_merged = load_data(username)
-    return list_merged.loc[pd.notnull(list_merged["username"])]["title_author"].values
+def update_checklist(listname, username):
+    df = initiate_lists(listname)
+    list_merged = load_data(df, username)
+    options = [
+        {
+            "label": html.Span(
+                [html.B(str(100 - i) + ". "), t]
+            ),  # bold number then title
+            "value": t,
+        }
+        for i, t in enumerate(list_merged["title_author"])
+    ]
+    values = list_merged.loc[pd.notnull(list_merged["username"])]["title_author"].values
+    return options, values
 
 
 app.layout = html.Div(
@@ -52,9 +80,15 @@ app.layout = html.Div(
             id="list_selector",
             options=[
                 {
-                    "label": "New York Times Best Books of 21st Century",
-                    "value": "New York Times Best Books of 21st Century",
+                    "label": list_name,
+                    "value": list_name,
                 }
+                # iterate through unique BooksLists names
+                for list_name in list(
+                    BooksLists.objects.order_by()
+                    .values_list("list_name", flat=True)
+                    .distinct()
+                )
             ],
             value="New York Times Best Books of 21st Century",  # default value
         ),
@@ -77,6 +111,7 @@ app.layout = html.Div(
         html.Div(id="output"),
     ],
 )
+
 
 if __name__ == "__main__":
 
