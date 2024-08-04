@@ -131,7 +131,7 @@ class BooksLists(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["title", "list_name"], name="unique_book_list"
+                fields=["title", "list_name", "book_id"], name="unique_book_list"
             )
         ]
 
