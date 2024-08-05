@@ -145,6 +145,7 @@ class BooksLists(models.Model):
 class UserLists(models.Model):
     ## Whether a user has read a particular title in a book
     username = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.ForeignKey(BooksLists, null=True, related_name='title', on_delete=models.SET_NULL)
-    list_name = models.ForeignKey(BooksLists, null=True, related_name='list_name', on_delete=models.SET_NULL)
+    list_info = models.ForeignKey(BooksLists, null=True, on_delete=models.SET_NULL)
+    read = models.BooleanField(default=False)
+
 
