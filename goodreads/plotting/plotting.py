@@ -49,13 +49,17 @@ def load_data(username):
     return df
 
 
+def simplify_titles(df, title_col):
+    df[title_col] = df[title_col].str.replace(":.*", "")
+    df[title_col] = df[title_col].str.replace("\\(.*\\)", "")
+    df[title_col] = df[title_col].str.strip()
+    return df
+
 def preprocess(df):
     gender_dict = {"mostly_male": "male", "mostly_female": "female"}
     df["gender"] = df["gender"].map(gender_dict).fillna(df["gender"])
     df["date_read"] = pd.to_datetime(df["date_read"])
-    df["title_simple"] = df["title"].str.replace(":.*", "")
-    df["title_simple"] = df["title_simple"].str.replace("\\(.*\\)", "")
-    df["title_simple"] = df["title_simple"].str.strip()
+    df["title_simple"] = simplify_titles(df, title_col="title")
     df["author"] = df["author"].apply(lambda x: re.sub(r"\s+", " ", x))
     return df
 

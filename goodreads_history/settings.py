@@ -41,6 +41,7 @@ ALLOWED_HOSTS = [
     "0.0.0.0",
     "novelty-insights.com",
     "www.novelty-insights.com",
+    "54.90.59.213",
 ]
 
 

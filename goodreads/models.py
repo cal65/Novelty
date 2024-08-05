@@ -140,3 +140,11 @@ class BooksLists(models.Model):
     author = models.CharField(max_length=250)
     list_name = models.CharField(max_length=250)
     rank = models.IntegerField()
+
+
+class UserLists(models.Model):
+    ## Whether a user has read a particular title in a book
+    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.ForeignKey(BooksLists, on_delete=models.SET_NULL)
+    list_name = models.ForeignKey(BooksLists, on_delete=models.SET_NULL)
+
