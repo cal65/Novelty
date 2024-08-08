@@ -19,6 +19,7 @@
                success: function(response) {
                 alert("Comment submitted.");
                 document.getElementById("comment-form").reset();
+                window.location.href = response.redirect_url;
                 return true;
            },
            error: function(response) {
