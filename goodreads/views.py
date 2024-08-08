@@ -5,6 +5,8 @@ from datetime import datetime
 
 import pandas as pd
 from django.shortcuts import render
+from django.urls import reverse
+
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -550,14 +552,12 @@ def comments(request):
 
 
 def post_comment(request):
+    from goodreads.models import Comments
     comment = request.POST.get("comment", "")
-    next = request.POST.get("next", "/")
-    logger.info(str(comment))
-    # when script finishes, move user to plots view
-    if next:
-        logger.info(next)
-        HttpResponseRedirect(next)
-    return HttpResponseRedirect("/")
+    username = request.user
+    # save comment in database
+    Comments.objects.create(username=username, comments=comment)
+    return JsonResponse({"redirect_url": reverse("index-view")})
 
 
 @login_required(redirect_field_name="next", login_url="user-login")
