@@ -1,6 +1,6 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.generic import RedirectView
-from django.urls import re_path
+from goodreads.dash import dash_list
 from .views import *
 
 urlpatterns = [
