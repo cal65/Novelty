@@ -67,7 +67,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
     "crispy_bootstrap4",
-    "channels"
+    "channels",
 ]
 
 MIDDLEWARE = [
