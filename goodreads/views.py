@@ -7,7 +7,6 @@ import pandas as pd
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django import template
 from spotify.plotting.utils import objects_to_df, minute_conversion
 
@@ -809,5 +808,5 @@ def load_lists(request):
     username = request.user
     # context has to contain a dictionary that gets passed to the dash app
     context = {"dash_context": {"usernameInput": {"value": str(username)}}}
-    logger.info(f"Context: {context}")
+    logger.info(f"Lists loaded. Context: {context}")
     return render(request, "goodreads/lists.html", context=context)

@@ -1,14 +1,22 @@
 from dash import dcc, html
 import pandas as pd
-import os
 from goodreads.models import ExportData, BooksLists
 from spotify.plotting.utils import objects_to_df
 from django_plotly_dash import DjangoDash
 from dash.dependencies import Input, Output
 
-# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'goodreads_history.settings')
-# django.setup()
-# Initialize the Dash app
+import logging
+
+logging.basicConfig(
+    filename="logs.txt",
+    filemode="a",
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    level=logging.INFO,
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
+
+
 external_stylesheets = [
     "/static/css/landing.css"  # This should be the relative URL as served by Django
 ]
@@ -39,10 +47,14 @@ def load_data(df, username):
         df["username"] = None
         return df
     merged_df = pd.merge(df, user_df[["book_id", "username"]], on="book_id", how="left")
-    merged_df = pd.pivot_table(merged_df, index=['title', 'author', 'rank', 'list_name'], values='username',
-                   aggfunc=lambda x: any(pd.notnull(x))).reset_index()
+    merged_df = pd.pivot_table(
+        merged_df,
+        index=["title", "author", "rank", "list_name"],
+        values="username",
+        aggfunc=lambda x: any(pd.notnull(x)),
+    ).reset_index()
     merged_df.sort_values("rank", ascending=False, inplace=True)
-    merged_df['username'] = merged_df['username'].replace(False, None)
+    merged_df["username"] = merged_df["username"].replace(False, None)
     merged_df["title_author"] = merged_df["title"] + " - " + merged_df["author"]
     ## logic to add in matches based on title and author matches
     return merged_df
