@@ -810,3 +810,6 @@ def load_lists(request):
     context = {"dash_context": {"usernameInput": {"value": str(username)}}}
     logger.info(f"Lists loaded. Context: {context}")
     return render(request, "goodreads/lists.html", context=context)
+
+
+

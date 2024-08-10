@@ -287,7 +287,9 @@ def plot_timeline(df):
 
 
 def plot_hist(df, username):
-    from scipy.stats import mode
+    def cust_mode(a):
+        u, c = np.unique(a, return_counts=True)
+        return u[c.argmax()]
 
     df["month"] = df["date"].dt.month
     df["year"] = df["date"].dt.year
@@ -295,7 +297,7 @@ def plot_hist(df, username):
         df,
         index=["month", "year", "title_type"],
         values=["name"],
-        aggfunc=[len, lambda x: mode(x)[0]],
+        aggfunc=[len, lambda x: cust_mode(x)],
     ).reset_index()
     df_hist.columns = ["month", "year", "title_type", "n", "Top Show"]
     df_hist["segment"] = (
