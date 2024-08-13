@@ -494,7 +494,7 @@ html {
 }
 
 .dash-frame > div {
-    height: 100% !important;
+    height: 1000px !important;
     padding: 0 !important;
     font-family: courier new;
 }
