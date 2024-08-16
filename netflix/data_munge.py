@@ -364,6 +364,9 @@ def codify_title(title):
 
 
 def net_merge(df, titles_df, left, right, ids, how="inner"):
+    """
+    Pass in ids to exclude from the merge
+    """
     df = df.copy()
     if ids is not None:
         df = df.loc[~df["id"].isin(ids)]
@@ -410,7 +413,7 @@ def pipeline_steps(df):
     # match cleared out name with title. This matches TV shows
     step2 = net_merge(df, titles_df, left="name", right="title", ids=step1["id"])
     # match the rest
-    step1_2_ids = pd.unique(step1["id"].append(step2["id"]))
+    step1_2_ids = pd.unique(pd.concat([step1["id"], step2["id"]]))
     titles_df["name"] = titles_df["title"].apply(lambda x: x.split(":")[0])
     step3 = net_merge(
         df, titles_df, left="name", right="name", ids=step1_2_ids, how="left"

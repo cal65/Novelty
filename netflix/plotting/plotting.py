@@ -151,7 +151,7 @@ def reduce_genre(genre):
     }
     for w in stop_words:
         genre = genre.replace(w, "")
-    genre = (", ").join([g.strip() for g in genre.split(", ")])
+    genre = ", ".join([g.strip() for g in genre.split(", ")])
 
     genre = genre_mapper[genre] if genre in genre_mapper.keys() else genre
     return genre
@@ -190,7 +190,7 @@ def truncate_genres(genres, genres_series, n):
     If the number of unique chosen genres exceeds the palette colors, truncate the genres
     Genres is ordered by most common
     """
-    other_genres = {k: "Other" for k in list(genres[(n - 1) :])}
+    other_genres = {k: "Other" for k in list(genres[(n - 1):])}
     genres_series = genres_series.map(other_genres).fillna(genres_series)
     genres = genres[: (n - 1)] + ["Other"]
     return genres, genres_series
@@ -272,7 +272,7 @@ def plot_timeline(df):
     fig.update_layout(
         updatemenus=[
             dict(
-                active=int(np.where(years==current_year)[0][0]),
+                active=int(np.where(years == current_year)[0][0]),
                 buttons=buttons,
                 x=0.1,
                 xanchor="left",
@@ -287,7 +287,9 @@ def plot_timeline(df):
 
 
 def plot_hist(df, username):
-    from scipy.stats import mode
+    def cust_mode(a):
+        u, c = np.unique(a, return_counts=True)
+        return u[c.argmax()]
 
     df["month"] = df["date"].dt.month
     df["year"] = df["date"].dt.year
@@ -295,11 +297,11 @@ def plot_hist(df, username):
         df,
         index=["month", "year", "title_type"],
         values=["name"],
-        aggfunc=[len, lambda x: mode(x)[0]],
+        aggfunc=[len, lambda x: cust_mode(x)],
     ).reset_index()
     df_hist.columns = ["month", "year", "title_type", "n", "Top Show"]
     df_hist["segment"] = (
-        df_hist["year"].astype(str) + "-" + df_hist["month"].astype(str)
+            df_hist["year"].astype(str) + "-" + df_hist["month"].astype(str)
     )
     fig = go.Figure()
     for t in df_hist["title_type"].unique():
@@ -445,12 +447,12 @@ def plot_comparison(combined_plot, name1, name2):
         fig.add_trace(
             go.Scatter(
                 x=(
-                    combined_shows_p["group_index"]
-                    / combined_shows_p["group_index_max"]
-                )
-                * index_max
-                + xm
-                + 10 * i,
+                          combined_shows_p["group_index"]
+                          / combined_shows_p["group_index_max"]
+                  )
+                  * index_max
+                  + xm
+                  + 10 * i,
                 y=combined_shows_p["y"],
                 text=combined_shows_p["name"],
                 textposition="bottom center",

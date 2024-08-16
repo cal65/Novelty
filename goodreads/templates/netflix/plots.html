@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+{%load plotly_dash%}
 <script>
     function getCookie(name) {
     let cookieValue = null;
@@ -77,7 +78,7 @@
 <p id="infotext"></p>
 <div style="text-align: center; " class="image-title">Volume Histogram</div>
     <div class ="plotly">
-        <iframe src="{% static histogram_url %}"  class="iframe" alt="genres" /> </iframe>
+        <iframe src="{% static histogram_url %}"  class="iframe" alt="volume" /> </iframe>
     </div>
 <div class="caption-text">
     This shows the historical consumption of your Netflix account, based on the number of episodes and when they were last watched.
@@ -85,11 +86,10 @@
 <br><br>
 </section>
 <br> <br>
-</div>
 <section id ="Genres-TV">
     <div style="text-align: center;" class="image-title">Genres - TV Shows</div>
     <div class ="plotly">
-        <iframe class ="iframe" src="{% static genre_series_url %}" alt="genre"></iframe>
+        <iframe class ="iframe" src="{% static genre_series_url %}" alt="genres-tv"></iframe>
     </div>
 <br>
     <br>
@@ -101,7 +101,7 @@
 <section id ="Genres-Movies">
     <div style="text-align: center; " class="image-title">Genres - Movies</div>
     <div class ="plotly">
-        <iframe src="{% static genre_movie_url %}"  class="iframe" alt="genres" /> </iframe>
+        <iframe src="{% static genre_movie_url %}"  class="iframe" alt="genres-movies" /> </iframe>
     </div>
 <div class="caption-text">
     This shows the movies you've watched grouped by a genre type. Occasionally shows are mislabeled as movies and vice versa.
@@ -111,8 +111,8 @@
     <br>
     <br>
      <div style="text-align: center; " class="image-title">Actor Network Plot</div>
-    <div class ="plotly">
-        <iframe src="{% static network_url %}"  class="iframe" alt="top-songs" /> </iframe>
+    <div class ="dash-frame">
+        {%plotly_app name="bacon_interactive" initial_arguments=dash_context %}
     </div>
 <div class="caption-text">
     And this plot has a lot going on. Hover over to see actors/actresses who have appeared in multiple productions you've seen.
