@@ -485,7 +485,20 @@ html {
     margin-left: auto;
     margin-right: auto;
     min-height: 70vh;
-    height: 50%;
+    height: 60%;
+    justify-content: center; 
+    border: 2px solid #ccc; /* Light grey border */
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+    align-items: center;
+    overflow: auto;
+}
+
+.dash-frame-network {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 70vh;
+    height: 100%;
     justify-content: center; 
     border: 2px solid #ccc; /* Light grey border */
     /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
@@ -494,14 +507,24 @@ html {
 }
 
 .dash-frame > div {
-    height: 1000px !important;
+    height: 100% !important;
     padding: 0 !important;
+    min-height: 70vh;
     font-family: courier new;
+}
+
+.dash-frame-network > div:first-child {
+    height: 100% !important;
+    padding: 0 !important;
+    min-height: 70vh;
+    font-family: courier new;
+    display: none;
 }
 
 .checklistContainer {
     height: 70%;
     font-family: courier new;
+    max-height: 1000px;
 }
 
 .checklist {

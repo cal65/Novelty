@@ -24,45 +24,51 @@ df = load_data(username)
 G = nd.format_network(df)
 
 app.layout = html.Div(
-    className="checklistContainer",
-    children=[
+    [
         dcc.Graph(
             id="network-graph",
-            className="dash-frame",
+            className="dash-frame-network",
             config={"scrollZoom": True},
             figure=plot_network(df, username),
             style={"width": "100%"},
-        )
-    ],
+        ),
+        dcc.Store(id="click-store", data=None),
+    ]
 )
 
 
 @app.callback(
-    Output("network-graph", "figure"),
+    [Output("network-graph", "figure"), Output("click-store", "data")],
     [Input("network-graph", "clickData")],
-    [State("network-graph", "figure")],
+    [State("network-graph", "figure"), State("click-store", "data")],
 )
-def update_figure(clickData, existing_figure):
+def update_figure(clickData, existing_figure, stored_click):
     fig = existing_figure
     if clickData:
-        logger.info(clickData)
         clicked_node = clickData["points"][0]["customdata"]
         node_name = clicked_node[0]
+        logger.info(f"clickData: {clickData}. stored_click: {stored_click}")
+        if node_name != stored_click:
+            # Highlight the clicked node and its neighbors
+            for trace in fig["data"]:
+                if trace["mode"] == "markers":
+                    # Make an array of 0.1 and 1, with 1 being the clicked node
+                    node_names = [n[0] for n in trace["customdata"]]
+                    # Find the neighbors and change those to a middle opacity
+                    neighbors = set(G.neighbors(node_name))
+                    opacity_array = [
+                        1 if nn == node_name else 0.7 if nn in neighbors else 0.1
+                        for nn in node_names
+                    ]
+                    trace["marker"]["opacity"] = opacity_array
+            stored_click = node_name
+        else:
+            # Reset the opacity to default
+            for trace in fig["data"]:
+                if trace["mode"] == "markers":
+                    trace["marker"]["opacity"] = 1
 
-        # Highlight the clicked node and its neighbors
-        for trace in fig["data"]:
-            if trace["mode"] == "markers":
-                # Make an array of 0.1 and 1, with 1 being the clicked node
-                node_names = [n[0] for n in trace["customdata"]]
-                # Find the neighbors and change those to a middle opacity
-                neighbors = set(G.neighbors(node_name))
-                opacity_array = [
-                    1 if nn == node_name else 0.7 if nn in neighbors else 0.1
-                    for nn in node_names
-                ]
-                trace["marker"]["opacity"] = opacity_array
-
-    return fig
+    return fig, stored_click
 
 
 if __name__ == "__main__":
