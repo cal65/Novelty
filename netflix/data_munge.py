@@ -298,12 +298,18 @@ def ingest_netflix(df, user):
     """
     NetflixUsers.objects.filter(username=user).delete()
 
-    for i, row in df.iterrows():
-        netflix_Entry = NetflixUsers()
-        netflix_Entry.title = row["title"]
-        netflix_Entry.date = row["date"]
-        netflix_Entry.username = user
-        netflix_Entry.save()
+    # Prepare a list of NetflixUsers objects
+    netflix_entries = [
+        NetflixUsers(
+            title=row["title"],
+            date=row["date"],
+            username=user
+        )
+        for _, row in df.iterrows()
+    ]
+    # Bulk create the new entries in a single transaction
+    NetflixUsers.objects.bulk_create(netflix_entries)
+    
     return
 
 
