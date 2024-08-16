@@ -525,6 +525,8 @@ def netflix_plots_view(request):
             "binge_show": max_binge.get("name", ""),
             "binge_date": max_binge.get("date", ""),
             "binge_n": max_binge.get("username", ""),
+            # added context for dash app to load username
+            "dash_context": {"usernameInput": {"value": str(username)}}
         },
     )
 
