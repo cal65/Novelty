@@ -70,7 +70,7 @@ def update_figure(clickData, gData, figure_data, existing_figure, stored_click):
     if clickData:
         clicked_node = clickData["points"][0]["customdata"]
         node_name = clicked_node[0]
-        logger.info(f"clickData: {clickData}. stored_click: {stored_click}")
+        logger.info(f"clicked node: {clicked_node}. stored_click: {stored_click}")
         G = json_graph.node_link_graph(gData)
         if node_name != stored_click:
             # Highlight the clicked node and its neighbors
