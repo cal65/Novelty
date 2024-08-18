@@ -786,7 +786,7 @@ def explore_data_streaming(request):
     stream_df = pd.merge(stream_df, actors_df, on="netflix_id", how="left")
     # turn comma separated cast into array, keep only ten people for performance reasons
     stream_df["cast"].fillna("", inplace=True)
-    stream_df["cast"] = stream_df["cast"].apply(lambda x: x.split(",")[:10])
+    stream_df["cast"] = stream_df["cast"].apply(lambda x: x.split(",")[:15])
     # add space to the first value to make consistent but cast could be None
     stream_df["cast"] = stream_df["cast"].apply(
         lambda x: [" " + y if i == 0 else y for i, y in enumerate(x)]
