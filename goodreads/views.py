@@ -511,7 +511,10 @@ def netflix_plots_view(request):
         username, username
     )
     network_url = "Graphs/{}/netflix_network_{}.html".format(username, username)
-    max_binge = nplot.find_max(username)
+    try:
+        max_binge = nplot.find_max(username)
+    except ValueError as e:
+        return HttpResponseRedirect("/upload-view-netflix")
 
     return render(
         request,

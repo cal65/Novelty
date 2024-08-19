@@ -32,7 +32,7 @@ def load_data(username):
     )
     if len(df) == 0:
         logger.info(f"No data found for user {username}")
-        raise Exception(f"No data found for user {username}")
+        raise ValueError(f"No data found for user {username}")
     df = nd.pipeline_steps(df)
     nids = df["netflix_id"][pd.notnull(df["netflix_id"])].unique().astype(int)
     genres_df = pd.DataFrame.from_records(

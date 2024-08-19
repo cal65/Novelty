@@ -50,8 +50,8 @@ def load_data(username):
 
 
 def simplify_titles(df, title_col, new_col="title_simple"):
-    df[new_col] = df[title_col].str.replace(":.*", "")
-    df[new_col] = df[new_col].str.replace("\\(.*\\)", "")
+    df[new_col] = df[title_col].str.replace(":.*", "", regex=True)
+    df[new_col] = df[new_col].str.replace("\\(.*\\)", "", regex=True)
     df[new_col] = df[new_col].str.strip()
     return df
 
