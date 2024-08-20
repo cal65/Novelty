@@ -539,8 +539,8 @@ def plot_top_artists_over_time(df, periods=10):
     for i, row in artists_range_df.iterrows():
         ## y_annot has some above line and some below line
         a = row["artistname"]
-        y_annot = yrange[1] * (1 + 0.10 * (-1) ** i)
-        y_annot2 = yrange[1] * (1 + 0.05 * (-1) ** (i + 1))
+        y_annot = yrange[1] * (1 + 0.10 * (-1) ** i) # Name above and below line
+        y_annot2 = yrange[1] * (1 + 0.05 * (-1) ** (i + 1)) # Picture above and below line
         fig.add_trace(
             go.Scatter(
                 x=[row["date_start"], row["date_end"]],

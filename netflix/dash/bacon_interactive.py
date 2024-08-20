@@ -28,7 +28,7 @@ app = DjangoDash("bacon_interactive", external_stylesheets=external_stylesheets)
      Output("network-data-store", "data")],
     [Input("usernameInput", "value")],
 )
-def initiate_data(username):
+def initiate_data(username: str):
     df = load_data(username)
     G = nd.format_network(df)
     fig = plot_network(df, username)
@@ -39,7 +39,7 @@ def initiate_data(username):
 
 app.layout = html.Div(
     [
-        dcc.Input(id="usernameInput", style={"display": "none"}, value=" "),
+        dcc.Input(id="usernameInput", style={"display": "none"}, value=""),
         dcc.Graph(
             id="network-graph",
             className="dash-frame-network",

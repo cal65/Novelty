@@ -23,6 +23,15 @@
 {% block gallery %}
         <a class="nav-link" href="{% url 'gallery-streaming' %}">Gallery</a>
 {% endblock gallery %}
+{% block lists %}
+{% endblock lists %}
+
+{% block view-data %}
+        <a class="nav-link" href="{% url 'streaming-view-data' %}">View Data</a>
+{% endblock view-data %}
+{% block explore-data %}
+        <a class="nav-link" href="{% url 'streaming-explore' %}">Explore Data</a>
+{% endblock explore-data %}
 
 {% block gal-title %}
 <div style="text-align: center;" class="font-bold pt-4 text-3xl">STREAMING GALLERY</div>
