@@ -5,7 +5,7 @@ from goodreads.scripts.append_to_export import append_scraping, scrape_bid, conv
 from spotify.plotting.utils import objects_to_df
 
 
-def scrape_null(book_ids, n, wait=10):
+def scrape_null(book_ids, n, wait=10, username='Scraped'):
     for bid in book_ids[:n]:
         b = append_scraping(bid, wait=wait)
         b.save()
@@ -13,7 +13,7 @@ def scrape_null(book_ids, n, wait=10):
             scraped_dict = scrape_bid(bid, wait=wait/2)
             # don't save if we get a bad page
             if scraped_dict['author'] is not None:
-                e = convert_to_ExportData(scraped_dict, username='Scraped')
+                e = convert_to_ExportData(scraped_dict, username=username)
         print(b.added_by)
 
 

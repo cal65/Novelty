@@ -34,7 +34,7 @@ django.setup()
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("file_path", type=str)
-        parser.add_argument("domain", type=str)
+        parser.add_argument("domain", type=str, help="One of 'Spotify', 'Books' or 'List'")
         parser.add_argument("list_name", type=str, default='')
 
     def handle(self, **options):
@@ -137,7 +137,7 @@ def sync_list(df, list_name):
             break
         list_book.author = row['author']
         list_book.book_id = row['book_id']
-        list_book.rank = row['rank']
+        list_book.rank = row.get('rank', i+1) # if column rank exists use that
         list_book.list_name = list_name
         list_book.save()
 
