@@ -10,6 +10,7 @@ from .models import (
     SpotifyArtist,
     RefNationality,
     BooksLists,
+    Comments,
 )
 
 
@@ -145,3 +146,8 @@ class BooksListsAdmin(admin.ModelAdmin):
         "list_name",
         "rank",
     )
+
+
+@admin.register(Comments)
+class Comments(admin.ModelAdmin):
+    list_display = ("username", "comments", "timestamp")

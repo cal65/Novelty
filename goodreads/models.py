@@ -147,5 +147,3 @@ class UserLists(models.Model):
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     list_info = models.ForeignKey(BooksLists, null=True, on_delete=models.SET_NULL)
     read = models.BooleanField(default=False)
-
-
