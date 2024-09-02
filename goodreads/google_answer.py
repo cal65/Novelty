@@ -46,6 +46,8 @@ def get_result(soup):
     if len(raw_results) == 0:
         # this result is less likely to be a straight nationality
         raw_results = soup.findAll("span", {"class": "FCUp0c rQMQod"})
+    elif len(raw_results) == 0:
+        raw_results = soup.findAll("span", {"class": "BNeawe tAd8D AP7Wnd"})
 
     results = []
     for raw in raw_results:
