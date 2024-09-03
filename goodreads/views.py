@@ -9,6 +9,8 @@ from django.urls import reverse
 
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.db.models.functions import Length
 from django import template
 from spotify.plotting.utils import objects_to_df, minute_conversion
 
@@ -695,14 +697,15 @@ def load_data_streaming(request):
 
 
 def explore_data_books(request):
-    books_df = objects_to_df(Books.objects.all())
+    # Extract DataTable parameters from request
+    logger.info(request.GET)
+    books_df = objects_to_df(Books.objects.filter(added_by__gt=1))
     books_df["book_id"] = pd.to_numeric(books_df["book_id"]).astype(int)
     books_df.sort_values("book_id", inplace=True)
-    export_df = objects_to_df(ExportData.objects.all())
+    export_df = objects_to_df(ExportData.objects.annotate(title_len=Length('title')).filter(title_len__gt=1))
     export_df["book_id"] = export_df["book_id"].astype(float).astype(int)
-
-    authors_df = objects_to_df(Authors.objects.all())
     good_df = pd.merge(books_df, export_df, how="left", on="book_id")
+    authors_df = objects_to_df(Authors.objects.filter(author_name__in=export_df['author'].unique()))
     authors_df.rename(columns={"author_name": "author"}, inplace=True)
     authors_df.drop(columns="ts_updated", inplace=True)
     # drop a few authors that aren't books
@@ -731,7 +734,6 @@ def explore_data_books(request):
     ).reset_index()
     edf["read"] = edf["read"].fillna(0)
     edf = edf.fillna("")
-    edf = edf.loc[edf["title_simple"].str.len() > 1]
     edf.sort_values("read", ascending=False, inplace=True)
     html_cols = [
         "title_simple",
@@ -744,8 +746,10 @@ def explore_data_books(request):
         "shelves",
         "number_of_pages",
     ]
+
     read_table = edf[html_cols].to_dict(orient="records")
-    logger.info(f"reading table: {read_table[:4]}")
+
+    logger.info(f"reading table called by user {request.user}")
     return JsonResponse(read_table, safe=False)
 
 
