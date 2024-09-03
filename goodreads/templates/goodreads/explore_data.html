@@ -16,9 +16,11 @@
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 <script>
 function load_datatable(url, columns) {
+	// necessary variable to get dictionary of columns
 	var cols_raw = columns.map(function(c) {
 	  return { data: c };
 	});
+	// turn the column shelves into string for display and manageable array for search pane filter
 	const newData = {
 	  data: "shelves",
 	  render: {
@@ -28,7 +30,7 @@ function load_datatable(url, columns) {
 	};
 	var cols = cols_raw.map(item => {
 	  if (item.data === "shelves") {
-	    // If 'data' is 'b', merge the new data with the existing item
+	    // If 'data' is 'shelves', apply render and sp distinction
 	    return { ...item, ...newData };
 	  } else {
 	    // Otherwise, keep the original item
@@ -41,33 +43,13 @@ function load_datatable(url, columns) {
 	    dataType: 'json',
 	    success: function(response){
 	    	console.log('starting');
-
-	    	var cols_raw = columns.map(function(c) {
-                return { data: c };
-            });
-	    	const newData = {
-                data: "shelves",
-                render: {
-                    _: "[, ]",
-                    sp: "[]"
-                }
-            };
-
-            var cols = cols_raw.map(item => {
-                if (item.data === "shelves") {
-                    // If 'data' is 'b', merge the new data with the existing item
-                    return { ...item, ...newData };
-                } else {
-                    // Otherwise, keep the original item
-                    return item;
-                }
-            });
 	    	var dataTableOptions = {
 	    		data: response,
 	    		columns: cols,
 	    		"pageLength": 25,
 		    	dom: 'PlBfrtip',
 		    	order: [5, 'desc'],
+		    	deferRender: true,
 		    	columnDefs: [
 		            {
 		                searchPanes: {

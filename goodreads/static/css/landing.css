@@ -133,6 +133,13 @@ html {
     line-height: 1.5em;
 }
 
+/* Media query for mobile devices */
+@media screen and (max-width: 767px) {
+    .nav-link {
+        font-size: 0.8rem; /* Adjust the font size for mobile */
+    }
+}
+
 .navbar-text {
     display: inline-block;
     padding-top: 0.5rem;
@@ -344,6 +351,13 @@ html {
     margin-right: auto;
     width: 50%;
     font-family: courier new;
+}
+
+/* Media query for mobile devices */
+@media screen and (max-width: 767px) {
+    .headline {
+        font-size: 2rem; /* Adjust the font size for mobile */
+    }
 }
 
 .plotly {
