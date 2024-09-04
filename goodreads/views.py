@@ -701,11 +701,8 @@ def explore_data_books(request):
     # Extract DataTable parameters from request
     t0 = time.time()
     logger.info(request.GET)
-    books_df = objects_to_df(Books.objects.filter(added_by__gt=1))
-    books_df["book_id"] = pd.to_numeric(books_df["book_id"]).astype(int)
-    books_df.sort_values("book_id", inplace=True)
+    books_df = objects_to_df(Books.objects.filter(added_by__gt=1).order_by("book_id"))
     export_df = objects_to_df(ExportData.objects.annotate(title_len=Length('title')).filter(title_len__gt=1))
-    export_df["book_id"] = export_df["book_id"].astype(float).astype(int)
     good_df = pd.merge(books_df, export_df, how="left", on="book_id")
     logger.info(f"good_df merged: {round(time.time()-t0, 2)}")
     authors_df = objects_to_df(Authors.objects.filter(author_name__in=export_df['author'].unique()))
@@ -716,6 +713,7 @@ def explore_data_books(request):
     good_df = pd.merge(good_df, authors_df, on="author", how="left")
     good_df["author"] = good_df["author"].fillna("")
     good_df = gplot.run_all(good_df)
+    logger.info(f"pre genre join: {round(time.time() - t0, 2)}")
     good_df = gplot.genre_join(good_df)
     edf = pd.pivot_table(
         good_df,
