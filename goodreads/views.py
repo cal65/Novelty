@@ -41,6 +41,7 @@ from .scripts.append_to_export import (
     convert_to_Book,
 )
 
+import time
 import logging
 
 logging.basicConfig(
@@ -698,6 +699,7 @@ def load_data_streaming(request):
 
 def explore_data_books(request):
     # Extract DataTable parameters from request
+    t0 = time.time()
     logger.info(request.GET)
     books_df = objects_to_df(Books.objects.filter(added_by__gt=1))
     books_df["book_id"] = pd.to_numeric(books_df["book_id"]).astype(int)
@@ -705,6 +707,7 @@ def explore_data_books(request):
     export_df = objects_to_df(ExportData.objects.annotate(title_len=Length('title')).filter(title_len__gt=1))
     export_df["book_id"] = export_df["book_id"].astype(float).astype(int)
     good_df = pd.merge(books_df, export_df, how="left", on="book_id")
+    logger.info(f"good_df merged: {round(time.time()-t0, 2)}")
     authors_df = objects_to_df(Authors.objects.filter(author_name__in=export_df['author'].unique()))
     authors_df.rename(columns={"author_name": "author"}, inplace=True)
     authors_df.drop(columns="ts_updated", inplace=True)
@@ -732,6 +735,7 @@ def explore_data_books(request):
             "shelves": "first",
         },
     ).reset_index()
+    logger.info(f"edf pivoted: {round(time.time() - t0, 2)}")
     edf["read"] = edf["read"].fillna(0)
     edf = edf.fillna("")
     edf.sort_values("read", ascending=False, inplace=True)
@@ -748,7 +752,7 @@ def explore_data_books(request):
     ]
 
     read_table = edf[html_cols].to_dict(orient="records")
-
+    logger.info(f"done: {round(time.time() - t0, 2)}")
     logger.info(f"reading table called by user {request.user}")
     return JsonResponse(read_table, safe=False)
 
