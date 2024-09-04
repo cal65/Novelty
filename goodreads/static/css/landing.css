@@ -123,6 +123,11 @@ html {
     -ms-flex-align: center;
     align-items: center;
 }
+@media screen and (max-width: 767px) {
+    .navbar-collapse {
+        font-size: 0.6rem
+        }
+    }
 
 .nav-link {
     display: block;
@@ -137,6 +142,8 @@ html {
 @media screen and (max-width: 767px) {
     .nav-link {
         font-size: 0.8rem; /* Adjust the font size for mobile */
+
+        line-height: 1em;
     }
 }
 
@@ -310,6 +317,12 @@ html {
 
 .logo {
   width: 9em;
+}
+
+@media screen and (max-width: 767px) {
+    .logo {
+       width: 6em;
+       }
 }
 
 .footer {
