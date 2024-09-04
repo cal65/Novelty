@@ -532,7 +532,7 @@ def netflix_plots_view(request):
             "binge_date": max_binge.get("date", ""),
             "binge_n": max_binge.get("username", ""),
             # added context for dash app to load username
-            "dash_context": {"usernameInput": {"value": str(username)}}
+            "dash_context": {"usernameInput": {"value": str(username)}},
         },
     )
 
@@ -560,6 +560,7 @@ def comments(request):
 
 def post_comment(request):
     from goodreads.models import Comments
+
     comment = request.POST.get("comment", "")
     username = request.user
     # save comment in database
@@ -701,13 +702,21 @@ def explore_data_books(request):
     # Extract DataTable parameters from request
     t0 = time.time()
     logger.info(request.GET)
-    books_df = objects_to_df(Books.objects.filter(added_by__gt=1).order_by("book_id"))
-    export_df = objects_to_df(ExportData.objects.annotate(title_len=Length('title')).filter(title_len__gt=1))
+    books_df = objects_to_df(Books.objects.filter(added_by__gt=1))
+    export_df = objects_to_df(
+        ExportData.objects.annotate(title_len=Length("title"))
+        .filter(title_len__gt=1)
+        .values("book_id", "title", "author")
+        .distinct()
+    )
     good_df = pd.merge(books_df, export_df, how="left", on="book_id")
     logger.info(f"good_df merged: {round(time.time()-t0, 2)}")
-    authors_df = objects_to_df(Authors.objects.filter(author_name__in=export_df['author'].unique()))
+    authors_df = objects_to_df(
+        Authors.objects.filter(author_name__in=export_df["author"].unique()).values(
+            "author_name", "gender", "nationality_chosen"
+        )
+    )
     authors_df.rename(columns={"author_name": "author"}, inplace=True)
-    authors_df.drop(columns="ts_updated", inplace=True)
     # drop a few authors that aren't books
     authors_df = authors_df.loc[authors_df["author"] != "NOT A BOOK"]
     good_df = pd.merge(good_df, authors_df, on="author", how="left")
@@ -821,6 +830,3 @@ def load_lists(request):
     context = {"dash_context": {"usernameInput": {"value": str(username)}}}
     logger.info(f"Lists loaded. Context: {context}")
     return render(request, "goodreads/lists.html", context=context)
-
-
-
