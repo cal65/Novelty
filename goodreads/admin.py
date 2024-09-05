@@ -57,6 +57,7 @@ class AuthorsAdmin(admin.ModelAdmin):
         "nationality1",
         "nationality2",
         "nationality_chosen",
+        "ts_updated",
     )
 
 
@@ -151,3 +152,4 @@ class BooksListsAdmin(admin.ModelAdmin):
 @admin.register(Comments)
 class Comments(admin.ModelAdmin):
     list_display = ("username", "comments", "timestamp")
+
