@@ -705,6 +705,7 @@ def explore_data_books(request):
     if edf is None:
         edf = get_explore_books_table()
         cache.set('explore_books_data', edf, timeout=7 * 24 * 60 * 60)
+        logger.info("No cache found")
 
     html_cols = [
         "title_simple",
