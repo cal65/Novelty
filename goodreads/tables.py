@@ -76,3 +76,25 @@ def get_explore_books_table():
     edf = edf.fillna("")
     edf.sort_values("read", ascending=False, inplace=True)
     return edf
+
+
+def get_explore_streaming():
+    title_df = objects_to_df(NetflixTitles.objects.filter(netflix_id__isnull=False))
+    genres_df = objects_to_df(NetflixGenres.objects.all())
+    actors_df = objects_to_df(NetflixActors.objects.all())
+    stream_df = pd.merge(title_df, genres_df, on="netflix_id", how="left")
+    stream_df = pd.merge(stream_df, actors_df, on="netflix_id", how="left")
+    # turn comma separated cast into array, keep only n people for performance reasons
+    stream_df = df_str_to_array(stream_df, col='genres')
+    stream_df = df_str_to_array(stream_df, col='cast')
+    return stream_df
+
+
+def df_str_to_array(df, col, n=15):
+    df[col].fillna("", inplace=True)
+    df[col] = df[col].apply(lambda x: x.split(",")[:n])
+    # add space to the first value to make consistent but cast could be None
+    df[col] = df[col].apply(
+        lambda x: [" " + y if i == 0 else y for i, y in enumerate(x)]
+    )
+    return df

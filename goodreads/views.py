@@ -35,7 +35,7 @@ from netflix import data_munge as nd
 from netflix.plotting import plotting as nplot
 
 from .plotting import plotting as gplot
-from .tables import get_explore_books_table
+from .tables import get_explore_books_table, get_explore_streaming
 from .scripts.append_to_export import (
     convert_to_ExportData,
     convert_to_Authors,
@@ -757,18 +757,12 @@ def view_explore_streaming(request):
 
 
 def explore_data_streaming(request):
-    title_df = objects_to_df(NetflixTitles.objects.filter(netflix_id__isnull=False))
-    genres_df = objects_to_df(NetflixGenres.objects.all())
-    actors_df = objects_to_df(NetflixActors.objects.all())
-    stream_df = pd.merge(title_df, genres_df, on="netflix_id", how="left")
-    stream_df = pd.merge(stream_df, actors_df, on="netflix_id", how="left")
-    # turn comma separated cast into array, keep only n people for performance reasons
-    stream_df["cast"].fillna("", inplace=True)
-    stream_df["cast"] = stream_df["cast"].apply(lambda x: x.split(",")[:15])
-    # add space to the first value to make consistent but cast could be None
-    stream_df["cast"] = stream_df["cast"].apply(
-        lambda x: [" " + y if i == 0 else y for i, y in enumerate(x)]
-    )
+    logger.info(f"netflix exploration called by user {request.user}")
+    stream_df = cache.get('explore_stream_data')
+    if stream_df is None:
+        stream_df = get_explore_streaming()
+        cache.set('explore_stream_data', stream_df, timeout=7 * 24 * 60 * 60)
+        logger.info("No streaming cache found")
     html_cols = [
         "title",
         "release_year",
@@ -780,7 +774,6 @@ def explore_data_streaming(request):
     ]
     stream_df = stream_df.fillna("")
     stream_table = stream_df[html_cols].to_dict(orient="records")
-    logger.info(f"netflix exploration called")
     return JsonResponse(stream_table, safe=False)
 
 
