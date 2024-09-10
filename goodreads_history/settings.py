@@ -148,6 +148,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",  # Arbitrary name for the cache location
+    }
+}
+
+
 SITE_ID = 2
 LOGOUT_REDIRECT_URL = "index-view"
 LOGIN_REDIRECT_URL = "index-view"
@@ -193,8 +201,8 @@ TAILWIND_APP_NAME = "theme"
 
 INTERNAL_IPS = ["127.0.0.1", "35.175.111.52"]
 
-X_FRAME_OPTIONS = 'SAMEORIGIN'
+X_FRAME_OPTIONS = "SAMEORIGIN"
 
-XS_SHARING_ALLOWED_METHODS = ['POST','GET','OPTIONS', 'PUT', 'DELETE']
+XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = "bootstrap4"
