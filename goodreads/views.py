@@ -9,8 +9,7 @@ from django.urls import reverse
 
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
-from django.db.models.functions import Length
+from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import cache
 from django import template
 from spotify.plotting.utils import objects_to_df, minute_conversion
@@ -65,6 +64,7 @@ def run_script_function(request):
     gplot.main(user)
 
 
+@csrf_exempt
 def index(request):
     next = request.POST.get("next", "/")
     if request.user.is_authenticated:
@@ -74,10 +74,12 @@ def index(request):
     return render(request, "goodreads/home.html", {"basefile": base_auth_template})
 
 
+@csrf_exempt
 def books_home(request):
     return render(request, "goodreads/books_home.html")
 
 
+@csrf_exempt
 def music_home(request):
     return render(request, "spotify/music_home.html")
 

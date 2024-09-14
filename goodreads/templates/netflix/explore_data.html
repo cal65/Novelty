@@ -85,6 +85,10 @@ function load_datatable(url, columns) {
                     },
                 ],
                 "deferLoading": 400,
+                initComplete: function() {
+                // Hide the loading image once the DataTable is initialized
+                $('#loadingImage').hide();
+            }
             });
         }, 
             error: function(xhr, errmsg, err) {
@@ -112,7 +116,11 @@ $(document).ready( function() {
         "cast",]);
 });
 </script>
+
+<img id="loadingImage" src="/static/admin/img/N-Logo-loop.gif" style="display: block; height: 30em; margin-left: auto; margin-right: auto;">
+
 <style>
+
 
 
 /* Optional: Style the header to make it visually distinct */
