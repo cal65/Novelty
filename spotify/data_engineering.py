@@ -43,7 +43,7 @@ def convert_to_SpotifyStreaming(row, username):
     Take a row from a Spotify export after its columns have been made lowercase and write it to database
     """
     djangoSpotifyStreaming = SpotifyStreaming()
-    djangoSpotifyStreaming.endtime = timezone.make_aware(["endtime"], timezone.get_current_timezone())
+    djangoSpotifyStreaming.endtime = timezone.make_aware(row["endtime"], timezone.get_current_timezone())
     djangoSpotifyStreaming.artistname = row["artistname"]
     djangoSpotifyStreaming.trackname = row["trackname"]
     djangoSpotifyStreaming.msplayed = row["msplayed"]
