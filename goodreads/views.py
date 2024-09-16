@@ -440,6 +440,7 @@ def populateSpotifyStreaming(df, user):
     logger.info(f"spotify df {df.head()}")
     # if 'uri' in df.columns:
     #     print("something") Add in some logic to deal with newer export
+    df['endtime'] = pd.to_datetime(df['endtime'])
     spotifyStreamingObjs = df.apply(
         lambda x: de.convert_to_SpotifyStreaming(x, username=str(user)),
         axis=1,
