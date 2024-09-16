@@ -139,6 +139,7 @@ class RefNationalityAdmin(admin.ModelAdmin):
 
 @admin.register(BooksLists)
 class BooksListsAdmin(admin.ModelAdmin):
+    search_fields = ("title__contains", "list_name__contains")
     list_display = (
         "id",
         "book_id",

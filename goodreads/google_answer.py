@@ -25,6 +25,7 @@ nationality_dict = (
     .to_dict()
 )
 nationality_dict["United States"] = "American"
+nationality_dict['England'] = "English"
 
 
 def get_search_url(name):

@@ -92,9 +92,9 @@ def unique_cast(df, name="name"):
         "cast"
     ].apply(lambda x: ", ".join(x))
     # for the list, join them into one string
-    cast_df.loc[
-        cast_df["cast"].apply(lambda x: isinstance(x, np.ndarray)), "cast"
-    ] = joined_arrays
+    cast_df.loc[cast_df["cast"].apply(lambda x: isinstance(x, np.ndarray)), "cast"] = (
+        joined_arrays
+    )
     # split the strings into an array then turn into a set
     cast_df["cast_set"] = cast_df["cast"].str.split(", ").apply(set)
     cast_df.drop(columns=["cast"], inplace=True)
@@ -145,6 +145,22 @@ def return_unmerged(df, ref_df, df_name_col="Name", ref_name_col="title"):
     return list(set(df[df_name_col]).difference(set(ref_df[ref_name_col])))
 
 
+class RapidCaller:
+    def __init__(self, url_ending, **kwargs):
+        self.url = rapid_api_url + url_ending
+        self.headers = {
+            "X-RapidAPI-Key": os.environ["RAPID_API_NETFLIX"],
+            "X-RapidAPI-Host": "unogs-unogs-v1.p.rapidapi.com",
+        }
+        self.kwargs = kwargs
+
+    def get_response(self):
+        response = requests.request(
+            "GET", self.url, headers=self.headers, params=self.kwargs
+        )
+        return response.json()
+
+
 def query_title(title: str):
     url = rapid_api_url + "search/titles"
 
@@ -182,7 +198,9 @@ def get_actors(netflix_id):
     if results is None:
         logger.info(f"No response found for {netflix_id}")
         return
-    actors = ", ".join([r["full_name"] for r in results])
+    full_names = [r["full_name"] for r in results]
+    full_names = pd.unique(full_names)
+    actors = ", ".join(full_names)
     actors_results = pd.Series({"netflix_id": netflix_id, "actors": actors})
     return actors_results
 
@@ -257,6 +275,32 @@ def get_deleted(title):
         return
 
 
+def generic_search(start_year=None, end_year=None, order_by="date", type="series"):
+    url = rapid_api_url + "search/titles"
+    if start_year is not None:
+        querystring = {
+            "start_year": start_year,
+            "end_year": end_year,
+            "order_by": order_by,
+            "type": type,
+        }
+    querystring = {k: v for k, v in querystring.items() if v is not None}
+    headers = {
+        "X-RapidAPI-Key": os.environ["RAPID_API_NETFLIX"],
+        "X-RapidAPI-Host": "unogs-unogs-v1.p.rapidapi.com",
+    }
+    response = requests.request("GET", url, headers=headers, params=querystring)
+
+    results_all = response.json()["results"]
+    if results_all is None:
+        logger.info(f"No response found for {querystring}")
+        return
+    results = results_all[0]  # take first search
+    series_results = pd.Series(results)
+    series_results["title"] = series_results["title"].replace("&#39;", "'")
+    return results_all
+
+
 def format_network(df, title_col="name"):
     cast_dict = unique_cast(df, name=title_col)
     intersections = return_intersections(cast_dict)
@@ -300,16 +344,12 @@ def ingest_netflix(df, user):
 
     # Prepare a list of NetflixUsers objects
     netflix_entries = [
-        NetflixUsers(
-            title=row["title"],
-            date=row["date"],
-            username=user
-        )
+        NetflixUsers(title=row["title"], date=row["date"], username=user)
         for _, row in df.iterrows()
     ]
     # Bulk create the new entries in a single transaction
     NetflixUsers.objects.bulk_create(netflix_entries)
-    
+
     return
 
 
@@ -430,13 +470,15 @@ def pipeline_steps(df):
 
 def save_titles(series_results, override=False):
     if not override:
-        if NetflixTitles.objects.filter(netflix_id=series_results["netflix_id"]).exists():
+        if NetflixTitles.objects.filter(
+            netflix_id=series_results["netflix_id"]
+        ).exists():
             return
     nt = NetflixTitles()
     nt.title = series_results["title"]
     nt.netflix_id = series_results["netflix_id"]
     nt.title_type = series_results["title_type"]
-    nt.release_year = series_results["year"] if series_results["year"] != '' else None
+    nt.release_year = series_results["year"] if series_results["year"] != "" else None
     nt.default_image = series_results.get(
         "default_image", series_results.get("img", "")
     )
