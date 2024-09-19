@@ -4,7 +4,7 @@
     flex-wrap: wrap;
     justify-content: left;
     align-items: flex-start;
-    max-width: 40%;
+    max-width: 60%;
     margin: 0 auto;
 }
 
@@ -220,7 +220,7 @@ html {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 50%;
+    width: 60%;
     font-family: courier new;
 }
 
@@ -257,6 +257,20 @@ html {
     margin-right: auto;
     font-family: courier new;
     flex: 1; /* Make the child elements expand and take up all available space within the row */
+}
+
+
+@media (max-width: 480px) {
+    .left-text {
+        text-align: left;
+        font-size: 0.7em;
+        lineheight: 0.7em;
+        max-width: 90%;
+        margin-left: 0;
+        margin-right: auto;
+        font-family: courier new;
+        flex: 1;
+    }
 }
 
 .answer {
@@ -559,4 +573,13 @@ html {
     display: grid;
     grid-template-rows: repeat(25, auto);
     grid-auto-flow: column;
+}
+
+.center-image-home {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.5em;
+    width: 60%;
+    max-height: 5em;
 }

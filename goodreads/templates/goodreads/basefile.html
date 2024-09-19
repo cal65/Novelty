@@ -21,9 +21,9 @@
 {% endblock head %}
     <body>
     {% block navbar %}
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav class="navbar-expand-lg navbar-dark bg-dark">
           <div class="navbar-collapse" id="navbarText">
-            <ul class="navbar-nav mr-auto">
+            <ul class="navbar-nav">
               <li class="nav-item active pr-2">
                 <a class="nav-link" href="{% url 'index-view' %}">
                   <img src="/static/admin/img/N_logo_ondark.svg" alt="Novelty" class="logo">
@@ -31,22 +31,22 @@
               </li>
               <li class="nav-item active pr-2">
                 {% block d1 %}
-                <a class="nav-link" href="{% url 'books-home' %}" style="color: #636efa; font-weight: bold;">Books</a>
+                <a class="nav-link" href="{% url 'books-home' %}" style="color: #636efa; font-weight: bold;">BOOKS</a>
                 {% endblock d1 %}
               </li>
               <li class="nav-item active pr-2">
                 {% block d2 %}
-                <a class="nav-link" href="{% url 'music-home' %}">Music</a>
+                <a class="nav-link" href="{% url 'music-home' %}">MUSIC</a>
                 {% endblock d2 %}
               </li>
                <li class="nav-item active pr-2">
                 {% block d3 %}
-                <a class="nav-link" href="{% url 'streaming-home' %}">Streaming</a>
+                <a class="nav-link" href="{% url 'streaming-home' %}">STREAMING</a>
                 {% endblock d3 %}
               </li>
               <li class="nav-item active pr-2">
                 {% block d4 %}
-                <a class="nav-link" href="{% url 'geography-home' %}">Travel</a>
+                <a class="nav-link" href="{% url 'geography-home' %}">TRAVEL</a>
                 {% endblock d4 %}
               </li>
             </ul>

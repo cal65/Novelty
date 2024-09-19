@@ -68,6 +68,8 @@ def get_result(soup):
                     elif text in nationality_dict.keys():
                         # if it's a region, add the associated nationality
                         results.append(nationality_dict[text])
+                    elif 'California' in text:
+                        results.append('American')
                     else:
                         logger.info(f"Unrecognized text: {text}")
     return results
