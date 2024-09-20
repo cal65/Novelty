@@ -51,6 +51,8 @@ def get_result(soup):
         raw_results = soup.findAll("span", {"class": "BNeawe tAd8D AP7Wnd"})
     elif len(raw_results) == 0:
         raw_results = soup.findAll("div", {"class": "BNeawe deIvCb AP7Wnd"})
+    elif len(raw_results) == 0:
+        raw_results = soup.findAll("div", {"class": "BNeawe s3v9rd AP7Wnd"})
 
     results = []
     for raw in raw_results:
@@ -72,6 +74,7 @@ def get_result(soup):
                         results.append('American')
                     else:
                         logger.info(f"Unrecognized text: {text}")
+    results = [r for r in results if r is not None]
     return results
 
 
