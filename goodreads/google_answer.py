@@ -72,6 +72,8 @@ def get_result(soup):
                         results.append(nationality_dict[text])
                     elif 'California' in text:
                         results.append('American')
+                    elif 'British' in text:
+                        results.append("British")
                     else:
                         logger.info(f"Unrecognized text: {text}")
     results = [r for r in results if r is not None]

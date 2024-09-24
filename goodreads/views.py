@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import cache
+from django.utils import timezone
 from django import template
 from spotify.plotting.utils import objects_to_df, minute_conversion
 
@@ -440,7 +441,9 @@ def populateSpotifyStreaming(df, user):
     logger.info(f"spotify df {df.head()}")
     # if 'uri' in df.columns:
     #     print("something") Add in some logic to deal with newer export
-    df['endtime'] = pd.to_datetime(df['endtime'])
+    df['endtime'] = pd.to_datetime(df['endtime']).apply(
+        lambda x: timezone.make_aware(x, timezone.get_current_timezone()))
+
     spotifyStreamingObjs = df.apply(
         lambda x: de.convert_to_SpotifyStreaming(x, username=str(user)),
         axis=1,
