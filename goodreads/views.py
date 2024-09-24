@@ -385,15 +385,19 @@ def upload_spotify(request):
         os.mkdir(graphs_path)
     # change columns from endTime to endtime etc.
     df = de.lowercase_cols(df)
+    
     # detect if upload format is of full Spotify export format
     if "ip_addr_decrypted" in df.columns:
         df = splot.preprocess_new(df)
+    else:
+        df['endtime'] = pd.to_datetime(df['endtime']).apply(
+            lambda x: timezone.make_aware(x, timezone.get_current_timezone()))
     # load up the existing data in database for this user
     loaded_df = splot.load_data(user)
     # if there is existing data, dedupe with new data
+
     if len(loaded_df) > 0:
         loaded_df["endtime"] = pd.to_datetime(loaded_df["endtime"], utc=True)
-        df["endtime"] = pd.to_datetime(df["endtime"], utc=True)
         logger.info(
             f"df: {df['endtime'].values[:5]}, \nloaded_df: {loaded_df['endtime'].values[:5]}"
         )
@@ -441,8 +445,6 @@ def populateSpotifyStreaming(df, user):
     logger.info(f"spotify df {df.head()}")
     # if 'uri' in df.columns:
     #     print("something") Add in some logic to deal with newer export
-    df['endtime'] = pd.to_datetime(df['endtime']).apply(
-        lambda x: timezone.make_aware(x, timezone.get_current_timezone()))
 
     spotifyStreamingObjs = df.apply(
         lambda x: de.convert_to_SpotifyStreaming(x, username=str(user)),
