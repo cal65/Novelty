@@ -8,12 +8,20 @@
 {% block domain-home %}
         <a class="nav-link" href="{% url 'geography-home' %}">Geography</a>
 {% endblock domain-home %}
+{% block d1 %}
+        <a class="nav-link" href="{% url 'books-home' %}" >BOOKS</a>
+{% endblock d1 %}
+{% block d4 %}
+        <a class="nav-link" href="{% url 'geography-home' %}" style="color: #AB63FB; font-weight: bold;" >GEOGRAPHY</a>
+{% endblock d4 %}
 {% block upload %}
 {% endblock upload %}
 {% block about %}
 {% endblock about %}
 {% block plots %}
 {% endblock plots %}
+{% block lists %}
+{% endblock lists %}
 {% block gallery %}
         <a class="nav-link" href="{% url 'gallery-geography' %}">Gallery</a>
 {% endblock gallery %}
