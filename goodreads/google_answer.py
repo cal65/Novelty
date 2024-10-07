@@ -25,7 +25,9 @@ nationality_dict = (
     .to_dict()
 )
 nationality_dict["United States"] = "American"
-nationality_dict['England'] = "English"
+nationality_dict["England"] = "English"
+nationalities = set(nationality_dict.values())
+regions = set(nationality_dict.keys())
 
 
 def get_search_url(name):
@@ -64,20 +66,32 @@ def get_result(soup):
             texts = raw.text.split("-")
             for text in texts:
                 if text not in ["Images", "People also ask"]:
-                    if text in nationality_dict.values():
-                        # if it's a nationality, add
-                        results.append(text)
-                    elif text in nationality_dict.keys():
-                        # if it's a region, add the associated nationality
-                        results.append(nationality_dict[text])
-                    elif 'California' in text:
-                        results.append('American')
-                    elif 'British' in text:
-                        results.append("British")
-                    else:
-                        logger.info(f"Unrecognized text: {text}")
+                    result = text_to_national(text)
+                    if result is not None:
+                        results.append(result)
+            if len(results) == 0:
+                texts_space = raw.text.split(" ")
+                for text in texts_space:
+                    result = text_to_national(text)
+                    if result is not None:
+                        results.append(result)
     results = [r for r in results if r is not None]
     return results
+
+
+def text_to_national(text):
+    if text in nationalities:
+        # if it's a nationality, add
+        return text
+    elif text in regions:
+        # if it's a region, add the associated nationality
+        return nationality_dict[text]
+    elif "California" in text:
+        return "American"
+    elif "British" in text:
+        return "British"
+    else:
+        logger.info(f"Unrecognized text: {text}")
 
 
 def lookup_author_nationality(author):
