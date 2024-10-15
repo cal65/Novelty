@@ -80,6 +80,8 @@ def get_result(soup):
 
 
 def text_to_national(text):
+    if text in ["Images", "People also ask"]:
+        return None
     if text in nationalities:
         # if it's a nationality, add
         return text

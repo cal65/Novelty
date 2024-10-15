@@ -385,7 +385,7 @@ def upload_spotify(request):
         os.mkdir(graphs_path)
     # change columns from endTime to endtime etc.
     df = de.lowercase_cols(df)
-    
+
     # detect if upload format is of full Spotify export format
     if "ip_addr_decrypted" in df.columns:
         df = splot.preprocess_new(df)
@@ -714,6 +714,10 @@ def explore_data_books(request):
         edf = get_explore_books_table()
         cache.set('explore_books_data', edf, timeout=7 * 24 * 60 * 60)
         logger.info("No cache found")
+    # map synonymm nationalities
+    nat_synonyms = {"Nepali": "Nepalese", "Korean": "South Korean", "Soviet": "Russian",
+                    "Czechoslovak": "Czech"}
+    edf["nationality_chosen"] = edf["nationality_chosen"].map(nat_synonyms).fillna(edf["nationality_chosen"])
 
     html_cols = [
         "title_simple",
