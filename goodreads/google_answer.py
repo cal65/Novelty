@@ -64,6 +64,7 @@ def get_result(soup):
                 results.append(child.get("aria-label"))
         else:
             texts = raw.text.split("-")
+            texts.remove("People also ask")
             for text in texts:
                 if text not in ["Images", "People also ask"]:
                     result = text_to_national(text)
@@ -71,6 +72,9 @@ def get_result(soup):
                         results.append(result)
             if len(results) == 0:
                 texts_space = raw.text.split(" ")
+                texts_space.remove("People")
+                texts_space.remove("also")
+                texts_space.remove("ask")
                 for text in texts_space:
                     result = text_to_national(text)
                     if result is not None:

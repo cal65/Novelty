@@ -13,6 +13,7 @@ class TestAuthenticatedViews(TestCase):
 class TestAllUrls(TestCase):
     def setUp(self):
         self.test_user = User.objects.create_user(username='testuser', password='testpassword')
+        self.client = self.client_class()
 
     def test_urls(self):
         # Test that all URLs are accessible by an authenticated user

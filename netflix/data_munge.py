@@ -179,8 +179,13 @@ def query_title(title: str):
         return
     results = results_all[0]  # take first search
     series_results = pd.Series(results)
-    series_results["title"] = series_results["title"].replace("&#39;", "'")
+    series_results["title"] = reformat_title(series_results["title"])
     return series_results
+
+
+def reformat_title(title):
+    title = title.replace("&#39;", "'")
+    return title
 
 
 def get_actors(netflix_id):
@@ -540,3 +545,10 @@ def lookup_and_insert(title):
     actors_and_genres(netflix_id)
 
     return
+
+def wtf():
+    params = {'start_year': 2017, 'end_year': 2018, 'order_by': 'date', 'type': 'series'}
+    d = RapidCaller(url_ending='search/titles', params=params)
+    r = d.get_response()
+    [save_titles(res) for res in r['results']]
+
