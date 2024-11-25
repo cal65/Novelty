@@ -57,6 +57,11 @@ def get_result(soup):
         raw_results = soup.findAll("div", {"class": "BNeawe deIvCb AP7Wnd"})
     elif len(raw_results) == 0:
         raw_results = soup.findAll("div", {"class": "BNeawe s3v9rd AP7Wnd"})
+    elif len(raw_results) == 0:
+        try:
+            raw_results = soup.findAll("div", {"class": "BNeawe"})[0]
+        except:
+            pass
 
     results = []
     for raw in raw_results:
