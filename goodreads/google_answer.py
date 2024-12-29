@@ -50,6 +50,10 @@ def get_result(soup):
         # this result is less likely to be a straight nationality
         raw_results = soup.findAll("span", {"class": "FCUp0c rQMQod"})
     elif len(raw_results) == 0:
+        raw_results = soup.findAll(
+            "div", {"data-attrid": "kc:/people/person:nationality"}
+        )
+    elif len(raw_results) == 0:
         raw_results = soup.findAll("span", {"class": "BNeawe tAd8D AP7Wnd"})
     elif len(raw_results) == 0:
         raw_results = soup.findAll("div", {"class": "BNeawe tAd8D AP7Wnd"})
@@ -62,7 +66,6 @@ def get_result(soup):
             raw_results = soup.findAll("div", {"class": "BNeawe"})[0]
         except:
             pass
-
     results = []
     for raw in raw_results:
         children = raw.findChildren("a", recursive=True)
@@ -80,7 +83,9 @@ def get_result(soup):
                         results.append(result)
             if len(results) == 0:
                 texts_space = raw.text.split(" ")
-                texts_space = [t for t in texts_space if t not in set(["People", "also", "ask"])]
+                texts_space = [
+                    t for t in texts_space if t not in set(["People", "also", "ask"])
+                ]
                 for text in texts_space:
                     result = text_to_national(text)
                     if result is not None:
@@ -90,6 +95,7 @@ def get_result(soup):
 
 
 def text_to_national(text):
+    text = text.strip()
     if text in ["Images", "People also ask"]:
         return None
     if text in nationalities:

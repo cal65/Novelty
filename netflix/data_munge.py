@@ -92,9 +92,9 @@ def unique_cast(df, name="name"):
         "cast"
     ].apply(lambda x: ", ".join(x))
     # for the list, join them into one string
-    cast_df.loc[cast_df["cast"].apply(lambda x: isinstance(x, np.ndarray)), "cast"] = (
-        joined_arrays
-    )
+    cast_df.loc[
+        cast_df["cast"].apply(lambda x: isinstance(x, np.ndarray)), "cast"
+    ] = joined_arrays
     # split the strings into an array then turn into a set
     cast_df["cast_set"] = cast_df["cast"].str.split(", ").apply(set)
     cast_df.drop(columns=["cast"], inplace=True)
@@ -546,9 +546,14 @@ def lookup_and_insert(title):
 
     return
 
-def wtf():
-    params = {'start_year': 2017, 'end_year': 2018, 'order_by': 'date', 'type': 'series'}
-    d = RapidCaller(url_ending='search/titles', params=params)
-    r = d.get_response()
-    [save_titles(res) for res in r['results']]
 
+def wtf():
+    params = {
+        "start_year": 2017,
+        "end_year": 2018,
+        "order_by": "date",
+        "type": "series",
+    }
+    d = RapidCaller(url_ending="search/titles", params=params)
+    r = d.get_response()
+    [save_titles(res) for res in r["results"]]
