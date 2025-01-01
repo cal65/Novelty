@@ -6,6 +6,7 @@ from goodreads.plotting.plotting import (
     format_month_plot,
     load_data,
     preprocess,
+    create_read_plot_heatmap
 )
 import pandas as pd
 
@@ -50,6 +51,12 @@ def graph_monthly(data, selected_years, username):
         title_col="title_simple",
         author_gender_col="gender",
         format=False,
+    )
+    month_fig.update_layout(
+        autosize=True,
+        height=None,  # Default height; remove this to let Plotly manage it dynamically
+        width=None,  # Default width; remove this to let Plotly manage it dynamically
+        margin=dict(l=20, r=20, t=20, b=20),  # Adjust margins as needed
     )
     return month_fig
 

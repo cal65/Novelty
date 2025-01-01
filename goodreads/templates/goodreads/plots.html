@@ -145,17 +145,13 @@
     <div class="caption-text">
         Below is an interactive plot of the books you've read and what month you read them. If you do not record the date in which you finished books, this plot will not show up.
     </div>
-    <div class="plotly" >
-        <iframe src="{% static monthly_pages_read_url %}" class="iframe"  style="height:1200px;" alt="monthly-history" >
-        </iframe>
+    <div class="dash-frame">
+        {%plotly_app name="goodreads_dash" initial_arguments=dash_context %}
     </div>
     <br> <br>
 </section>
 
-<div class="dash-frame">
-{%plotly_app name="goodreads_dash" initial_arguments=dash_context %}
 
-</div>
 
     <br> <br> <br> <br> <br> <br>
 {% endblock content %}
