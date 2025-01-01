@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+{%load plotly_dash%}
 <script>
     function getCookie(name) {
     let cookieValue = null;
@@ -150,5 +151,11 @@
     </div>
     <br> <br>
 </section>
+
+<div class="dash-frame">
+{%plotly_app name="goodreads_dash" initial_arguments=dash_context %}
+
+</div>
+
     <br> <br> <br> <br> <br> <br>
 {% endblock content %}

@@ -1,6 +1,6 @@
 from django.urls import path, include, re_path
 from django.views.generic import RedirectView
-from goodreads.dash import dash_list
+from goodreads.dash import dash_list, dropdowns
 from netflix.dash import bacon_interactive
 from .views import *
 

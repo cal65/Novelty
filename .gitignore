@@ -10,6 +10,8 @@ noveltyenv/
 .DS_Store
 *.sh
 *.sql
+*.html
+*.rdb
 art/*
 ssl/*
 # Elastic Beanstalk Files

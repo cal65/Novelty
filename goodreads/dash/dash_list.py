@@ -65,6 +65,7 @@ def load_data(df, username):
     Output(component_id="checklist", component_property="value"),
     [
         Input(component_id="list_selector", component_property="value"),
+        #usernameInput is passed in from views.py load_lists
         Input("usernameInput", "value"),
     ],
 )
