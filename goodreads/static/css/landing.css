@@ -579,7 +579,7 @@ html {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 0.5em;
+    margin-bottom: 0.02em;
     width: 60%;
-    max-height: 5em;
+    height: auto;
 }
