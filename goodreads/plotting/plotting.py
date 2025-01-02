@@ -919,8 +919,8 @@ def month_plot(
             "non-binary": palette[3],
         }
     )
-    df["text"] = df["text"] = (
-        df[title_col] + "<br>" + df["author"] + "<br>" + df[date_col].astype(str)
+    df["text"] = (
+        "<b>" + df[title_col] + "<br>" + df["author"] + "<br></b>" + df[date_col].astype(str)
     )
     fig = make_subplots(
         rows=n_years,
