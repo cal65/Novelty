@@ -51,7 +51,7 @@ def graph_monthly(data, selected_years, username):
         page_col="number_of_pages",
         title_col="title_simple",
         author_gender_col="gender",
-        format=False,
+        format_bool=False,
     )
     month_fig.update_layout(
         autosize=True,

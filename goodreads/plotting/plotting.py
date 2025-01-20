@@ -890,10 +890,10 @@ def format_month_plot(df, date_col):
 
 
 def month_plot(
-    df, username, date_col, page_col, title_col, author_gender_col, lims=None, format=True
+    df, username, date_col, page_col, title_col, author_gender_col, lims=None, format_bool=True
 ):
     df = df.copy()
-    if format:  # adding if statement for dash app to override
+    if format_bool:  # adding if statement for dash app to override
         df = format_month_plot(df, date_col=date_col)
     if lims is not None:
         df = df[(df["year_read"] >= lims[0]) & (df["year_read"] <= lims[1])]
