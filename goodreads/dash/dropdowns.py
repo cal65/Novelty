@@ -40,6 +40,8 @@ def initiate_data(username):
 )
 def graph_monthly(data, selected_years, username):
     df = pd.DataFrame(data)
+    print(df.head())
+    print(df.columns)
     if not isinstance(selected_years, list):
         selected_years = [selected_years]
     if "all" not in selected_years:

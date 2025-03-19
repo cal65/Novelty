@@ -37,7 +37,7 @@ def get_search_url(name):
 
 def get_soup(url):
     headers = {
-        "User-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36"
+        "User-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
     }
     page = requests.get(url, headers=headers)
     soup = BeautifulSoup(page.content, "html.parser")
