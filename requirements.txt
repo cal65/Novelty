@@ -8,7 +8,7 @@ beautifulsoup4==4.9.3
 billiard==3.6.4.0
 binaryornot==0.4.4
 bokeh==2.4.2
-celery==5.2.6
+celery==5.5.2
 certifi==2025.4.26
 cffi==1.15.1
 channels==4.0.0
@@ -59,7 +59,7 @@ joblib==1.2.0
 Js2Py==0.74
 kaleido==0.2.1
 kiwisolver==1.4.2
-kombu==5.2.4
+kombu==5.5.3
 MarkupSafe==2.1.2
 matplotlib==3.10.1
 mizani==0.8.1
