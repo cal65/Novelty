@@ -178,14 +178,6 @@ html {
     line-height: 1.5em;
 }
 
-.mr-auto, .mx-auto {
-    margin-right: auto!important;
-}
-
-.pr-2, .px-2 {
-    padding-right: 0.5rem!important;
-}
-
 .bg-dark {
     background-color: #343a40!important;
 }
@@ -293,10 +285,6 @@ html {
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
-}
-
-.pt-4 {
-    padding-top: 1rem; /* 16px */
 }
 
 .link {
