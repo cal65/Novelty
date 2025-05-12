@@ -8,7 +8,6 @@ import sys
 
 def main():
     # take environment variables from .env file if it exists.
-    # Note that manage.py is not used in production, so this will not have an effect there.
     load_dotenv()
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "goodreads_history.settings")
