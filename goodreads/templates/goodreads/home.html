@@ -1,11 +1,11 @@
-    {% load static %}
+{% load static tailwind_tags %}
 <!DOCTYPE html>
 <html>
     <head>
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+		{% tailwind_css %}
         <link rel="stylesheet" href="{%  static  'css/landing.css'  %}" />
         <title>Novelty Insights</title>
     </head>
