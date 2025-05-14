@@ -114,7 +114,7 @@ def get_stats(url, wait=0):
 
     try:
         author = soup.find("span", {"data-testid": "name"}).text
-        author = re.sub(pattern="\s+", repl=" ", string=author)
+        author = re.sub(pattern=r"\s+", repl=" ", string=author)
     except:
         author = None
 
@@ -203,12 +203,12 @@ def get_read_stats(url):
     except Exception as e:
         logger.info(f"Error {e} for {url}")
         return null_return
-    ratings = re.findall("\d+", ratings_raw)
-    reviews = re.findall("\d+", reviews_raw)
-    to_reads = re.findall("\d+", to_reads_raw)
+    ratings = re.findall(r"\d+", ratings_raw)
+    reviews = re.findall(r"\d+", reviews_raw)
+    to_reads = re.findall(r"\d+", to_reads_raw)
     to_reads = int("".join(to_reads))
     read = int("".join(ratings)) + int("".join(reviews))
-    added_by = int("".join(re.findall("\d+", added_by_raw)))
+    added_by = int("".join(re.findall(r"\d+", added_by_raw)))
     return {
         "added_by": added_by,
         "to_reads": to_reads,
