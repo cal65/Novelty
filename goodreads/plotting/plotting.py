@@ -653,7 +653,7 @@ def bokeh_world_plot(world_df, username):
     from bokeh.palettes import brewer
 
     output_file(
-        filename=f"goodreads/static/Graphs/{username}/author_map_{username}.html",
+        filename=f"static/Graphs/{username}/author_map_{username}.html",
         title=f"Author Map - {username}",
     )
     heat_palette = brewer["OrRd"][8]
@@ -872,7 +872,7 @@ def create_read_plot_heatmap(
     )
 
     filename = (
-        f"goodreads/static/Graphs/{username}/goodreads_read_heatmap_{username}.html"
+        f"static/Graphs/{username}/goodreads_read_heatmap_{username}.html"
     )
     fig.write_html(file=filename)
     return fig
@@ -1029,7 +1029,7 @@ def main(username):
         fig_summary = summary_plot(read_df, username)
         save_fig(
             fig_summary,
-            f"goodreads/static/Graphs/{username}/goodreads_summary_{username}.html",
+            f"static/Graphs/{username}/goodreads_summary_{username}.html",
         )
     except Exception as exception:
         logger.info(" summary plot failed: " + str(exception))
@@ -1040,14 +1040,14 @@ def main(username):
         logger.info("reader heatmap plot failed: " + str(exception))
     fig_finish = finish_plot(df, username)
     fig_finish.write_html(
-        f"goodreads/static/Graphs/{username}/goodreads_finish_plot_{username}.html"
+        f"static/Graphs/{username}/goodreads_finish_plot_{username}.html"
     )
     genres_avg = pd.read_csv("artifacts/genres_avg.csv")
     genre_difference = format_genre_table(read_df, genres_avg=genres_avg, n=12)
     fig_genres = plot_genre_difference(genre_difference, username)
     save_fig(
         fig_genres,
-        f"goodreads/static/Graphs/{username}/goodreads_genre_diff_{username}.html",
+        f"static/Graphs/{username}/goodreads_genre_diff_{username}.html",
     )
     # world map plotting
     world_df = load_map()
@@ -1056,7 +1056,7 @@ def main(username):
     bokeh_world_plot(world_df, username)
 
     write_text(
-        filename=f"goodreads/static/Graphs/{username}/goodreads_small_{username}.txt",
+        filename=f"static/Graphs/{username}/goodreads_small_{username}.txt",
         texts=[write_small_nationalities(return_small_nationalities(read_df))],
     )
 
@@ -1070,7 +1070,7 @@ def main(username):
         lims=[2013, 2024],
     )
     fig_month.write_html(
-        f"goodreads/static/Graphs/{username}/monthly_pages_read_{username}.html"
+        f"static/Graphs/{username}/monthly_pages_read_{username}.html"
     )
 
 
