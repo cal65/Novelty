@@ -28,7 +28,7 @@ generate_plots <- function(name){
   dt <- setDT(dbGetQuery(con, query))
   dt <- run_all(dt)
   print(head(dt))
-  dir.create(paste0('Novelty/goodreads/static/Graphs/', name), showWarnings = F)
+  dir.create(paste0('Novelty/static/Graphs/', name), showWarnings = F)
   # # update the authors database based on potential new data from dt
   # authors_database <- update_authors_artifact(authors_database, dt)
   # dt$gender <- mapvalues(

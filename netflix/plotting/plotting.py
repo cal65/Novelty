@@ -606,30 +606,30 @@ def main(username):
     fig_plotline = plot_timeline(df)
     save_fig(
         fig_plotline,
-        f"goodreads/static/Graphs/{username}/netflix_timeline_{username}.html",
+        f"static/Graphs/{username}/netflix_timeline_{username}.html",
     )
     fig_genres_s = plot_genres(df, username, "series")
     save_fig(
         fig_genres_s,
-        f"goodreads/static/Graphs/{username}/netflix_genres_{username}_series.html",
+        f"static/Graphs/{username}/netflix_genres_{username}_series.html",
     )
     fig_genres_m = plot_genres(df, username, "movie")
     save_fig(
         fig_genres_m,
-        f"goodreads/static/Graphs/{username}/netflix_genres_{username}_movie.html",
+        f"static/Graphs/{username}/netflix_genres_{username}_movie.html",
     )
     fig_hist = plot_hist(df, username)
     save_fig(
         fig_hist,
-        f"goodreads/static/Graphs/{username}/netflix_histogram_{username}.html",
+        f"static/Graphs/{username}/netflix_histogram_{username}.html",
     )
     df_network = df.drop_duplicates(subset="name")
     fig_network = plot_network(df_network, username)
     save_fig(
         fig_network,
-        f"goodreads/static/Graphs/{username}/netflix_network_{username}.html",
+        f"static/Graphs/{username}/netflix_network_{username}.html",
     )
     df_network.to_csv(
-        f"goodreads/static/Graphs/{username}/netflix_process_{username}.csv",
+        f"static/Graphs/{username}/netflix_process_{username}.csv",
         index=False,
     )

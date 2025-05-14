@@ -1141,55 +1141,55 @@ def load_data(username):
 
 def main(username):
     df = load_data(username)
-    path = f"goodreads/static/Graphs/{username}"
+    path = f"static/Graphs/{username}"
     if not (os.path.exists(path) and os.path.isdir(path)):
         os.mkdir(path)
 
     fig_overall = multiplot_overall(df)
     fig_overall.write_html(
-        f"goodreads/static/Graphs/{username}/spotify_overall_{username}.html"
+        f"static/Graphs/{username}/spotify_overall_{username}.html"
     )
 
     fig_year = plot_years(
         df, feature_col="release_year", minutes_col="minutes", index_col="artistname"
     )
     fig_year.write_html(
-        f"goodreads/static/Graphs/{username}/spotify_year_plot_{username}.html"
+        f"static/Graphs/{username}/spotify_year_plot_{username}.html"
     )
 
     fig_top_artists = plot_top_artists_over_time(df)
     fig_top_artists.write_html(
-        f"goodreads/static/Graphs/{username}/spotify_top_artists_plot_{username}.html"
+        f"static/Graphs/{username}/spotify_top_artists_plot_{username}.html"
     )
     fig_daily = plot_daily(df)
     fig_daily.write_html(
-        f"goodreads/static/Graphs/{username}/spotify_daily_plot_{username}.html"
+        f"static/Graphs/{username}/spotify_daily_plot_{username}.html"
     )
 
     fig_popularity = plot_popularity(df)
     fig_popularity.write_html(
-        f"goodreads/static/Graphs/{username}/spotify_popularity_plot_{username}.html"
+        f"static/Graphs/{username}/spotify_popularity_plot_{username}.html"
     )
 
     fig_genre = plot_genres(df, genre_col="genre_chosen", n=25)
     fig_genre.write_html(
-        f"goodreads/static/Graphs/{username}/spotify_genre_plot_{username}.html"
+        f"static/Graphs/{username}/spotify_genre_plot_{username}.html"
     )
 
     fig_songs = plot_song_day(
         df, artist_col="artistname", song_col="trackname", date_col="date"
     )
     fig_songs.write_html(
-        f"goodreads/static/Graphs/{username}/spotify_top_songs_{username}.html"
+        f"static/Graphs/{username}/spotify_top_songs_{username}.html"
     )
 
     write_text(
-        filename=f"goodreads/static/Graphs/{username}/spotify_summary_{username}.txt",
+        filename=f"static/Graphs/{username}/spotify_summary_{username}.txt",
         texts=[write_new_info(df), write_skips_summary(df), write_last_listened(df)],
     )
 
     write_text(
-        filename=f"goodreads/static/Graphs/{username}/spotify_weekly_{username}.txt",
+        filename=f"static/Graphs/{username}/spotify_weekly_{username}.txt",
         texts=[write_week_text(format_weekly(df, date_col="date"))],
     )
 
@@ -1201,5 +1201,5 @@ def main(username):
     ).reset_index()
     fig_heat = create_follower_heatmap(top_artists, heat_col="followers_total")
     fig_heat.write_html(
-        f"goodreads/static/Graphs/{username}/spotify_follower_heat_{username}.html"
+        f"static/Graphs/{username}/spotify_follower_heat_{username}.html"
     )
