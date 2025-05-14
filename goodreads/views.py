@@ -128,7 +128,7 @@ def gallery_geography(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def nationality_map_view(request):
     username = request.user
-    nationality_map_url = "goodreads/static/Graphs/{}/author_map_{}.html".format(
+    nationality_map_url = "static/Graphs/{}/author_map_{}.html".format(
         username, username
     )
     return render(
@@ -141,7 +141,7 @@ def nationality_map_view(request):
 @login_required(redirect_field_name="next", login_url="user-login")
 def popularity_spectrum_view(request):
     username = request.user
-    popularity_spectrum_url = "goodreads/static/Graphs/{}/read_heatmap_{}.html".format(
+    popularity_spectrum_url = "static/Graphs/{}/read_heatmap_{}.html".format(
         username, username
     )
     return render(
@@ -217,13 +217,13 @@ def runscriptNetflix(request):
 
 def spot_text(request):
     username = request.user
-    info_text_url = f"goodreads/static/Graphs/{username}/spotify_summary_{username}.txt"
+    info_text_url = f"static/Graphs/{username}/spotify_summary_{username}.txt"
     with open(info_text_url) as f:
         lines = f.readlines()
     f.close()
     info_text = "".join(lines)
     weekly_text_url = (
-        f"goodreads/static/Graphs/{username}/spotify_weekly_{username}.txt"
+        f"static/Graphs/{username}/spotify_weekly_{username}.txt"
     )
     with open(weekly_text_url) as f:
         lines2 = f.readlines()
@@ -314,9 +314,9 @@ def upload_goodreads(request):
     # save csv file in database
     logger.info(f"Goodreads upload started for {user}")
     df = pd.read_csv(csv_file)
-    if not os.path.exists(f"goodreads/static/Graphs/{user}"):
-        os.mkdir(f"goodreads/static/Graphs/{user}")
-    df.to_csv(f"goodreads/static/Graphs/{user}/export_{user}.csv")
+    if not os.path.exists(f"static/Graphs/{user}"):
+        os.mkdir(f"static/Graphs/{user}")
+    df.to_csv(f"static/Graphs/{user}/export_{user}.csv")
     df = process_export_upload(df)
     logger.info(f"starting export table addition for {user} with {str(len(df))} rows")
     exportDataObjs = populateExportData(df, user)
@@ -379,11 +379,11 @@ def upload_view_spotify(request):
 
 def upload_spotify(request):
     user = request.user
-    graphs_path = f"goodreads/static/Graphs/{user}"
+    graphs_path = f"static/Graphs/{user}"
     json_file = request.FILES["file"]
     logger.info(f"Spotify upload started for {user}")
     df = pd.read_json(json_file)
-    file_path = f"goodreads/static/Graphs/{user}/spotify_{user}.csv"
+    file_path = f"static/Graphs/{user}/spotify_{user}.csv"
     df.to_csv(file_path, index=False)
     if not os.path.exists(graphs_path):
         os.mkdir(graphs_path)
@@ -417,7 +417,7 @@ def upload_spotify(request):
         return JsonResponse({"tracknames": [0], "artistnames": [0], "msplayed": [0]})
     populateSpotifyStreaming(df_new, user)
     # save csv file in database
-    file_path = f"goodreads/static/Graphs/{user}/spotify_{user}_{new_lines}.csv"
+    file_path = f"static/Graphs/{user}/spotify_{user}_{new_lines}.csv"
     df_new.to_csv(file_path, index=False)
     df_unmerged = de.get_unmerged(
         df_new, track_col="trackname", artist_col="artistname"
@@ -484,9 +484,9 @@ def upload_netflix(request):
     csv_file = request.FILES["file"]
     # save csv file in database
     df = pd.read_csv(csv_file)
-    if not os.path.exists(f"goodreads/static/Graphs/{user}"):
-        os.mkdir(f"goodreads/static/Graphs/{user}")
-    df.to_csv(f"goodreads/static/Graphs/{user}/netflix_history_{user}.csv")
+    if not os.path.exists(f"static/Graphs/{user}"):
+        os.mkdir(f"static/Graphs/{user}")
+    df.to_csv(f"static/Graphs/{user}/netflix_history_{user}.csv")
     df.columns = [c.lower() for c in df.columns]
     df["date"] = pd.to_datetime(df["date"])
     # load up the existing data in database for this user
@@ -617,7 +617,7 @@ def netflix_compare_func(request):
 def good_text(request):
     username = request.user
     small_text_url = (
-        f"goodreads/static/Graphs/{username}/goodreads_small_{username}.txt"
+        f"static/Graphs/{username}/goodreads_small_{username}.txt"
     )
     with open(small_text_url) as f:
         lines = f.readlines()

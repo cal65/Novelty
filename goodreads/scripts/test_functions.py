@@ -54,7 +54,7 @@ test_df = pd.DataFrame(
 
 def test_goodreads_main():
     username = "test-olive"
-    graph_dir = f"goodreads/static/Graphs/{username}"
+    graph_dir = f"static/Graphs/{username}"
     goodreads_files_raw = [
         f"monthly_pages_read_{username}.html",
         f"goodreads_summary_{username}.html",
@@ -74,7 +74,7 @@ def test_goodreads_main():
 def test_spotify_main():
     # my approach here is I've created a user named test-olive and loaded it with data
     username = "test-olive"
-    graph_dir = f"goodreads/static/Graphs/{username}"
+    graph_dir = f"static/Graphs/{username}"
 
     spotify_files_raw = [
         f"overall_{username}.html",
