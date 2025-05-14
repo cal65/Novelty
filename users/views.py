@@ -41,7 +41,7 @@ def register(request):
 
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            path = 'goodreads/static/Graphs/{}'.format(username)
+            path = 'static/Graphs/{}'.format(username)
             try:
                 create_folder(path)
             except:
