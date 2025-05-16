@@ -27,7 +27,7 @@ urlpatterns = [
     path("streaming/", streaming, name="streaming-home"),
     path("faq/", faq, name="faq"),
     re_path(
-        r"^favicon\.ico$", RedirectView.as_view(url="/static/admin/img/favicon.ico")
+        r"^favicon\.ico$", RedirectView.as_view(url="/static/novelty/favicon.ico")
     ),
     path("music/plots/", spot_plots_view, name="spotify-plots"),
     path("upload-view-netflix/", upload_view_netflix, name="upload-view-netflix"),
