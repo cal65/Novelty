@@ -63,9 +63,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "tailwind",
-    "theme",
-    "django_browser_reload",  # for django-tailwind
     "adaptor",
     "crispy_forms",
     "django_extensions",
@@ -91,7 +88,6 @@ MIDDLEWARE = [
     "django_plotly_dash.middleware.BaseMiddleware",
     "django_plotly_dash.middleware.ExternalRedirectionMiddleware",
     "allauth.account.middleware.AccountMiddleware",
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = "goodreads_history.urls"
@@ -208,8 +204,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # MEDIA_URL = '/media/'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
-TAILWIND_APP_NAME = "theme"
 
 INTERNAL_IPS = ["127.0.0.1", "35.175.111.52"]
 

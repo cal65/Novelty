@@ -1,0 +1,6 @@
+/*
+ * We have to tell Tailwind to look for classes in the base directory of the git repo, rather than starting in this
+ * directory. Its defaults for files to inspect work for us out of the box otherwise.
+ * Ref: https://tailwindcss.com/docs/detecting-classes-in-source-files
+ */
+@import 'tailwindcss' source('../../..');
