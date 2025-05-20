@@ -45,10 +45,16 @@ ALLOWED_HOSTS = [
     "44.225.40.155",
 ]
 
+DJANGO_VITE = {
+  "default": {
+    "dev_mode": DEBUG
+  }
+}
 
 # Application definition
 
 INSTALLED_APPS = [
+    "django_vite",
     "goodreads.apps.GoodreadsConfig",
     "users",
     "django.contrib.admin",
@@ -192,7 +198,10 @@ CHANNEL_LAYERS = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATICFILES_DIRS = ("static/Graphs",)
+STATICFILES_DIRS = [
+    "static/Graphs",
+    "goodreads/vite_assets/dist",
+]
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
