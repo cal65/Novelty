@@ -1,5 +1,7 @@
 {% extends "goodreads/basefile.html" %}
 
+{% load django_vite %}
+
 {% block css-additional %}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.11/css/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css"/>
@@ -94,6 +96,19 @@
 
 
     {% block dt %}
+        <div class="headline mb-16">
+            Explore Database
+        </div>
+
+        {% url 'books-load-explore' as dataUrl %}
+        <script id="dataTableProps" type="application/json">
+          {"url": "{{ dataUrl|escapejs }}"}
+        </script>
+
+        {% vite_asset "entryPoints/booksDataTable.tsx?elementId=dataTableProps" %}
+
+        <div class="h-16"></div>
+        <!--
         <script>
             $(document).ready(function () {
                 load_datatable("{% url 'books-load-explore' %}",
@@ -110,10 +125,6 @@
         </script>
 
 
-        <div class="headline">
-            Explore Database
-            <br>
-        </div>
         <img id="loadingImage" src="/static/novelty/N-Logo-loop.gif"
              style="display: block; height: 30em; margin-left: auto; margin-right: auto;">
         <style>
@@ -141,7 +152,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <!-- Table body content will be generated dynamically -->
+                    < !-- Table body content will be generated dynamically -- >
                     </tbody>
                 </table>
                 <br>
@@ -153,6 +164,7 @@
         </div>
         <br>
         <br>
+        -->
 
     {% endblock dt %}
 

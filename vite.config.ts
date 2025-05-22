@@ -29,7 +29,7 @@ export default defineConfig(({mode}) => {
             outDir: resolve(OUTPUT_DIR),
             rollupOptions: {
                 input: {
-                    main: join(INPUT_DIR, '/apps/main.tsx'),
+                    dataTable: join(INPUT_DIR, '/entryPoints/booksDataTable.tsx'),
                     css: join(INPUT_DIR, '/css/main.css.ts'),
                 }
             }
