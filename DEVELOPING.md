@@ -17,9 +17,10 @@ but you can also run `uv run manage.py migrate` to create the database and table
 ## Deploying to production
 
 1. ssh to the production webserver and pull from git
-2. Run `npm install` and `npm run build` to install and build frontend assets
-3. Kill gunicorn if it's already running: `pkill gunicorn`
-4. Run `./scripts/run_production.sh` to start the server
+2. Run `npm install` to install frontend libraries
+3. Run `npm run build` to build frontend assets
+4. Kill gunicorn if it's already running: `pkill gunicorn`
+5. Run `./scripts/run_production.sh` to start the server
 
 
 
