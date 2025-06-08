@@ -16,8 +16,8 @@ import {
   IconArrowsDiagonalMinimize,
   IconX,
 } from "@tabler/icons-react";
-import { useState } from "react";
-import { sumBy } from "remeda";
+import { type SetStateAction, useReducer, useState } from "react";
+import { isFunction, sumBy } from "remeda";
 import useSWR from "swr";
 import { fetcher } from "../util/fetcher.ts";
 import { saveToCsv } from "../util/tables.ts";
@@ -102,6 +102,47 @@ const mainColumns = [
   }),
 ];
 
+type FilterId =
+  | "author"
+  | "gender"
+  | "nationality"
+  | "year"
+  | "narrative"
+  | "shelves"
+  | "pageCount";
+
+type RowSelectionAction = FilterId | "clear";
+
+function initialRowSelectionState(): Record<FilterId, RowSelectionState> {
+  return {
+    author: {},
+    gender: {},
+    nationality: {},
+    year: {},
+    narrative: {},
+    shelves: {},
+    pageCount: {},
+  };
+}
+
+function rowSelectionReducer(
+  state: Record<FilterId, RowSelectionState>,
+  action: {
+    type: RowSelectionAction;
+    selection?: SetStateAction<RowSelectionState>;
+  },
+) {
+  if (action.type === "clear") {
+    return initialRowSelectionState();
+  }
+  return {
+    ...state,
+    [action.type]: isFunction(action.selection)
+      ? action.selection(state[action.type])
+      : action.selection,
+  };
+}
+
 export default function BooksDataTable({ url }: Props) {
   const { data, error, isLoading } = useSWR<Book[]>(url, fetcher);
 
@@ -121,21 +162,10 @@ export default function BooksDataTable({ url }: Props) {
     },
   });
 
-  const [authorRowSelection, setAuthorRowSelection] =
-    useState<RowSelectionState>({});
-  const [genderRowSelection, setGenderRowSelection] =
-    useState<RowSelectionState>({});
-  const [nationalityRowSelection, setNationalityRowSelection] =
-    useState<RowSelectionState>({});
-  const [yearRowSelection, setYearRowSelection] = useState<RowSelectionState>(
-    {},
+  const [rowSelectionState, dispatchRowSelection] = useReducer(
+    rowSelectionReducer,
+    initialRowSelectionState(),
   );
-  const [narrativeRowSelection, setNarrativeRowSelection] =
-    useState<RowSelectionState>({});
-  const [shelvesRowSelection, setShelvesRowSelection] =
-    useState<RowSelectionState>({});
-  const [pageCountRowSelection, setPageCountRowSelection] =
-    useState<RowSelectionState>({});
 
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
 
@@ -185,15 +215,7 @@ export default function BooksDataTable({ url }: Props) {
           variant="default"
           disabled={activeFilterCount === 0}
           rightSection={<IconX />}
-          onClick={() => {
-            setAuthorRowSelection({});
-            setGenderRowSelection({});
-            setNationalityRowSelection({});
-            setYearRowSelection({});
-            setNarrativeRowSelection({});
-            setShelvesRowSelection({});
-            setPageCountRowSelection({});
-          }}
+          onClick={() => dispatchRowSelection({ type: "clear" })}
         >
           Clear All
         </Button>
@@ -203,50 +225,67 @@ export default function BooksDataTable({ url }: Props) {
           table={table}
           columnId="author"
           collapsed={filtersCollapsed}
-          rowSelection={authorRowSelection}
-          setRowSelection={setAuthorRowSelection}
+          rowSelection={rowSelectionState.author}
+          setRowSelection={(selectedRows) =>
+            dispatchRowSelection({ type: "author", selection: selectedRows })
+          }
         />
         <ValueFilterTable<Book, string>
           table={table}
           columnId="gender"
           collapsed={filtersCollapsed}
-          rowSelection={genderRowSelection}
-          setRowSelection={setGenderRowSelection}
+          rowSelection={rowSelectionState.gender}
+          setRowSelection={(selectedRows) =>
+            dispatchRowSelection({ type: "gender", selection: selectedRows })
+          }
         />
         <ValueFilterTable<Book, string>
           table={table}
           columnId="nationality_chosen"
           collapsed={filtersCollapsed}
-          rowSelection={nationalityRowSelection}
-          setRowSelection={setNationalityRowSelection}
+          rowSelection={rowSelectionState.nationality}
+          setRowSelection={(selectedRows) =>
+            dispatchRowSelection({
+              type: "nationality",
+              selection: selectedRows,
+            })
+          }
         />
         <ValueFilterTable<Book, number>
           table={table}
           columnId="original_publication_year"
           collapsed={filtersCollapsed}
-          rowSelection={yearRowSelection}
-          setRowSelection={setYearRowSelection}
+          rowSelection={rowSelectionState.year}
+          setRowSelection={(selectedRows) =>
+            dispatchRowSelection({ type: "year", selection: selectedRows })
+          }
         />
         <ValueFilterTable<Book, string>
           table={table}
           columnId="narrative"
           collapsed={filtersCollapsed}
-          rowSelection={narrativeRowSelection}
-          setRowSelection={setNarrativeRowSelection}
+          rowSelection={rowSelectionState.narrative}
+          setRowSelection={(selectedRows) =>
+            dispatchRowSelection({ type: "narrative", selection: selectedRows })
+          }
         />
         <ValueFilterTable<Book, string[]>
           table={table}
           columnId="shelves"
           collapsed={filtersCollapsed}
-          rowSelection={shelvesRowSelection}
-          setRowSelection={setShelvesRowSelection}
+          rowSelection={rowSelectionState.shelves}
+          setRowSelection={(selectedRows) =>
+            dispatchRowSelection({ type: "shelves", selection: selectedRows })
+          }
         />
         <ValueFilterTable<Book, number>
           table={table}
           columnId="number_of_pages"
           collapsed={filtersCollapsed}
-          rowSelection={pageCountRowSelection}
-          setRowSelection={setPageCountRowSelection}
+          rowSelection={rowSelectionState.pageCount}
+          setRowSelection={(selectedRows) =>
+            dispatchRowSelection({ type: "pageCount", selection: selectedRows })
+          }
         />
       </div>
 
