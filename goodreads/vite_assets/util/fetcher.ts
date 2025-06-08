@@ -3,5 +3,8 @@ export async function fetcher(
   init?: RequestInit,
 ) {
   const res = await fetch(input, init);
+  if (!res.ok) {
+    throw new Error(`Fetch error: ${res.status} ${res.statusText}`);
+  }
   return await res.json();
 }

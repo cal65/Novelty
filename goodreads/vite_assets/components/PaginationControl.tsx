@@ -12,14 +12,18 @@ export function PaginationControl<TData>({ table }: Props<TData>) {
   const { rows } = table.getFilteredRowModel();
   return (
     <div className="flex justify-between text-sm my-2">
-      <div>
-        Showing entries {pagination.pageIndex * pagination.pageSize + 1} to{" "}
-        {Math.min(
-          (pagination.pageIndex + 1) * pagination.pageSize,
-          rows.length,
-        )}{" "}
-        of {formatNumber(rows.length)} entries
-      </div>
+      {rows.length ? (
+        <div>
+          Showing entries {pagination.pageIndex * pagination.pageSize + 1} to{" "}
+          {Math.min(
+            (pagination.pageIndex + 1) * pagination.pageSize,
+            rows.length,
+          )}{" "}
+          of {formatNumber(rows.length)} entries
+        </div>
+      ) : (
+        <div>Showing 0 entries</div>
+      )}
       <Pagination
         value={pagination.pageIndex + 1}
         total={table.getPageCount()}

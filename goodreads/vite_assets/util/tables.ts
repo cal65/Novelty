@@ -23,7 +23,10 @@ export function updatePageSize<TData>(
   if (pageSizeValue === null) {
     return;
   }
-  const newPageSize = Number.parseInt(pageSizeValue, 10);
+  let newPageSize = Number.parseInt(pageSizeValue, 10);
+  if (Number.isNaN(newPageSize) || newPageSize <= 0) {
+    newPageSize = 10; // Fallback to default page size
+  }
   table.setPagination(({ pageIndex, pageSize }) => {
     const newPageIndex = Math.floor((pageIndex * pageSize) / newPageSize);
     return {

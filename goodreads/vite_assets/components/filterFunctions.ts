@@ -16,7 +16,7 @@ export function equalsAny<TData extends RowData, TValue>(
 export function arrIncludesAny<TData extends RowData, TValue>(
   row: Row<TData>,
   columnId: string,
-  filterValue: TValue[],
+  filterValue: TValue[] | null,
 ): boolean {
   const columnValues = row.getValue<TValue[] | null>(columnId);
   return (
