@@ -1,7 +1,7 @@
 import { join, resolve } from "node:path";
-import { defineConfig, loadEnv } from "vite";
-import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react-swc";
+import { defineConfig, loadEnv } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
       outDir: resolve(OUTPUT_DIR),
       rollupOptions: {
         input: {
-          dataTable: join(INPUT_DIR, "/entryPoints/booksDataTable.tsx"),
+          booksDataTable: join(INPUT_DIR, "/entryPoints/booksDataTable.tsx"),
           css: join(INPUT_DIR, "/css/main.css.ts"),
         },
       },
