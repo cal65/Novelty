@@ -1,159 +1,22 @@
 {% extends "goodreads/basefile.html" %}
 
-{% block css-additional %}
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.11/css/jquery.dataTables.min.css"/>
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css"/>
-    <link rel="stylesheet" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.dataTables.min.css"/>
-    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css"/>
-{% endblock css-additional %}
+{% load django_vite %}
+
 {% block content %}
-
-    <script src="https://cdn.datatables.net/1.13.11/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
-    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
-    <script>
-        function load_datatable(url, columns) {
-            const cols = columns.map(columnName => {
-                if (columnName === "shelves") {
-                    // Turn the column shelves into string for display and manageable array for search pane filter
-                    return {
-                        data: columnName,
-                        render: {
-                            _: "[, ]",
-                            sp: "[]"
-                        }
-                    };
-                } else {
-                    return {data: columnName};
-                }
-            });
-            $.ajax({
-                url: url,
-                method: 'GET',
-                dataType: 'json',
-                success: function (response) {
-                    console.log('starting');
-                    const dataTableOptions = {
-                        data: response,
-                        columns: cols,
-                        "pageLength": 25,
-                        dom: 'PlBfrtip',
-                        order: [5, 'desc'],
-                        deferRender: true,
-                        columnDefs: [
-                            {
-                                searchPanes: {
-                                    show: true,
-                                    orthogonal: 'sp',
-                                    dtOpts: {
-                                        select: {style: 'multi'},
-                                        order: [1, 'desc']
-                                    }
-                                },
-                                targets: [1, 2, 3, 6, 7]
-                            },
-                            {
-                                searchPanes: {
-                                    show: true,
-                                    dtOpts: {
-                                        order: [0, 'desc'],
-                                        select: {style: 'multi'},
-                                    }
-                                },
-                                targets: [4]
-                            },
-                            {
-                                searchPanes: {
-                                    show: false
-                                },
-                                targets: [0, 5]
-                            },
-                            {
-                                orderData: [1], // Order by the second column (Author) initially
-                                targets: [1]
-                            }
-                        ],
-                        buttons: ['copy', 'csv', 'excel'],
-                        initComplete: function () {
-                            // Hide the loading image once the DataTable is initialized
-                            $('#loadingImage').hide();
-                        }
-                    };
-                    // Initialize DataTable only after finishing modifications
-                    $('#rTable').DataTable(dataTableOptions);
-                },
-                error: function (xhr, errmsg, err) {
-                    // Handle any errors
-                    console.log(errmsg);
-                }
-            })
-        }
-    </script>
-
-
     {% block dt %}
-        <script>
-            $(document).ready(function () {
-                load_datatable("{% url 'books-load-explore' %}",
-                    ["title_simple",
-                        "author",
-                        "gender",
-                        "nationality_chosen",
-                        "original_publication_year",
-                        "read",
-                        "narrative",
-                        "shelves",
-                        "number_of_pages"]);
-            });
+        <div class="headline mb-16">
+            Explore Database
+        </div>
+
+        {% url 'books-load-explore' as dataUrl %}
+        <script id="dataTableProps" type="application/json">
+          {"url": "{{ dataUrl|escapejs }}"}
         </script>
 
+        {% vite_asset "entryPoints/booksDataTable.tsx?elementId=dataTableProps" %}
 
-        <div class="headline">
-            Explore Database
-            <br>
-        </div>
-        <img id="loadingImage" src="/static/novelty/N-Logo-loop.gif"
-             style="display: block; height: 30em; margin-left: auto; margin-right: auto;">
-        <style>
-            #rTable thead {
-                background-color: #f2f2f2;
-                color: #636efa;
-                font-weight: bold;
-                font-size: 0.8rem;
-            }
-        </style>
-        <div class="table-container">
-            <div class="table-wrapper" style="margin: 0;">
-                <table id="rTable" class="cell-border">
-                    <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Author</th>
-                        <th>Gender</th>
-                        <th>Nationality</th>
-                        <th>Year</th>
-                        <th>Readers</th>
-                        <th>Narrative</th>
-                        <th>Shelves</th>
-                        <th># of Pages</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <!-- Table body content will be generated dynamically -->
-                    </tbody>
-                </table>
-                <br>
-                <br>
-            </div>
-            <br>
-            <br> <br>
-            <br>
-        </div>
-        <br>
-        <br>
-
+        <!-- space for the footer -->
+        <div class="h-16"></div>
     {% endblock dt %}
 
 
