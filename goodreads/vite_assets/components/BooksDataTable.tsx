@@ -20,6 +20,7 @@ import { useState } from "react";
 import { sumBy } from "remeda";
 import useSWR from "swr";
 import { fetcher } from "../util/fetcher.ts";
+import { saveToCsv } from "../util/tables.ts";
 import DataTable from "./DataTable.tsx";
 import { PageSizeControl } from "./PageSizeControl.tsx";
 import SearchInput from "./SearchInput.tsx";
@@ -252,6 +253,13 @@ export default function BooksDataTable({ url }: Props) {
       <div className="flex justify-between">
         <div className="flex gap-x-4 items-center">
           <PageSizeControl table={table} />
+
+          <Button
+            variant="default"
+            onClick={() => saveToCsv(table, "books_data.csv")}
+          >
+            CSV
+          </Button>
         </div>
 
         <SearchInput
