@@ -43,6 +43,7 @@ ALLOWED_HOSTS = [
     "www.novelty-insights.com",
     "54.90.59.213",
     "44.225.40.155",
+    "141.76.94.18:80"
 ]
 
 DJANGO_VITE = {
