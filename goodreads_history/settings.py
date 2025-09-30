@@ -43,7 +43,9 @@ ALLOWED_HOSTS = [
     "www.novelty-insights.com",
     "54.90.59.213",
     "44.225.40.155",
-    "141.76.94.18:80"
+    "ec2-44-225-40-155.us-west-2.compute.amazonaws.com",
+    "141.76.94.18",
+    "172.26.3.171"
 ]
 
 DJANGO_VITE = {

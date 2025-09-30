@@ -36,6 +36,8 @@ dist
 dist-ssr
 *.local
 
+goodreads/static/Graphs
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
