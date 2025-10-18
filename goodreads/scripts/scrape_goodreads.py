@@ -6,6 +6,7 @@ import random
 import time
 import sys
 import re
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -13,14 +14,14 @@ logger.setLevel(logging.INFO)
 
 
 cookies = {
-    'ccsid': '981-7720517-4539359',
+    'ccsid': '162-6250125-6529944',
     'p': 'dkCKV365TjqNenOKY4VtqQ6sIm7CTPX-c9d94GhAzRXKWDHD',
     'likely_has_account': 'true',
     'allow_behavioral_targeting': 'true',
-    'session-id': '141-6452885-9687058',
+    'session-id': '135-9578339-3724526',
     'logged_out_browsing_page_count': '2',
     'srb_1': '0',
-    'ubid-main': '131-4250835-4161367',
+    'ubid-main': '133-4011406-7695433',
     'lc-main': 'en_US',
     'csm-hit': 'tb:28PZZBK444T48GAAWQ0H+b-4K51QZ90N1KMGMJX1EGE|1667883949756&t:1667883949756&adb:adblk_no',
     'srb_8': '0_ar',
@@ -28,9 +29,9 @@ cookies = {
     'locale': 'en',
     'ntvSession': '{"id":7105107,"placementID":1210536,"lastInteraction":1689465068498,"sessionStart":1689465068498,"sessionEndDate":1689490800000,"experiment":""}',
     'csm-sid': '269-3996257-5017812',
-    'session-id-time': '2320515620l',
-    'session-token': 'Bll6D6eAe4nNvOkehUMOOiTy4c4dutA4SyuqLzIqhZ5cMhyT2bANWizk46rCLq+4aX5D5pqBvnIaX6QsPa56vc5gkxqXminijtEMeUbLF3qOik7AZPmfvytj6nPBPfT+t9A42Dp7xlKFAZnaVO+Foi21M9N3xAh3QCCPxdSAaPZkhowMHaJGGjttzEyUu2EUX1DMzy5acpvzFWv7UwT1gUzeFee0FrxSfSh8k0dQdkCZP6+7WRHUAIM3gV1xnOzb',
-    'x-main': '"4EosvwpQCoL@Zqhj7Zl8DtXYnjfXD7IkpvU@N8xOvXojNJjDQltTAFj8AHu9yDRf"',
+    'session-id-time': '2378177356l',
+    'session-token': 'od3bAO9OYTy8DywKy+aMKtbRJARxFTJCRaQVdigNS66w2JXYE94wT9XLh4+rNCXpMjxzC5Bo06juZvfqQoDtO8EbB90m8cDnXZMZU20BezWgwngpTa0diz9uWKdWyGuTxpazjAIeimkw9bzX0cCuKRstzUuxfROUfP12u/p0a9zo/LIv1m3oV08dtuIiDeWq1GQJ2gwRDL51n7cmHAeVLhEx5NjGN8XdnYF6XMRbFYioA6HePRGmRgnC3o8ub6+2iFKqyg4I728EwELJh/fs7e8rJzQt7xiISJD2wKAynlurzNM4mrX2jr2MSCbIGH6H1+DlKKlFg1MZoDET5dj2ce2cWddxVyI25s3m2MrcmKl+FVM4DYiV4Tcaw3TTW0kD',
+    'x-main': 'n9oyMq5CUQ9WbCvZjaUlyok7rXOnq0GEjBm2GCKy1NeJ1AqvlmoUdxalzQJEzDyI',
     'at-main': 'Atza|IwEBIMkjx-aTGd5k5nOkjWE2S50ghFqGwXFblgQVwqkLIK0PpWxkaYVh4LWhhqF7qP3bEFDHsQ8VS7vyBC8aHWvY47-Aef9fMP5aQ01xHNps59k6kvGGqoqG_Jm2mvZsKHzygEteaxC0K45nhUEsdIYZ-KMEQqxV_EsImxEkPmQ3860AaQ7DN9cCviswebYV8FYkIU3I4WLenkGiH7jIfFAi15_BlpSTMsGYft98wFpjb5pKFxRpIs91oQvD7tCfLVf3MwnGve3V_zcWcr_Ft-PbS1KD',
     'sess-at-main': '"L4X7nx1bEIpiwwD4dl1RnG+lCVmCeLZhDOTptos71YI="',
     '_session_id2': '709591c189ab49250a9d5e92eaf6ef6d',
@@ -68,6 +69,32 @@ def get_soup(url):
         return None
     soup = BeautifulSoup(page.content, "html.parser")
     return soup
+
+def get_scripts(soup):
+    scripts = soup.find_all("script", string=re.compile("secondaryContributorEdges"))
+    script = scripts[0].contents[0]
+    return script
+
+def iter_get(d, keys):
+    for key in keys:
+        try:
+            d = d[key]
+        except (KeyError, TypeError):
+            return None
+    return d
+
+def get_genres(script):
+    data = json.loads(script)
+    d2 = iter_get(data, ['props', 'pageProps', 'apolloState'])
+    if d2 is None:
+        return None
+    book_keys = [k for k in d2.keys() if k.startswith('Book')]
+    # genre_keys = ['props', 'pageProps', 'apolloState', 'Book:kca://book/amzn1.gr.book.v1.L8xC_pyytbmWYVi8GFp1dA', 'bookGenres']
+    genres_raw = iter_get(d2, [book_keys[0], 'bookGenres'])
+    if genres_raw is None:
+        return None
+    genres = [g.get('genre').get('name') for g in genres_raw]
+    return genres
 
 
 def get_stats(url, wait=0):
@@ -193,6 +220,7 @@ def get_read_stats(url):
     if soup is None:
         logger.info("Connection refused for stats page - too many requests")
         return null_return
+
     stats_raw = soup.findAll("div", {"class": "infoBoxRowItem"})
     stats = [s.text.strip() for s in stats_raw]
     try:
