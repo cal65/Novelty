@@ -77,7 +77,7 @@ var estimate;
    <div class="form-upload">
       <form action="" id="csv-form" method="POST" enctype="multipart/form-data" onsubmit= "event.preventDefault(); return getEstimate();">
          {% csrf_token %}
-         <input type="file" id="file1" name="file" accept=".csv">
+         <input type="file" id="file1" class="file1" name="file" accept=".csv">
          <div class="pt-4"><button type="submit" name="upload" class="bg-button-red hover:bg-red-900 font-bold py-2 px-4 rounded">
                       Streaming Upload
          </button></div>

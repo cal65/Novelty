@@ -182,12 +182,13 @@ html {
     background-color: #343a40!important;
 }
 
-@media (min-width: 752px)
+@media (min-width: 752px) {
 .navbar-expand-lg .navbar-nav {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
     -ms-flex-direction: row;
     flex-direction: row;
+}
 }
 
 .item {
@@ -256,7 +257,7 @@ html {
     .left-text {
         text-align: left;
         font-size: 0.7em;
-        lineheight: 0.7em;
+        line-height: 0.7em;
         max-width: 90%;
         margin-left: 0;
         margin-right: auto;
@@ -399,7 +400,7 @@ html {
 .caption-text {
     text-align: left;
     font-size: 1em;
-    lineheight: 1em;
+    line-height: 1em;
     max-width: 60%;
     margin-left: auto;
     margin-right: auto;
@@ -570,4 +571,18 @@ html {
     margin-bottom: 0.02em;
     width: 60%;
     height: auto;
+}
+
+.file1 {
+    display: block;                  /* block */
+    width: 100%;                     /* w-full */
+    font-size: 0.875rem;             /* text-sm */
+    font-weight: 700;                /* font-bold */
+    color: #111827;                  /* text-gray-900 */
+    border: 1px solid #d1d5db;       /* border + border-gray-300 */
+    border-radius: 0.5rem;           /* rounded-lg */
+    cursor: pointer;                 /* cursor-pointer */
+    background-color: #f9fafb;       /* bg-gray-50 */
+    outline: none;                   /* focus:outline-none */
+    box-sizing: border-box;
 }

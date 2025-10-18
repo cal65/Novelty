@@ -88,7 +88,7 @@ function toggle(id){
    <div class="form-upload">
       <form action="" id="csv-form" method="POST" enctype="multipart/form-data" onsubmit= "event.preventDefault(); return getEstimate();">
         {% csrf_token %}
-        <input type="file" id="file1" name="file" accept=".csv">
+        <input type="file" id="file1" class="file1" name="file"  accept=".csv">
         <div class="pt-4">
             <button type="submit" class="bg-button hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
                       Upload
