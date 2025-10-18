@@ -77,7 +77,7 @@ function insert(tracknames, artistnames, msplayed){
    <div class="form-upload">
         <form action="" id="json-form" method="POST" enctype="multipart/form-data" onsubmit= "event.preventDefault(); return getEstimate();">
             {% csrf_token %}
-            <input type="file" id="file1" name="file" accept=".json">
+            <input type="file" id="file1" class="file1" name="file" accept=".json">
             <div class="pt-4"><button type="submit" class="bg-button-green hover:bg-green-800 font-bold py-2 px-4 rounded">
                           Streaming Upload
             </button></div>
