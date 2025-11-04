@@ -32,7 +32,7 @@ def grab_first_result(search_term):
     try:
         DATA = R.json()
     except Exception as e:
-        logger.error("Wikipedia error {e}")
+        logger.error(f"Wikipedia error {e} for {search_term}")
         raise ValueError(e)
     try:
         first_result = DATA[-1][0]
