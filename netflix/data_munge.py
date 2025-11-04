@@ -326,7 +326,7 @@ def plot_network(graph, cast_df):
     # position of text
     pos_moved = pos.copy()
     for k, v in pos_moved.items():
-        pos_moved[k] = pos_moved[k] + [0, 0.005]
+        pos_moved[k] = v + [0, 0.005]
     f, ax = plt.subplots(figsize=(30, 30))
     plt.style.use("ggplot")
 
