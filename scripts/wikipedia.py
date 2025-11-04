@@ -13,6 +13,9 @@ logger.addHandler(ch)
 
 S = requests.Session()
 
+headers = {
+    "User-Agent": "novelty-insights"
+}
 URL = "https://en.wikipedia.org/w/api.php"
 PARAMS = {
     "action": "opensearch",
