@@ -14,7 +14,7 @@ logger.addHandler(ch)
 S = requests.Session()
 
 headers = {
-    "User-Agent": "novelty-insights"
+    "User-Agent": "novelty-insights: 1.0 novelty-insights.com"
 }
 URL = "https://en.wikipedia.org/w/api.php"
 PARAMS = {
@@ -28,8 +28,12 @@ PARAMS = {
 
 def grab_first_result(search_term):
     PARAMS["search"] = search_term
-    R = S.get(url=URL, params=PARAMS)
-    DATA = R.json()
+    R = S.get(url=URL, params=PARAMS, headers=headers)
+    try:
+        DATA = R.json()
+    except Exception as e:
+        logger.error("Wikipedia error {e}")
+        raise ValueError(e)
     try:
         first_result = DATA[-1][0]
     except:
@@ -39,7 +43,7 @@ def grab_first_result(search_term):
 
 
 def eval_page(url):
-    page = requests.get(url)
+    page = requests.get(url, headers=headers)
     soup = BeautifulSoup(page.content, "html.parser")
     paragraphs = soup.findAll("p")
     return paragraphs
