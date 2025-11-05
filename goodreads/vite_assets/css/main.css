@@ -3,4 +3,7 @@
  * directory. Its defaults for files to inspect work for us out of the box otherwise.
  * Ref: https://tailwindcss.com/docs/detecting-classes-in-source-files
  */
-@import 'tailwindcss' source('../../..');
+@import "tailwindcss";
+
+/* workaround biome issue: https://github.com/biomejs/biome/discussions/3195#discussioncomment-12028319 */
+@source "../../..";
