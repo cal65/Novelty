@@ -13,7 +13,16 @@ import pandas as pd
 external_stylesheets = [
     "/static/css/landing.css"  # This should be the relative URL as served by Django
 ]
-app = DjangoDash("goodreads_dash", external_stylesheets=external_stylesheets)
+
+external_scripts = [
+    "https://cdn.jsdelivr.net/npm/plotly.js@2.26.0/dist/plotly.min.js"
+]
+
+app = DjangoDash(
+    "goodreads_dash",
+    external_stylesheets=external_stylesheets,
+    external_scripts=external_scripts
+)
 
 
 @app.callback(
@@ -40,8 +49,6 @@ def initiate_data(username):
 )
 def graph_monthly(data, selected_years, username):
     df = pd.DataFrame(data)
-    print(df.head())
-    print(df.columns)
     if not isinstance(selected_years, list):
         selected_years = [selected_years]
     if "all" not in selected_years:
@@ -87,6 +94,7 @@ def graph_heatmap(data, selected_years2, username):
         date_col="date_read",
         start_year=None,
         lim=40,
+        write=False
     )
     heat_fig.update_layout(
         autosize=True,
@@ -138,9 +146,9 @@ app.layout = html.Div(
             [
                 dcc.Input(id="usernameInput", style={"display": "none"}, value=" "),
                 html.Br(),
-                html.Div(className="caption-text",
-                         children="Below is an interactive plot of the books you've read and what month you read them. If you do not record the date in which you finished books, this plot will not show up.",
-                         style={'margin-bottom': '20px'}),
+                # html.Div(className="caption-text",
+                #          children="Below is an interactive plot of the books you've read and what month you read them. If you do not record the date in which you finished books, this plot will not show up.",
+                #          style={'margin-bottom': '20px'}),
                 dcc.Dropdown(
                     id="yearDropdown",
                     options=[

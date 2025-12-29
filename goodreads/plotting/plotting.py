@@ -766,6 +766,7 @@ def create_read_plot_heatmap(
     start_year=None,
     lim=40,
     colorscale="Plotly3",
+    write=True,
 ):
     df = read_plot_munge(
         df,
