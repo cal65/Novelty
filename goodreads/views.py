@@ -181,9 +181,8 @@ def plots_view(request):
             "monthly_pages_read_url": monthly_pages_read_url,
             "genre_diff_url": genre_diff_url,
             # dash context for app
-            "dash_context": {"usernameInput": {"value": str(username)}},
-        }
-
+            "dash_context": {"usernameInput": {"data": str(username)}},
+        },
     )
 
 
@@ -222,9 +221,7 @@ def spot_text(request):
         lines = f.readlines()
     f.close()
     info_text = "".join(lines)
-    weekly_text_url = (
-        f"static/Graphs/{username}/spotify_weekly_{username}.txt"
-    )
+    weekly_text_url = f"static/Graphs/{username}/spotify_weekly_{username}.txt"
     with open(weekly_text_url) as f:
         lines2 = f.readlines()
     f.close()
@@ -394,8 +391,9 @@ def upload_spotify(request):
     if "ip_addr_decrypted" in df.columns:
         df = splot.preprocess_new(df)
     else:
-        df['endtime'] = pd.to_datetime(df['endtime']).apply(
-            lambda x: timezone.make_aware(x, timezone.get_current_timezone()))
+        df["endtime"] = pd.to_datetime(df["endtime"]).apply(
+            lambda x: timezone.make_aware(x, timezone.get_current_timezone())
+        )
     # load up the existing data in database for this user
     loaded_df = splot.load_data(user)
     # if there is existing data, dedupe with new data
@@ -616,9 +614,7 @@ def netflix_compare_func(request):
 
 def good_text(request):
     username = request.user
-    small_text_url = (
-        f"static/Graphs/{username}/goodreads_small_{username}.txt"
-    )
+    small_text_url = f"static/Graphs/{username}/goodreads_small_{username}.txt"
     with open(small_text_url) as f:
         lines = f.readlines()
     f.close()
@@ -713,15 +709,21 @@ def load_data_streaming(request):
 
 def explore_data_books(request):
     # Extract DataTable parameters from request
-    edf = cache.get('explore_books_data')
+    edf = cache.get("explore_books_data")
     if edf is None:
         edf = get_explore_books_table()
-        cache.set('explore_books_data', edf, timeout=7 * 24 * 60 * 60)
+        cache.set("explore_books_data", edf, timeout=7 * 24 * 60 * 60)
         logger.info("No cache found")
     # map synonymm nationalities
-    nat_synonyms = {"Nepali": "Nepalese", "Korean": "South Korean", "Soviet": "Russian",
-                    "Czechoslovak": "Czech"}
-    edf["nationality_chosen"] = edf["nationality_chosen"].map(nat_synonyms).fillna(edf["nationality_chosen"])
+    nat_synonyms = {
+        "Nepali": "Nepalese",
+        "Korean": "South Korean",
+        "Soviet": "Russian",
+        "Czechoslovak": "Czech",
+    }
+    edf["nationality_chosen"] = (
+        edf["nationality_chosen"].map(nat_synonyms).fillna(edf["nationality_chosen"])
+    )
 
     html_cols = [
         "title_simple",
@@ -774,10 +776,10 @@ def view_explore_streaming(request):
 
 def explore_data_streaming(request):
     logger.info(f"netflix exploration called by user {request.user}")
-    stream_df = cache.get('explore_stream_data')
+    stream_df = cache.get("explore_stream_data")
     if stream_df is None:
         stream_df = get_explore_streaming()
-        cache.set('explore_stream_data', stream_df, timeout=7 * 24 * 60 * 60)
+        cache.set("explore_stream_data", stream_df, timeout=7 * 24 * 60 * 60)
         logger.info("No streaming cache found")
     html_cols = [
         "title",

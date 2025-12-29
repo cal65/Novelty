@@ -28,15 +28,21 @@ app = DjangoDash(
 @app.callback(
     [Output("stored-data", "data"), Output("stored-years", "data")],
     [
-        Input(component_id="usernameInput", component_property="value"),
+        Input(component_id="usernameInput", component_property="data"),
     ],
 )
 def initiate_data(username):
-    df = load_data(username)
-    df = run_all(df)
-    df = format_month_plot(df, date_col="date_read")
-    all_years = df["year_read"].unique()
-    return df.to_dict("records"), all_years
+    if not username:
+        return [], []
+    try:
+        df = load_data(username)
+        df = run_all(df)
+        df = format_month_plot(df, date_col="date_read")
+        all_years = df["year_read"].unique()
+        return df.to_dict("records"), all_years
+    except ValueError as e:
+        print(f"Error loading data: {e}")
+        return [], []
 
 
 @app.callback(
@@ -44,7 +50,7 @@ def initiate_data(username):
     [
         Input("stored-data", "data"),
         Input(component_id="yearDropdown", component_property="value"),
-        Input(component_id="usernameInput", component_property="value"),
+        Input(component_id="usernameInput", component_property="data"),
     ],
 )
 def graph_monthly(data, selected_years, username):
@@ -76,7 +82,7 @@ def graph_monthly(data, selected_years, username):
     [
         Input("stored-data", "data"),
         Input(component_id="yearDropdown_heat", component_property="value"),
-        Input(component_id="usernameInput", component_property="value"),
+        Input(component_id="usernameInput", component_property="data"),
     ],
 )
 def graph_heatmap(data, selected_years2, username):
@@ -144,7 +150,7 @@ app.layout = html.Div(
         ),
         html.Div(
             [
-                dcc.Input(id="usernameInput", style={"display": "none"}, value=" "),
+                dcc.Store(id="usernameInput", data=""),
                 html.Br(),
                 # html.Div(className="caption-text",
                 #          children="Below is an interactive plot of the books you've read and what month you read them. If you do not record the date in which you finished books, this plot will not show up.",

@@ -37,6 +37,8 @@ palette = plotly.colors.qualitative.Plotly
 
 def load_data(username):
     export_df = objects_to_df(ExportData.objects.filter(username=username))
+    if export_df.empty:
+        raise ValueError(f"No data found for user '{username}'.")
     books_df = objects_to_df(Books.objects.filter(book_id__in=export_df["book_id"]))
     authors_df = objects_to_df(
         Authors.objects.filter(author_name__in=export_df["author"])
