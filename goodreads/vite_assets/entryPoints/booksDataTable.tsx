@@ -5,9 +5,7 @@ import { MantineProvider } from "@mantine/core";
 import BooksDataTable from "../components/BooksDataTable.tsx";
 import theme from "../util/theme.ts";
 
-const scriptUrlParams = new URL(import.meta.url).searchParams;
-const propsElementId = scriptUrlParams.get("elementId") ?? "reactPropsElement";
-const propsElement = document.getElementById(propsElementId);
+const propsElement = document.getElementById("dataTableProps");
 if (propsElement) {
   // Parse the JSON props from the element's text content, and then render the component in a div
   // that is inserted after the props element.
@@ -22,5 +20,5 @@ if (propsElement) {
     </StrictMode>,
   );
 } else {
-  console.error(`dataTable: element with id ${propsElementId} not found.`);
+  console.error("dataTable: element with id dataTableProps not found.");
 }
