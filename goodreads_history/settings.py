@@ -163,6 +163,10 @@ CACHES = {
     }
 }
 
+DJANGO_PLOTLY_DASH = {
+    "initial_argument_storage": "session",
+}
+
 
 SITE_ID = 2
 LOGOUT_REDIRECT_URL = "index-view"
