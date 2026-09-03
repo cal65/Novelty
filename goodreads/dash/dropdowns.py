@@ -127,7 +127,7 @@ app.layout = html.Div(
                         ]
                     ],
                     multi=True,
-                    value=2024,
+                    value="all",
                     placeholder="Select Year(s)",
                 ),
                 html.Br(),
@@ -151,7 +151,7 @@ app.layout = html.Div(
                         ]
                     ],
                     multi=True,
-                    value=2024,  # Default to all years
+                    value="all",  # Default to all years
                     placeholder="Select Year(s)",
                     style={'margin-bottom': '20px'}
                 ),

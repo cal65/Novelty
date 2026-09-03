@@ -1067,7 +1067,7 @@ def main(username):
         page_col="number_of_pages",
         title_col="title_simple",
         author_gender_col="gender",
-        lims=[2013, 2024],
+        lims=None,
     )
     fig_month.write_html(
         f"static/Graphs/{username}/monthly_pages_read_{username}.html"
