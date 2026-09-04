@@ -163,8 +163,8 @@ CACHES = {
     }
 }
 
-DJANGO_PLOTLY_DASH = {
-    "initial_argument_storage": "session",
+PLOTLY_DASH = {
+    "cache_arguments": False,
 }
 
 
