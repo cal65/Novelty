@@ -101,18 +101,24 @@ def generate_labels(breaks):
         return [f"{breaks[0]} - {breaks[1]}"] + generate_labels(breaks[1:])
 
 
-def strat_count(df, col, min_break=3, opt_labels=None):
+def strat_count(df, col, min_break=3, max_break=6, opt_labels=None):
     """
     Take a dataframe and a column, and minimum digits in last break
-    Divide column into strats of powers of ten, starting from 10^min_break
+    Divide column into strats of powers of ten, starting from 10^min_break.
+    Caps at 10^max_break (default 1,000,000) so outlier books don't get their
+    own stratum — everything above the cap goes into the top bucket.
     """
     df.sort_values(col, ascending=True, inplace=True)
     col_max = int(df[col].max())
-    max_digits = len(str(col_max))
-    digit_range = list(range(min_break, max_digits + 1))
+    effective_max = min(len(str(col_max)), max_break)
+    digit_range = list(range(min_break, effective_max + 1))
     breaks = [0] + [10**d for d in digit_range]
-    # ['0 - 1,000', '1,000 - 10,000', '10,000 - 100,000', '100,000 - 1,000,000'] using fancy local-aware f:, hack
-    break_labels = generate_labels([f"{b:,}" for b in breaks])
+    cap_exceeded = col_max > breaks[-1]
+    if cap_exceeded:
+        breaks.append(float("inf"))
+    break_labels = generate_labels([f"{b:,}" for b in breaks if b != float("inf")] + (["inf"] if cap_exceeded else []))
+    if cap_exceeded:
+        break_labels[-1] = f"{10**effective_max:,}+"
     if opt_labels is not None:
         if len(opt_labels) != 2:
             raise Exception("labels must be of length 2")
