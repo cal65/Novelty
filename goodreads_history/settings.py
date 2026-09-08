@@ -202,8 +202,11 @@ CHANNEL_LAYERS = {
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATICFILES_DIRS = [
-    "static/Graphs",
-    "goodreads/vite_assets/dist",
+    os.path.join(BASE_DIR, "goodreads/vite_assets/dist"),
+]
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
@@ -219,3 +222,7 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+PLOTLY_DASH = {
+    'serve_locally': False,
+}
