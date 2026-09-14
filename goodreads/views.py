@@ -170,6 +170,12 @@ def plots_view(request):
     if "run_script_function" in request.POST:
         run_script_function(request)
 
+    # Store username in the django_plotly_dash session key so Dash callbacks can
+    # read it via session_state — more reliable than initial_arguments across workers.
+    dpd_session = request.session.get("django_plotly_dash", {})
+    dpd_session["username"] = str(username)
+    request.session["django_plotly_dash"] = dpd_session
+
     return render(
         request,
         "goodreads/plots.html",
@@ -180,10 +186,8 @@ def plots_view(request):
             "summary_plot_url": summary_plot_url,
             "monthly_pages_read_url": monthly_pages_read_url,
             "genre_diff_url": genre_diff_url,
-            # dash context for app
             "dash_context": {"usernameInput": {"value": str(username)}},
-        }
-
+        },
     )
 
 
