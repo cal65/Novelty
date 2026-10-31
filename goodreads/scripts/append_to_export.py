@@ -228,3 +228,21 @@ def convert_to_Book(book_id, wait=2):
         djangoBook.save()
         logger.info(f"Book {djangoBook.book_id} updated in books table")
     return status
+
+def look_up_dict(author_nats):
+    """
+    Pass in a dict of author nationalities and set in db
+    """
+    for name, nat_dict in author_nats.items():
+        if nat_dict.get('nationality1') !='':
+            try:
+                a = Authors.objects.get(author_name=name)
+                a.nationality1 = nat_dict['nationality1']
+                a.nationality2 = nat_dict['nationality2']
+                a.nationality_chosen = nat_dict['nationality1']
+                a.save()
+                print(a.nationality_chosen)
+            except Exception as e:
+                print(f"Exception {e} for {name}")
+                next
+
