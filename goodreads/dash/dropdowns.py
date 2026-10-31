@@ -1,4 +1,5 @@
 from dash import dcc, html
+import plotly.graph_objects as go
 from django_plotly_dash import DjangoDash
 from dash.dependencies import Input, Output
 from goodreads.plotting.plotting import (
@@ -22,12 +23,20 @@ app = DjangoDash("goodreads_dash", external_stylesheets=external_stylesheets)
         Input(component_id="usernameInput", component_property="value"),
     ],
 )
-def initiate_data(username):
-    df = load_data(username)
-    df = run_all(df)
-    df = format_month_plot(df, date_col="date_read")
-    all_years = df["year_read"].unique()
-    return df.to_dict("records"), all_years
+def initiate_data(username, session_state=None):
+    # Prefer the username stored in the Django session (reliable across workers)
+    # over the initial_arguments-injected value which can fail across workers.
+    actual_username = (session_state or {}).get("username") or username
+    if not actual_username or not actual_username.strip():
+        return [], []
+    try:
+        df = load_data(actual_username)
+        df = run_all(df)
+        df = format_month_plot(df, date_col="date_read")
+        all_years = df["year_read"].unique()
+        return df.to_dict("records"), list(all_years)
+    except Exception:
+        return [], []
 
 
 @app.callback(
@@ -40,8 +49,8 @@ def initiate_data(username):
 )
 def graph_monthly(data, selected_years, username):
     df = pd.DataFrame(data)
-    print(df.head())
-    print(df.columns)
+    if df.empty or "year_read" not in df.columns:
+        return go.Figure()
     if not isinstance(selected_years, list):
         selected_years = [selected_years]
     if "all" not in selected_years:
@@ -74,6 +83,8 @@ def graph_monthly(data, selected_years, username):
 )
 def graph_heatmap(data, selected_years2, username):
     df = pd.DataFrame(data)
+    if df.empty or "read" not in df.columns:
+        return go.Figure()
     if not isinstance(selected_years2, list):
         selected_years2 = [selected_years2]
     if "all" not in selected_years2:
